@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>销售单据查询</title>
+<link rel="stylesheet" type="text/css"
+	href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css"
+	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+<script type="text/javascript">
+	var mode = null;
+	var client = null;
+	var price = null;
+	var length = null;
+	var json = {};
+
+	//清空筛选条件,并初始化筛选属性的值 
+	function clertCondition() {
+		mode = undefined;
+		client = undefined;
+		price = undefined;
+		length = undefined;
+		json = {};
+		$("#clientId").combobox("reset");
+		$("#mode").combobox("reset");
+		$("#price").combobox("reset");
+		$("#length").combobox("reset");
+		$("#dg").datagrid("reload");
+	}
+	
+	$(document).ready(function() {
+		$("#clientId").combobox({
+			panelHeight : 'auto',
+			valueField : 'id',
+			textField : 'name',
+			url : '/admin/client/clientList',
+			onSelect : function(client) {
+				client = client.name;
+				if (mode) {
+					json.modeSort = mode;
+				}
+				if (price) {
+					json.priceSort = price;
+				}
+				if (length) {
+					json.lengthSort = length;
+				}
+				if (client) {
+					json.client = client;
+				}
+
+				$.post("/admin/saleListProduct/screen", json, function(result) {
+					if (result.success) {
+						console.log(result.rows);
+						$("#dg").datagrid('loadData', result.rows);
+					}
+				}, "json");
+
+			}
+		});
+		//按幅宽排序下拉框 
+		$("#mode").combobox({
+			panelHeight : 'auto',
+			valueField : 'label',
+			textField : 'value',
+			data : [ {
+				label : 'ASC',
+				value : '升序'
+			}, {
+				label : 'DESC',
+				value : '降序'
+			} ],
+			onSelect : function(modeVal) {
+				mode = modeVal.label;
+				if (mode) {
+					json.modeSort = mode;
+				}
+				if (price) {
+					json.priceSort = price;
+				}
+				if (length) {
+					json.lengthSort = length;
+				}
+				if (client) {
+					json.client = client;
+				}
+
+				$.post("/admin/saleListProduct/screen", json, function(result) {
+					if (result.success) {
+						$("#dg").datagrid('loadData', result.rows);
+					}
+				}, "json");
+
+			}
+		});
+
+		//按厚度排序下拉框 
+		$("#price").combobox({
+			panelHeight : 'auto',
+			valueField : 'label',
+			textField : 'value',
+			data : [ {
+				label : 'ASC',
+				value : '升序'
+			}, {
+				label : 'DESC',
+				value : '降序'
+			} ],
+			onSelect : function(priceVal) {
+				price = priceVal.label;
+				if (mode) {
+					json.modeSort = mode;
+				}
+				if (price) {
+					json.priceSort = price;
+				}
+				if (length) {
+					json.lengthSort = length;
+				}
+				if (client) {
+					json.client = client;
+				}
+
+				$.post("/admin/saleListProduct/screen", json, function(result) {
+					if (result.success) {
+						$("#dg").datagrid('loadData', result.rows);
+					}
+				}, "json");
+			}
+		});
+
+		//按长度排序下拉框 
+		$("#length").combobox({
+			panelHeight : 'auto',
+			valueField : 'label',
+			textField : 'value',
+			data : [ {
+				label : 'ASC',
+				value : '升序'
+			}, {
+				label : 'DESC',
+				value : '降序'
+			} ],
+			onSelect : function(lengthVal) {
+				length = lengthVal.label;
+				if (mode) {
+					json.modeSort = mode;
+				}
+				if (price) {
+					json.priceSort = price;
+				}
+				if (length) {
+					json.lengthSort = length;
+				}
+				if (client) {
+					json.client = client;
+				}
+
+				$.post("/admin/saleListProduct/screen", json, function(result) {
+					if (result.success) {
+						$("#dg").datagrid('loadData', result.rows);
+					}
+				}, "json");
+			}
+		});
+
+		//加载数据
+		$("#dg").datagrid({
+			columns : [ [ {
+				field : 'cb',
+				checkbox : "true",
+				align : "center"
+			}, {
+				field : "id",
+				title : "农称",
+				width : "100",
+				align : "center"
+			}, {
+				field : "peasant",
+				title : "农户名称",
+				width : "100",
+				align : "center"
+			}, {
+				field : "clientname",
+				title : "客户名称",
+				width : "100",
+				align : "center"
+			}, {
+				field : 'name',
+				title : "产品名称",
+				width : "200",
+				align : "center"
+			}, {
+				field : "model",
+				title : "幅宽（m）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "price",
+				title : "厚度（mm）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "length",
+				title : "长度（m）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "meter",
+				title : "生产米数",
+				width : "100",
+				align : "center"
+			}, {
+				field : "color",
+				title : "颜色",
+				width : "50",
+				align : "center"
+			}, {
+				field : "oneweight",
+				title : "单件重量（kg）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "num",
+				title : "订货数量",
+				width : "100",
+				align : "center"
+			}, {
+				field : "sumwight",
+				title : "总重量（kg）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "realitymodel",
+				title : "实际幅宽（m）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "demand",
+				title : "要求",
+				width : "200",
+				align : "center"
+			}, {
+				field : "wightset",
+				title : "重量设置",
+				width : "200",
+				align : "center"
+			}, {
+				field : "dao",
+				title : "剖刀",
+				width : "150",
+				align : "center"
+			}, {
+				field : "brand",
+				title : "商标",
+				width : "150",
+				align : "center"
+			}, {
+				field : "pack",
+				title : "包装",
+				width : "200",
+				align : "center"
+			}, {
+				field : "letter",
+				title : "印字",
+				width : "200",
+				align : "center"
+			}, {
+				field : "realityweight",
+				title : "实际重量（kg）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "realityprice",
+				title : "实际厚度（mm）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "theoryweight",
+				title : "理论重量（kg）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "square",
+				title : "单件平米",
+				width : "100",
+				align : "center"
+			}, {
+				field : "numsquare",
+				title : "总平米",
+				width : "50",
+				align : "center"
+			}, {
+				field : "weightway",
+				title : "称重方式",
+				width : "100",
+				align : "center"
+			}, {
+				field : "label",
+				title : "标签名称",
+				width : "100",
+				align : "center"
+			}, {
+				field : "weight",
+				title : "重量（kg）",
+				width : "100",
+				align : "center"
+			}, {
+				field : "patu",
+				title : "纸管",
+				width : "50",
+				align : "center"
+			}, {
+				field : "remark",
+				title : "备注",
+				width : "100",
+				align : "center"
+			} ] ]
+		});
+	});
+
+	//分配机台 
+	function jitaiAllot() {
+		var ids;
+		var idsArr = [];
+		if (!$("#jitai").combobox("getValue")) {
+			$.messager.alert('系统提示', '请选择要分配的机台');
+			return;
+		}
+		if ($("#dg").datagrid("getSelections").length == 0) {
+			$.messager.alert('系统提示', '请选择要分配的订单');
+			return;
+		}
+
+		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
+			idsArr.push($("#dg").datagrid("getSelections")[i].id);
+		}
+		ids = idsArr.join(",");
+
+		$.post("/admin/production/jitaiAllocation", {
+			jitai : $("#jitai").combobox("getValue"),
+			sale : ids
+		}, function(result) {
+			if (result.success) {
+				$.messager.confirm('系统提示', '订单分配成功', function(r) {
+					if (r) {
+						clertCondition();
+					}
+				});
+			}
+		});
+	}
+</script>
+</head>
+<body style="margin: 1px">
+	<table id="dg" title="商标设置" class="easyui-datagrid" fitColumns="false"
+		rownumbers="true" url="/admin/saleListProduct/listProductSucceed"
+		toolbar="#tb" fit="true">
+	</table>
+
+	<div id="tb" style="padding: 15px;">
+		<div>
+			&nbsp;&nbsp;&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
+				id="clientId" name="clientId" style="width: 100px" />
+
+			&nbsp;&nbsp;&nbsp;&nbsp;幅&nbsp;&nbsp;&nbsp;&nbsp;宽（m）： <input
+				id="mode" name="mode" style="width: 50px" />
+
+			&nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;度（mm）： <input
+				id="price" name="price" style="width: 50px" />
+
+			&nbsp;&nbsp;&nbsp;&nbsp;长&nbsp;&nbsp;&nbsp;&nbsp;度（m）： <input
+				id="length" name="length" style="width: 50px" />
+
+			&nbsp;&nbsp;&nbsp;&nbsp;选择机台：<input class="easyui-combobox"
+				id="jitai" name="jitai" style="width: 100px"
+				data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'" />
+
+			&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:clertCondition()"
+				class="easyui-linkbutton" iconCls="icon-cancel">清空条件</a>
+
+			&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:jitaiAllot()"
+				class="easyui-linkbutton" iconCls="icon-ok">分配</a>
+		</div>
+	</div>
+</body>
+</html>
