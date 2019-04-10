@@ -50,6 +50,15 @@ public class JiTaiAdminController {
 		logService.save(new Log(Log.SEARCH_ACTION, "查询机台信息"));
 		return resultMap;
 	}
+	
+	/**
+	 * 查询所有所有机台信息
+	 * @return
+	 */
+	@RequestMapping("/findAll")
+	public List<JiTai> findAll() {
+		return jiTaiService.findAll();
+	}
 
 	/**
 	 * 添加或修改仓库信息

@@ -24,7 +24,6 @@ public class SaleListProduct {
 	@GeneratedValue
 	private Integer id;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "saleListId")
 	private SaleList saleList;// 销售单

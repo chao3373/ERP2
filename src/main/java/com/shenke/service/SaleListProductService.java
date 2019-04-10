@@ -37,6 +37,13 @@ public interface SaleListProductService {
 	 * @return
 	 */
 	public List<SaleListProduct> fandAll();
+	
+	/**
+	 * 根据id列表获取订单商品信息
+	 * @param ids
+	 * @return
+	 */
+	public List<SaleListProduct> fandAll(Iterable<Integer> ids);
 
 	/**
 	 * 查询所有的审核成功的销售商品信息

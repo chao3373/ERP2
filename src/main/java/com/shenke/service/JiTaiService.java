@@ -71,4 +71,10 @@ public interface JiTaiService {
 	 */
 	public List<JiTai> findByName(String string);
 
+	/**
+	 * 查询所有机台信息
+	 * @return
+	 */
+	public List<JiTai> findAll();
+
 }

@@ -51,7 +51,10 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 	public List<SaleListProduct> fandAll() {
 		return saleListProductRepository.findAll();
 	}
-
+	
+	public List<SaleListProduct> fandAll(Iterable<Integer> ids) {
+		return saleListProductRepository.findAll(ids);
+	}
 	@Override
 	public List<SaleListProduct> listProductSucceed() {
 		return saleListProductRepository.listProductSucceed();
@@ -75,9 +78,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 				predicate.getExpressions().add(cb.like(root.get("state"), "%审核通过%"));
 				if (condition.get("client") != null) {
 
-					System.out.println("*********************client!=null*******************************");
-					System.out.println("*************************" + condition.get("client") + "***************************************");
-
 					Subquery<Integer> subquery2 = query.subquery(Integer.class);
 					Root<Client> fromC = subquery2.from(Client.class);
 					subquery2.select(fromC.get("id")).where(cb.equal(fromC.get("name"), condition.get("client")));
@@ -89,37 +89,35 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 					predicate.getExpressions().add(cb.and(root.get("saleList").get("id").in(subquery)));
 				}
 
+				if (condition.get("modeSort") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("model"), condition.get("modeSort"))));
+				}
+				if (condition.get("priceSort") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("price"), condition.get("priceSort"))));
+				}
+				if (condition.get("lengthSort") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("length"), condition.get("lengthSort"))));
+				}
+				if (condition.get("meter") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("meter"), condition.get("meter"))));
+				}
+				if (condition.get("oneweight") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("oneweight"), condition.get("oneweight"))));
+				}
+				if (condition.get("sumwight") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("sumwight"), condition.get("sumwight"))));
+				}
+				if (condition.get("realitymodel") != null) {
+					predicate.getExpressions()
+							.add(cb.and(cb.equal(root.get("realitymodel"), condition.get("realitymodel"))));
+				}
+
 				return predicate;
 			}
 		};
 
-		if (condition.get("modeSort") != null) {
-			if (condition.get("modeSort").equals("DESC")) {
-				orders.add(new Order(Direction.DESC, "model"));
-			} else {
-				orders.add(new Order(Direction.ASC, "model"));
-			}
-		}
-		if (condition.get("priceSort") != null) {
-			if (condition.get("priceSort").equals("DESC")) {
-				orders.add(new Order(Direction.DESC, "price"));
-			} else {
-				orders.add(new Order(Direction.ASC, "price"));
-			}
-		}
-		if (condition.get("lengthSort") != null) {
-			if (condition.get("lengthSort").equals("DESC")) {
-				orders.add(new Order(Direction.DESC, "length"));
-			} else {
-				orders.add(new Order(Direction.ASC, "length"));
-			}
-		}
+		return saleListProductRepository.findAll(specification);
 
-		if (orders.size() != 0) {
-			return saleListProductRepository.findAll(specification, new Sort(orders));
-		} else {
-			return saleListProductRepository.findAll(specification);
-		}
 	}
 
 }

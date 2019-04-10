@@ -18,9 +18,9 @@ public class SaleListProductAdminController {
 
 	@Resource
 	private LogService logService;
-	
+
 	@Resource
-	private ClientService clientService; 
+	private ClientService clientService;
 
 	@Resource
 	private SaleListProductService saleListProductService;
@@ -71,7 +71,6 @@ public class SaleListProductAdminController {
 	@RequestMapping("/listProductSucceed")
 	public Map<String, Object> listProductSucceed() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		System.out.println(saleListProductService.listProductSucceed().toString());
 		map.put("rows", saleListProductService.listProductSucceed());
 		return map;
 	}
@@ -99,15 +98,20 @@ public class SaleListProductAdminController {
 	 * @return
 	 */
 	@RequestMapping("/screen")
-	public Map<String, Object> screen(String modeSort, String priceSort, String lengthSort, String client) {
+	public Map<String, Object> screen(String modeSort, String priceSort, String lengthSort, String client, String meter,
+			String oneweight, String sumwight, String realitymodel) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> condition = new HashMap<String, Object>();
-		
+
 		condition.put("modeSort", modeSort);
 		condition.put("priceSort", priceSort);
 		condition.put("lengthSort", lengthSort);
 		condition.put("client", client);
-		
+		condition.put("meter", meter);
+		condition.put("oneweight", oneweight);
+		condition.put("sumwight", sumwight);
+		condition.put("realitymodel", realitymodel);
+
 		List<SaleListProduct> screen = saleListProductService.screen(condition);
 		map.put("success", true);
 		map.put("rows", screen);

@@ -15,162 +15,79 @@
 	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="/static/js/date.js"></script>
 <script type="text/javascript">
-	var mode = null;
-	var client = null;
-	var price = null;
-	var length = null;
 	var json = {};
+
+	//按回车键查询
+	$(document).keyup(function(event) {
+		if (event.keyCode == 13) {
+			screenSale();
+		}
+	});
+
+	//添加筛选条件 
+	function addScreen() {
+		json = {};
+		if ($("#mode").val()) {
+			json.modeSort = $("#mode").val();
+		}
+		if ($("#price").val()) {
+			json.priceSort = $("#price").val();
+		}
+		if ($("#length").val()) {
+			json.lengthSort = $("#length").val();
+		}
+		if ($("#meter").val()) {
+			json.meter = $("#meter").val();
+		}
+		if ($("#oneweight").val()) {
+			json.oneweight = $("#oneweight").val();
+		}
+		if ($("#sumwight").val()) {
+			json.sumwight = $("#sumwight").val();
+		}
+		if ($("#realitymodel").val()) {
+			json.realitymodel = $("#realitymodel").val();
+		}
+		if (client) {
+			json.client = client;
+		}
+	}
+
+	//按照条件筛选订单信息
+	function screenSale() {
+		addScreen();
+		refreshData();
+	}
+
+	//添加条件筛选时刷新数据 
+	function refreshData() {
+		$.post("/admin/saleListProduct/screen", json, function(result) {
+			if (result.success) {
+				$("#dg").datagrid('loadData', result.rows);
+			}
+		}, "json");
+	}
+
+	//选择客户时触发 
+	function selectClient(clientName) {
+		client = clientName
+		addScreen();
+		refreshData();
+	}
 
 	//清空筛选条件,并初始化筛选属性的值 
 	function clertCondition() {
-		mode = undefined;
-		client = undefined;
-		price = undefined;
-		length = undefined;
+		loadData();
 		json = {};
 		$("#clientId").combobox("reset");
-		$("#mode").combobox("reset");
-		$("#price").combobox("reset");
-		$("#length").combobox("reset");
-		$("#dg").datagrid("reload");
+		$("#mode").val("");
+		$("#price").val("");
+		$("#length").val("");
+		$("#dg").val("");
 	}
-	
-	$(document).ready(function() {
-		$("#clientId").combobox({
-			panelHeight : 'auto',
-			valueField : 'id',
-			textField : 'name',
-			url : '/admin/client/clientList',
-			onSelect : function(client) {
-				client = client.name;
-				if (mode) {
-					json.modeSort = mode;
-				}
-				if (price) {
-					json.priceSort = price;
-				}
-				if (length) {
-					json.lengthSort = length;
-				}
-				if (client) {
-					json.client = client;
-				}
 
-				$.post("/admin/saleListProduct/screen", json, function(result) {
-					if (result.success) {
-						console.log(result.rows);
-						$("#dg").datagrid('loadData', result.rows);
-					}
-				}, "json");
-
-			}
-		});
-		//按幅宽排序下拉框 
-		$("#mode").combobox({
-			panelHeight : 'auto',
-			valueField : 'label',
-			textField : 'value',
-			data : [ {
-				label : 'ASC',
-				value : '升序'
-			}, {
-				label : 'DESC',
-				value : '降序'
-			} ],
-			onSelect : function(modeVal) {
-				mode = modeVal.label;
-				if (mode) {
-					json.modeSort = mode;
-				}
-				if (price) {
-					json.priceSort = price;
-				}
-				if (length) {
-					json.lengthSort = length;
-				}
-				if (client) {
-					json.client = client;
-				}
-
-				$.post("/admin/saleListProduct/screen", json, function(result) {
-					if (result.success) {
-						$("#dg").datagrid('loadData', result.rows);
-					}
-				}, "json");
-
-			}
-		});
-
-		//按厚度排序下拉框 
-		$("#price").combobox({
-			panelHeight : 'auto',
-			valueField : 'label',
-			textField : 'value',
-			data : [ {
-				label : 'ASC',
-				value : '升序'
-			}, {
-				label : 'DESC',
-				value : '降序'
-			} ],
-			onSelect : function(priceVal) {
-				price = priceVal.label;
-				if (mode) {
-					json.modeSort = mode;
-				}
-				if (price) {
-					json.priceSort = price;
-				}
-				if (length) {
-					json.lengthSort = length;
-				}
-				if (client) {
-					json.client = client;
-				}
-
-				$.post("/admin/saleListProduct/screen", json, function(result) {
-					if (result.success) {
-						$("#dg").datagrid('loadData', result.rows);
-					}
-				}, "json");
-			}
-		});
-
-		//按长度排序下拉框 
-		$("#length").combobox({
-			panelHeight : 'auto',
-			valueField : 'label',
-			textField : 'value',
-			data : [ {
-				label : 'ASC',
-				value : '升序'
-			}, {
-				label : 'DESC',
-				value : '降序'
-			} ],
-			onSelect : function(lengthVal) {
-				length = lengthVal.label;
-				if (mode) {
-					json.modeSort = mode;
-				}
-				if (price) {
-					json.priceSort = price;
-				}
-				if (length) {
-					json.lengthSort = length;
-				}
-				if (client) {
-					json.client = client;
-				}
-
-				$.post("/admin/saleListProduct/screen", json, function(result) {
-					if (result.success) {
-						$("#dg").datagrid('loadData', result.rows);
-					}
-				}, "json");
-			}
-		});
-
+	//加载数据
+	function loadData() {
 		//加载数据
 		$("#dg").datagrid({
 			columns : [ [ {
@@ -179,9 +96,18 @@
 				align : "center"
 			}, {
 				field : "id",
-				title : "农称",
-				width : "100",
-				align : "center"
+				title : "id号",
+				width : "120",
+				align : "center",
+				hidden : "true"
+			}, {
+				field : "saleNumber",
+				title : "订单号",
+				width : "120",
+				align : "center",
+				formatter : function(value, rows, index) {
+					return rows.saleList.saleNumber;
+				}
 			}, {
 				field : "peasant",
 				title : "农户名称",
@@ -324,29 +250,47 @@
 				align : "center"
 			} ] ]
 		});
+	}
+
+	$(document).ready(function() {
+		loadData();
+		$("#clientId").combobox({
+			panelHeight : 'auto',
+			valueField : 'id',
+			textField : 'name',
+			url : '/admin/client/clientList',
+			onSelect : function(client) {
+				client = client.name;
+				selectClient(client);
+			}
+		});
 	});
 
 	//分配机台 
 	function jitaiAllot() {
 		var ids;
 		var idsArr = [];
+		//判断是是否已经选择机台 
 		if (!$("#jitai").combobox("getValue")) {
 			$.messager.alert('系统提示', '请选择要分配的机台');
 			return;
 		}
+		//判断是否已经选择订单 
 		if ($("#dg").datagrid("getSelections").length == 0) {
 			$.messager.alert('系统提示', '请选择要分配的订单');
 			return;
 		}
 
+		//获取所有选中的订单的id
 		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
 			idsArr.push($("#dg").datagrid("getSelections")[i].id);
 		}
 		ids = idsArr.join(",");
 
+		//给订单分配机台
 		$.post("/admin/production/jitaiAllocation", {
 			jitai : $("#jitai").combobox("getValue"),
-			sale : ids
+			ids : ids
 		}, function(result) {
 			if (result.success) {
 				$.messager.confirm('系统提示', '订单分配成功', function(r) {
@@ -366,29 +310,43 @@
 	</table>
 
 	<div id="tb" style="padding: 15px;">
-		<div>
-			&nbsp;&nbsp;&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
-				id="clientId" name="clientId" style="width: 100px" />
-
-			&nbsp;&nbsp;&nbsp;&nbsp;幅&nbsp;&nbsp;&nbsp;&nbsp;宽（m）： <input
-				id="mode" name="mode" style="width: 50px" />
-
-			&nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;度（mm）： <input
-				id="price" name="price" style="width: 50px" />
-
-			&nbsp;&nbsp;&nbsp;&nbsp;长&nbsp;&nbsp;&nbsp;&nbsp;度（m）： <input
-				id="length" name="length" style="width: 50px" />
-
-			&nbsp;&nbsp;&nbsp;&nbsp;选择机台：<input class="easyui-combobox"
-				id="jitai" name="jitai" style="width: 100px"
-				data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'" />
-
-			&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:clertCondition()"
-				class="easyui-linkbutton" iconCls="icon-cancel">清空条件</a>
-
-			&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:jitaiAllot()"
-				class="easyui-linkbutton" iconCls="icon-ok">分配</a>
-		</div>
+		<table>
+			<tr>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;购货单位： <input
+					class="easyui-combobox" id="clientId" name="clientId"
+					style="width: 100px" /></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;幅宽（m）： <input id="mode" name="mode"
+					style="width: 98px" />
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;度（mm）&nbsp;： <input
+					id="price" name="price" style="width: 95px" /></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;长度（m）： <input id="length"
+					name="length" style="width: 95px" /></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;生产米数： <input id="meter"
+					name="meter" style="width: 66px" /></td>
+			</tr>
+			<tr>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;单件重量： <input id="oneweight"
+					name="oneweight" style="width: 95px" /></td>
+				<td>&nbsp;&nbsp;&nbsp;总&nbsp;&nbsp;重&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;：
+					<input id="sumwight" name="sumwight" style="width: 98px" />
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;实际幅宽（m）： <input id="realitymodel"
+					name="realitymodel" style="width: 98px" /></td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;选&nbsp;择&nbsp;机&nbsp;台： <input
+					class="easyui-combobox" id="jitai" name="jitai"
+					style="width: 100px"
+					data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'" />
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+					class="easyui-linkbutton" iconCls="icon-search">查询</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="javascript:jitaiAllot()" class="easyui-linkbutton"
+					iconCls="icon-ok">分配</a> &nbsp;&nbsp;&nbsp;&nbsp; <a
+					href="javascript:clertCondition()" class="easyui-linkbutton"
+					iconCls="icon-cancel">清空</a>
+				</td>
+			</tr>
+		</table>
 	</div>
 </body>
 </html>

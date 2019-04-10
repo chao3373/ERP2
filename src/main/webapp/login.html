@@ -50,6 +50,10 @@ canvas {
 <script src="static/js/Particleground.js"></script>
 <script>
 	$(document).ready(function() {
+		$('body').particleground({
+			dotColor : '#5cbdaa',
+			lineColor : '#5cbdaa'
+		});
 		//  ....此处是页面DOM加载完成的入口
 		$("#loginBtn").click(function() {
 			$.get(

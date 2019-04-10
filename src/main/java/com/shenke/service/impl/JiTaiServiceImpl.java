@@ -93,4 +93,9 @@ public class JiTaiServiceImpl implements JiTaiService {
 		return jiTaiRepository.findByName(string);
 	}
 
+	@Override
+	public List<JiTai> findAll() {
+		return jiTaiRepository.findAll();
+	}
+
 }
