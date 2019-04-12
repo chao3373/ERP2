@@ -61,6 +61,7 @@ public interface SaleListProductRepository
 
 	/**
 	 * 根据订单审核状态和销售单id查询所有订单信息
+	 * 
 	 * @param id
 	 * @param state
 	 * @return
@@ -70,6 +71,7 @@ public interface SaleListProductRepository
 
 	/**
 	 * 查询所有审核通过的商品信息
+	 * 
 	 * @return
 	 */
 	@Query(value = "select * from t_sale_list_product where state like '%审核通过%'", nativeQuery = true)
@@ -77,10 +79,21 @@ public interface SaleListProductRepository
 
 	/**
 	 * 下拉框模糊查询所有幅宽信息
+	 * 
 	 * @param q
 	 * @return
 	 */
 	@Query(value = "select * from t_sale_list_product where model like ?1", nativeQuery = true)
 	public List<SaleListProduct> breadthList(String q);
+
+	/**
+	 * 根据订单商品信息修改订单商品状态
+	 * 
+	 * @param name
+	 * @param id
+	 */
+	@Modifying
+	@Query(value = "UPDATE t_sale_list_product SET state = ?1 where id = ?2", nativeQuery = true)
+	public void updateState(String name, Integer id);
 
 }

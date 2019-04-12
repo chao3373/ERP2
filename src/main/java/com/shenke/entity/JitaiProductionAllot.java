@@ -22,32 +22,38 @@ public class JitaiProductionAllot {
 	@Id
 	@GeneratedValue
 	private int id;
-	
+
 	@ManyToOne
-	@JoinColumn(name="JitaiId")
-	private JiTai jiTai;//所分配的机台
-	
+	@JoinColumn(name = "JitaiId")
+	private JiTai jiTai;// 所分配的机台
+
+	@ManyToOne
+	@JoinColumn(name = "saleListProductId")
+	private SaleListProduct saleListProduct;// 所对应的销售订单产品信息
+
 	@Column(length = 50)
-	private Long informNumber;//通知单号
-	
+	private Long informNumber;// 通知单号
+
 	@Column(length = 50)
-	private String saleNumber;//订单号
-	
+	private String saleNumber;// 订单号
+
 	@Column(length = 500)
-	private String productionMessage;//产品信息
-	
-	private Double taskQuantity;//任务量
-	
-	private Date allorTime;//分配时间
-	
+	private String productionMessage;// 产品信息
+
+	private Double taskQuantity;// 任务量
+
+	private Date allorTime;// 分配时间
+
 	@Column(length = 50)
-	private String allotState;//分配状态
-	
+	private String allotState;// 分配状态
+
 	@Column(length = 50)
-	private String issueState;//下发状态
-	
+	private String issueState;// 下发状态
+
+	private Integer num;// 数量
+
 	@Transient
-	private Date seachTime;//搜索用到，根据日期查询
+	private Date seachTime;// 搜索用到，根据日期查询
 
 	public int getId() {
 		return id;
@@ -63,6 +69,14 @@ public class JitaiProductionAllot {
 
 	public void setJiTai(JiTai jiTai) {
 		this.jiTai = jiTai;
+	}
+
+	public SaleListProduct getSaleListProduct() {
+		return saleListProduct;
+	}
+
+	public void setSaleListProduct(SaleListProduct saleListProduct) {
+		this.saleListProduct = saleListProduct;
 	}
 
 	public Long getInformNumber() {
@@ -121,6 +135,14 @@ public class JitaiProductionAllot {
 		this.issueState = issueState;
 	}
 
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
 	public Date getSeachTime() {
 		return seachTime;
 	}
@@ -131,10 +153,10 @@ public class JitaiProductionAllot {
 
 	@Override
 	public String toString() {
-		return "JitaiProductionAllot [id=" + id + ", jiTai=" + jiTai + ", informNumber=" + informNumber
-				+ ", saleNumber=" + saleNumber + ", productionMessage=" + productionMessage + ", taskQuantity="
-				+ taskQuantity + ", allorTime=" + allorTime + ", allotState=" + allotState + ", issueState="
-				+ issueState + ", seachTime=" + seachTime + "]";
+		return "JitaiProductionAllot [id=" + id + ", jiTai=" + jiTai + ", saleListProduct=" + saleListProduct
+				+ ", informNumber=" + informNumber + ", saleNumber=" + saleNumber + ", productionMessage="
+				+ productionMessage + ", taskQuantity=" + taskQuantity + ", allorTime=" + allorTime + ", allotState="
+				+ allotState + ", issueState=" + issueState + ", num=" + num + ", seachTime=" + seachTime + "]";
 	}
 
 }

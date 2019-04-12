@@ -64,18 +64,35 @@ public class ProductionAdminController {
 
 		for (SaleListProduct saleListProduct : list) {
 			logService.save(new Log(Log.ADD_ACTION, "添加生产通知单"));
-			JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
-			jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
-			jitaiProductionAllot.setInformNumber(this.getInformNumber());
-			jitaiProductionAllot.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
-			jitaiProductionAllot.setProductionMessage("幅宽： " + saleListProduct.getModel() + "，厚度："
-					+ saleListProduct.getPrice() + "，长度：" + saleListProduct.getLength() + "，颜色："
-					+ saleListProduct.getColor() + "，数量：" + saleListProduct.getNum());
-			jitaiProductionAllot.setTaskQuantity(saleListProduct.getSumwight());
-			jitaiProductionAllot.setAllorTime(new Date(System.currentTimeMillis()));
-			jitaiProductionAllot.setAllotState(saleListProduct.getState());
-			jitaiProductionAllot.setIssueState("未下发");
-			jitaiProductionAllotService.save(jitaiProductionAllot);
+			Long informNumber = this.getInformNumber();
+			for (int i = 0; i < saleListProduct.getNum(); i++) {
+				JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
+				jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
+				jitaiProductionAllot.setInformNumber(informNumber);
+				jitaiProductionAllot.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
+				jitaiProductionAllot.setProductionMessage("幅宽： " + saleListProduct.getModel() + "，厚度："
+						+ saleListProduct.getPrice() + "，长度：" + saleListProduct.getLength() + "，颜色："
+						+ saleListProduct.getColor() + "，要求：" + saleListProduct.getDemand());
+				jitaiProductionAllot.setTaskQuantity(saleListProduct.getSumwight());
+				jitaiProductionAllot.setAllorTime(new Date(System.currentTimeMillis()));
+				jitaiProductionAllot.setAllotState(saleListProduct.getState());
+				jitaiProductionAllot.setIssueState("未下发");
+				jitaiProductionAllot.setSaleListProduct(saleListProduct);
+				Integer countSaleListProduct = jitaiProductionAllotService
+						.countBySaleListProductId(saleListProduct.getId());
+				jitaiProductionAllot.setNum(countSaleListProduct == null ? 0 : countSaleListProduct);
+				jitaiProductionAllotService.save(jitaiProductionAllot);
+				List<JitaiProductionAllot> jitaiProductionAllots = jitaiProductionAllotService
+						.findBySaleListProductId(saleListProduct.getId());
+				for (JitaiProductionAllot jitaiProductionAllo : jitaiProductionAllots) {
+					System.out.println("****************************************");
+					System.out.println(countSaleListProduct);
+					System.out.println("****************************************");
+					System.out.println(jitaiProductionAllo.getSaleListProduct().getId());
+					System.out.println("****************************************");
+					jitaiProductionAllotService.updateNum(countSaleListProduct, jitaiProductionAllo.getSaleListProduct().getId());
+				}
+			}
 		}
 
 		map.put("success", true);

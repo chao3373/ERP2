@@ -18,58 +18,83 @@
 	//加载数据
 	function loadData() {
 		//加载数据
-		$("#dg").datagrid({
-			columns : [ [ {
-				field : 'cb',
-				checkbox : "true",
-				align : "center"
-			}, {
-				field : "id",
-				title : "id号",
-				width : "120",
-				align : "center",
-				hidden : "true"
-			}, {
-				field : "jiTai",
-				title : "生产机台",
-				width : "120",
-				align : "center",
-				formatter : function(value, rows, index) {
-					return rows.jiTai.name;
-				}
-			}, {
-				field : "informNumber",
-				title : "通知单号",
-				width : "100",
-				align : "center"
-			}, {
-				field : "productionMessage",
-				title : "产品信息",
-				width : "350",
-				align : "center"
-			}, {
-				field : 'taskQuantity',
-				title : "任务量",
-				width : "200",
-				align : "center"
-			}, {
-				field : "allotState",
-				title : "分配状态",
-				width : "150",
-				align : "center"
-			}, {
-				field : "issueState",
-				title : "下发状态",
-				width : "100",
-				align : "center"
-			} ] ]
-		});
+		$("#dg")
+				.datagrid(
+						{
+							columns : [ [
+									{
+										field : 'cb',
+										checkbox : "true",
+										align : "center"
+									},
+									{
+										field : "id",
+										title : "id号",
+										width : "120",
+										align : "center",
+										hidden : "true"
+									},
+									{
+										field : "jiTai",
+										title : "生产机台",
+										width : "120",
+										align : "center",
+										formatter : function(value, rows, index) {
+											return rows.jiTai.name;
+										}
+									},
+									{
+										field : "informNumber",
+										title : "通知单号",
+										width : "100",
+										align : "center"
+									},
+									{
+										field : "productionMessage",
+										title : "产品信息",
+										width : "250",
+										align : "center"
+									},
+									{
+										field : 'taskQuantity',
+										title : "任务量",
+										width : "200",
+										align : "center"
+									},
+									{
+										field : 'num',
+										title : "数量",
+										width : "200",
+										align : "center"
+									},
+									{
+										field : "allotState",
+										title : "分配状态",
+										width : "150",
+										align : "center"
+									},
+									{
+										field : "issueState",
+										title : "下发状态",
+										width : "150",
+										align : "center",
+										formatter : function(value, rows, index) {
+											if (value == "未下发") {
+												return "<span style='color:red;'>未下发</span>";
+											} else {
+												return "<span style='color:green;'>"
+														+ value + "</span>";
+											}
+										}
+									} ] ]
+						});
 	}
 
 	//清空条件并重新加载数据
 	function reset() {
 		$("#allorTime").datebox("reset");
 		$("#jitai").combobox("reset");
+		$("#alertJitai").combobox("reset");
 		$("#dg").datagrid("reload");
 	}
 
@@ -84,15 +109,70 @@
 			json.allorTime = $("#allorTime").datebox("getValue");
 		}
 		$.post("/admin/jitaiProductionAllot/screen", json, function(result) {
-			if(result.success) {
+			if (result.success) {
 				console.log(result);
 				console.log(result.rows);
 				$("#dg").datagrid('loadData', result.rows);
 			}
 		});
-		console.log(json);
 	}
 
+	//所有下发的通知单的id 
+	var ids = [];
+	//点击下发按钮时触发 
+	function issue() {
+		if ($("#dg").datagrid("getSelections").length < 1) {
+			$.messager.alert("系统提示",
+					"<span style='color:red;'>请选择要下发的通知单！</span>");
+			return;
+		}
+		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
+			ids.push($("#dg").datagrid("getSelections")[i].id);
+		}
+
+		var idStr = ids.join(",");
+		$.post("/admin/jitaiProductionAllot/issue", {
+			idStr : idStr
+		}, function(result) {
+			if (result.success) {
+				$.messager.alert("系统提示", "已成功下发机台！");
+				reset();
+			}
+		});
+
+	}
+
+	//修改机台
+	function alertJitai() {
+		if ($("#dg").datagrid("getSelections").length < 1) {
+			$.messager.alert("系统提示",
+					"<span style='color:red;'>请选择要修改机台的通知单！</span>");
+			return;
+		}
+		if (!$("#alertJitai").combobox("getValue")) {
+			$.messager.alert("系统提示",
+					"<span style='color:red'>请选择要修改的机台！</span>");
+			return;
+		}
+
+		var informNumbers = [];
+		var jitai = $("#alertJitai").combobox("getValue");
+		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
+			informNumbers
+					.push($("#dg").datagrid("getSelections")[i].informNumber);
+		}
+		var informNumberStr = informNumbers.join(",");
+		$.post("/admin/jitaiProductionAllot/alertJitai", {
+			informNumberStr : informNumberStr,
+			jitai : jitai
+		}, function(result) {
+			if (result.success) {
+				$.messager.alert("系统提示", "修改成功！");
+				reset();
+			}
+		}, "json")
+
+	}
 	$(document).ready(function() {
 		//当选择一个日期的时候执行的操作
 		$("#allorTime").datebox({
@@ -113,8 +193,8 @@
 </head>
 <body style="margin: 1px">
 	<table id="dg" title="商标设置" class="easyui-datagrid" fitColumns="false"
-		rownumbers="true" url="/admin/jitaiProductionAllot/list" toolbar="#tb"
-		fit="true">
+		rownumbers="true" url="/admin/jitaiProductionAllot/listGroubBy"
+		toolbar="#tb" fit="true">
 	</table>
 
 	<div id="tb" style="padding: 15px;">
@@ -131,7 +211,15 @@
 					iconCls="icon-cancel" href="javascript:reset()">清空</a>
 				</td>
 				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-					iconCls="icon-add" href="javascript:reset()">下发</a>
+					iconCls="icon-add" href="javascript:issue()">下发</a>
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：
+					<input id="alertJitai" class="easyui-combobox"
+					url="/admin/jitai/findAll" name="mode" valueField="id"
+					panelHeight="auto" textField="name" style="width: 98px" />
+				</td>
+				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
+					iconCls="icon-ok" href="javascript:alertJitai()">修改</a>
 				</td>
 			</tr>
 		</table>

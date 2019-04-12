@@ -120,4 +120,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
 	}
 
+	@Override
+	public void updateState(String name, Integer id) {
+		saleListProductRepository.updateState(name, id);
+	}
+
 }

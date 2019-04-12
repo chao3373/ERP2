@@ -65,4 +65,11 @@ public interface SaleListProductService {
 	 */
 	public List<SaleListProduct> screen(Map<String, Object> condition);
 
+	/**
+	 * 根据订单商品信息id修改订单商品信息状态
+	 * @param name
+	 * @param id
+	 */
+	public void updateState(String name, Integer id);
+
 }

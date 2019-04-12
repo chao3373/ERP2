@@ -16,19 +16,20 @@ import com.shenke.service.LogService;
 
 /**
  * 机台Controller
+ * 
  * @author Administrator
  *
  */
 @RestController
 @RequestMapping("/admin/jitai")
 public class JiTaiAdminController {
-	
+
 	@Resource
 	private JiTaiService jiTaiService;
-	
+
 	@Resource
 	private LogService logService;
-	
+
 	/**
 	 * 分页查询机台信息
 	 * 
@@ -50,9 +51,10 @@ public class JiTaiAdminController {
 		logService.save(new Log(Log.SEARCH_ACTION, "查询机台信息"));
 		return resultMap;
 	}
-	
+
 	/**
 	 * 查询所有所有机台信息
+	 * 
 	 * @return
 	 */
 	@RequestMapping("/findAll")
@@ -99,17 +101,17 @@ public class JiTaiAdminController {
 		resultMap.put("success", true);
 		return resultMap;
 	}
-	
-	
+
 	/**
 	 * 下拉框模糊查询机台信息
+	 * 
 	 * @return
 	 */
 	@RequestMapping("/jitaiList")
 	public List<JiTai> jitaiList(String q) {
-		if(q==null){
-			q="";
+		if (q == null) {
+			q = "";
 		}
-		return jiTaiService.findByName("%"+q+"%");
+		return jiTaiService.findByName("%" + q + "%");
 	}
 }
