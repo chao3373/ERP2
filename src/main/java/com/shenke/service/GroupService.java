@@ -56,4 +56,11 @@ public interface GroupService {
 	 */
 	public void delete(Integer id);
 
+	/**
+	 * 下拉框模糊查询
+	 * @param string
+	 * @return
+	 */
+	public List<Group> findByName(String string);
+
 }

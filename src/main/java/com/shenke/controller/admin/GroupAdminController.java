@@ -91,5 +91,18 @@ public class GroupAdminController {
 		resultMap.put("success", true);
 		return resultMap;
 	}
+	
+	/**
+	 * 下拉框模糊查询
+	 * @param q
+	 * @return
+	 */
+	@RequestMapping("/clerkList")
+	public List<Group> clerkList(String q) {
+		if (q == null) {
+			q = "";
+		}
+		return groupService.findByName("%" + q + "%");
+	}
 
 }

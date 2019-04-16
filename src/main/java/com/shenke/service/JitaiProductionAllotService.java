@@ -1,9 +1,11 @@
 package com.shenke.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.shenke.entity.JiTai;
 import com.shenke.entity.JitaiProductionAllot;
+import com.shenke.entity.SaleListProduct;
 
 /**
  * 机台生产分配Service
@@ -96,6 +98,35 @@ public interface JitaiProductionAllotService {
 	 * @param string
 	 */
 	public JitaiProductionAllot findById(Integer id);
+
+	/**
+	 * 根据机台id查询分配到该机台的所有销售订单信息
+	 * @param jitaiId
+	 * @return
+	 */
+	public List<SaleListProduct> selectSaleListProductByJitaiId(Integer jitaiId);
+
+	/**
+	 * 根据机台id查询该机台下的所有通知单号
+	 * @param jitaiId
+	 * @return
+	 */
+	public Set<Integer> selectAllInformByJitaiId(Integer jitaiId);
+
+	/**
+	 * 根据机台id和通知单号查询该通知单号下的所有通知单
+	 * @param jitai
+	 * @param parseLong
+	 * @return
+	 */
+	public List<SaleListProduct> selectAllByInformAndJitaiId(Integer jitai, String parseLong);
+
+	/**
+	 * 根据销售商品信息id查询生产通知单
+	 * @param id
+	 * @return
+	 */
+	public List<JitaiProductionAllot> selectBySaleListProductId(Integer id);
 
 
 }

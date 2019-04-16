@@ -1,19 +1,20 @@
 package com.shenke.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import com.shenke.entity.JiTai;
 import com.shenke.entity.JitaiProductionAllot;
+import com.shenke.entity.SaleListProduct;
 import com.shenke.repository.JiTaiRepository;
 import com.shenke.repository.JitaiProductionAllotRepository;
 import com.shenke.repository.SaleListProductRepository;
@@ -33,10 +34,10 @@ public class JitaiProductionAllotServiceImpl implements JitaiProductionAllotServ
 
 	@Resource
 	private JitaiProductionAllotRepository jitaiProductionAllotRepository;
-	
+
 	@Resource
 	private JiTaiRepository jiTaiRepository;
-	
+
 	@Resource
 	private SaleListProductRepository saleListProductRepository;
 
@@ -126,5 +127,33 @@ public class JitaiProductionAllotServiceImpl implements JitaiProductionAllotServ
 	public JitaiProductionAllot findById(Integer id) {
 		return jitaiProductionAllotRepository.findOne(id);
 	}
-	
+
+	@Override
+	public List<SaleListProduct> selectSaleListProductByJitaiId(Integer jitaiId) {
+		Set<Integer> saleListProductIds = new HashSet<Integer>();
+		List<JitaiProductionAllot> jitaiProductionAllots = jitaiProductionAllotRepository.findByJitaiId(jitaiId);
+		for (JitaiProductionAllot jitaiProductionAllot : jitaiProductionAllots) {
+			saleListProductIds.add(jitaiProductionAllot.getSaleListProduct().getId());
+		}
+
+		return saleListProductRepository.findAll(saleListProductIds);
+
+	}
+
+	@Override
+	public Set<Integer> selectAllInformByJitaiId(Integer jitaiId) {
+		return jitaiProductionAllotRepository.selectAllInformByJitaiId(jitaiId);
+	}
+
+	@Override
+	public List<SaleListProduct> selectAllByInformAndJitaiId(Integer jitai, String parseLong) {
+		return saleListProductRepository.selectAllByInformAndJitaiId(jitai, Long.parseLong(parseLong));
+
+	}
+
+	@Override
+	public List<JitaiProductionAllot> selectBySaleListProductId(Integer id) {
+		return jitaiProductionAllotRepository.selectBySaleListProductId(id);
+	}
+
 }

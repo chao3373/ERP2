@@ -19,20 +19,22 @@ import com.shenke.repository.UserRepository;
 import com.shenke.service.UserService;
 import com.shenke.util.StringUtil;
 
-
 /**
  * 用户Service实现类
+ * 
  * @author Administrator
  *
  */
 @Service("userService")
 @Transactional
-public class UserServiceImpl implements UserService{
-	
+public class UserServiceImpl implements UserService {
+
 	@Resource
 	private UserRepository userRepository;
 
-	/* 根据用户名查询用户
+	/*
+	 * 根据用户名查询用户
+	 * 
 	 * @see com.shenke.service.UserService#findByUserName(java.lang.String)
 	 */
 	@Override
@@ -42,14 +44,14 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public List<User> list(User user, Integer page, Integer pageSize, Direction direction, String... properties) {
-		Pageable pageable = new PageRequest(page-1, pageSize);
+		Pageable pageable = new PageRequest(page - 1, pageSize);
 		Page<User> pageUser = userRepository.findAll(new Specification<User>() {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate = cb.conjunction();
-				if(user!=null) {
-					if(StringUtil.isNotEmpty(user.getUserName())) {
-						predicate.getExpressions().add(cb.like(root.get("userName"), "%"+user.getUserName()+"%"));
+				if (user != null) {
+					if (StringUtil.isNotEmpty(user.getUserName())) {
+						predicate.getExpressions().add(cb.like(root.get("userName"), "%" + user.getUserName() + "%"));
 					}
 				}
 				return predicate;
@@ -64,9 +66,9 @@ public class UserServiceImpl implements UserService{
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate = cb.conjunction();
-				if(user!=null) {
+				if (user != null) {
 					if (StringUtil.isNotEmpty(user.getUserName())) {
-						predicate.getExpressions().add(cb.like(root.get("userName"), "%"+user.getUserName()+"%"));
+						predicate.getExpressions().add(cb.like(root.get("userName"), "%" + user.getUserName() + "%"));
 					}
 					predicate.getExpressions().add(cb.notEqual(root.get("id"), 1));
 				}
@@ -90,5 +92,10 @@ public class UserServiceImpl implements UserService{
 	public void delete(Integer id) {
 		userRepository.delete(id);
 	}
-	
+
+	@Override
+	public Object findNamePsw(String name, String psw) {
+		return userRepository.findByuserNameAndPwd(name, psw);
+	}
+
 }

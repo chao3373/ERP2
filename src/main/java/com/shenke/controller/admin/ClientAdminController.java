@@ -76,7 +76,7 @@ public class ClientAdminController {
 	}
 
 	/**
-	 * 删除产品及原料信息
+	 * 删除部门信息
 	 * 
 	 * @param id
 	 * @return
@@ -84,27 +84,37 @@ public class ClientAdminController {
 	 */
 	@RequestMapping("/delete")
 	@RequiresPermissions(value = "产品及原料设置")
-	public Map<String, Object> delete(Integer id) throws Exception {
+	public Map<String, Object> delete(Integer id) {
 		Map<String, Object> resultMap = new HashMap<>();
-		Client Client = clientService.findById(id);
-		logService.save(new Log(Log.DELETE_ACTION, "删除产品及原料信息" + Client));
-		clientService.deleteById(id);
+		try {
+			Client Client = clientService.findById(id);
+			
+			logService.save(new Log(Log.DELETE_ACTION, "删除产品及原料信息" + Client));
+			clientService.deleteById(id);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("errorInfo", "与该客户存在业务往来，无法删除！");
+			resultMap.put("success", false);
+			return resultMap;
+		}
 		resultMap.put("success", true);
 		return resultMap;
 	}
-	
+
 	/**
 	 * 下拉框模糊查询
+	 * 
 	 * @param q
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping("/clientList")
-	public List<Client> comboList(String q)throws Exception{
-		if(q==null){
-			q="";
+	public List<Client> comboList(String q) throws Exception {
+		if (q == null) {
+			q = "";
 		}
-		return clientService.findByName("%"+q+"%");
+		return clientService.findByName("%" + q + "%");
 	}
 
 }

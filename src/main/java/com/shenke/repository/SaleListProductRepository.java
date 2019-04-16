@@ -1,6 +1,8 @@
 package com.shenke.repository;
 
 import java.util.List;
+import java.util.Set;
+
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -8,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import com.shenke.entity.JitaiProductionAllot;
 import com.shenke.entity.SaleListProduct;
 
 @Transactional
@@ -95,5 +98,25 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "UPDATE t_sale_list_product SET state = ?1 where id = ?2", nativeQuery = true)
 	public void updateState(String name, Integer id);
+
+	/**
+	 * 根据机台id和通知单号查询所有销售商品信息
+	 * 
+	 * @param jitai
+	 * @param parseLong
+	 * @return
+	 */
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE id IN (SELECT sale_list_product_id FROM t_jitai_production_allot WHERE jitai_id = ?1 AND inform_number = ?2)", nativeQuery = true)
+	public List<SaleListProduct> selectAllByInformAndJitaiId(Integer jitai, Long parseLong);
+
+	/**
+	 * 根据id修改实际重量
+	 * @param weight
+	 * @param saleListProductId
+	 */
+	@Modifying
+	@Query(value = "UPDATE t_sale_list_product SET realityweight = ?1 where id = ?2", nativeQuery = true)
+	public void updaterRealityWeightById(Double weight, Integer saleListProductId);
+
 
 }

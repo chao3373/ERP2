@@ -29,7 +29,7 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
 	 * @return
 	 * 
 	 */
-	@Query(value="SELECT * FROM t_clerk WHERE dep_id IN (SELECT id FROM t_dep WHERE NAME LIKE '%销售%') AND NAME LIKE ?1", nativeQuery=true)
+	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1", nativeQuery=true)
 	public List<Clerk> findByName(String string);
 	
 }

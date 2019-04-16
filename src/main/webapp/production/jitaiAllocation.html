@@ -53,18 +53,75 @@
 										field : "productionMessage",
 										title : "产品信息",
 										width : "250",
-										align : "center"
+										align : "center",
+										formatter : function(value, rows, index) {
+											if (rows.saleListProduct) {
+												var saleListProduct = rows.saleListProduct;
+												return "产品名称: "
+														+ saleListProduct.name
+														+ "   农户名称: "
+														+ saleListProduct.peasant
+														+ "   客户名称: "
+														+ saleListProduct.clientname
+														+ "   幅宽: "
+														+ saleListProduct.model
+														+ "   厚度: "
+														+ saleListProduct.price
+														+ "   长度: "
+														+ saleListProduct.length
+														+ "   颜色: "
+														+ saleListProduct.color
+														+ "   数量: "
+														+ saleListProduct.num
+														+ "   理论重量: "
+														+ saleListProduct.theoryweight
+														+ "   单件重量: "
+														+ saleListProduct.oneweight
+														+ "   单件平米: "
+														+ saleListProduct.square
+														+ "   总平米: "
+														+ saleListProduct.numsquare
+														+ "   要求.: "
+														+ saleListProduct.demand
+														+ "   标签名称: "
+														+ saleListProduct.label
+														+ "   重量: "
+														+ saleListProduct.weight
+														+ "   剖刀: "
+														+ saleListProduct.dao
+														+ "   商标: "
+														+ saleListProduct.brand
+														+ "   包装: "
+														+ saleListProduct.pack
+														+ "   印字: "
+														+ saleListProduct.letter
+														+ "   纸管: "
+														+ saleListProduct.patu
+														+ "   重量设置: "
+														+ saleListProduct.wightset
+														+ "   订单状态: "
+														+ saleListProduct.state
+														+ "   总重量: "
+														+ saleListProduct.sumwight
+														+ "   生产米数: "
+														+ saleListProduct.meter
+														+ "   备注: "
+														+ saleListProduct.remark;
+											} else {
+												return "";
+											}
+										}
 									},
 									{
-										field : 'taskQuantity',
+										field : 'sumwight',
 										title : "任务量",
-										width : "200",
+										width : "100",
 										align : "center"
 									},
 									{
 										field : 'num',
 										title : "数量",
-										width : "200",
+										width : "100",
 										align : "center"
 									},
 									{
@@ -86,6 +143,20 @@
 														+ value + "</span>";
 											}
 										}
+									},
+									{
+										field : "saleListProductId",
+										title : "订单商品id",
+										width : "150",
+										align : "center",
+										formatter : function(value, rows, index) {
+											if (rows.saleListProduct) {
+												return rows.saleListProduct.id;
+											} else {
+												return;
+											}
+										},
+										hidden : "true"
 									} ] ]
 						});
 	}
@@ -100,7 +171,6 @@
 
 	//根据条件对数据进行筛选
 	function screen() {
-		console.log("screen");
 		var json = {};
 		if ($("#jitai").combobox("getValue")) {
 			json.jitai = $("#jitai").combobox("getValue");
@@ -108,10 +178,8 @@
 		if ($("#allorTime").datebox("getValue")) {
 			json.allorTime = $("#allorTime").datebox("getValue");
 		}
-		$.post("/admin/jitaiProductionAllot/screen", json, function(result) {
+		$.post("/admin/productionProcess/screen", json, function(result) {
 			if (result.success) {
-				console.log(result);
-				console.log(result.rows);
 				$("#dg").datagrid('loadData', result.rows);
 			}
 		});
@@ -127,7 +195,7 @@
 			return;
 		}
 		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
-			ids.push($("#dg").datagrid("getSelections")[i].id);
+			ids.push($("#dg").datagrid("getSelections")[i].saleListProduct.id);
 		}
 
 		var idStr = ids.join(",");
@@ -192,8 +260,9 @@
 </script>
 </head>
 <body style="margin: 1px">
-	<table id="dg" title="商标设置" class="easyui-datagrid" fitColumns="false"
-		rownumbers="true" url="/admin/jitaiProductionAllot/listGroubBy"
+	<table id="dg" title="机台生产分配" class="easyui-datagrid"
+		fitColumns="false" rownumbers="true"
+		url="/admin/productionProcess/selectByIssueState?issueState=未下发"
 		toolbar="#tb" fit="true">
 	</table>
 

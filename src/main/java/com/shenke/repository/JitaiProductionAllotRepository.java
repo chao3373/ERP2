@@ -1,6 +1,7 @@
 package com.shenke.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.shenke.entity.JiTai;
 import com.shenke.entity.JitaiProductionAllot;
+import com.shenke.entity.SaleListProduct;
 
 public interface JitaiProductionAllotRepository
 		extends JpaRepository<JitaiProductionAllot, Integer>, JpaSpecificationExecutor<JitaiProductionAllot> {
@@ -94,5 +96,41 @@ public interface JitaiProductionAllotRepository
 	 */
 	@Query(value = "select * from t_jitai_production_allot where inform_number = ?1", nativeQuery = true)
 	public List<JitaiProductionAllot> findByImformNubers(int parseInt);
+
+	/**
+	 * 根据分配的机台id查询所有分配到该机台的生产通知单
+	 * 
+	 * @param jitaiId
+	 * @return
+	 */
+	@Query(value = "select * from t_jitai_production_allot where jitai_id = ?1", nativeQuery = true)
+	public List<JitaiProductionAllot> findByJitaiId(Integer jitaiId);
+
+	/**
+	 * 根据机台id查询该机台下的所有通知单号
+	 * 
+	 * @param jitaiId
+	 * @return
+	 */
+	@Query(value = "select inform_number from t_jitai_production_allot where jitai_id = ?1", nativeQuery = true)
+	public Set<Integer> selectAllInformByJitaiId(Integer jitaiId);
+
+	/**
+	 * 根据销售商品id查询生产通知单
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@Query(value = "SELECT * FROM t_jitai_production_allot WHERE sale_list_product_id =?1 and id not in(select id from t_jitai_production_allot where issue_state like '%完成%')", nativeQuery = true)
+	public List<JitaiProductionAllot> selectBySaleListProductId(Integer id);
+
+	/**
+	 * 根据id修改生产通知单状态
+	 * @param string
+	 * @param jitaiProductionAllotId
+	 */
+	@Modifying
+	@Query(value = "UPDATE t_jitai_production_allot SET issue_state = ?1 WHERE id = ?2", nativeQuery = true)
+	public void updateStateById(String string, Integer jitaiProductionAllotId);
 
 }

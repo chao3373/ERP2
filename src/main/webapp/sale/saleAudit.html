@@ -2,244 +2,459 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>销售单据查询</title>
-<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
-<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<title>销售订单审核</title>
+<link rel="stylesheet" type="text/css"
+	href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css"
+	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 
 <script type="text/javascript" src="/static/js/date.js"></script>
 <script type="text/javascript">
-	
-	function formatUser(val,row){
-		return val.trueName+"&nbsp;("+val.userName+")&nbsp;";
+	function formatUser(val, row) {
+		return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
 	}
-	
-	
-	function searchSale(){
+
+	function searchSale() {
 		var clientId;
 		var clerkId;
-		if(isNaN($("#s_client").combobox("getValue"))){
-			clientId="";
-		}else{
-			clientId=$("#s_client").combobox("getValue");
+		if (isNaN($("#s_client").combobox("getValue"))) {
+			clientId = "";
+		} else {
+			clientId = $("#s_client").combobox("getValue");
 		}
-		
-		if(isNaN($("#s_clerk").combobox("getValue"))){
-			clerkId="";
-		}else{
-			clerkId=$("#s_clerk").combobox("getValue");
+
+		if (isNaN($("#s_clerk").combobox("getValue"))) {
+			clerkId = "";
+		} else {
+			clerkId = $("#s_clerk").combobox("getValue");
 		}
 		$("#dg").datagrid({
-			url:'/admin/saleList/list',
-			queryParams:{
-				saleNumber:$("#s_saleNumber").val(),
-				clientId:clientId,
-				clerkId:clerkId,
-				bSaleDate:$("#s_bSaleDate").datebox("getValue"),
-				eSaleDate:$("#s_eSaleDate").datebox("getValue")
+			url : '/admin/saleList/list',
+			queryParams : {
+				saleNumber : $("#s_saleNumber").val(),
+				clientId : clientId,
+				clerkId : clerkId,
+				bSaleDate : $("#s_bSaleDate").datebox("getValue"),
+				eSaleDate : $("#s_eSaleDate").datebox("getValue")
 			}
 		});
 	}
-	
-	function formatSupplier(val,row){
+
+	function formatSupplier(val, row) {
 		return val.name;
 	}
-	
+
 	//格式化日期 
-	Date.prototype.format = function(formatStr){   
-        var str = formatStr;   
-        var Week = ['日','一','二','三','四','五','六'];   
-        str=str.replace(/yyyy|YYYY/,this.getFullYear());  
-        str=str.replace(/MM/,(this.getMonth()+1)>9?(this.getMonth()+1).toString():'0' + (this.getMonth()+1));   
-        str=str.replace(/dd|DD/,this.getDate()>9?this.getDate().toString():'0' + this.getDate());   
-       return str;   
-	} 
-	
+	Date.prototype.format = function(formatStr) {
+		var str = formatStr;
+		var Week = [ '日', '一', '二', '三', '四', '五', '六' ];
+		str = str.replace(/yyyy|YYYY/, this.getFullYear());
+		str = str.replace(/MM/,
+				(this.getMonth() + 1) > 9 ? (this.getMonth() + 1).toString()
+						: '0' + (this.getMonth() + 1));
+		str = str.replace(/dd|DD/, this.getDate() > 9 ? this.getDate()
+				.toString() : '0' + this.getDate());
+		return str;
+	}
+
 	//显示时间数据时先进行格式化 
 	function formatDate(val, row) {
-		var dateType = "";  
-	    var date = new Date();  
-	    date.setTime(val); 
-	    dateType = date.format("yyyy-MM-dd")
-	    return dateType;
+		var dateType = "";
+		var date = new Date();
+		date.setTime(val);
+		dateType = date.format("yyyy-MM-dd")
+		return dateType;
 	}
-	
-	function formatUser(val,row){
-		return val.trueName + "&nbsp;("+val.userName+")&nbsp;";
+
+	function formatUser(val, row) {
+		return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
 	}
-	
-	function deleteSale(){
-		var selectedRows=$("#dg").datagrid("getSelections");
-		if(selectedRows.length!=1){
-			$.messager.alert("系统提示","请选择一条要删除的销售单！");
+
+	function deleteSale() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length != 1) {
+			$.messager.alert("系统提示", "请选择一条要删除的销售单！");
 			return;
 		}
-		var id=selectedRows[0].id;
-		$.messager.confirm("系统提示","<font color=red>删除销售单后将无法恢复，是否删除?</font>",function(r){
-			if(r){
-				$.post("/admin/saleList/delete",{id:id},function(result){
-					if(result.success){
-						$("#dg").datagrid("reload");
-						$("#dg2").datagrid("reload");
-					}else{
-						$.messager.alert("系统提示",result.errorInfo);
+		var id = selectedRows[0].id;
+		$.messager.confirm("系统提示", "<font color=red>删除销售单后将无法恢复，是否删除?</font>",
+				function(r) {
+					if (r) {
+						$.post("/admin/saleList/delete", {
+							id : id
+						}, function(result) {
+							if (result.success) {
+								$("#dg").datagrid("reload");
+								$("#dg2").datagrid("reload");
+							} else {
+								$.messager.alert("系统提示", result.errorInfo);
+							}
+						}, "json");
 					}
-				},"json");
-			}
-		});
-	}
-	
-	
-	$(document).ready(function() {
-		$("#dlg").dialog("close");
-		$("#s_bSaleDate").datebox("setValue",genLastMonthDayStr()); // 设置上个月日期
-		$("#s_eSaleDate").datebox("setValue",genTodayStr()); // 设置当前日期
-		
-		$("#dg").datagrid({
-			url:"/admin/saleList/list",
-			 columns:[[
-				{field:"id", width:"20", align:"center", title:"销售单ID",
-					formatter:function(val, row) {
-						saleListId = val;
-					    return val;
-					}, 	
-				},
-				{field:"saleNumber", width:"150", align:"center", title:"销售单号"},
-				{field:"saleDate", width:"100", align:"center", 
-					formatter:function(val, row) {
-						var dateType = "";  
-					    var date = new Date();  
-					    date.setTime(val); 
-					    dateType = date.format("yyyy-MM-dd")
-					    return dateType;
-					}, 
-				title:"销售日期"},
-				{field:"client", width:"100", align:"center", 
-					formatter:function(val,row){
-						return val.name;
-					}, 
-					title:"客户"},
-				{field:"clerk", width:"100", align:"center", 
-						formatter:function(val,row){
-							return val.name;
-						}, 
-				title:"业务员"},
-				{field:"user", width:"150", align:"center", 
-					formatter:function(val,row){
-						return val.trueName + "&nbsp;("+val.userName+")&nbsp;";
-					}, 
-				title:"操作员"},
-				{field:"lankman", width:"100", align:"center", title:"联系人"},
-				{field:"tel", width:"100", align:"center", title:"客户电话"},
-				{field:"address", width:"200", align:"center", title:"客户地址"},
-				{field:"deliveryDate", width:"100", align:"center", 
-					formatter:function(val, row) {
-						var dateType = "";  
-					    var date = new Date();  
-					    date.setTime(val); 
-					    dateType = date.format("yyyy-MM-dd")
-					    return dateType;
-					},
-				title:"发货时间"},
-				{field:"remark", width:"100", align:"center", title:"备注"}
-				
-			]], 
-			 /*	<th field="id" width="20" align="center">销售单号</th>
-				<th field="saleNumber" width="150" align="center">销售单号</th>
-				<th field="saleDate" width="100" align="center" formatter="formatDate">销售日期</th>
-				<th field="client" width="100" align="center" formatter="formatSupplier">客户</th>
-				<th field="clerk" width="100" align="center" formatter="formatSupplier">业务员</th>
-				<th field="user" width="150" align="center" formatter="formatUser">操作员</th>
-				<th field="lankman" width="100" align="center">联系人</th>
-				<th field="tel" width="100" align="center">客户电话</th>
-				<th field="address" width="200" align="center">客户地址</th>
-				<th field="deliveryDate" width="100" align="center" formatter="formatDate">发货时间</th>
-				<th field="remark" width="100" align="center">备注</th> */
-			onClickRow:function(index,row){
-				$("#cc1").combobox("reset");
-				$("#dg2").datagrid({
-					url:'/admin/saleList/listProduct',
-					queryParams:{
-						saleListId:row.id
-					},
-					columns:[[
-						{field:'cb', checkbox:"true", align:"center"},
-						{field:'state', title:"订单状态", width:"150", align:"center",
-							formatter: function(value, row, index) {
-								if(row.state == "下单") {
-									$("#state").css("color", "#FF0000");
-									return '<span style="color:#0000FF">' + '未审核' + '</span>';
-								} else if (row.state.indexOf("审核失败") == 0) {
-									return '<span style="color:#FF0000">' + row.state + '</span>';
-								}else if (row.state == "审核通过") {
-									return '<span style="color:#0B610B">' + row.state + '</span>';
-								} else {
-									return '<span style="color:#8A0829">' + row.state + '</span>';
-								}
-							}	
-						},
-						{field:'name', title:"产品名称", width:"200", align:"center"},
-						{field:"model", title:"幅宽（m）", width:"100", align:"center"},
-						{field:"price", title:"厚度（mm）", width:"100", align:"center"},
-						{field:"length", title:"长度（m）", width:"100", align:"center"},
-						{field:"meter", title:"生产米数", width:"100", align:"center"},
-						{field:"color", title:"颜色", width:"50", align:"center"},
-						{field:"oneweight", title:"单件重量（kg）", width:"100", align:"center"},
-						{field:"num", title:"订货数量", width:"100", align:"center"},
-						{field:"sumwight", title:"总重量（kg）", width:"100", align:"center"},
-						{field:"realitymodel", title:"实际幅宽（m）", width:"100", align:"center"},
-						{field:"demand", title:"要求", width:"200", align:"center"},
-						{field:"wightset", title:"重量设置", width:"200", align:"center"},
-						{field:"dao", title:"剖刀", width:"150", align:"center"},
-						{field:"brand", title:"商标", width:"150", align:"center"},
-						{field:"pack", title:"包装", width:"200", align:"center"},
-						{field:"letter", title:"印字", width:"200", align:"center"},
-						{field:"peasant", title:"农户名称", width:"100", align:"center"},
-						{field:"clientname", title:"客户名称", width:"100", align:"center"},
-						{field:"realityweight", title:"实际重量（kg）", width:"100", align:"center"},
-						{field:"realityprice", title:"实际厚度（mm）", width:"100", align:"center"},
-						{field:"theoryweight", title:"理论重量（kg）", width:"100", align:"center"},
-						{field:"square", title:"单件平米", width:"100", align:"center"},
-						{field:"numsquare", title:"总平米", width:"50", align:"center"},
-						{field:"weightway", title:"称重方式", width:"100", align:"center"},
-						{field:"label", title:"标签名称", width:"100", align:"center"},
-						{field:"weight", title:"重量（kg）", width:"100", align:"center"},
-						{field:"patu", title:"纸管", width:"50", align:"center"},
-						{field:"remark", title:"备注", width:"100", align:"center"}
-					]]
 				});
-			}
-		});
-		
-	});
-			
-/* 	$.post($.post("/admin/saleList/getSaleListYes",
-			{id:val},
-			function(result){
-				if(result.success){
-					idArr = result.arr;
-				}
-			},"json");
-	
-	alert(idArr); */
-	
-	
-	function formatPrice(val,row){
-		return "¥"+val;
 	}
-	
-	function formatTotal(val,row){
-		return "¥"+val;
+
+	$(document)
+			.ready(
+					function() {
+						$("#dlg").dialog("close");
+						$("#s_bSaleDate").datebox("setValue",
+								genLastMonthDayStr()); // 设置上个月日期
+						$("#s_eSaleDate").datebox("setValue", genTodayStr()); // 设置当前日期
+
+						$("#dg")
+								.datagrid(
+										{
+											url : "/admin/saleList/list",
+											columns : [ [
+													{
+														field : "id",
+														width : "20",
+														align : "center",
+														title : "销售单ID",
+														formatter : function(
+																val, row) {
+															saleListId = val;
+															return val;
+														},
+													},
+													{
+														field : "saleNumber",
+														width : "150",
+														align : "center",
+														title : "销售单号"
+													},
+													{
+														field : "saleDate",
+														width : "100",
+														align : "center",
+														formatter : function(
+																val, row) {
+															var dateType = "";
+															var date = new Date();
+															date.setTime(val);
+															dateType = date
+																	.format("yyyy-MM-dd")
+															return dateType;
+														},
+														title : "销售日期"
+													},
+													{
+														field : "client",
+														width : "100",
+														align : "center",
+														formatter : function(
+																val, row) {
+															return val.name;
+														},
+														title : "客户"
+													},
+													{
+														field : "clerk",
+														width : "100",
+														align : "center",
+														formatter : function(
+																val, row) {
+															return val.name;
+														},
+														title : "业务员"
+													},
+													{
+														field : "user",
+														width : "150",
+														align : "center",
+														formatter : function(
+																val, row) {
+															return val.trueName
+																	+ "&nbsp;("
+																	+ val.userName
+																	+ ")&nbsp;";
+														},
+														title : "操作员"
+													},
+													{
+														field : "lankman",
+														width : "100",
+														align : "center",
+														title : "联系人"
+													},
+													{
+														field : "tel",
+														width : "100",
+														align : "center",
+														title : "客户电话"
+													},
+													{
+														field : "address",
+														width : "200",
+														align : "center",
+														title : "客户地址"
+													},
+													{
+														field : "deliveryDate",
+														width : "100",
+														align : "center",
+														formatter : function(
+																val, row) {
+															var dateType = "";
+															var date = new Date();
+															date.setTime(val);
+															dateType = date
+																	.format("yyyy-MM-dd")
+															return dateType;
+														},
+														title : "发货时间"
+													}, {
+														field : "remark",
+														width : "100",
+														align : "center",
+														title : "备注"
+													}
+
+											] ],
+											onClickRow : function(index, row) {
+												$("#cc1").combobox("reset");
+												$("#dg2")
+														.datagrid(
+																{
+																	url : '/admin/saleList/listProduct',
+																	queryParams : {
+																		saleListId : row.id
+																	},
+																	columns : [ [
+																			{
+																				field : 'cb',
+																				checkbox : "true",
+																				align : "center"
+																			},
+																			{
+																				field : 'state',
+																				title : "订单状态",
+																				width : "150",
+																				align : "center",
+																				formatter : function(
+																						value,
+																						row,
+																						index) {
+																					if (row.state == "下单") {
+																						$(
+																								"#state")
+																								.css(
+																										"color",
+																										"#FF0000");
+																						return '<span style="color:#0000FF">'
+																								+ '未审核'
+																								+ '</span>';
+																					} else if (row.state
+																							.indexOf("审核失败") == 0) {
+																						return '<span style="color:#FF0000">'
+																								+ row.state
+																								+ '</span>';
+																					} else if (row.state == "审核通过") {
+																						return '<span style="color:#0B610B">'
+																								+ row.state
+																								+ '</span>';
+																					} else {
+																						return '<span style="color:#8A0829">'
+																								+ row.state
+																								+ '</span>';
+																					}
+																				}
+																			},
+																			{
+																				field : 'name',
+																				title : "产品名称",
+																				width : "200",
+																				align : "center"
+																			},
+																			{
+																				field : "model",
+																				title : "幅宽（m）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "price",
+																				title : "厚度（mm）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "length",
+																				title : "长度（m）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "meter",
+																				title : "生产米数",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "color",
+																				title : "颜色",
+																				width : "50",
+																				align : "center"
+																			},
+																			{
+																				field : "oneweight",
+																				title : "单件重量（kg）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "num",
+																				title : "订货数量",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "sumwight",
+																				title : "总重量（kg）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "realitymodel",
+																				title : "实际幅宽（m）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "demand",
+																				title : "要求",
+																				width : "200",
+																				align : "center"
+																			},
+																			{
+																				field : "wightset",
+																				title : "重量设置",
+																				width : "200",
+																				align : "center"
+																			},
+																			{
+																				field : "dao",
+																				title : "剖刀",
+																				width : "150",
+																				align : "center"
+																			},
+																			{
+																				field : "brand",
+																				title : "商标",
+																				width : "150",
+																				align : "center"
+																			},
+																			{
+																				field : "pack",
+																				title : "包装",
+																				width : "200",
+																				align : "center"
+																			},
+																			{
+																				field : "letter",
+																				title : "印字",
+																				width : "200",
+																				align : "center"
+																			},
+																			{
+																				field : "peasant",
+																				title : "农户名称",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "clientname",
+																				title : "客户名称",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "realityweight",
+																				title : "实际重量（kg）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "realityprice",
+																				title : "实际厚度（mm）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "theoryweight",
+																				title : "理论重量（kg）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "square",
+																				title : "单件平米",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "numsquare",
+																				title : "总平米",
+																				width : "50",
+																				align : "center"
+																			},
+																			{
+																				field : "weightway",
+																				title : "称重方式",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "label",
+																				title : "标签名称",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "weight",
+																				title : "重量（kg）",
+																				width : "100",
+																				align : "center"
+																			},
+																			{
+																				field : "patu",
+																				title : "纸管",
+																				width : "50",
+																				align : "center"
+																			},
+																			{
+																				field : "remark",
+																				title : "备注",
+																				width : "100",
+																				align : "center"
+																			} ] ]
+																});
+											}
+										});
+
+					});
+
+	function formatPrice(val, row) {
+		return "¥" + val;
 	}
-	
+
+	function formatTotal(val, row) {
+		return "¥" + val;
+	}
+
 	var ids;
-	
+
 	//审核
 	function auditResult(value) {
 		var selectedRows = $("#dg2").datagrid("getSelections");
-		if(selectedRows.length == 0) {
+		if (selectedRows.length == 0) {
 			$.messager.alert("系统提示", "请选择要审核的信息！");
 			return;
 		}
@@ -249,268 +464,579 @@
 		}
 		ids = strIds.join(",");
 		//审核成功
-		if(value == 1) {
-			$.messager.confirm("系统提示", "您确定审核这些数据吗？", function(r) {
-				if(r) {
-					$.post("/admin/saleListProduct/passTheAudit", 
-						{ids:ids}, 
-						function(result) {
-							if(result.success) {
-								$.messager.alert("系统提示", "审核已通过!");
-								$.post("/admin/saleListProduct/listAllBySaleList",
-									{id:$("#dg").datagrid("getSelections")[0].id},
-									function(data) {
-										if(data.success) {
-											
-										}
-									}
-								);
-								$("#dg").datagrid("selectRecord", $("#dg").datagrid("getSelections")[0].id);
-								console.log($("#dg").datagrid("getSelections")[0].id);
-								$("#dg2").datagrid("reload");
-							} else {
-								$.messager.alert("系统提示", result.errorInfo);
-							}
-						});
-					
-				}
-			});
+		if (value == 1) {
+			$.messager
+					.confirm(
+							"系统提示",
+							"您确定审核这些数据吗？",
+							function(r) {
+								if (r) {
+									$
+											.post(
+													"/admin/saleListProduct/passTheAudit",
+													{
+														ids : ids
+													},
+													function(result) {
+														if (result.success) {
+															$.messager.alert(
+																	"系统提示",
+																	"审核已通过!");
+															$
+																	.post(
+																			"/admin/saleListProduct/listAllBySaleList",
+																			{
+																				id : $(
+																						"#dg")
+																						.datagrid(
+																								"getSelections")[0].id
+																			},
+																			function(
+																					data) {
+																				if (data.success) {
+
+																				}
+																			});
+															$("#dg")
+																	.datagrid(
+																			"selectRecord",
+																			$(
+																					"#dg")
+																					.datagrid(
+																							"getSelections")[0].id);
+															console
+																	.log($(
+																			"#dg")
+																			.datagrid(
+																					"getSelections")[0].id);
+															$("#dg2").datagrid(
+																	"reload");
+														} else {
+															$.messager
+																	.alert(
+																			"系统提示",
+																			result.errorInfo);
+														}
+													});
+
+								}
+							});
 		} else if (value == 0) {//审核失败 
 			$("#dlg").dialog("open");
 		}
 	}
-	
+
 	//提交审核未通过原因
 	function saveCause() {
 		var cause = "审核失败：" + $("#cause").val();
 		alert(cause);
 		alert("saveCause" + ids);
-		$.post("/admin/saleListProduct/auditFailure", 
-			{ids:ids,cause:cause}, 
-			function(result) {
-				if(result.success) {
-					$.messager.alert("系统提示", "审核结果已提交");
-					$("#dg2").datagrid("reload");
-				} else {
-					$.messager.alert("系统提示", result.errorInfo);
-				}
-			});
+		$.post("/admin/saleListProduct/auditFailure", {
+			ids : ids,
+			cause : cause
+		}, function(result) {
+			if (result.success) {
+				$.messager.alert("系统提示", "审核结果已提交");
+				$("#dg2").datagrid("reload");
+			} else {
+				$.messager.alert("系统提示", result.errorInfo);
+			}
+		});
 		closeCause();
 	}
-	
+
 	//关闭审核未通过原因面板
 	function closeCause() {
 		$("#dlg").dialog("close");
 	}
-	
+
 	//根据审核条件进行订单商品信息的查询
 	function auditQuery(value) {
 		var selectenRows = $("#dg").datagrid("getSelections");
 		if (selectenRows.length != 1) {
-			$.messager.confirm("系统提示", "<span style='color: red;'>未选择任何订单信息将列出所有" + value +"订单商品信息</span>", function(r) {
-				if(r) {
-					if (value == "未审核") {
-						value = "下单";
-					}
-					$("#dg2").datagrid({
-						url:'/admin/saleList/listProductByState',
-						queryParams:{
-							state:value
-						},
-						columns:[[
-							{field:'cb', checkbox:"true", align:"center"},
-							{field:'state', title:"订单状态", width:"150", align:"center",
-								formatter: function(value, row, index) {
-									if(row.state == "下单") {
-										$("#state").css("color", "#FF0000");
-										return '<span style="color:#0000FF">' + '未审核' + '</span>';
-									} else if (row.state.indexOf("审核失败") == 0) {
-										return '<span style="color:#FF0000">' + row.state + '</span>';
-									}else if (row.state == "审核通过") {
-										return '<span style="color:#0B610B">' + row.state + '</span>';
-									} else {
-										return '<span style="color:#8A0829">' + row.state + '</span>';
+			$.messager
+					.confirm(
+							"系统提示",
+							"<span style='color: red;'>未选择任何订单信息将列出所有" + value
+									+ "订单商品信息</span>",
+							function(r) {
+								if (r) {
+									if (value == "未审核") {
+										value = "下单";
 									}
-								}	
-							},
-							{field:'name', title:"产品名称", width:"200", align:"center"},
-							{field:"model", title:"幅宽（m）", width:"100", align:"center"},
-							{field:"price", title:"厚度（mm）", width:"100", align:"center"},
-							{field:"length", title:"长度（m）", width:"100", align:"center"},
-							{field:"meter", title:"生产米数", width:"100", align:"center"},
-							{field:"color", title:"颜色", width:"50", align:"center"},
-							{field:"oneweight", title:"单件重量（kg）", width:"100", align:"center"},
-							{field:"num", title:"订货数量", width:"100", align:"center"},
-							{field:"sumwight", title:"总重量（kg）", width:"100", align:"center"},
-							{field:"realitymodel", title:"实际幅宽（m）", width:"100", align:"center"},
-							{field:"demand", title:"要求", width:"200", align:"center"},
-							{field:"wightset", title:"重量设置", width:"200", align:"center"},
-							{field:"dao", title:"剖刀", width:"150", align:"center"},
-							{field:"brand", title:"商标", width:"150", align:"center"},
-							{field:"pack", title:"包装", width:"200", align:"center"},
-							{field:"letter", title:"印字", width:"200", align:"center"},
-							{field:"peasant", title:"农户名称", width:"100", align:"center"},
-							{field:"clientname", title:"客户名称", width:"100", align:"center"},
-							{field:"realityweight", title:"实际重量（kg）", width:"100", align:"center"},
-							{field:"realityprice", title:"实际厚度（mm）", width:"100", align:"center"},
-							{field:"theoryweight", title:"理论重量（kg）", width:"100", align:"center"},
-							{field:"square", title:"单件平米", width:"100", align:"center"},
-							{field:"numsquare", title:"总平米", width:"50", align:"center"},
-							{field:"weightway", title:"称重方式", width:"100", align:"center"},
-							{field:"label", title:"标签名称", width:"100", align:"center"},
-							{field:"weight", title:"重量（kg）", width:"100", align:"center"},
-							{field:"patu", title:"纸管", width:"50", align:"center"},
-							{field:"remark", title:"备注", width:"100", align:"center"}
-						]]
-					});
-				}				
-			});
+									$("#dg2")
+											.datagrid(
+													{
+														url : '/admin/saleList/listProductByState',
+														queryParams : {
+															state : value
+														},
+														columns : [ [
+																{
+																	field : 'cb',
+																	checkbox : "true",
+																	align : "center"
+																},
+																{
+																	field : 'state',
+																	title : "订单状态",
+																	width : "150",
+																	align : "center",
+																	formatter : function(
+																			value,
+																			row,
+																			index) {
+																		if (row.state == "下单") {
+																			$(
+																					"#state")
+																					.css(
+																							"color",
+																							"#FF0000");
+																			return '<span style="color:#0000FF">'
+																					+ '未审核'
+																					+ '</span>';
+																		} else if (row.state
+																				.indexOf("审核失败") == 0) {
+																			return '<span style="color:#FF0000">'
+																					+ row.state
+																					+ '</span>';
+																		} else if (row.state == "审核通过") {
+																			return '<span style="color:#0B610B">'
+																					+ row.state
+																					+ '</span>';
+																		} else {
+																			return '<span style="color:#8A0829">'
+																					+ row.state
+																					+ '</span>';
+																		}
+																	}
+																},
+																{
+																	field : 'name',
+																	title : "产品名称",
+																	width : "200",
+																	align : "center"
+																},
+																{
+																	field : "model",
+																	title : "幅宽（m）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "price",
+																	title : "厚度（mm）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "length",
+																	title : "长度（m）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "meter",
+																	title : "生产米数",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "color",
+																	title : "颜色",
+																	width : "50",
+																	align : "center"
+																},
+																{
+																	field : "oneweight",
+																	title : "单件重量（kg）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "num",
+																	title : "订货数量",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "sumwight",
+																	title : "总重量（kg）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "realitymodel",
+																	title : "实际幅宽（m）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "demand",
+																	title : "要求",
+																	width : "200",
+																	align : "center"
+																},
+																{
+																	field : "wightset",
+																	title : "重量设置",
+																	width : "200",
+																	align : "center"
+																},
+																{
+																	field : "dao",
+																	title : "剖刀",
+																	width : "150",
+																	align : "center"
+																},
+																{
+																	field : "brand",
+																	title : "商标",
+																	width : "150",
+																	align : "center"
+																},
+																{
+																	field : "pack",
+																	title : "包装",
+																	width : "200",
+																	align : "center"
+																},
+																{
+																	field : "letter",
+																	title : "印字",
+																	width : "200",
+																	align : "center"
+																},
+																{
+																	field : "peasant",
+																	title : "农户名称",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "clientname",
+																	title : "客户名称",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "realityweight",
+																	title : "实际重量（kg）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "realityprice",
+																	title : "实际厚度（mm）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "theoryweight",
+																	title : "理论重量（kg）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "square",
+																	title : "单件平米",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "numsquare",
+																	title : "总平米",
+																	width : "50",
+																	align : "center"
+																},
+																{
+																	field : "weightway",
+																	title : "称重方式",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "label",
+																	title : "标签名称",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "weight",
+																	title : "重量（kg）",
+																	width : "100",
+																	align : "center"
+																},
+																{
+																	field : "patu",
+																	title : "纸管",
+																	width : "50",
+																	align : "center"
+																},
+																{
+																	field : "remark",
+																	title : "备注",
+																	width : "100",
+																	align : "center"
+																} ] ]
+													});
+								}
+							});
 		} else {
 			if (value == "未审核") {
 				value = "下单";
 			}
-			$("#dg2").datagrid({
-				url:'/admin/saleList/listProductByState',
-				queryParams:{
-					id:selectenRows[0].id,
-					state:value
-				},
-				columns:[[
-					{field:'cb', checkbox:"true", align:"center"},
-					{field:'state', title:"订单状态", width:"150", align:"center",
-						formatter: function(value, row, index) {
-							if(row.state == "下单") {
-								$("#state").css("color", "#FF0000");
-								return '<span style="color:#0000FF">' + '未审核' + '</span>';
-							} else if (row.state.indexOf("审核失败") == 0) {
-								return '<span style="color:#FF0000">' + row.state + '</span>';
-							}else if (row.state == "审核通过") {
-								return '<span style="color:#0B610B">' + row.state + '</span>';
-							} else {
-								return '<span style="color:#8A0829">' + row.state + '</span>';
-							}
-						}	
-					},
-					{field:'name', title:"产品名称", width:"200", align:"center"},
-					{field:"model", title:"幅宽（m）", width:"100", align:"center"},
-					{field:"price", title:"厚度（mm）", width:"100", align:"center"},
-					{field:"length", title:"长度（m）", width:"100", align:"center"},
-					{field:"meter", title:"生产米数", width:"100", align:"center"},
-					{field:"color", title:"颜色", width:"50", align:"center"},
-					{field:"oneweight", title:"单件重量（kg）", width:"100", align:"center"},
-					{field:"num", title:"订货数量", width:"100", align:"center"},
-					{field:"sumwight", title:"总重量（kg）", width:"100", align:"center"},
-					{field:"realitymodel", title:"实际幅宽（m）", width:"100", align:"center"},
-					{field:"demand", title:"要求", width:"200", align:"center"},
-					{field:"wightset", title:"重量设置", width:"200", align:"center"},
-					{field:"dao", title:"剖刀", width:"150", align:"center"},
-					{field:"brand", title:"商标", width:"150", align:"center"},
-					{field:"pack", title:"包装", width:"200", align:"center"},
-					{field:"letter", title:"印字", width:"200", align:"center"},
-					{field:"peasant", title:"农户名称", width:"100", align:"center"},
-					{field:"clientname", title:"客户名称", width:"100", align:"center"},
-					{field:"realityweight", title:"实际重量（kg）", width:"100", align:"center"},
-					{field:"realityprice", title:"实际厚度（mm）", width:"100", align:"center"},
-					{field:"theoryweight", title:"理论重量（kg）", width:"100", align:"center"},
-					{field:"square", title:"单件平米", width:"100", align:"center"},
-					{field:"numsquare", title:"总平米", width:"50", align:"center"},
-					{field:"weightway", title:"称重方式", width:"100", align:"center"},
-					{field:"label", title:"标签名称", width:"100", align:"center"},
-					{field:"weight", title:"重量（kg）", width:"100", align:"center"},
-					{field:"patu", title:"纸管", width:"50", align:"center"},
-					{field:"remark", title:"备注", width:"100", align:"center"}
-				]]
-			});
+			$("#dg2")
+					.datagrid(
+							{
+								url : '/admin/saleList/listProductByState',
+								queryParams : {
+									id : selectenRows[0].id,
+									state : value
+								},
+								columns : [ [
+										{
+											field : 'cb',
+											checkbox : "true",
+											align : "center"
+										},
+										{
+											field : 'state',
+											title : "订单状态",
+											width : "150",
+											align : "center",
+											formatter : function(value, row,
+													index) {
+												if (row.state == "下单") {
+													$("#state").css("color",
+															"#FF0000");
+													return '<span style="color:#0000FF">'
+															+ '未审核' + '</span>';
+												} else if (row.state
+														.indexOf("审核失败") == 0) {
+													return '<span style="color:#FF0000">'
+															+ row.state
+															+ '</span>';
+												} else if (row.state == "审核通过") {
+													return '<span style="color:#0B610B">'
+															+ row.state
+															+ '</span>';
+												} else {
+													return '<span style="color:#8A0829">'
+															+ row.state
+															+ '</span>';
+												}
+											}
+										}, {
+											field : 'name',
+											title : "产品名称",
+											width : "200",
+											align : "center"
+										}, {
+											field : "model",
+											title : "幅宽（m）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "price",
+											title : "厚度（mm）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "length",
+											title : "长度（m）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "meter",
+											title : "生产米数",
+											width : "100",
+											align : "center"
+										}, {
+											field : "color",
+											title : "颜色",
+											width : "50",
+											align : "center"
+										}, {
+											field : "oneweight",
+											title : "单件重量（kg）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "num",
+											title : "订货数量",
+											width : "100",
+											align : "center"
+										}, {
+											field : "sumwight",
+											title : "总重量（kg）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "realitymodel",
+											title : "实际幅宽（m）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "demand",
+											title : "要求",
+											width : "200",
+											align : "center"
+										}, {
+											field : "wightset",
+											title : "重量设置",
+											width : "200",
+											align : "center"
+										}, {
+											field : "dao",
+											title : "剖刀",
+											width : "150",
+											align : "center"
+										}, {
+											field : "brand",
+											title : "商标",
+											width : "150",
+											align : "center"
+										}, {
+											field : "pack",
+											title : "包装",
+											width : "200",
+											align : "center"
+										}, {
+											field : "letter",
+											title : "印字",
+											width : "200",
+											align : "center"
+										}, {
+											field : "peasant",
+											title : "农户名称",
+											width : "100",
+											align : "center"
+										}, {
+											field : "clientname",
+											title : "客户名称",
+											width : "100",
+											align : "center"
+										}, {
+											field : "realityweight",
+											title : "实际重量（kg）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "realityprice",
+											title : "实际厚度（mm）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "theoryweight",
+											title : "理论重量（kg）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "square",
+											title : "单件平米",
+											width : "100",
+											align : "center"
+										}, {
+											field : "numsquare",
+											title : "总平米",
+											width : "50",
+											align : "center"
+										}, {
+											field : "weightway",
+											title : "称重方式",
+											width : "100",
+											align : "center"
+										}, {
+											field : "label",
+											title : "标签名称",
+											width : "100",
+											align : "center"
+										}, {
+											field : "weight",
+											title : "重量（kg）",
+											width : "100",
+											align : "center"
+										}, {
+											field : "patu",
+											title : "纸管",
+											width : "50",
+											align : "center"
+										}, {
+											field : "remark",
+											title : "备注",
+											width : "100",
+											align : "center"
+										} ] ]
+							});
 		}
 	}
 </script>
 </head>
 <body class="easyui-layout" style="margin: 1px">
- <div region="north" style="height: 300px">
-	<table id="dg" title="销售单据查询" class="easyui-datagrid"
-	fitColumns="false" rownumbers="true" singleSelect="true"
-	 fit="true" toolbar="#tb" split="true">
-		<thead>
-			<th field="id" width="20" align="center">销售单号</th>
-			<th field="saleNumber" width="150" align="center">销售单号</th>
-			<th field="saleDate" width="100" align="center" formatter="formatDate">销售日期</th>
-			<th field="client" width="100" align="center" formatter="formatSupplier">客户</th>
-			<th field="clerk" width="100" align="center" formatter="formatSupplier">业务员</th>
-			<th field="user" width="150" align="center" formatter="formatUser">操作员</th>
-			<th field="lankman" width="100" align="center">联系人</th>
-			<th field="tel" width="100" align="center">客户电话</th>
-			<th field="address" width="200" align="center">客户地址</th>
-			<th field="deliveryDate" width="100" align="center" formatter="formatDate">发货时间</th>
-			<th field="remark" width="100" align="center">备注</th>
-		</thead>
-	</table>
-	
-	<div id="tb">
-		<fieldset style="border-color: #E7F0FF">
-			<legend>查询设置</legend>
-			&nbsp;单据号&nbsp;
-			<input type="text" id="s_saleNumber" size="15" onkeydown="if(event.keyCode==13) searchSale()"/>
-			&nbsp;&nbsp;&nbsp;客户：&nbsp;<input class="easyui-combobox" id="s_client" name="client.id" style="width: 200px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
-			&nbsp;&nbsp;&nbsp;业务员：&nbsp;<input class="easyui-combobox" id="s_clerk" name="clerk.id" style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
-			&nbsp;&nbsp;&nbsp;日期：&nbsp;
-			<input id="s_bSaleDate" class="easyui-datebox" editable=false style="width:100px"/>
-			&nbsp;&nbsp;-&nbsp;&nbsp;
-			<input id="s_eSaleDate" class="easyui-datebox" editable=false style="width:100px"/>
-			&nbsp;&nbsp;<a href="javascript:searchSale()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-			&nbsp;&nbsp;<a href="javascript:deleteSale()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
-		</fieldset>
+	<div region="north" style="height: 300px">
+		<table id="dg" title="销售单据查询" class="easyui-datagrid"
+			fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
+			toolbar="#tb" split="true">
+			<thead>
+				<th field="id" width="20" align="center">销售单号</th>
+				<th field="saleNumber" width="150" align="center">销售单号</th>
+				<th field="saleDate" width="100" align="center"
+					formatter="formatDate">销售日期</th>
+				<th field="client" width="100" align="center"
+					formatter="formatSupplier">客户</th>
+				<th field="clerk" width="100" align="center"
+					formatter="formatSupplier">业务员</th>
+				<th field="user" width="150" align="center" formatter="formatUser">操作员</th>
+				<th field="lankman" width="100" align="center">联系人</th>
+				<th field="tel" width="100" align="center">客户电话</th>
+				<th field="address" width="200" align="center">客户地址</th>
+				<th field="deliveryDate" width="100" align="center"
+					formatter="formatDate">发货时间</th>
+				<th field="remark" width="100" align="center">备注</th>
+			</thead>
+		</table>
+
+		<div id="tb">
+			<fieldset style="border-color: #E7F0FF">
+				<legend>查询设置</legend>
+				&nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
+					onkeydown="if(event.keyCode==13) searchSale()" />
+				&nbsp;&nbsp;&nbsp;客户：&nbsp;<input class="easyui-combobox"
+					id="s_client" name="client.id" style="width: 200px"
+					data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'" />
+				&nbsp;&nbsp;&nbsp;业务员：&nbsp;<input class="easyui-combobox"
+					id="s_clerk" name="clerk.id" style="width: 100px"
+					data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
+				&nbsp;&nbsp;&nbsp;日期：&nbsp; <input id="s_bSaleDate"
+					class="easyui-datebox" editable=false style="width: 100px" />
+				&nbsp;&nbsp;-&nbsp;&nbsp; <input id="s_eSaleDate"
+					class="easyui-datebox" editable=false style="width: 100px" />
+				&nbsp;&nbsp;<a href="javascript:searchSale()"
+					class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+				&nbsp;&nbsp;<a href="javascript:deleteSale()"
+					class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			</fieldset>
+		</div>
 	</div>
- </div>
- 
- <div region="center" style="margin-top: 5px">
-     <table id="dg2"  class="easyui-datagrid"
-		fitColumns="false"  rownumbers="true" 
-		 fit="true" split="true" toolbar="#tb2">
-		<thead>
-			<!-- <th field="cb" checkbox="true" align="center"></th>
-			<th field="state" width="150" align="center">订单状态</th>
-			<th field="name" width="200" align="center">产品名称</th>
-			<th field="model" width="100" align="center">幅宽（m）</th>
-			<th field="price" width="100" align="center">厚度（mm）</th>
-			<th field="length" width="100" align="center">长度（m）</th>
-			<th field="meter" width="100" align="center">生产米数</th>
-			<th field="color" width="50" align="center">颜色</th>
-			<th field="oneweight" width="100" align="center">单件重量（kg）</th>
-			<th field="num" width="100" align="center">订货数量</th>
-			<th field="sumwight" width="100" align="center">总重量</th>
-			<th field="realitymodel" width="100" align="center">实际幅宽（m）</th>
-			<th field="demand" width="200" align="center">要求</th>
-			<th field="wightset" width="200" align="center">重量设置</th>
-			<th field="dao" width="150" align="center">剖刀</th>
-			<th field="brand" width="150" align="center">商标</th>
-			<th field="pack" width="200" align="center">包装</th>
-			<th field="letter" width="200" align="center">印字</th>
-			<th field="peasant" width="100" align="center">农户名称</th>
-			<th field="clientname" width="100" align="center">客户名称</th>
-			<th field="realityweight" width="100" align="center">实际重量（kg）</th>
-			<th field="realityprice" width="100" align="center">实际厚度（mm）</th>
-			<th field="theoryweight" width="100" align="center">理论重量（kg）</th>
-			<th field="square" width="100" align="center">单件平米</th>
-			<th field="numsquare" width="50" align="center">总平米</th>
-			<th field="weightway" width="100" align="center">称重方式</th>
-			<th field="label" width="100" align="center">标签名称</th>
-			<th field="weight" width="100" align="center">重量（kg）</th>
-			<th field="patu" width="50" align="center">纸管</th>
-			<th field="remark" width="100" align="center">备注</th> -->
-		</thead>
-	</table>
- </div>
- 
- <div id="tb2">
- 	<div>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(1)"
-			class="easyui-linkbutton" iconCls="icon-ok" plain="true">审核通过</a> 
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(0)"
-			class="easyui-linkbutton" iconCls="icon-no" plain="true">审核失败</a> 
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订单状态：&nbsp;
-		<!-- <input id="combo" class="easyui-combobox" style="width:120px;" /> -->
-		<!-- <input id="cc" name="dept" /> -->
-		<input id="cc1" class="easyui-combobox" data-options="
+
+	<div region="center" style="margin-top: 5px">
+		<table id="dg2" class="easyui-datagrid" fitColumns="false"
+			rownumbers="true" fit="true" split="true" toolbar="#tb2">
+		</table>
+	</div>
+
+	<div id="tb2">
+		<div>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(1)"
+				class="easyui-linkbutton" iconCls="icon-ok" plain="true">审核通过</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(0)"
+				class="easyui-linkbutton" iconCls="icon-no" plain="true">审核失败</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订单状态：&nbsp;
+			<!-- <input id="combo" class="easyui-combobox" style="width:120px;" /> -->
+			<!-- <input id="cc" name="dept" /> -->
+			<input id="cc1" class="easyui-combobox"
+				data-options="
 			panelHeight: 'auto',
 		    valueField: 'label',
 		    textField: 'value',
@@ -527,18 +1053,23 @@
 		    onSelect: function(rec){
 		    	auditQuery(rec.value);
 		    }" />
-		<a href="" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+			<a href="" class="easyui-linkbutton" iconCls="icon-search"
+				plain="true">搜索</a>
+		</div>
 	</div>
- </div>
- 
- <div id ="dlg" class="easyui-dialog" title="审核未通过原因" style="padding:10px 20px" buttons="#dlg-buttons">
-	&nbsp;&nbsp;&nbsp;原因：<textarea id="cause" style="margin-right: 20px;width:300px;height:100px;vertical-align:top;resize:none"></textarea>
- </div>
- 
- <div id="dlg-buttons">
- 	<a href="javascript:saveCause()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
- 	<a href="javascript:closeCause()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
- </div>
+
+	<div id="dlg" class="easyui-dialog" title="审核未通过原因"
+		style="padding: 10px 20px" buttons="#dlg-buttons">
+		&nbsp;&nbsp;&nbsp;原因：
+		<textarea id="cause"
+			style="margin-right: 20px; width: 300px; height: 100px; vertical-align: top; resize: none"></textarea>
+	</div>
+
+	<div id="dlg-buttons">
+		<a href="javascript:saveCause()" class="easyui-linkbutton"
+			iconCls="icon-ok">确定</a> <a href="javascript:closeCause()"
+			class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
 
 </body>
 </html>

@@ -2,20 +2,21 @@ package com.shenke.controller.admin;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.shenke.entity.JiTai;
 import com.shenke.entity.JitaiProductionAllot;
 import com.shenke.entity.Log;
+import com.shenke.entity.ProductionProcess;
 import com.shenke.entity.SaleListProduct;
 import com.shenke.service.JiTaiService;
 import com.shenke.service.JitaiProductionAllotService;
 import com.shenke.service.LogService;
+import com.shenke.service.ProductionProcessService;
 import com.shenke.service.SaleListProductService;
 
 /**
@@ -40,6 +41,9 @@ public class ProductionAdminController {
 	@Resource
 	private JitaiProductionAllotService jitaiProductionAllotService;
 
+	@Resource
+	private ProductionProcessService productionProcessService;
+
 	/**
 	 * 分配机台信息
 	 * 
@@ -49,7 +53,7 @@ public class ProductionAdminController {
 	public Map<String, Object> jitaiAllocation(String ids, Integer jitai) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		String jitaiName = jiTaiService.findById(jitai).getName();
+		JiTai jitai1 = jiTaiService.findById(jitai);
 		String[] idarr = ids.split(",");
 		List<Integer> idList = new ArrayList<Integer>();
 		logService.save(new Log(Log.UPDATE_ACTION, "分配机台"));
@@ -57,14 +61,54 @@ public class ProductionAdminController {
 		for (int i = 0; i < idarr.length; i++) {
 			int id = Integer.parseInt(idarr[i]);
 			idList.add(id);
-			saleListProductService.auditFailure(id, "分配机台：" + jitaiName);
+			saleListProductService.auditFailure(id, "分配机台：" + jitai1.getName());
 		}
 
 		List<SaleListProduct> list = saleListProductService.fandAll(idList);
 
+		Long informNumber = this.getInformNumber();
 		for (SaleListProduct saleListProduct : list) {
+
+			ProductionProcess processpProcess = new ProductionProcess();
+			processpProcess.setSaleListProduct(saleListProduct);
+			processpProcess.setBrand(saleListProduct.getBrand());
+			processpProcess.setClientname(saleListProduct.getClientname());
+			processpProcess.setColor(saleListProduct.getColor());
+			processpProcess.setDao(saleListProduct.getDao());
+			processpProcess.setDemand(saleListProduct.getDemand());
+			processpProcess.setJiTai(jitai1);
+			processpProcess.setLabel(saleListProduct.getLabel());
+			processpProcess.setLength(saleListProduct.getLength());
+			processpProcess.setLetter(saleListProduct.getLetter());
+			processpProcess.setMeter(saleListProduct.getMeter());
+			processpProcess.setModel(saleListProduct.getModel());
+			processpProcess.setName(saleListProduct.getName());
+			processpProcess.setNum(saleListProduct.getNum());
+			processpProcess.setNumsquare(saleListProduct.getNumsquare());
+			processpProcess.setOneweight(saleListProduct.getOneweight());
+			processpProcess.setPack(saleListProduct.getPack());
+			processpProcess.setPatu(saleListProduct.getPatu());
+			processpProcess.setPeasant(saleListProduct.getPeasant());
+			processpProcess.setPrice(saleListProduct.getPrice());
+			processpProcess.setRealitymodel(saleListProduct.getRealitymodel());
+			processpProcess.setRealityprice(saleListProduct.getRealityprice());
+			processpProcess.setRealityweight(saleListProduct.getRealityweight());
+			processpProcess.setRemark(saleListProduct.getRemark());
+			processpProcess.setSquare(saleListProduct.getSquare());
+			processpProcess.setState(saleListProduct.getState());
+			processpProcess.setSumwight(saleListProduct.getSumwight());
+			processpProcess.setTheoryweight(saleListProduct.getTheoryweight());
+			processpProcess.setWeight(saleListProduct.getWeight());
+			processpProcess.setWeightway(saleListProduct.getWeightway());
+			processpProcess.setWightset(saleListProduct.getWightset());
+			processpProcess.setInformNumber(informNumber);
+			processpProcess.setIssueState("未下发");
+			processpProcess.setAllotState("分配状态：" + jitai1.getName());
+			processpProcess.setAllorTime(new Date(System.currentTimeMillis()));
+
+			productionProcessService.save(processpProcess);
+
 			logService.save(new Log(Log.ADD_ACTION, "添加生产通知单"));
-			Long informNumber = this.getInformNumber();
 			for (int i = 0; i < saleListProduct.getNum(); i++) {
 				JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
 				jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
@@ -85,12 +129,8 @@ public class ProductionAdminController {
 				List<JitaiProductionAllot> jitaiProductionAllots = jitaiProductionAllotService
 						.findBySaleListProductId(saleListProduct.getId());
 				for (JitaiProductionAllot jitaiProductionAllo : jitaiProductionAllots) {
-					System.out.println("****************************************");
-					System.out.println(countSaleListProduct);
-					System.out.println("****************************************");
-					System.out.println(jitaiProductionAllo.getSaleListProduct().getId());
-					System.out.println("****************************************");
-					jitaiProductionAllotService.updateNum(countSaleListProduct, jitaiProductionAllo.getSaleListProduct().getId());
+					jitaiProductionAllotService.updateNum(countSaleListProduct,
+							jitaiProductionAllo.getSaleListProduct().getId());
 				}
 			}
 		}

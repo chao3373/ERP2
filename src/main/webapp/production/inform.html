@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>销售单据查询</title>
+<title>生产通知单</title>
 <link rel="stylesheet" type="text/css"
 	href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
 <link rel="stylesheet" type="text/css"
@@ -80,6 +80,7 @@
 		loadData();
 		json = {};
 		$("#clientId").combobox("reset");
+		$("#jitai").combobox("reset");
 		$("#mode").val("");
 		$("#price").val("");
 		$("#length").val("");
@@ -304,7 +305,7 @@
 </script>
 </head>
 <body style="margin: 1px">
-	<table id="dg" title="商标设置" class="easyui-datagrid" fitColumns="false"
+	<table id="dg" title="生产通知单" class="easyui-datagrid" fitColumns="false"
 		rownumbers="true" url="/admin/saleListProduct/listProductSucceed"
 		toolbar="#tb" fit="true">
 	</table>

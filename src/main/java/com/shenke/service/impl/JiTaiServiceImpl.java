@@ -26,20 +26,20 @@ import com.shenke.util.StringUtil;
  */
 @Service("jiTaiService")
 public class JiTaiServiceImpl implements JiTaiService {
-	
+
 	@Resource
 	private JiTaiRepository jiTaiRepository;
 
 	@Override
 	public List<JiTai> list(JiTai group, Integer page, Integer pageSize, Direction asc, String... properties) {
-		Pageable pageable = new PageRequest(page-1, pageSize);
+		Pageable pageable = new PageRequest(page - 1, pageSize);
 		Page<JiTai> pageUser = jiTaiRepository.findAll(new Specification<JiTai>() {
 			@Override
 			public Predicate toPredicate(Root<JiTai> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate = cb.conjunction();
-				if(group!=null) {
-					if(StringUtil.isNotEmpty(group.getName())) {
-						predicate.getExpressions().add(cb.like(root.get("name"), "%"+group.getName()+"%"));
+				if (group != null) {
+					if (StringUtil.isNotEmpty(group.getName())) {
+						predicate.getExpressions().add(cb.like(root.get("name"), "%" + group.getName() + "%"));
 					}
 				}
 				return predicate;

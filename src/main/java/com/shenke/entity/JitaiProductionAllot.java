@@ -50,6 +50,11 @@ public class JitaiProductionAllot {
 	@Column(length = 50)
 	private String issueState;// 下发状态
 
+	@Column(length = 50)
+	private String accomplishState;// 完成状态
+
+	private Double realityweight;// 实际重量
+
 	private Integer num;// 数量
 
 	@Transient
@@ -135,6 +140,22 @@ public class JitaiProductionAllot {
 		this.issueState = issueState;
 	}
 
+	public String getAccomplishState() {
+		return accomplishState;
+	}
+
+	public void setAccomplishState(String accomplishState) {
+		this.accomplishState = accomplishState;
+	}
+
+	public Double getRealityweight() {
+		return realityweight;
+	}
+
+	public void setRealityweight(Double realityweight) {
+		this.realityweight = realityweight;
+	}
+
 	public Integer getNum() {
 		return num;
 	}
@@ -156,7 +177,8 @@ public class JitaiProductionAllot {
 		return "JitaiProductionAllot [id=" + id + ", jiTai=" + jiTai + ", saleListProduct=" + saleListProduct
 				+ ", informNumber=" + informNumber + ", saleNumber=" + saleNumber + ", productionMessage="
 				+ productionMessage + ", taskQuantity=" + taskQuantity + ", allorTime=" + allorTime + ", allotState="
-				+ allotState + ", issueState=" + issueState + ", num=" + num + ", seachTime=" + seachTime + "]";
+				+ allotState + ", issueState=" + issueState + ", accomplishState=" + accomplishState
+				+ ", realityweight=" + realityweight + ", num=" + num + ", seachTime=" + seachTime + "]";
 	}
 
 }

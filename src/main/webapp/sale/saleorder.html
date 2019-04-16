@@ -76,11 +76,11 @@
 	//显示所有列 
 	function showAllRows() {
 		var allRow = [ "name", "model", "price", "length", "meter", "color",
-			"oneweight", "num", "sumwight", "realitymodel", "demand",
-			"wightset", "dao", "brand", "pack", "letter", "peasant",
-			"clientname", "realityweight", "realityprice", "theoryweight",
-			"square", "numsquare", "weightway", "label", "weight", "patu",
-			"remark" ];
+				"oneweight", "num", "sumwight", "realitymodel", "demand",
+				"wightset", "dao", "brand", "pack", "letter", "peasant",
+				"clientname", "realityweight", "realityprice", "theoryweight",
+				"square", "numsquare", "weightway", "label", "weight", "patu",
+				"remark" ];
 		for (var i = 0; i < allRow.length; i++) {
 			$("#dg").datagrid("showColumn", allRow[i]);
 		}
@@ -478,23 +478,35 @@
 	//提交上传文件 
 	function saveToLead() {
 
-		$("#fm3").form('submit', {
-			url : "/admin/toLead/importFile",
-			onSubmit : function() {
-				var fileAccept = $("#fil").val().split(".")[1];
-				if (fileAccept != "xls" && fileAccept != "xlsx") {
-					alert("只能上传.xls和.xlsx的文件！");
-					return false;
-				}
-				return true;
-			},
-			success : function(result) {
-				var resultt = $.parseJSON(result);
-				$("#dg").datagrid({
-					data : resultt
+		$("#fm3").form(
+				'submit',
+				{
+					url : "/admin/toLead/importFile",
+					onSubmit : function() { //onSubmit  事件会在表单中的确认按钮被点击时发生
+						var fileAccept = $("#fil").val().split(".")[1];
+						if (fileAccept != "xls" && fileAccept != "xlsx") {
+							alert("只能上传.xls和.xlsx的文件！");
+							return false;
+						}
+						return true;
+					},
+					success : function(result) {
+						var obj = eval('(' + result + ')');
+						if (obj.success) {
+
+						} else {
+							$.messager.alert("系统提示", "<span style='color:red'>"
+									+ obj.errorInfo + "</span>");
+
+						}
+
+						var resultt = $.parseJSON(result);
+						$("#dg").datagrid({
+							data : resultt.rows
+						});
+
+					}
 				});
-			}
-		});
 
 		$("#dlg3").dialog("close");
 	}
@@ -981,85 +993,86 @@
 			<table>
 				<tr>
 					<td><input id="nameIpt" type="checkbox" />产品名称</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="modelIpt"
-						type="checkbox" />幅宽
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="modelIpt" type="checkbox" />幅宽
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="priceIpt"
-						type="checkbox" />厚度
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="priceIpt" type="checkbox" />厚度
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="lengthIpt"
-						type="checkbox" />长度
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="lengthIpt" type="checkbox" />长度
 					</td>
 				</tr>
 				<tr>
 					<td><input id="meterIpt" type="checkbox" />生产米数</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="colorIpt"
-						type="checkbox" />颜色
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="colorIpt" type="checkbox" />颜色
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="oneweightIpt"
-						type="checkbox" />单件重量
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="oneweightIpt" type="checkbox" />单件重量
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="numIpt" type="checkbox" />订货数量
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="numIpt" type="checkbox" />订货数量
 					</td>
 				</tr>
 				<tr>
 					<td><input id="sumwightIpt" type="checkbox" />总重量</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="realitymodelIpt"
-						type="checkbox" />实际幅宽
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="realitymodelIpt" type="checkbox" />实际幅宽
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="demandIpt"
-						type="checkbox" />要求
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="demandIpt" type="checkbox" />要求
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="wightsetIpt"
-						type="checkbox" />重量设置
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="wightsetIpt" type="checkbox" />重量设置
 					</td>
 				</tr>
 				<tr>
 					<td><input id="daoIpt" type="checkbox" />剖刀</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="brandIpt"
-						type="checkbox" />商标
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="brandIpt" type="checkbox" />商标
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="packIpt"
-						type="checkbox" />包装
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="packIpt" type="checkbox" />包装
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="letterIpt" type="checkbox" />印字</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="letterIpt" type="checkbox" />印字
+					</td>
 				</tr>
 				<tr>
-					<td><input id="peasantIpt"
-						type="checkbox" />农户名称
+					<td><input id="peasantIpt" type="checkbox" />农户名称</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="clientnameIpt" type="checkbox" />客户名称
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="clientnameIpt"
-						type="checkbox" />客户名称
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="realityweightIpt" type="checkbox" />实际重量
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="realityweightIpt"
-						type="checkbox" />实际重量
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="realitypriceIpt" type="checkbox" />实际厚度
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="realitypriceIpt" type="checkbox" />实际厚度</td>
 				</tr>
 				<tr>
-					<td><input id="theoryweightIpt"
-						type="checkbox" />理论重量
+					<td><input id="theoryweightIpt" type="checkbox" />理论重量</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="squareIpt" type="checkbox" />单件平米
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="squareIpt"
-						type="checkbox" />单件平米
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="numsquareIpt" type="checkbox" />总平米
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="numsquareIpt"
-						type="checkbox" />总平米
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="weightwayIpt" type="checkbox" />称重方式
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="weightwayIpt" type="checkbox" />称重方式</td>
 				</tr>
 				<tr>
-					<td><input id="labelIpt"
-						type="checkbox" />标签名称
+					<td><input id="labelIpt" type="checkbox" />标签名称</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="weightIpt" type="checkbox" />重量
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="weightIpt"
-						type="checkbox" />重量
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="patuIpt" type="checkbox" />纸管
 					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="patuIpt"
-						type="checkbox" />纸管
-					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="remarkIpt"
-						type="checkbox" />备注
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+						id="remarkIpt" type="checkbox" />备注
 					</td>
 				</tr>
 			</table>

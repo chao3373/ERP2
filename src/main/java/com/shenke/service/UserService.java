@@ -58,4 +58,12 @@ public interface UserService {
 	 */
 	public void delete(Integer id);
 	
+	/**
+	 * 根据用户名和密码判断是否存在该用户
+	 * @param userName
+	 * @param pwd
+	 * @return
+	 */
+	public Object findNamePsw(String name, String psw);
+	
 }
