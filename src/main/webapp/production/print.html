@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>销售订单</title>
+
+<style type="text/css">
+body {
+	background: white;
+	margin: 0px;
+	padding: 60px 100px 0 50px;
+	text-align: center;
+}
+	table td {
+		border: 1px solid #000;
+	}
+	table {
+		border-collapse: collapse;
+		text-align: left;
+	}
+</style>
+</head>
+<body>
+<OBJECT ID='WebBrowser' NAME="WebBrowser" WIDTH=0 HEIGHT=0 CLASSID='CLSID:8856F961-340A-11D0-A96B-00C04FD705A2'></OBJECT>
+    <script type="text/javascript" src="/static/js/LodopFuncs.js"></script>
+	<script type="text/javascript">
+		if (window.dialogArguments) {
+			document.write(window.dialogArguments.tableString);
+			console.log(window.dialogArguments.tableString);
+		} else {
+			document.write(window.opener.tableString);
+			console.log(window.opener.tableString);
+		}
+
+		window.print();
+		var timeId = setInterval(function () {
+			if (document.getElementsByTagName("img")) {
+				window.close();
+				clearInterval(timeId);
+			}
+		}, 1000)
+	</script>
+</body>
+</html>
