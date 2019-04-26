@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>销售单据查询</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+        //确定出库
+        var ids;
+        var client;
+        var pandianji;
+
+        function out() {
+            var selectedRows = $("#a").datagrid("getRows");
+            if (selectedRows.length == 0) {
+                $.messager.alert("系统提示", "请选择准备出库的信息！");
+                return;
+            }
+            if (!$("#pandianji").combobox("getValue")) {
+                $.messager.alert("系统提示","<span style='color: red;'>请选择盘点机！</span>");
+                return;
+            }
+            var strIds = [];
+            for (var i = 0; i < selectedRows.length; i++) {
+                strIds.push(selectedRows[i].id);
+            }
+            ids = strIds.join(",");
+            //审核成功
+            $.messager.confirm("系统提示", "确定要将这些商品出库吗", function (r) {
+                if (r) {
+                    $.post("/admin/storage/out", {
+                        ids: ids
+                    }, function (result) {
+                        if (result.success) {
+                            $('#a').datagrid('loadData', {
+                                total: 0,
+                                rows: []
+                            });
+                        } else {
+                            $.messager.alert("系统提示", result.errorInfo);
+                        }
+                    });
+                    $.post("/admin/storage/save", {
+                        pandianji: $("#pandianji").combobox("getValue"),
+                        ids: ids
+                    }, function (result) {
+                        if (result.success) {
+                            reset();
+                        }
+                    }, "json");
+
+                }
+            });
+
+        }
+
+        $(document).ready(function () {
+            loadData();
+            $("#clientId").combobox({
+                panelHeight: 'auto',
+                valueField: 'id',
+                textField: 'name',
+                url: '/admin/client/clientList',
+                onSelect: function (client) {
+                    client = client.name;
+                    selectClient(client);
+                }
+            });
+            //时间设置为当前时间并获取
+            $("#s_btime").datebox("setValue", genTodayStr());
+            //设置弹出窗口
+            $(function () {
+                $('#dd1').dialog({
+                    width: 400,
+                    height: 200,
+                    title: '任务选择',
+                    modal: true,
+                    // 是否显示可折叠按钮
+                    collapsible: true,
+                    // 是否显示最小化按钮
+                    minimizable: true,
+                    // 是否显示最大化按钮
+                    maximizable: true,
+                    // 是否可以改变对话框窗口大小
+                    resizable: true,
+                    // 设置对话框窗口顶部工具栏
+                    // 对话框窗口底部按钮
+                    buttons: [{
+                        href: 'javascript:addRows()',
+                        text: '确定',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            var b = $("#dg").datagrid("getSelections");
+                            $("#a").datagrid("loadData", b);
+                            $("#dd1").dialog("close");
+                        }
+                    }, {
+                        text: '取消',
+                        iconCls: 'icon-cancel',
+                        handler: function () {
+                            $("#dd1").dialog("close");
+                        }
+                    }]
+                })
+            });
+
+        });
+
+
+        //选择客户时触发
+        function selectClient(clientName) {
+            client = clientName
+            addScreen();
+            refreshData();
+        }
+
+        function loadData() {
+            //加载数据
+            $("#dg").datagrid({
+                columns: [[
+                    {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
+                    field: 'id',
+                    title: 'id',
+                    width: 100,
+                    hidden: 'true',
+                    align: 'center'
+                }, {
+                    field: 'informNumber',
+                    title: 'informNumber',
+                    width: 100,
+                    hidden: 'true',
+                    align: 'center'
+                }, {
+                    field: 'saleListProduct',
+                    title: 'saleListProductId',
+                    width: 100,
+                    hidden: 'true',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.saleListProduct) {
+                            return row.saleListProduct.id;
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: 'saleNumber',
+                    title: '订单号',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'peasant',
+                    title: '农户名称',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'productionMessage',
+                    title: '商品信息',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'meter',
+                    title: '生产米数',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'dateInProduced',
+                    title: '生产日期',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'letter',
+                    title: '印字',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'issue_state',
+                    title: '下放机台',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'label',
+                    title: 'label',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'clientname',
+                    title: '客户',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'name',
+                    title: '名称',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'oneweight',
+                    title: '单件重量',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'color',
+                    title: '颜色',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'model',
+                    title: '幅宽',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'realitymodel',
+                    title: '实际幅宽',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'length',
+                    title: '长度',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'price',
+                    title: '厚度',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'realityprice',
+                    title: '实际厚度',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'dao',
+                    title: '剖刀',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'pack',
+                    title: '包装',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'accomplishState',
+                    title: '是否完成',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'taskQuantity',
+                    title: '工作数量',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'brand',
+                    title: '品牌',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'patu',
+                    title: '纸管',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'allorTime',
+                    title: '分配时间',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'allorState',
+                    title: '分配机台',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'jitai_production_allot_id',
+                    title: '机台产品分配ID',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'sumwight',
+                    title: '订重',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'theoryweight',
+                    title: '理论重',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.theoryweight) {
+                            return row.theoryweight;
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: 'sumwight',
+                    title: '总重',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'realityweight',
+                    title: '实际重量',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'weightway',
+                    title: '称重方式',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'weightset',
+                    title: '称重设置',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'numsquare',
+                    title: '平方米',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'square',
+                    title: '单件平米',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'state',
+                    title: '下发机台2',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'jiTai',
+                    title: '机台ID',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'num',
+                    title: '下发数',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'accomplishNumber',
+                    title: '完成数',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.accomplishNumber) {
+                            return row.accomplishNumber;
+                        } else {
+                            return 0;
+                        }
+                    }
+                }, {
+                    field: 'num',
+                    title: '和件数',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'label',
+                    title: '标签名',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'demand',
+                    title: '要求',
+                    width: 300,
+                    align: 'center'
+                }, {
+                    field: 'remark',
+                    title: '备注',
+                    width: 100,
+                    align: 'center'
+                }]],
+
+            });
+
+        }
+
+        //清空筛选条件,并初始化筛选属性的值
+        function clertCondition() {
+            /* loadData(); */
+            json = {};
+            client = null;
+            $("#clientId").combobox("reset");
+            $("#mode").val("");
+            $("#name").val("");
+            $("#price").val("");
+            $("#color").val("");
+            $("#address").val("");
+            $("#saleNumber").val("");
+            refreshData();
+
+        }
+
+
+        //按照条件筛选信息
+        function searchRole() {
+            addScreen();
+            refreshData();
+        }
+
+        //添加条件筛选时刷新数据
+        function refreshData() {
+            $.post("/admin/storage/screen", json, function (result) {
+                if (result.success) {
+                    $("#dg").datagrid('loadData', result.rows);
+                }
+            }, "json");
+        }
+
+
+        //添加筛选条件
+        function addScreen() {
+            json = {};
+            if ($("#mode").val()) {
+                json.mode = $("#mode").val();
+            }
+            if ($("#price").val()) {
+                json.price = $("#price").val();
+            }
+            if ($("#color").val()) {
+                json.color = $("#color").val();
+            }
+            if ($("#address").val()) {
+                json.address = $("#address").val();
+            }
+            if ($("#saleNumber").val()) {
+                json.saleNumber = $("#saleNumber").val();
+            }
+            if ($("#name").val()) {
+                json.name = $("#name").val();
+            }
+            /* if($("clientName").combobox("getText")){
+                json.client = $("#clientName".val);
+            } */
+            if (client) {
+                json.client = client;
+            }
+        }
+
+
+        /* 	//选择客户时触发
+            function selectClient(clientName) {
+                client = clientName
+                addScreen();
+                refreshData();
+            }
+             */
+
+
+        //删除要打印的行   ok
+        function deleteSaleListGoods() {
+            var selectedRows = $("#a").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要删除打印的出库信息！");
+                return;
+            }
+            $.messager.confirm("系统提示", "您确定要删除这条信息吗?", function (r) {
+                if (r) {
+                    $("#a").datagrid("deleteRow",
+                        $("#a").datagrid("getRowIndex", selectedRows[0]));
+                    setSaleListAmount();
+                }
+            });
+        }
+
+        // 销售订货单模块
+        function setSaleListAmount() {
+            var rows = $("#a").datagrid("getRows");
+            var amount = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                amount += row.total;
+            }
+            $("#amountPayable").val(amount.toFixed(2));
+        }
+
+        //关闭打印设置列   ok
+        function closeSelectRows() {
+            $("#dlg4").dialog("close"); //dialog标签定义的对话框或窗口
+        }
+
+        //存放隐藏的列的field  ok
+        var rowArr = [];
+
+        $(document).ready(function () {
+
+            closeSelectRows();
+
+            //双击隐藏该列
+
+            $("#a").datagrid({
+                onClickRow: function (rowIndex, rowData) {
+                    $(this).datagrid('unselectRow', rowIndex);
+                },
+                onDblClickCell: function (index, field, row) {
+                    $.messager.confirm('系统提示', '确定取消打印该列吗？', function (r) {
+                        if (r) {
+                            rowArr.push(field);
+                            $("#a").datagrid("hideColumn", field);
+                        }
+                    });
+                }
+            });
+
+        });
+
+        //打印
+        function printdg() {
+            CreateFormPage("datagrid", $("#a"));
+        }
+
+        //显示所有列   ok
+        function showAllRows() {
+            var allRow = ["name", "model", "price", "length", "meter", "color",
+                "oneweight", "num", "sumwight", "realitymodel", "demand",
+                "wightset", "dao", "brand", "pack", "letter", "peasant",
+                "clientname", "realityweight", "realityprice", "theoryweight",
+                "square", "numsquare", "weightway", "label", "weight", "patu",
+                "remark"];
+            for (var i = 0; i < allRow.length; i++) {
+                $("#a").datagrid("showColumn", allRow[i]);//向服务器改变数据之后，更新前台数据
+            }
+        }
+
+        //显示打印列  ok
+        var fieldlist = [];
+
+        function showPrintRows() {
+            var allRow = ["name", "model", "price", "length", "meter", "color",
+                "oneweight", "num", "sumwight", "realitymodel", "demand",
+                "wightset", "dao", "brand", "pack", "letter", "peasant",
+                "clientname", "realityweight", "realityprice", "theoryweight",
+                "square", "numsquare", "weightway", "label", "weight", "patu",
+                "remark"];
+            //获取之前所设置的打印列
+            $.ajax({
+                url: "/admin/printSet/getSelectRows", ////////////////////////////////////////////////要是换数据的话这个地方得改
+                async: false,//处理异步
+                success: function (result) {
+                    var fieldss = [];
+                    if (result.success) {
+                        console.log(result.fields);
+                        for (var i = 0; i < result.fields.length; i++) {
+                            fieldss.push(result.fields[i].substr(0,
+                                result.fields[i].length - 3));
+                        }
+                        console.log("fieldss");
+                        console.log(fieldss);
+                        fieldlist = fieldss;
+                        console.log("fieldlist");
+                        console.log(fieldlist);
+                    }
+                },
+                dataType: "json"
+            });
+            console.log("fieldlist");
+            console.log(fieldlist);
+            var showRows = [];
+            for (var i = 0; i < fieldlist.length; i++) {
+                if (allRow.indexOf(fieldlist[i]) != -1) {
+                    allRow.splice(allRow.indexOf(fieldlist[i]), 1);
+                    showRows.push(fieldlist[i]);
+                }
+            }
+            for (var i = 0; i < showRows.length; i++) {
+                $("#a").datagrid("showColumn", showRows[i]);
+            }
+            for (var i = 0; i < allRow.length; i++) {
+                $("#a").datagrid("hideColumn", allRow[i]);
+            }
+            console.log("删除完成后的allRow");
+            console.log(allRow);
+            allRow = ["name", "model", "price", "length", "meter", "color",
+                "oneweight", "num", "sumwight", "realitymodel", "demand",
+                "wightset", "dao", "brand", "pack", "letter", "peasant",
+                "clientname", "realityweight", "realityprice", "theoryweight",
+                "square", "numsquare", "weightway", "label", "weight", "patu",
+                "remark"];
+            console.log("重新赋值后的allRow"); //类似于alert ， 但是弹出时不会打断代码的运行
+            console.log(allRow);
+        }
+
+        //打开设置打印列  ok
+        function selectPrintRows() {
+            //获取之前所设置的打印列
+            $.post("/admin/printSet/getSelectRows", function (result) {
+                if (result.success) {
+                    console.log("result.fields");
+                    console.log(result.fields);
+                    for (var i = 0; i < result.fields.length; i++) {
+                        result.fields[i] = "#" + result.fields[i];
+                        $(result.fields[i]).prop("checked", true);
+                    }
+                }
+            }, "json");
+            $("#dlg4").dialog("open");
+        }
+
+        //确定选择要打印的列  ok
+        function saveSelectRows() {
+            var fieldArr = [];
+            $("#dlg4").find("input").each(function () {
+                if ($(this).is(':checked')) { //checked  在页面加载的时候应该被预先选定的input元素
+                    var idVal = $(this).attr("id"); //返回被选元素的属性值
+                    idVal = idVal.substr(0, idVal.length - 3); //在字符串中抽取 一定范围的字符
+                    if (fieldArr.indexOf(idVal) == -1) { //indexOf 如果要检索的字符串没有出现就返回-1
+                        fieldArr.push(idVal); //push：把参数顺序添加到fieldArrange的后面 ，此处的参数为idVal
+                    }
+                }
+            });
+            if (fieldArr.length == 0) {
+                $.messager.alert("系统提示",
+                    "<span style='color:red;'>请选择要打印的列！</span>");
+                return;
+            }
+            var fields = fieldArr.join(","); //join()方法把数组中所有的元素放入资格字符串中，，通过值定分隔符分隔
+            $.post("/admin/printSet/selectRows", {
+                fields: fields
+            }, function (result) {
+                if (result.success) {
+                    $.messager.alert("系统提示", "保存成功！");
+                    closeSelectRows();
+                }
+            }, "json"); //$post(url,data,callback,type);
+            //url 发送请求地址
+            //data 发送给后台的数据 key/value形式  {a:value1,b:value2}  ，即json格式
+            //callback  请求成功后的回调函数
+            //type  及第二个参数data的数据类型，如果有data传递给后台，需要加上该类型
+            //获取之前所设置的打印列
+            $.post("/admin/printSet/getSelectRows", function (result) {
+                var fieldss = [];
+                if (result.success) {
+                    console.log(result.fields);
+                    for (var i = 0; i < result.fields.length; i++) {
+                        fieldss.push(result.fields[i].substr(0,
+                            result.fields[i].length - 3));
+                    }
+                    console.log("fieldss");
+                    console.log(fieldss);
+                    fieldlist = fieldss;
+                    console.log("fieldlist");
+                    /*？*/
+                    console.log(fieldlist);
+                }
+            }, "json");
+        }
+
+        //打印
+        var tableString;
+        // strPrintName 打印任务名
+        // printDatagrid 要打印的datagrid
+        function CreateFormPage(strPrintName, printDatagrid) {
+            tableString = "";
+            tableString += "<h1 style='font-size: 28px;text-align: center;'>提货单</h1>";
+            /*tableString += "<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;提货日期：" + $("#s_btime").datebox("getValue")
+            +"&nbsp;&nbsp;&nbsp;单号："+$("#danhao").val()
+            +"&nbsp;&nbsp;&nbsp;生成发货单："+$("#shengchengfahuodan").val() </h3>";*/
+            tableString += '<table cellspacing="0" class="pb">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
+
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function (index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 0; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            console.log(rows);
+            console.log(nameList);
+            var nl = eval('([' + nameList.substring(1) + '])');
+            console.log(nl);
+            for (var i = 0; i < rows.length; ++i) {
+                tableString += '\n<tr>';
+                $(nl).each(function (j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        if (tdStr == null) {
+                            tdStr = "";
+                        }
+                        console.log(tdStr);
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                tableString += '\n</tr>';
+            }
+            tableString += '\n</table>';
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "/production/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "/production/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                console.log(tableString);
+            }
+        }
+
+        //打开任务选择对话框
+        function openRoleAddDialog() {
+            $("#dd1").dialog("open").dialog("setTitle", "任务选择");
+        }
+
+        //时间选择器
+        function searchLog() {
+            $("#dg").datagrid('load', {
+                "type": $("#s_type").combobox("getValue"),
+                "user.trueName": $("#s_trueName").val(),
+                "btime": $("#s_btime").datetimebox("getValue"),
+                "etime": $("#s_etime").datetimebox("getValue")
+            });
+        }
+
+        /* data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'" */
+    </script>
+</head>
+<body class="easyui-layout">
+
+<div data-options="region:'north'" style="padding: 10px; border: 1px">
+    <form id="fm" method="post">
+        <table cellspacing="8px">
+            <tr>
+                <td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text"
+                                                      id="saleDate" name="saleDate" class="easyui-datebox"
+                                                      demandd="true" data-options="editable:false" size="10"/>
+                </td>
+                <!--<td>&nbsp;&nbsp;单号：<input type="text" id="danhao"-->
+                                          <!--required="true" name="danhao" size="10"/>-->
+                <!--</td>-->
+                <!--<td>&nbsp;&nbsp;生成发货单：<input type="text"-->
+                                             <!--id="shengchengfahuodan" required="true" name="shengchengfahuodan"-->
+                                             <!--size="10"/>-->
+                <!--</td>-->
+                <td width="180px">&nbsp;&nbsp;盘点机：<input
+                        class="easyui-combobox" id="pandianji" name="pandianji"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'pid',textField:'name',url:'/admin/pandianji/pandianjiList'"/>
+                </td>
+                <td><a href="javascript:openRoleAddDialog()"
+                       class="easyui-linkbutton" iconCls="icon-add" plain="true">添加出库商品</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<div data-options="region:'center'" style="padding: 10px; border: 1px">
+    <table id="a" class="easyui-datagrid" style="" rownumbers="true"
+           fit="true" toolbar="#top">
+        <thead>
+        <th id="nameRow" field="name" width="200" align="center">产品名称</th>
+        <th id="modelRow" field="model" width="200" align="center">幅宽（m）</th>
+        <th id="priceRow" field="price" width="200" align="center">厚度（mm）</th>
+        <th id="lengthRow" field="length" width="200" align="center">长度（m）</th>
+        <th id="meterRow" field="meter" width="200" align="center">生产米数</th>
+        <th id="colorRow" field="color" width="200" align="center">颜色</th>
+        <th id="oneweightRow" field="oneweight" width="200" align="center">单件重量（kg）</th>
+        <th id="numRow" field="num" width="200" align="center">订货数量</th>
+        <th id="sumwightRow" field="sumwight" width="200" align="center">总重量</th>
+        <th id="realitymodRow" field="realitymodel" width="200"
+            align="center">实际幅宽（m）
+        </th>
+        <th id="demandRow" field="demand" width="200" align="center">要求</th>
+        <th id="wightsetRow" field="wightset" width="200" align="center">重量设置</th>
+        <th id="daoRow" field="dao" width="200" align="center">剖刀</th>
+        <th id="brandRow" field="brand" width="200" align="center">商标</th>
+        <th id="packRow" field="pack" width="200" align="center">包装</th>
+        <th id="letterRow" field="letter" width="200" align="center">印字</th>
+        <th id="peasantRow" field="peasant" width="200" align="center">农户名称</th>
+        <th id="clientnameRow" field="clientname" width="200" align="center">客户名称</th>
+        <th id="realityweiRow" field="realityweight" width="200"
+            align="center">实际重量（kg）
+        </th>
+        <th id="realitypriRow" field="realityprice" width="200"
+            align="center">实际厚度（mm）
+        </th>
+        <th id="theoryweigRow" field="theoryweight" width="200"
+            align="center">理论重量（kg）
+        </th>
+        <th id="squareRow" field="square" width="200" align="center">单件平米</th>
+        <th id="numsquareRow" field="numsquare" width="200" align="center">总平米</th>
+        <th id="weightwayRow" field="weightway" width="200" align="center">称重方式</th>
+        <th id="labelRow" field="label" width="200" align="center">标签名称</th>
+        <th id="weightRow" field="weight" width="200" align="center">重量（kg）</th>
+        <th id="patuRow" field="patu" width="200" align="center">纸管</th>
+        <th id="remarkRow" field="remark" width="200" align="center">备注</th>
+        </thead>
+    </table>
+</div>
+
+<!-- 顶部工具栏 -->
+<div id="top">
+    <div style="padding: 2px">
+        <a href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
+           iconCls="icon-remove" plain="true">删除</a> <a
+            href="javascript:printdg()" class="easyui-linkbutton"
+            iconCls="icon-print" plain="true">打印</a> <a
+            href="javascript:showAllRows()" class="easyui-linkbutton"
+            plain="true">显示所有列</a> <a href="javascript:showPrintRows()"
+                                      class="easyui-linkbutton" plain="true">显示打印列</a> <a
+            href="javascript:selectPrintRows()" class="easyui-linkbutton"
+            plain="true">设置打印列</a> <a href="javascript:out()"
+                                      class="easyui-linkbutton" plain="true">提货</a>
+    </div>
+</div>
+<!-- /admin/saleListProduct/findAll -->
+<!-- 弹出的框 -->
+<div class="easyui-dialog" id="dd1" fit="true" closed="true">
+    <table id="dg" class="easyui-datagrid" fitColumns="false"
+           rownumbers="true" url="/admin/storage/outSuccess" toolbar="#tb"
+           fit="true">
+    </table>
+    <div id="tb" style="padding: 15px">
+
+        <div id="tb1" style="margin: 5px">
+            &nbsp;&nbsp;&nbsp;&nbsp;客户名称：&nbsp;&nbsp;<input
+                class="easyui-combobox" id="clientId" name="clientId"
+                style="width: 100px"
+                data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;产品名称：&nbsp;&nbsp;
+            <input id="name" name="name" style="width: 100px"/>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;幅宽：&nbsp;&nbsp;<input id="mode" name="mode"
+                                                          style="width: 100px"/> &nbsp;&nbsp;&nbsp;&nbsp;<a
+                href="javascript:searchRole()" class="easyui-linkbutton"
+                iconCls="icon-search" plain="true">查询</a>
+        </div>
+        <div id="tb2" style="margin: 5px">
+            &nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp; <input
+                id="price" name="price" style="width: 100px"/>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;订单编号：&nbsp;&nbsp;<input id="saleNumber"
+                                                            name="saleNumber" style="width: 100px"/>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;颜色：&nbsp;&nbsp;<input id="color" name="color"
+                                                          style="width: 100px"/>
+            <a href="javascript:clertCondition()" class="easyui-linkbutton"
+               iconCls="icon-cancel">清空</a>
+        </div>
+    </div>
+</div>
+
+<!-- 选择打印列 -->
+<div id="dlg4" class="easyui-dialog" title="请选择要打印的列"
+     style="width: 500px; height: 270px; padding: 10px;"
+     buttons="#dlg-buttons4">
+    <form action="">
+        <table>
+            <tr>
+                <td><input id="nameIpt" type="checkbox"/>产品名称</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="modelIpt" type="checkbox"/>幅宽
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="priceIpt" type="checkbox"/>厚度
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="lengthIpt" type="checkbox"/>长度
+                </td>
+            </tr>
+            <tr>
+                <td><input id="meterIpt" type="checkbox"/>生产米数</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="colorIpt" type="checkbox"/>颜色
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="oneweightIpt" type="checkbox"/>单件重量
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="numIpt" type="checkbox"/>订货数量
+                </td>
+            </tr>
+            <tr>
+                <td><input id="sumwightIpt" type="checkbox"/>总重量</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="realitymodelIpt" type="checkbox"/>实际幅宽
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="demandIpt" type="checkbox"/>要求
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="wightsetIpt" type="checkbox"/>重量设置
+                </td>
+            </tr>
+            <tr>
+                <td><input id="daoIpt" type="checkbox"/>剖刀</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="brandIpt" type="checkbox"/>商标
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="packIpt" type="checkbox"/>包装
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="letterIpt" type="checkbox"/>印字
+                </td>
+            </tr>
+            <tr>
+                <td><input id="peasantIpt" type="checkbox"/>农户名称</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="clientnameIpt" type="checkbox"/>客户名称
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="realityweightIpt" type="checkbox"/>实际重量
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="realitypriceIpt" type="checkbox"/>实际厚度
+                </td>
+            </tr>
+            <tr>
+                <td><input id="theoryweightIpt" type="checkbox"/>理论重量</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="squareIpt" type="checkbox"/>单件平米
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="numsquareIpt" type="checkbox"/>总平米
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="weightwayIpt" type="checkbox"/>称重方式
+                </td>
+            </tr>
+            <tr>
+                <td><input id="labelIpt" type="checkbox"/>标签名称</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="weightIpt" type="checkbox"/>重量
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="patuIpt" type="checkbox"/>纸管
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                        id="remarkIpt" type="checkbox"/>备注
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="dlg-buttons4">
+    <a href="javascript:saveSelectRows()" class="easyui-linkbutton"
+       iconCls="icon-ok">确定</a> <a href="javascript:closeSelectRows()"
+                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+</body>
+</html>

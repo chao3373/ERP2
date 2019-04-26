@@ -69,4 +69,6 @@ public interface WightService {
 	 * @return
 	 */
 	public List<Wight> findByName(String string);
+
+    public Wight findName(String weightname);
 }

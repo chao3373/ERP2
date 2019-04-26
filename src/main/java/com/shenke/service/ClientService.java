@@ -68,4 +68,6 @@ public interface ClientService {
 	 * @return
 	 */
 	public List<Client> findByName(String string);
+
+    public Client findName(String clname);
 }

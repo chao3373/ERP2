@@ -236,7 +236,7 @@
 </script>
 </head>
 <body class="easyui-layout" style="padding-top: 2px">
-	<div data-options="region:'west',collapsible:false" style="width: 200px" title="客户设置" split=true>
+	<div data-options="region:'west',collapsible:false" style="width: 200px" title="仓库设置" split=true>
 		<ul id="tree" class="easyui-tree" style="padding: 10px"></ul>
 		<div style="position: absolute;bottom: 10px;left: 15px">
 			<a href="javascript:openGoodsTypeAddDialog()" class="easyui-linkbutton" iconCls="icon-add" >新增</a>
@@ -244,17 +244,12 @@
 		</div>
 	</div>
 	<div data-options="region:'center'">
-		<table id="dg" title="客户设置" class="easyui-datagrid"
+		<table id="dg" title="仓库设置" class="easyui-datagrid"
 			fitColumns="true" pagination="true" rownumbers="true" singleSelect="true"
 			url="/admin/entrepot/list" fit="true" toolbar="#tb">
 				<thead>
 					<th field="id" width="30" align="center">编号</th>
-					<th field="name" width="50" align="center">客户名称</th>
-					<th field="help" width="30" align="center">助记词</th>
-					<th field="address" width="60" align="center">地址</th>
-					<th field="tel" width="60" align="center">电话</th>
-					<th field="mobile" width="100" align="center">手机</th>
-					<th field="linkman" width="50" align="center">联系人</th>
+					<th field="name" width="50" align="center">仓库名称</th>
 					<th field="remark" width="50" align="center">备注</th>
 				</thead>
 			</table>
@@ -266,7 +261,7 @@
 					<a href="javascript:deleteGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
 				</div>
 				<div>
-					&nbsp;客户名称：&nbsp;<input type="text" id="s_name" size="20" onkeydown="if(event.keyCode==13) searchGoods()"/>
+					&nbsp;仓库名称：&nbsp;<input type="text" id="s_name" size="20" onkeydown="if(event.keyCode==13) searchGoods()"/>
 					<a href="javascript:searchGoods()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
 				</div>
 			</div>
@@ -304,33 +299,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td>助记词：</td>
-					<td>
-						<input type="text" id="help" name="help" class="easyui-validatebox"  style="width: 120px"  />
-					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-					<td>地址：</td>
-					<td>
-						<input type="text" id="address" name="address" class="easyui-validatebox" style="width: 120px"  />
-					</td>
-				</tr>
-				<tr>
-					<td>电话：</td>
-					<td>
-						<input type="text" id="tel" name="tel" class="easyui-validatebox"  style="width: 120px"  />
-					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-					<td>手机：</td>
-					<td>
-						<input type="text" id="mobile" name="mobile" class="easyui-validatebox" style="width: 120px"  />
-					</td>
-				</tr>
-				<tr>
-					<td>联系人：</td>
-					<td>
-						<input type="text" id="linkman" name="linkman" class="easyui-validatebox"  style="width: 120px"  />
-					</td>
-					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 					<td>备注：</td>
 					<td>
 						<input type="text" id="remark" name="remark" class="easyui-validatebox" style="width: 120px"  />

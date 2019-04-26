@@ -90,4 +90,9 @@ public class LetterServiceImpl implements LetterService{
 	public List<Letter> findByName(String string) {
 		return letterRepository.findByName(string);
 	}
+
+    @Override
+    public Letter findName(String lettername) {
+        return letterRepository.findByLetterName(lettername);
+    }
 }

@@ -100,7 +100,9 @@ public class SaleListAdminController {
 		saleList.setLankman(lankman);
 		saleList.setTel(tel);
 		saleList.setAddress(address);
-		saleList.setDeliveryDate(sdf.parse(deliveryDate));
+		if (StringUtil.isNotEmpty(deliveryDate)) {
+			saleList.setDeliveryDate(sdf.parse(deliveryDate));
+		}
 		saleList.setSaleNumber(saleNumber);
 
 		saleList.setUser(userService.findByUserName((String) SecurityUtils.getSubject().getPrincipal()));// 设置操作用户
@@ -113,7 +115,8 @@ public class SaleListAdminController {
 			saleListProduct.setState("下单");
 		}
 
-		saleListService.save(saleList, plgList);
+		saleListService.saveOne(saleList);
+		saleListProductService.saveList(plgList);
 		logService.save(new Log(Log.ADD_ACTION, "添加销售单"));
 		map.put("success", true);
 		return map;

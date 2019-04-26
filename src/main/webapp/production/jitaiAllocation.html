@@ -1,297 +1,305 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>机台生产分配</title>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="/static/js/date.js"></script>
-<script type="text/javascript">
-	//加载数据
-	function loadData() {
-		//加载数据
-		$("#dg")
-				.datagrid(
-						{
-							columns : [ [
-									{
-										field : 'cb',
-										checkbox : "true",
-										align : "center"
-									},
-									{
-										field : "id",
-										title : "id号",
-										width : "120",
-										align : "center",
-										hidden : "true"
-									},
-									{
-										field : "jiTai",
-										title : "生产机台",
-										width : "120",
-										align : "center",
-										formatter : function(value, rows, index) {
-											return rows.jiTai.name;
-										}
-									},
-									{
-										field : "informNumber",
-										title : "通知单号",
-										width : "100",
-										align : "center"
-									},
-									{
-										field : "productionMessage",
-										title : "产品信息",
-										width : "250",
-										align : "center",
-										formatter : function(value, rows, index) {
-											if (rows.saleListProduct) {
-												var saleListProduct = rows.saleListProduct;
-												return "产品名称: "
-														+ saleListProduct.name
-														+ "   农户名称: "
-														+ saleListProduct.peasant
-														+ "   客户名称: "
-														+ saleListProduct.clientname
-														+ "   幅宽: "
-														+ saleListProduct.model
-														+ "   厚度: "
-														+ saleListProduct.price
-														+ "   长度: "
-														+ saleListProduct.length
-														+ "   颜色: "
-														+ saleListProduct.color
-														+ "   数量: "
-														+ saleListProduct.num
-														+ "   理论重量: "
-														+ saleListProduct.theoryweight
-														+ "   单件重量: "
-														+ saleListProduct.oneweight
-														+ "   单件平米: "
-														+ saleListProduct.square
-														+ "   总平米: "
-														+ saleListProduct.numsquare
-														+ "   要求.: "
-														+ saleListProduct.demand
-														+ "   标签名称: "
-														+ saleListProduct.label
-														+ "   重量: "
-														+ saleListProduct.weight
-														+ "   剖刀: "
-														+ saleListProduct.dao
-														+ "   商标: "
-														+ saleListProduct.brand
-														+ "   包装: "
-														+ saleListProduct.pack
-														+ "   印字: "
-														+ saleListProduct.letter
-														+ "   纸管: "
-														+ saleListProduct.patu
-														+ "   重量设置: "
-														+ saleListProduct.wightset
-														+ "   订单状态: "
-														+ saleListProduct.state
-														+ "   总重量: "
-														+ saleListProduct.sumwight
-														+ "   生产米数: "
-														+ saleListProduct.meter
-														+ "   备注: "
-														+ saleListProduct.remark;
-											} else {
-												return "";
-											}
-										}
-									},
-									{
-										field : 'sumwight',
-										title : "任务量",
-										width : "100",
-										align : "center"
-									},
-									{
-										field : 'num',
-										title : "数量",
-										width : "100",
-										align : "center"
-									},
-									{
-										field : "allotState",
-										title : "分配状态",
-										width : "150",
-										align : "center"
-									},
-									{
-										field : "issueState",
-										title : "下发状态",
-										width : "150",
-										align : "center",
-										formatter : function(value, rows, index) {
-											if (value == "未下发") {
-												return "<span style='color:red;'>未下发</span>";
-											} else {
-												return "<span style='color:green;'>"
-														+ value + "</span>";
-											}
-										}
-									},
-									{
-										field : "saleListProductId",
-										title : "订单商品id",
-										width : "150",
-										align : "center",
-										formatter : function(value, rows, index) {
-											if (rows.saleListProduct) {
-												return rows.saleListProduct.id;
-											} else {
-												return;
-											}
-										},
-										hidden : "true"
-									} ] ]
-						});
-	}
+    <meta charset="UTF-8">
+    <title>机台生产分配</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+        //加载数据
+        function loadData() {
+            //加载数据
+            $("#dg")
+                .datagrid(
+                    {
+                        columns: [[
+                            {
+                                field: 'cb',
+                                checkbox: "true",
+                                align: "center"
+                            },
+                            {
+                                field: "id",
+                                title: "id号",
+                                width: "120",
+                                align: "center",
+                                hidden: "true"
+                            },
+                            {
+                                field: "jiTai",
+                                title: "生产机台",
+                                width: "120",
+                                align: "center",
+                                formatter: function (value, rows, index) {
+                                    return rows.jiTai.name;
+                                }
+                            },
+                            {
+                                field: "informNumber",
+                                title: "通知单号",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "productionMessage",
+                                title: "产品信息",
+                                width: "250",
+                                align: "center",
+                                formatter: function (value, rows, index) {
+                                    if (rows.saleListProduct) {
+                                        var saleListProduct = rows.saleListProduct;
+                                        return "产品名称: "
+                                            + saleListProduct.name
+                                            + "   农户名称: "
+                                            + saleListProduct.peasant
+                                            + "   客户名称: "
+                                            + saleListProduct.clientname
+                                            + "   幅宽: "
+                                            + saleListProduct.model
+                                            + "   厚度: "
+                                            + saleListProduct.price
+                                            + "   长度: "
+                                            + saleListProduct.length
+                                            + "   颜色: "
+                                            + saleListProduct.color
+                                            + "   数量: "
+                                            + saleListProduct.num
+                                            + "   理论重量: "
+                                            + saleListProduct.theoryweight
+                                            + "   单件重量: "
+                                            + saleListProduct.oneweight
+                                            + "   单件平米: "
+                                            + saleListProduct.square
+                                            + "   总平米: "
+                                            + saleListProduct.numsquare
+                                            + "   要求.: "
+                                            + saleListProduct.demand
+                                            + "   标签名称: "
+                                            + saleListProduct.label
+                                            + "   重量: "
+                                            + saleListProduct.weight
+                                            + "   剖刀: "
+                                            + saleListProduct.dao
+                                            + "   商标: "
+                                            + saleListProduct.brand
+                                            + "   包装: "
+                                            + saleListProduct.pack
+                                            + "   印字: "
+                                            + saleListProduct.letter
+                                            + "   纸管: "
+                                            + saleListProduct.patu
+                                            + "   重量设置: "
+                                            + saleListProduct.wightset
+                                            + "   订单状态: "
+                                            + saleListProduct.state
+                                            + "   总重量: "
+                                            + saleListProduct.sumwight
+                                            + "   生产米数: "
+                                            + saleListProduct.meter
+                                            + "   备注: "
+                                            + saleListProduct.remark;
+                                    } else {
+                                        return "";
+                                    }
+                                }
+                            },
+                            {
+                                field: 'sumwight',
+                                title: "任务量",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: 'num',
+                                title: "数量",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "allotState",
+                                title: "分配状态",
+                                width: "150",
+                                align: "center"
+                            },
+                            {
+                                field: "issueState",
+                                title: "下发状态",
+                                width: "150",
+                                align: "center",
+                                formatter: function (value, rows, index) {
+                                    if (value == "未下发") {
+                                        return "<span style='color:red;'>未下发</span>";
+                                    } else {
+                                        return "<span style='color:green;'>"
+                                            + value + "</span>";
+                                    }
+                                }
+                            },
+                            {
+                                field: "saleListProductId",
+                                title: "订单商品id",
+                                width: "150",
+                                align: "center",
+                                formatter: function (value, rows, index) {
+                                    if (rows.saleListProduct) {
+                                        return rows.saleListProduct.id;
+                                    } else {
+                                        return;
+                                    }
+                                },
+                                hidden: "true"
+                            }]]
+                    });
+        }
 
-	//清空条件并重新加载数据
-	function reset() {
-		$("#allorTime").datebox("reset");
-		$("#jitai").combobox("reset");
-		$("#alertJitai").combobox("reset");
-		$("#dg").datagrid("reload");
-	}
+        //清空条件并重新加载数据
+        function reset() {
+            $("#allorTime").datebox("reset");
+            $("#jitai").combobox("reset");
+            $("#alertJitai").combobox("reset");
+            $("#dg").datagrid("reload");
+        }
 
-	//根据条件对数据进行筛选
-	function screen() {
-		var json = {};
-		if ($("#jitai").combobox("getValue")) {
-			json.jitai = $("#jitai").combobox("getValue");
-		}
-		if ($("#allorTime").datebox("getValue")) {
-			json.allorTime = $("#allorTime").datebox("getValue");
-		}
-		$.post("/admin/productionProcess/screen", json, function(result) {
-			if (result.success) {
-				$("#dg").datagrid('loadData', result.rows);
-			}
-		});
-	}
+        //根据条件对数据进行筛选
+        function screen() {
+            var json = {};
+            if ($("#jitai").combobox("getValue")) {
+                json.jitai = $("#jitai").combobox("getValue");
+            }
+            if ($("#allorTime").datebox("getValue")) {
+                json.allorTime = $("#allorTime").datebox("getValue");
+            }
+            json.issueState = "未下发";
+            $.post("/admin/jitaiProductionAllot/screen", json, function (result) {
+                if (result.success) {
+                    $("#dg").datagrid('loadData', result.rows);
+                }
+            });
+        }
 
-	//所有下发的通知单的id 
-	var ids = [];
-	//点击下发按钮时触发 
-	function issue() {
-		if ($("#dg").datagrid("getSelections").length < 1) {
-			$.messager.alert("系统提示",
-					"<span style='color:red;'>请选择要下发的通知单！</span>");
-			return;
-		}
-		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
-			ids.push($("#dg").datagrid("getSelections")[i].saleListProduct.id);
-		}
+        //所有下发的通知单的id
+        var ids = [];
 
-		var idStr = ids.join(",");
-		$.post("/admin/jitaiProductionAllot/issue", {
-			idStr : idStr
-		}, function(result) {
-			if (result.success) {
-				$.messager.alert("系统提示", "已成功下发机台！");
-				reset();
-			}
-		});
+        //点击下发按钮时触发
+        function issue() {
+            if ($("#dg").datagrid("getSelections").length < 1) {
+                $.messager.alert("系统提示",
+                    "<span style='color:red;'>请选择要下发的通知单！</span>");
+                return;
+            }
+            $.messager.progress({
+                title: '提示',
+                text: '数据正在处理中，请稍后....'
+            });
+            for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
+                ids.push($("#dg").datagrid("getSelections")[i].saleListProduct.id);
+            }
 
-	}
+            var idStr = ids.join(",");
+            $.post("/admin/jitaiProductionAllot/issue", {
+                idStr: idStr
+            }, function (result) {
+                if (result.success) {
+                    $.messager.progress('close');
+                    $.messager.alert("系统提示", "已成功下发机台！");
+                    reset();
+                }
+            });
 
-	//修改机台
-	function alertJitai() {
-		if ($("#dg").datagrid("getSelections").length < 1) {
-			$.messager.alert("系统提示",
-					"<span style='color:red;'>请选择要修改机台的通知单！</span>");
-			return;
-		}
-		if (!$("#alertJitai").combobox("getValue")) {
-			$.messager.alert("系统提示",
-					"<span style='color:red'>请选择要修改的机台！</span>");
-			return;
-		}
+        }
 
-		var informNumbers = [];
-		var jitai = $("#alertJitai").combobox("getValue");
-		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
-			informNumbers
-					.push($("#dg").datagrid("getSelections")[i].informNumber);
-		}
-		var informNumberStr = informNumbers.join(",");
-		$.post("/admin/jitaiProductionAllot/alertJitai", {
-			informNumberStr : informNumberStr,
-			jitai : jitai
-		}, function(result) {
-			if (result.success) {
-				$.messager.alert("系统提示", "修改成功！");
-				reset();
-			}
-		}, "json")
+        //修改机台
+        function alertJitai() {
+            if ($("#dg").datagrid("getSelections").length < 1) {
+                $.messager.alert("系统提示",
+                    "<span style='color:red;'>请选择要修改机台的通知单！</span>");
+                return;
+            }
+            if (!$("#alertJitai").combobox("getValue")) {
+                $.messager.alert("系统提示",
+                    "<span style='color:red'>请选择要修改的机台！</span>");
+                return;
+            }
 
-	}
-	$(document).ready(function() {
-		//当选择一个日期的时候执行的操作
-		$("#allorTime").datebox({
-			onSelect : function(date) {
-				screen();
-			}
-		});
+            var informNumbers = [];
+            var jitai = $("#alertJitai").combobox("getValue");
+            for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
+                informNumbers
+                    .push($("#dg").datagrid("getSelections")[i].informNumber);
+            }
+            var informNumberStr = informNumbers.join(",");
+            $.post("/admin/jitaiProductionAllot/alertJitai", {
+                informNumberStr: informNumberStr,
+                jitai: jitai
+            }, function (result) {
+                if (result.success) {
+                    $.messager.alert("系统提示", "修改成功！");
+                    reset();
+                }
+            }, "json")
 
-		//当选择一个机台的时候执行
-		$("#jitai").combobox({
-			onSelect : function(date) {
-				screen();
-			}
-		});
-		loadData();
-	});
-</script>
+        }
+
+        $(document).ready(function () {
+            //当选择一个日期的时候执行的操作
+            $("#allorTime").datebox({
+                onSelect: function (date) {
+                    screen();
+                }
+            });
+
+            //当选择一个机台的时候执行
+            $("#jitai").combobox({
+                onSelect: function (date) {
+                    screen();
+                }
+            });
+            loadData();
+        });
+    </script>
 </head>
 <body style="margin: 1px">
-	<table id="dg" title="机台生产分配" class="easyui-datagrid"
-		fitColumns="false" rownumbers="true"
-		url="/admin/productionProcess/selectByIssueState?issueState=未下发"
-		toolbar="#tb" fit="true">
-	</table>
+<table id="dg" title="机台生产分配" class="easyui-datagrid"
+       fitColumns="false" rownumbers="true"
+       url="/admin/jitaiProductionAllot/selectByIssueState?issueState=未下发"
+       toolbar="#tb" fit="true">
+</table>
 
-	<div id="tb" style="padding: 15px;">
-		<table>
-			<tr>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;日期： <input class="easyui-datebox"
-					id="allorTime" style="width: 100px" /></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;机台： <input id="jitai"
-					class="easyui-combobox" url="/admin/jitai/findAll" name="mode"
-					valueField="id" panelHeight="auto" textField="name"
-					style="width: 98px" />
-				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-					iconCls="icon-cancel" href="javascript:reset()">清空</a>
-				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-					iconCls="icon-add" href="javascript:issue()">下发</a>
-				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：
-					<input id="alertJitai" class="easyui-combobox"
-					url="/admin/jitai/findAll" name="mode" valueField="id"
-					panelHeight="auto" textField="name" style="width: 98px" />
-				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-					iconCls="icon-ok" href="javascript:alertJitai()">修改</a>
-				</td>
-			</tr>
-		</table>
-	</div>
+<div id="tb" style="padding: 15px;">
+    <table>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;日期： <input class="easyui-datebox"
+                                                   id="allorTime" style="width: 100px"/></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;机台： <input id="jitai"
+                                                   class="easyui-combobox" url="/admin/jitai/findAll" name="mode"
+                                                   valueField="id" panelHeight="auto" textField="name"
+                                                   style="width: 98px"/>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
+                                           iconCls="icon-cancel" href="javascript:reset()">清空</a>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
+                                           iconCls="icon-add" href="javascript:issue()">下发</a>
+            </td>
+            <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：-->
+            <!--<input id="alertJitai" class="easyui-combobox"-->
+            <!--url="/admin/jitai/findAll" name="mode" valueField="id"-->
+            <!--panelHeight="auto" textField="name" style="width: 98px" />-->
+            <!--</td>-->
+            <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"-->
+            <!--iconCls="icon-ok" href="javascript:alertJitai()">修改</a>-->
+            <!--</td>-->
+        </tr>
+    </table>
+</div>
 </body>
 </html>

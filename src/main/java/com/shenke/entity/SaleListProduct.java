@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 销售单商品实体
@@ -27,6 +26,10 @@ public class SaleListProduct {
 	@ManyToOne
 	@JoinColumn(name = "saleListId")
 	private SaleList saleList;// 销售单
+
+	@ManyToOne
+	@JoinColumn(name = "jitaiId")
+	private JiTai jiTai;//分配的机台
 
 	@Column(length = 50)
 	private String name;// 商品名称
@@ -111,6 +114,17 @@ public class SaleListProduct {
 	@Column(length = 50)
 	private String clientname;// 客户名称
 
+	private Integer accomplishNumber;// 完成数量
+
+	@Column(length = 50)
+	private String accomplishState;// 完成状态
+
+	@Column(length = 50)
+	private String issueState;// 下发状态
+
+	@Column(length = 50)
+	private Long informNumber;// 通知单号
+
 	private String remark;// 备注
 
 	@Transient
@@ -118,6 +132,90 @@ public class SaleListProduct {
 
 	@Transient
 	private int saleTotal;// 销售总数
+
+	@Override
+	public String toString() {
+		return "SaleListProduct{" +
+				"id=" + id +
+				", saleList=" + saleList +
+				", jiTai=" + jiTai +
+				", name='" + name + '\'' +
+				", model=" + model +
+				", price=" + price +
+				", length=" + length +
+				", color='" + color + '\'' +
+				", realitymodel=" + realitymodel +
+				", realityprice=" + realityprice +
+				", realityweight=" + realityweight +
+				", num=" + num +
+				", theoryweight=" + theoryweight +
+				", oneweight=" + oneweight +
+				", square=" + square +
+				", numsquare=" + numsquare +
+				", demand='" + demand + '\'' +
+				", weightway='" + weightway + '\'' +
+				", label='" + label + '\'' +
+				", weight=" + weight +
+				", dao='" + dao + '\'' +
+				", brand='" + brand + '\'' +
+				", pack='" + pack + '\'' +
+				", letter='" + letter + '\'' +
+				", patu='" + patu + '\'' +
+				", wightset='" + wightset + '\'' +
+				", state='" + state + '\'' +
+				", sumwight=" + sumwight +
+				", meter=" + meter +
+				", peasant='" + peasant + '\'' +
+				", clientname='" + clientname + '\'' +
+				", accomplishNumber=" + accomplishNumber +
+				", accomplishState='" + accomplishState + '\'' +
+				", issueState='" + issueState + '\'' +
+				", informNumber=" + informNumber +
+				", remark='" + remark + '\'' +
+				", queryName='" + queryName + '\'' +
+				", saleTotal=" + saleTotal +
+				'}';
+	}
+
+	public String getIssueState() {
+		return issueState;
+	}
+
+	public void setIssueState(String issueState) {
+		this.issueState = issueState;
+	}
+
+	public Long getInformNumber() {
+		return informNumber;
+	}
+
+	public void setInformNumber(Long informNumber) {
+		this.informNumber = informNumber;
+	}
+
+	public JiTai getJiTai() {
+		return jiTai;
+	}
+
+	public void setJiTai(JiTai jiTai) {
+		this.jiTai = jiTai;
+	}
+
+	public Integer getAccomplishNumber() {
+		return accomplishNumber;
+	}
+
+	public void setAccomplishNumber(Integer accomplishNumber) {
+		this.accomplishNumber = accomplishNumber;
+	}
+
+	public String getAccomplishState() {
+		return accomplishState;
+	}
+
+	public void setAccomplishState(String accomplishState) {
+		this.accomplishState = accomplishState;
+	}
 
 	public Integer getId() {
 		return id;
@@ -381,19 +479,6 @@ public class SaleListProduct {
 
 	public void setSaleTotal(int saleTotal) {
 		this.saleTotal = saleTotal;
-	}
-
-	@Override
-	public String toString() {
-		return "SaleListProduct [id=" + id + ", saleList=" + saleList + ", name=" + name + ", model=" + model
-				+ ", price=" + price + ", length=" + length + ", color=" + color + ", realitymodel=" + realitymodel
-				+ ", realityprice=" + realityprice + ", realityweight=" + realityweight + ", num=" + num
-				+ ", theoryweight=" + theoryweight + ", oneweight=" + oneweight + ", square=" + square + ", numsquare="
-				+ numsquare + ", demand=" + demand + ", weightway=" + weightway + ", label=" + label + ", weight="
-				+ weight + ", dao=" + dao + ", brand=" + brand + ", pack=" + pack + ", letter=" + letter + ", patu="
-				+ patu + ", wightset=" + wightset + ", state=" + state + ", sumwight=" + sumwight + ", meter=" + meter
-				+ ", peasant=" + peasant + ", clientname=" + clientname + ", remark=" + remark + ", queryName="
-				+ queryName + ", saleTotal=" + saleTotal + "]";
 	}
 
 }

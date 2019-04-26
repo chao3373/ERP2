@@ -69,4 +69,14 @@ public interface ProductService {
 	 * @return
 	 */
 	public List<Product> findByName(String string);
+
+	/**
+	 * 根据名称查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+    public Product findName(String name);
 }

@@ -67,4 +67,6 @@ public interface LetterService {
 	 * @return
 	 */
 	public List<Letter> findByName(String string);
+
+    public Letter findName(String lettername);
 }

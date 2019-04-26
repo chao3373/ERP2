@@ -93,4 +93,9 @@ public class DaoServiceImpl implements DaoService {
 		return daoRepository.findByName(string);
 	}
 
+    @Override
+    public Dao findName(String daoname) {
+        return daoRepository.findByDaoName(daoname);
+    }
+
 }

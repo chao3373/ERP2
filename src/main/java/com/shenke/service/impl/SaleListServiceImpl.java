@@ -104,4 +104,9 @@ public class SaleListServiceImpl implements SaleListService {
 	public List<Integer> getSaleListNo(int id) {
 		return saleListRepository.getSaleListNo();
 	}
+
+	@Override
+	public void saveOne(SaleList saleList) {
+		saleListRepository.save(saleList);
+	}
 }

@@ -98,4 +98,9 @@ public class ProductServiceImpl implements ProductService{
 		return productRepository.findByName(string);
 	}
 
+    @Override
+    public Product findName(String name) {
+        return productRepository.findByNam(name);
+    }
+
 }

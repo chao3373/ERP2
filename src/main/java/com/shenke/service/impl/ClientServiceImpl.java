@@ -96,4 +96,9 @@ public class ClientServiceImpl implements ClientService {
 	public List<Client> findByName(String string) {
 		return clientRepository.findByName(string);
 	}
+
+    @Override
+    public Client findName(String clname) {
+        return clientRepository.findByNam(clname);
+    }
 }

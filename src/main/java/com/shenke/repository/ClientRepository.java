@@ -1,7 +1,6 @@
 package com.shenke.repository;
 
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +29,15 @@ public interface ClientRepository extends JpaRepository<Client, Integer>, JpaSpe
 	 */
 	@Query(value="select * from t_client where name like ?1", nativeQuery = true)
 	public List<Client> findByName(String string);
+
+	/**
+	 * 根据名称查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Query(value="select * from t_client where name = ?1", nativeQuery = true)
+	public Client findByNam(String clname);
 }

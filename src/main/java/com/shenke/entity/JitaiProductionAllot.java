@@ -32,6 +32,9 @@ public class JitaiProductionAllot {
 	private SaleListProduct saleListProduct;// 所对应的销售订单产品信息
 
 	@Column(length = 50)
+	private String issueState;// 下发状态
+
+	@Column(length = 50)
 	private Long informNumber;// 通知单号
 
 	@Column(length = 50)
@@ -46,9 +49,6 @@ public class JitaiProductionAllot {
 
 	@Column(length = 50)
 	private String allotState;// 分配状态
-
-	@Column(length = 50)
-	private String issueState;// 下发状态
 
 	@Column(length = 50)
 	private String accomplishState;// 完成状态

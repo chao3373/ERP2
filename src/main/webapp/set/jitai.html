@@ -1,162 +1,276 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>机台设置</title>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript">
-	var url;
+    <meta charset="UTF-8">
+    <title>机台设置</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        var url;
 
-	function searchRole() {
-		$("#dg").datagrid('load', {
-			"name" : $("#s_roleName").val()
-		});
-	}
+        function searchRole() {
+            $("#dg").datagrid('load', {
+                "name": $("#s_roleName").val()
+            });
+        }
 
-	function resetValue() {
-		$("#name").val("");
-		$("#remark").val("");
-	}
+        function resetValue() {
+            $("#name").val("");
+            $("#remark").val("");
+        }
 
-	function closeRoleDialog() {
-		$("#dlg").dialog("close");
-		resetValue();
-	}
+        function closeRoleDialog() {
+            $("#dlg").dialog("close");
+            resetValue();
+        }
 
-	function saveRole() {
-		$("#fm").form("submit", {
-			url : url,
-			onSubmit : function() {
-				return $(this).form("validate");
-			},
-			success : function(result) {
-				var result = eval('(' + result + ')');
-				if (result.success) {
-					$.messager.alert("系统提示", "保存成功！");
-					resetValue();
-					$("#dlg").dialog("close");
-					$("#dg").datagrid("reload");
-				} else {
-					$.messager.alert("系统提示", result.errorInfo);
-				}
-			}
-		});
-	}
+        function saveRole() {
+            $("#fm").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                    var result = eval('(' + result + ')');
+                    if (result.success) {
+                        $.messager.alert("系统提示", "保存成功！");
+                        resetValue();
+                        $("#dlg").dialog("close");
+                        $("#dg").datagrid("reload");
+                    } else {
+                        $.messager.alert("系统提示", result.errorInfo);
+                    }
+                }
+            });
+        }
 
-	function openRoleAddDialog() {
-		$("#dlg").dialog("open").dialog("setTitle", "添加机台信息");
-		url = "/admin/jitai/save";
-	}
+        function openRoleAddDialog() {
+            $("#dlg").dialog("open").dialog("setTitle", "添加机台信息");
+            url = "/admin/jitai/save";
+        }
 
-	function openRoleModifyDialog() {
-		var selectedRows = $("#dg").datagrid("getSelections");
-		if (selectedRows.length != 1) {
-			$.messager.alert("系统提示", "请选择一条要修改的数据！");
-			return;
-		}
-		var row = selectedRows[0];
-		$("#dlg").dialog("open").dialog("setTitle", "修改机台信息");
-		$("#fm").form("load", row);
-		url = "/admin/jitai/save?id=" + row.id;
-	}
+        function openRoleModifyDialog() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要修改的数据！");
+                return;
+            }
+            var row = selectedRows[0];
+            console.log("row=========================");
+            console.log(row);
+            if (row.clientname) {
+                $("#clientName").prop("checked", true);
+            }
+            if (row.color) {
+                $("#color").prop("checked", true);
+            }
+            if (row.dao) {
+                $("#dao").prop("checked", true);
+            }
+            if (row.weight) {
+                $("#weight").prop("checked", true);
+            }
+            $("#fm").form("load", {
+                name: row.name,
+                remark: row.remark
+            });
+            $("#dlg").dialog("open").dialog("setTitle", "修改机台信息");
+            url = "/admin/jitai/save?id=" + row.id;
+        }
 
-	function deleteRole() {
-		var selectedRows = $("#dg").datagrid("getSelections");
-		if (selectedRows.length != 1) {
-			$.messager.alert("系统提示", "请选择一条要删除的数据！");
-			return;
-		}
-		var id = selectedRows[0].id;
-		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
-			if (r) {
-				$.post("/admin/jitai/delete", {
-					id : id
-				}, function(result) {
-					if (result.success) {
-						$.messager.alert("系统提示", "数据已成功删除！");
-						$("#dg").datagrid("reload");
-					} else {
-						$.messager.alert("系统提示", result.errorInfo);
-					}
-				}, "json");
-			}
-		});
-	}
+        function deleteRole() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要删除的数据！");
+                return;
+            }
+            var id = selectedRows[0].id;
+            $.messager.confirm("系统提示", "您确定要删除这条数据吗?", function (r) {
+                if (r) {
+                    $.post("/admin/jitai/delete", {
+                        id: id
+                    }, function (result) {
+                        if (result.success) {
+                            $.messager.alert("系统提示", "数据已成功删除！");
+                            $("#dg").datagrid("reload");
+                        } else {
+                            $.messager.alert("系统提示", result.errorInfo);
+                        }
+                    }, "json");
+                }
+            });
+        }
 
-	$(document).ready(function() {
+        $(document).ready(function () {
 
-		$("#dg").datagrid({
-			onDblClickRow : function(index, row) {
-				$("#dlg").dialog("open").dialog("setTitle", "修改机台信息");
-				$("#fm").form("load", row);
-				url = "/admin/jitai/save?id=" + row.id;
-			}
-		});
+            $("#dg").datagrid({
+                columns: [[
+                    {
+                        field: 'id', title: '编号', width: 100, align: 'center'
+                    },
+                    {field: 'name', title: '机台名称', width: 100, align: 'center'},
+                    {
+                        field: 'weight',
+                        title: '打印重量',
+                        width: 100,
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.weight) {
+                                return "是";
+                            }
+                            return "否";
+                        }
+                    },
+                    {
+                        field: 'dao', title: '打印剖刀', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.dao) {
+                                return "是";
+                            }
+                            return "否";
+                        }
+                    },
+                    {
+                        field: 'color', title: '打印颜色', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.color) {
+                                return "是";
+                            }
+                            return "否";
+                        }
+                    },
+                    {
+                        field: 'clientName', title: '打印客户名称', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.clientName) {
+                                return "是";
+                            }
+                            return "否";
+                        }
+                    },
+                    {
+                        field: 'group',
+                        title: '班组',
+                        width: 100,
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.group) {
+                                return row.group.name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'clerk',
+                        title: '员工',
+                        width: 100,
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.clerk) {
+                                return row.clerk.name;
+                            }
+                            return "";
+                        }
+                    },
+                    {field: 'remark', title: '备注', width: 100, align: 'center'}
+                ]],
+                onDblClickRow: function (index, row) {
+                    $("#dlg").dialog("open").dialog("setTitle", "修改机台信息");
+                    if (row.clientname) {
+                        $("#clientName").prop("checked", true);
+                    }
+                    if (row.color) {
+                        $("#color").prop("checked", true);
+                    }
+                    if (row.dao) {
+                        $("#dao").prop("checked", true);
+                    }
+                    if (row.weight) {
+                        $("#weight").prop("checked", true);
+                    }
+                    $("#fm").form("load", {
+                        name: row.name,
+                        remark: row.remark
+                    });
+                    url = "/admin/jitai/save?id=" + row.id;
+                }
+            });
 
-	});
-</script>
+        });
+    </script>
 </head>
 <body style="margin: 1px">
-	<table id="dg" title="机台设置" class="easyui-datagrid" fitColumns="true"
-		pagination="true" rownumbers="true" singleSelect="true"
-		url="/admin/jitai/list" fit="true" toolbar="#tb">
-		<thead>
-			<th field="id" width="20" align="center">编号</th>
-			<th field="name" width="50" align="center">机台名称</th>
-			<th field="remark" width="100" align="center">备注</th>
-		</thead>
-	</table>
+<table id="dg" title="机台设置" class="easyui-datagrid" fitColumns="true"
+       pagination="true" rownumbers="true" singleSelect="true"
+       url="/admin/jitai/list" fit="true" toolbar="#tb">
+</table>
 
-	<div id="tb">
-		<div>
-			<a href="javascript:openRoleAddDialog()"
-				class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
-				href="javascript:openRoleModifyDialog()" class="easyui-linkbutton"
-				iconCls="icon-edit" plain="true">修改</a> <a
-				href="javascript:deleteRole()" class="easyui-linkbutton"
-				iconCls="icon-remove" plain="true">删除</a>
-		</div>
-		<div>
-			&nbsp;机台名称：&nbsp;<input type="text" id="s_roleName" size="20"
-				onkeydown="if(event.keyCode==13) searchRole()" /> <a
-				href="javascript:searchRole()" class="easyui-linkbutton"
-				iconCls="icon-search" plain="true">搜索</a>
-		</div>
-	</div>
+<div id="tb">
+    <div>
+        <a href="javascript:openRoleAddDialog()"
+           class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
+            href="javascript:openRoleModifyDialog()" class="easyui-linkbutton"
+            iconCls="icon-edit" plain="true">修改</a> <a
+            href="javascript:deleteRole()" class="easyui-linkbutton"
+            iconCls="icon-remove" plain="true">删除</a>
+    </div>
+    <div>
+        &nbsp;机台名称：&nbsp;<input type="text" id="s_roleName" size="20"
+                                onkeydown="if(event.keyCode==13) searchRole()"/> <a
+            href="javascript:searchRole()" class="easyui-linkbutton"
+            iconCls="icon-search" plain="true">搜索</a>
+    </div>
+</div>
 
+<div id="dlg" class="easyui-dialog"
+     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
+    <form id="fm" method="post">
+        <table cellspacing="8px">
+            <tr>
+                <td>机台名称：</td>
+                <td colspan="2"><input type="text" id="name" name="name"
+                                       class="easyui-validatebox" required="true"/></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="weight" name="weight"/>打印重量</td>
+                <td><input type="checkbox" id="dao" name="dao"/>打印剖刀</td>
+                <td><input type="checkbox" id="color" name="color"/>打印颜色</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="clientName" name="clientName"/>打印客户名称</td>
+                <td>班组：<input
+                        id="banzu" panelHeight="auto" valueField="id" textField="name"
+                        class="easyui-combobox" style="width: 55px;"
+                        url="/admin/group/clerkList" name="group"/></td>
+                <td>生产人员：<input id="staff" class="easyui-combobox"
+                                style="width: 55px;" url="/admin/clerk/clerkList"
+                                panelHeight="auto" valueField="id" textField="name" name="clerk"/></td>
+            </tr>
+            <tr>
 
-	<div id="dlg" class="easyui-dialog"
-		style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-		buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
-		<form id="fm" method="post">
-			<table cellspacing="8px">
-				<tr>
-					<td>机台名称：</td>
-					<td><input type="text" id="name" name="name"
-						class="easyui-validatebox" required="true" /></td>
-				</tr>
-				<tr>
-					<td valign="top">备注：</td>
-					<td><textarea rows="3" cols="35" id="remark" name="remark"></textarea>
-					</td>
-				</tr>
-			</table>
-		</form>
-	</div>
+            </tr>
+            <tr>
+                <td valign="top">备注：</td>
+                <td colspan="2"><input/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
 
-	<div id="dlg-buttons">
-		<a href="javascript:saveRole()" class="easyui-linkbutton"
-			iconCls="icon-ok">保存</a> <a href="javascript:closeRoleDialog()"
-			class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-	</div>
+<div id="dlg-buttons">
+    <a href="javascript:saveRole()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a> <a href="javascript:closeRoleDialog()"
+                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
 
 </html>

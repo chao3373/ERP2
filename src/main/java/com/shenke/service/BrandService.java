@@ -67,4 +67,7 @@ public interface BrandService {
 	 * @return
 	 */
 	public List<Brand> findByName(String string);
+
+    public Brand findName(String biaoname);
+
 }

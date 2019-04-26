@@ -16,6 +16,7 @@
 <script type="text/javascript" src="/static/js/date.js"></script>
 <script type="text/javascript">
 	var json = {};
+	var client;
 
 	//按回车键查询
 	$(document).keyup(function(event) {
@@ -79,6 +80,7 @@
 	function clertCondition() {
 		loadData();
 		json = {};
+		client = null;
 		$("#clientId").combobox("reset");
 		$("#jitai").combobox("reset");
 		$("#mode").val("");
@@ -282,6 +284,11 @@
 			return;
 		}
 
+		$.messager.progress({
+			title : '提示',
+			text : '数据正在处理中，请稍后....'
+		});
+
 		//获取所有选中的订单的id
 		for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
 			idsArr.push($("#dg").datagrid("getSelections")[i].id);
@@ -294,6 +301,7 @@
 			ids : ids
 		}, function(result) {
 			if (result.success) {
+				$.messager.progress('close');
 				$.messager.confirm('系统提示', '订单分配成功', function(r) {
 					if (r) {
 						clertCondition();

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>当前库存查询</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="print.js"></script>
+
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north'"
+     style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>
+            库存查询
+        </legend>
+        <form id="fm" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
+                            type="text" id="saleDate" name="saleDate" class="easyui-datebox"
+                            demandd="true" data-options="editable:false" size="15"/>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;购货单位：<input
+                            class="easyui-combobox" id="clientId" name="clientId"
+                            style="width: 150px" required="true" demandd="true"
+                            data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;销售方式：<input
+                            class="easyui-combobox" required="true" id="sellId" name="sellId"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'method',url:'/admin/sell/sellList'"/>
+                    </td>
+                    <td width="180px">
+                        &nbsp;&nbsp;&nbsp;&nbsp;业&nbsp;务&nbsp;员&nbsp;：<input
+                            class="easyui-combobox" required="true" id="clerkId" name="clerkId"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td>联系人：<input type="text" id="lankman" required="true"
+                                   name="lankman" size="15"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>客户电话：<input type="text" id="tel" name="tel"
+                                    class="easyui-validatebox" size="15"/>
+                    </td>
+                    <td colspan="2">&nbsp;&nbsp;&nbsp;客户地址 ：<input type="text"
+                                                                   id="address" name="address" size="43"/>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;发货时间：<input type="text"
+                                                            id="deliveryDate" name="deliveryDate" class="easyui-datebox"
+                                                            size="10"/>
+                    </td>
+                    <td><input type="hidden" id="saleNumber" name="saleNumber"/>
+                        <input type="hidden" id="goodsJson" name="goodsJson"/> <a
+                                href="javascript:saveSaleGoods()" class="easyui-linkbutton"
+                                iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+                                href="javascript:toLead()" class="easyui-linkbutton"
+                                iconCls="icon-add">导入</a></td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+<div data-options="region:'center'" style="padding: 10px; border: 1px">
+    <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
+           singleSelect="true" fit="true" toolbar="#tb">
+        <thead>
+        <th id="nameRow" field="name" width="200" align="center">产品名称</th>
+        <th id="modelRow" field="model" width="200" align="center">幅宽（m）</th>
+        <th id="priceRow" field="price" width="200" align="center">厚度（mm）</th>
+        <th id="lengthRow" field="length" width="200" align="center">长度（m）</th>
+        <th id="meterRow" field="meter" width="200" align="center">生产米数</th>
+        <th id="colorRow" field="color" width="200" align="center">颜色</th>
+        <th id="oneweightRow" field="oneweight" width="200" align="center">单件重量（kg）</th>
+        <th id="numRow" field="num" width="200" align="center">订货数量</th>
+        <th id="sumwightRow" field="sumwight" width="200" align="center">总重量</th>
+        <th id="realitymodRow" field="realitymodel" width="200"
+            align="center">实际幅宽（m）
+        </th>
+        <th id="demandRow" field="demand" width="200" align="center">要求</th>
+        <th id="wightsetRow" field="wightset" width="200" align="center">重量设置</th>
+        <th id="daoRow" field="dao" width="200" align="center">剖刀</th>
+        <th id="brandRow" field="brand" width="200" align="center">商标</th>
+        <th id="packRow" field="pack" width="200" align="center">包装</th>
+        <th id="letterRow" field="letter" width="200" align="center">印字</th>
+        <th id="peasantRow" field="peasant" width="200" align="center">农户名称</th>
+        <th id="clientnameRow" field="clientname" width="200" align="center">客户名称</th>
+        <th id="realityweiRow" field="realityweight" width="200"
+            align="center">实际重量（kg）
+        </th>
+        <th id="realitypriRow" field="realityprice" width="200"
+            align="center">实际厚度（mm）
+        </th>
+        <th id="theoryweigRow" field="theoryweight" width="200"
+            align="center">理论重量（kg）
+        </th>
+        <th id="squareRow" field="square" width="200" align="center">单件平米</th>
+        <th id="numsquareRow" field="numsquare" width="200" align="center">总平米</th>
+        <th id="weightwayRow" field="weightway" width="200" align="center">称重方式</th>
+        <th id="labelRow" field="label" width="200" align="center">标签名称</th>
+        <th id="weightRow" field="weight" width="200" align="center">重量（kg）</th>
+        <th id="patuRow" field="patu" width="200" align="center">纸管</th>
+        <th id="remarkRow" field="remark" width="200" align="center">备注</th>
+        </thead>
+    </table>
+
+    <div id="tb">
+        <div style="padding: 2px">
+            <a href="javascript:printdg()" ;
+               class="easyui-linkbutton"
+               iconCls="icon-print" plain="true">打印</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

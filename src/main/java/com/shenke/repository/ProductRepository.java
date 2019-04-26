@@ -30,4 +30,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 	 */
 	@Query(value="select * from t_product where type_id=2 and name like ?1", nativeQuery=true)
 	public List<Product> findByName(String string);
+
+	/**
+	 * 根据姓名查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Query(value = "select * from t_product where name = ?1", nativeQuery = true)
+    public Product findByNam(String name);
 }

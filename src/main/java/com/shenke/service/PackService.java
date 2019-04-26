@@ -68,4 +68,6 @@ public interface PackService {
 	 * @return
 	 */
 	public List<Pack> findByName(String string);
+
+    public Pack findName(String packname);
 }

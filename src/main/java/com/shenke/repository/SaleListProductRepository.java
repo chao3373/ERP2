@@ -119,4 +119,62 @@ public interface SaleListProductRepository
 	public void updaterRealityWeightById(Double weight, Integer saleListProductId);
 
 
+	/**
+	 * 修改机台id
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Modifying
+	@Query(value = "update t_sale_list_product set jitai_id = ?2 where id = ?1", nativeQuery = true)
+	public void updateJitaiId(Integer id, Integer id1);
+
+	/**
+	 * 根据id修改通知单号
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Modifying
+	@Query(value = "update t_sale_list_product set inform_number = ?1 where id = ?2", nativeQuery = true)
+	public void updateInformNumber(Long informNumber, int id);
+
+	/**
+	 * 根据id修改下发状态
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Modifying
+	@Query(value = "update t_sale_list_product set issue_state = ?1 where id = ?2", nativeQuery = true)
+	public void updateIussueState(String issueState, int id);
+
+	/**
+	 * 查询该机台上所有未完成的通知单号
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE id NOT IN (SELECT id FROM t_sale_list_product WHERE state LIKE '%完成%' OR issue_state LIKE '%未下发%') AND jitai_id = ?1", nativeQuery = true)
+	public List<SaleListProduct> selectNoAccomplish(Integer jitaiId);
+
+	/**
+	 * 根据id修改完成数量
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Modifying
+	@Query(value = "update t_sale_list_product set accomplish_number = ?1 where id = ?2", nativeQuery = true)
+	public void updateAccomplishNumberById(Integer count, Integer producionProcessId);
 }

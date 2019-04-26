@@ -10,6 +10,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import com.shenke.entity.JitaiProductionAllot;
+import com.shenke.util.StringUtil;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -123,6 +125,53 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 	@Override
 	public void updateState(String name, Integer id) {
 		saleListProductRepository.updateState(name, id);
+	}
+
+    @Override
+    public void saveList(List<SaleListProduct> plgList) {
+		for (SaleListProduct saleListProduct : plgList) {
+			saleListProductRepository.save(saleListProduct);
+		}
+    }
+
+    @Override
+    public void updateJitaiId(Integer id, Integer id1) {
+        saleListProductRepository.updateJitaiId(id, id1);
+    }
+
+	@Override
+	public List<SaleListProduct> selectByJitaiIdAndIssueStateAndInformNumber(Integer jitaiId, String state, Long infLong) {
+		return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+			@Override
+			public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if(jitaiId != null) {
+					predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), jitaiId));
+				}
+				if (StringUtil.isNotEmpty(state)) {
+					predicate.getExpressions().add(cb.like(root.get("issueState"), "%" + state +"%"));
+				}
+				if (infLong!=null) {
+					predicate.getExpressions().add(cb.equal(root.get("informNumber"), infLong));
+				}
+				return predicate;
+			}
+		});
+	}
+
+	@Override
+	public void updateInformNumber(Long informNumber, int id) {
+		saleListProductRepository.updateInformNumber(informNumber, id);
+	}
+
+	@Override
+	public void updateIussueState(String issueState, int id) {
+		saleListProductRepository.updateIussueState(issueState, id);
+	}
+
+	@Override
+	public List<SaleListProduct> selectNoAccomplish(Integer jitaiId) {
+		return saleListProductRepository.selectNoAccomplish(jitaiId);
 	}
 
 }

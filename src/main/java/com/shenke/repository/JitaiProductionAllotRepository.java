@@ -133,4 +133,14 @@ public interface JitaiProductionAllotRepository
 	@Query(value = "UPDATE t_jitai_production_allot SET issue_state = ?1 WHERE id = ?2", nativeQuery = true)
 	public void updateStateById(String string, Integer jitaiProductionAllotId);
 
+	/**
+	 * 根据下发状态查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	@Query(value = "select * from t_jitai_production_allot where issue_state like ?1", nativeQuery = true)
+    public List<JitaiProductionAllot> selectByIssueState(String issueState);
 }

@@ -66,4 +66,6 @@ public interface DaoService {
 	 * @return
 	 */
 	public List<Dao> findByName(String string);
+
+    public Dao findName(String daoname);
 }

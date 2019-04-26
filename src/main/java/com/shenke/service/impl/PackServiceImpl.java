@@ -92,4 +92,9 @@ public class PackServiceImpl implements PackService {
 		return packRepository.findByName(string);
 	}
 
+    @Override
+    public Pack findName(String packname) {
+        return packRepository.findByPackName(packname);
+    }
+
 }

@@ -92,4 +92,9 @@ public class BrandServiceImpl implements BrandService{
 		return brandRepository.findByName(string);
 	}
 
+    @Override
+    public Brand findName(String biaoname) {
+        return brandRepository.findByBrandName(biaoname);
+    }
+
 }

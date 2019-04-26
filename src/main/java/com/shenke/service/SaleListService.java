@@ -61,5 +61,7 @@ public interface SaleListService {
 	 * @param id
 	 */
 	public List<Integer> getSaleListNo(int id);
-	
+
+    public void saveOne(SaleList saleList);
+
 }

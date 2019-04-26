@@ -1,56 +1,126 @@
 package com.shenke.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * 机台实体类
- * @author Administrator
  *
+ * @author Administrator
  */
 @Entity
-@Table(name="t_jitai")
+@Table(name = "t_jitai")
 public class JiTai {
-	
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@Column(length=50)
-	private String name;
-	
-	@Column(length=500)
-	private String remark;
 
-	public Integer getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue
+    private Integer id;//id
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Column(length = 50)
+    private String name;//机台名称
 
-	public String getRemark() {
-		return remark;
-	}
+    @ManyToOne
+    @JoinColumn(name = "groupId")
+    private Group group;//班组
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    @ManyToOne
+    @JoinColumn(name = "clerkId")
+    private Clerk clerk;//员工
 
-	public String getName() {
-		return name;
-	}
+    private Boolean weight;//重量
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private Boolean color;//颜色
 
-	@Override
-	public String toString() {
-		return "JiTai [id=" + id + ", remark=" + remark + "]";
-	}
+    private Boolean dao;//剖刀
+
+    private Boolean clientName;//客户
+
+    @Column(length = 500)
+    private String remark;//备注
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public Clerk getClerk() {
+        return clerk;
+    }
+
+    public void setClerk(Clerk clerk) {
+        this.clerk = clerk;
+    }
+
+    public Boolean getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Boolean weight) {
+        this.weight = weight;
+    }
+
+    public Boolean getColor() {
+        return color;
+    }
+
+    public void setColor(Boolean color) {
+        this.color = color;
+    }
+
+    public Boolean getDao() {
+        return dao;
+    }
+
+    public void setDao(Boolean dao) {
+        this.dao = dao;
+    }
+
+    public Boolean getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(Boolean clientName) {
+        this.clientName = clientName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    @Override
+    public String toString() {
+        return "JiTai{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", group=" + group +
+                ", clerk=" + clerk +
+                ", weight=" + weight +
+                ", color=" + color +
+                ", dao=" + dao +
+                ", clientName=" + clientName +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
 }

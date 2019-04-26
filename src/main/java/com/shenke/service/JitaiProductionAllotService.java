@@ -36,7 +36,7 @@ public interface JitaiProductionAllotService {
 	 * @param jitai
 	 * @return
 	 */
-	public List<JitaiProductionAllot> screen(String allorTime, Integer jitai);
+	public List<JitaiProductionAllot> screen(String allorTime, Integer jitai, String issueState);
 
 	/**
 	 * 下发机台
@@ -128,5 +128,13 @@ public interface JitaiProductionAllotService {
 	 */
 	public List<JitaiProductionAllot> selectBySaleListProductId(Integer id);
 
-
+	/**
+	 * 根据下发状态查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+    public List<JitaiProductionAllot> selectByIssueState(String issueState);
 }

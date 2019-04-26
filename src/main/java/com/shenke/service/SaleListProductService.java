@@ -72,4 +72,55 @@ public interface SaleListProductService {
 	 */
 	public void updateState(String name, Integer id);
 
+    public void saveList(List<SaleListProduct> plgList);
+
+    /**
+	 * 修改机台id
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+	public void updateJitaiId(Integer id, Integer id1);
+
+	/**
+	 * 根据机台id和下发状态和通知单号查询
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	public List<SaleListProduct> selectByJitaiIdAndIssueStateAndInformNumber(Integer jitaiId, String state, Long infLong);
+
+	/**
+	 * 根据id修改通知单号
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	public void updateInformNumber(Long informNumber, int id);
+
+	/**
+	 * 根据id修改下发状态
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	public void updateIussueState(String issueState, int id);
+
+	/**
+	 * 查询该机台上所有未完成的生产通知单号
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	public List<SaleListProduct> selectNoAccomplish(Integer jitaiId);
 }

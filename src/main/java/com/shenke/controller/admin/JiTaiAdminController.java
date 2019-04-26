@@ -33,7 +33,6 @@ public class JiTaiAdminController {
 	/**
 	 * 分页查询机台信息
 	 * 
-	 * @param role
 	 * @param page
 	 * @param rows
 	 * @return
@@ -68,6 +67,8 @@ public class JiTaiAdminController {
 	@RequestMapping("/save")
 	@RequiresPermissions("机台设置")
 	public Map<String, Object> save(JiTai jitai) {
+		System.out.println("======================================");
+		System.out.println(jitai);
 		if (jitai.getId() != null) {
 			logService.save(new Log(Log.UPDATE_ACTION, "修改机台信息" + jitai));
 		} else {
@@ -113,5 +114,21 @@ public class JiTaiAdminController {
 			q = "";
 		}
 		return jiTaiService.findByName("%" + q + "%");
+	}
+
+	/**
+	 * 根据机台id查询机台信息
+	* @Description:
+	* @Param:  
+	* @return:  
+	* @Author: Andy
+	* @Date:  
+	*/
+	@RequestMapping("/findOne")
+	public Map<String, Object> findOne(Integer jitai) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jitai", jiTaiService.findById(jitai));
+		map.put("success", true);
+		return map;
 	}
 }

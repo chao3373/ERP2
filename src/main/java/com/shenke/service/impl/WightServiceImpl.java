@@ -91,4 +91,9 @@ public class WightServiceImpl implements WightService {
 	public List<Wight> findByName(String string) {
 		return wightRepository.findByName(string);
 	}
+
+    @Override
+    public Wight findName(String weightname) {
+        return wightRepository.findByWightName(weightname);
+    }
 }

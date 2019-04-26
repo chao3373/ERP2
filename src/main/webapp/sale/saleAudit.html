@@ -200,14 +200,16 @@
 														field : "deliveryDate",
 														width : "100",
 														align : "center",
-														formatter : function(
-																val, row) {
-															var dateType = "";
-															var date = new Date();
-															date.setTime(val);
-															dateType = date
-																	.format("yyyy-MM-dd")
-															return dateType;
+														formatter : function(val, row) {
+															if (val){
+																var dateType = "";
+																var date = new Date();
+																date.setTime(val);
+																dateType = date
+																		.format("yyyy-MM-dd")
+																return dateType;
+															}
+															return;
 														},
 														title : "发货时间"
 													}, {
