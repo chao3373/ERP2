@@ -3,6 +3,7 @@ package com.shenke.service;
 import java.sql.Date;
 import java.util.List;
 
+import com.shenke.entity.Clerk;
 import com.shenke.entity.JieSuan;
 import com.shenke.entity.Storage;
 
@@ -23,7 +24,7 @@ public interface StorageService {
      * @param jitaiId                机台id
      */
     public void add(Double weight, Integer saleListProductId, Integer jitaiProductionAllotId, Integer producionProcessId,
-                    Integer jitaiId, String clerkName);
+                    Integer jitaiId, String clerkName, String group);
 
     public List<Storage> fandAll();
 
@@ -112,4 +113,6 @@ public interface StorageService {
      * @return
      */
     public List<JieSuan> FindByGroup(String client);
+
+    List<Storage> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group);
 }

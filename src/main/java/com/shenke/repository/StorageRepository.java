@@ -49,7 +49,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @Query(value = "select * from t_sale_list_product where state like '%审核通过%'", nativeQuery = true)
      * public List<SaleListProduct> listProductSucceed();
      */
-    @Query(value = "select * from t_storage where state not like '%提货%'", nativeQuery = true)
+    @Query(value = "select * from t_storage where state like '%生产完成%'", nativeQuery = true)
     public List<Storage> outSuccess();
 
     /**

@@ -1,12 +1,19 @@
 package com.shenke.service.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.annotation.Resource;
-
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.util.EntityUtils;
+import com.shenke.util.StringUtil;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.shenke.service.StorageService;
@@ -35,10 +42,14 @@ public class StorageServiceImpl implements StorageService {
     @Resource
     private ClerkRepository clerkRepository;
 
+    @Resource
+    private GroupRepository groupRepository;
+
     @Override
     public void add(Double weight, Integer saleListProductId, Integer jitaiProductionAllotId,
-                    Integer producionProcessId, Integer jitaiId, String clerkName) {
+                    Integer producionProcessId, Integer jitaiId, String clerkName, String group) {
 
+        Group byName = groupRepository.findByGrouptName(group);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
         JitaiProductionAllot jitaiProductionAllot = jitaiProductionAllotRepository.findOne(jitaiProductionAllotId);
         JiTai jiTai = jiTaiRepository.findOne(jitaiId);
@@ -66,6 +77,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setAllotState(jitaiProductionAllot.getAllotState());
         storage.setBrand(saleListProduct.getBrand());
         storage.setClientname(saleListProduct.getClientname());
+        storage.setClerk(clerk);
         storage.setColor(saleListProduct.getColor());
         storage.setDao(saleListProduct.getDao());
         storage.setDemand(saleListProduct.getDemand());
@@ -94,7 +106,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setSaleListProduct(saleListProduct);
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storage.setSquare(saleListProduct.getSquare());
-        storage.setState(saleListProduct.getState());
+        storage.setState("生产完成：" + saleListProduct.getJiTai().getName());
         storage.setSumwight(saleListProduct.getSumwight());
         storage.setTaskQuantity(jitaiProductionAllot.getTaskQuantity());
         storage.setTheoryweight(saleListProduct.getTheoryweight());
@@ -184,6 +196,40 @@ public class StorageServiceImpl implements StorageService {
         System.out.println(storageRepository.FindByGroup(client));
         List<JieSuan> castEntity = EntityUtils.castEntity(storageRepository.FindByGroup(client), JieSuan.class);
         return castEntity;
+    }
+
+    @Override
+    public List<Storage> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty(saleNumber)) {
+                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), saleNumber));
+                }
+                if (location!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), location));
+                }
+                if (jitai!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), jitai));
+                }
+                if (StringUtil.isNotEmpty(productDate)) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyyy-MM-dd").parse(productDate)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (clerk!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("clerk"), clerk));
+                }
+                if (group!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("group"), group));
+                }
+                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+                return predicate;
+            }
+        });
     }
 
 }

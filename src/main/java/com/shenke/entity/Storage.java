@@ -34,7 +34,15 @@ public class Storage {
 
     @ManyToOne
     @JoinColumn(name = "clerkId")
-    private Clerk clerk;
+    private Clerk clerk;//员工
+
+    @ManyToOne
+    @JoinColumn(name = "locationId")
+    private Location location;
+
+    @ManyToOne
+    @JoinColumn(name = "groupId")
+    private Group group;//班组
 
     @Column(length = 50)
     private String name;// 商品名称
@@ -159,6 +167,80 @@ public class Storage {
     private Date endDate;//结束时间查询用到
 
     private String remark;// 备注
+
+    @Override
+    public String toString() {
+        return "Storage{" +
+                "id=" + id +
+                ", saleListProduct=" + saleListProduct +
+                ", jitaiProductionAllot=" + jitaiProductionAllot +
+                ", jiTai=" + jiTai +
+                ", saleList=" + saleList +
+                ", clerk=" + clerk +
+                ", location=" + location +
+                ", group=" + group +
+                ", name='" + name + '\'' +
+                ", model=" + model +
+                ", price=" + price +
+                ", length=" + length +
+                ", color='" + color + '\'' +
+                ", realitymodel=" + realitymodel +
+                ", realityprice=" + realityprice +
+                ", realityweight=" + realityweight +
+                ", num=" + num +
+                ", theoryweight=" + theoryweight +
+                ", oneweight=" + oneweight +
+                ", square=" + square +
+                ", numsquare=" + numsquare +
+                ", demand='" + demand + '\'' +
+                ", weightway='" + weightway + '\'' +
+                ", label='" + label + '\'' +
+                ", weight=" + weight +
+                ", dao='" + dao + '\'' +
+                ", brand='" + brand + '\'' +
+                ", pack='" + pack + '\'' +
+                ", letter='" + letter + '\'' +
+                ", patu='" + patu + '\'' +
+                ", wightset='" + wightset + '\'' +
+                ", state='" + state + '\'' +
+                ", sumwight=" + sumwight +
+                ", meter=" + meter +
+                ", peasant='" + peasant + '\'' +
+                ", clientname='" + clientname + '\'' +
+                ", informNumber=" + informNumber +
+                ", saleNumber='" + saleNumber + '\'' +
+                ", productionMessage='" + productionMessage + '\'' +
+                ", taskQuantity=" + taskQuantity +
+                ", allorTime=" + allorTime +
+                ", allotState='" + allotState + '\'' +
+                ", issueState='" + issueState + '\'' +
+                ", accomplishState='" + accomplishState + '\'' +
+                ", dateInProduced=" + dateInProduced +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", deliveryTime=" + deliveryTime +
+                ", dateOfDelivery=" + dateOfDelivery +
+                ", outNumber='" + outNumber + '\'' +
+                ", starDate=" + starDate +
+                ", endDate=" + endDate +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 
     public Integer getId() {
         return id;
@@ -560,59 +642,4 @@ public class Storage {
         this.remark = remark;
     }
 
-    @Override
-    public String toString() {
-        return "Storage{" +
-                "id=" + id +
-                ", saleListProduct=" + saleListProduct +
-                ", jitaiProductionAllot=" + jitaiProductionAllot +
-                ", jiTai=" + jiTai +
-                ", saleList=" + saleList +
-                ", clerk=" + clerk +
-                ", name='" + name + '\'' +
-                ", model=" + model +
-                ", price=" + price +
-                ", length=" + length +
-                ", color='" + color + '\'' +
-                ", realitymodel=" + realitymodel +
-                ", realityprice=" + realityprice +
-                ", realityweight=" + realityweight +
-                ", num=" + num +
-                ", theoryweight=" + theoryweight +
-                ", oneweight=" + oneweight +
-                ", square=" + square +
-                ", numsquare=" + numsquare +
-                ", demand='" + demand + '\'' +
-                ", weightway='" + weightway + '\'' +
-                ", label='" + label + '\'' +
-                ", weight=" + weight +
-                ", dao='" + dao + '\'' +
-                ", brand='" + brand + '\'' +
-                ", pack='" + pack + '\'' +
-                ", letter='" + letter + '\'' +
-                ", patu='" + patu + '\'' +
-                ", wightset='" + wightset + '\'' +
-                ", state='" + state + '\'' +
-                ", sumwight=" + sumwight +
-                ", meter=" + meter +
-                ", peasant='" + peasant + '\'' +
-                ", clientname='" + clientname + '\'' +
-                ", informNumber=" + informNumber +
-                ", saleNumber='" + saleNumber + '\'' +
-                ", productionMessage='" + productionMessage + '\'' +
-                ", taskQuantity=" + taskQuantity +
-                ", allorTime=" + allorTime +
-                ", allotState='" + allotState + '\'' +
-                ", issueState='" + issueState + '\'' +
-                ", accomplishState='" + accomplishState + '\'' +
-                ", dateInProduced=" + dateInProduced +
-                ", serialNumber='" + serialNumber + '\'' +
-                ", deliveryTime=" + deliveryTime +
-                ", dateOfDelivery=" + dateOfDelivery +
-                ", outNumber='" + outNumber + '\'' +
-                ", starDate=" + starDate +
-                ", endDate=" + endDate +
-                ", remark='" + remark + '\'' +
-                '}';
-    }
 }

@@ -97,7 +97,7 @@ public class GroupAdminController {
 	 * @param q
 	 * @return
 	 */
-	@RequestMapping("/clerkList")
+	@RequestMapping("/groupList")
 	public List<Group> clerkList(String q) {
 		if (q == null) {
 			q = "";

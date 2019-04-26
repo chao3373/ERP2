@@ -113,10 +113,10 @@
 		<thead>
 			<th field="id" width="20" align="center">编号</th>
 			<th field="name" width="50" align="center">仓位名称</th>
-			<!-- <th field="entrepot.address" width="50" align="center">所属仓库</th>
+			<th field="entrepot.address" width="50" align="center">所属仓库</th>
 			<th field="space" width="50" align="center">仓位空间</th>
 			<th field="usespace" width="50" align="center">已用空间</th>
-			<th field="remain" width="50" align="center">剩余空间</th> -->
+			<th field="remain" width="50" align="center">剩余空间</th>
 		</thead>
 	</table>
 
@@ -139,7 +139,7 @@
 
 
 	<div id="dlg" class="easyui-dialog"
-		style="width: 350px; height: 150px; padding: 10px 20px" closed="true"
+		style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
 		buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
 		<form id="fm" method="post">
 			<table cellspacing="8px">
@@ -149,36 +149,36 @@
 						<input type="text" id="name" name="name"class="easyui-validatebox" required="true" />
 					</td>
 				</tr>
-				<!-- <tr>
-					<td>所属仓库：</td>
+				<tr>
+					<td>地址：</td>
 					<td>
 						<input type="text" id="address" name="address" class="easyui-validatebox"/>
 					</td>
 				</tr>
 				<tr>
-					<td>仓位空间：</td>
+					<td>负责人：</td>
 					<td>
 						<input type="text" id="man" name="man" class="easyui-validatebox"/>
 					</td>
 				</tr>
 				<tr>
-					<td>已用空间：</td>
+					<td>电话：</td>
 					<td>
 						<input type="text" id="tel" name="tel" class="easyui-validatebox"/>
 					</td>
 				</tr>
 				<tr>
-					<td>剩余空间：</td>
+					<td>手机：</td>
 					<td>
 						<input type="text" id="mobile" name="mobile" class="easyui-validatebox"/>
 					</td>
-				</tr> -->
-				<!-- <tr>
+				</tr>
+				<tr>
 					<td>备注：</td>
 					<td>
 						<input type="text" id="remark" name="remark" class="easyui-validatebox"/>
 					</td>
-				</tr> -->
+				</tr>
 			</table>
 		</form>
 	</div>

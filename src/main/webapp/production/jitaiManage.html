@@ -594,6 +594,10 @@
         var saleListProductId
 
         function weigh() {
+            if (!$("#banzu").val() || $("#staff").val()) {
+                $.messager.alert("系统提示","<span style='color: red'>未设置班组和人员信息</span>")
+                return;
+            }
             $("#printButton").show();
             $("#dg2").datagrid("selectRow", 0);
             if ($("#dg2").datagrid("getRows").length == 0) {
@@ -625,8 +629,9 @@
                                         jitaiProductionAllotId: jitaiProductionAllotId,
                                         producionProcessId: producionProcessId,
                                         jitaiId: jitaiId,
-                                        clerkName: clerkName
-                                    }, function (result) {
+                                        clerkName: clerkName,
+                                        group:$("#banzu").val()
+                                    }, function(result) {
                                         if (result.success) {
                                             // ddOpen();
                                             reload();
@@ -705,7 +710,7 @@
                         url += result.url;
                         url += "'/>";
                         tableString = "";
-                        tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 37px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='10' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                        tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
                         "</td>";
                         tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
                         if ($('#printWeight').is(':checked')) {
@@ -946,12 +951,12 @@
                 <td><input id="printLength" type="checkbox"/>打印剖刀&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printThickness" type="checkbox"/>打印客户&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printWeight" type="checkbox"/>打印重量&nbsp;&nbsp;&nbsp;</td>
-                <td>标签数：<input id="labelNumber" type="text"
+                <!--<td>标签数：<input id="labelNumber" type="text"
                                style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
                 <td>打包数量：<input id="packageNumber" type="text"
                                 style="width: 50px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </td>
+                </td>-->
             </tr>
         </table>
     </fieldset>
