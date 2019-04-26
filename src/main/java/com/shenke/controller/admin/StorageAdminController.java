@@ -184,4 +184,24 @@ public class StorageAdminController {
         map.put("rows", storageService.searchLiftMoney(saleNumber, location, jitai, productDate, clerk, group));
         return map;
     }
+
+    /**
+     * 根据id设置仓位信息
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
+    @RequestMapping("/setLocation")
+    public Map<String, Object> setLocation(String ids, Integer location) {
+        Map<String, Object> map = new HashMap<>();
+        String[] split = ids.split(",");
+        for (int i = 0; i < split.length; i++) {
+            storageService.setLocation(Integer.parseInt(split[i]), location);
+        }
+        map.put("success", true);
+        return map;
+    }
 }

@@ -152,6 +152,28 @@
 
         }
 
+        //设置仓位
+        function setLocation() {
+            if ($("#dg").datagrid("getSelections").length < 1) {
+                $.messager.alert("系统提示", "<span style='color: red'>请选择要设置仓位和记录！</span>");
+                return;
+            }
+            if (!$("#cang").combobox("getValue")) {
+                $.messager.alert("系统提示", "<span style='color: red'>请选择要设置仓位和记录！</span>");
+                return;
+            }
+            var rows = $("#dg").datagrid("getSelections");
+            var ids = [];
+            for (var i = 0; i < rows.length; i++) {
+                ids.push(rows[i].id);
+            }
+            var idsstr = ids.join(",");
+            $.post("/admin/storage/setLocation", {ids: idsstr, location: $("#cang").combobox("getValue")}, function (result) {
+                if (result.success) {
+                    $("#dg").datagrid("reload");
+                }
+            });
+        }
 
         $(document).ready(function () {
             loadData();
@@ -196,6 +218,15 @@
             <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
                                              iconCls="icon-cancel">清空</a>
 
+            </td>
+            <td></td>
+            <td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input
+                    class="easyui-combobox" id="cang" name="location"
+                    style="width: 100px"
+                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
+            </td>
+            <td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"
+                                                         iconCls="icon-ok">确定</a>
             </td>
         </tr>
         <tr>

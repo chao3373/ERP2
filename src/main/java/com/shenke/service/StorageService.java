@@ -115,4 +115,6 @@ public interface StorageService {
     public List<JieSuan> FindByGroup(String client);
 
     List<Storage> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group);
+
+    public void setLocation(Integer parseInt, Integer location);
 }

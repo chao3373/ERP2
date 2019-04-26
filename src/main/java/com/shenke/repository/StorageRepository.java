@@ -109,4 +109,16 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Query( value = "select name,count(*) from t_storage where clientname =?1  group by name" , nativeQuery = true)
     public List<Object[]> FindByGroup(String client);
+
+    /**
+     * 根据id设置仓位信息
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+    @Modifying
+    @Query(value = "update t_storage set location_id = ?2 where id = ?1", nativeQuery = true)
+    public void setLocation(Integer parseInt, Integer location);
 }

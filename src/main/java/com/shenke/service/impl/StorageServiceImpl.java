@@ -232,4 +232,9 @@ public class StorageServiceImpl implements StorageService {
         });
     }
 
+    @Override
+    public void setLocation(Integer parseInt, Integer location) {
+        storageRepository.setLocation(parseInt, location);
+    }
+
 }
