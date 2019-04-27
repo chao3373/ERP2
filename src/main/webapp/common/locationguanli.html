@@ -181,13 +181,14 @@
 
         //打印
         function printdg() {
-            $("#dg").datagrid("appendRow", {
+          	$("#dg").datagrid("appendRow", {
                 saleNumber: '总计',
                 dateInProduced: $("#dg").datagrid("getRows").length
             });
-            window.print();
+            //window.print();
            // CreateFormPage("datagrid", $("#dg"));
-            $("#dg").datagrid("reload");
+            $("#dg").datagrid("reload"); 
+        	CreateFormPage("datagrid", $("#dg"));
         }
 
         var tableString;
@@ -195,7 +196,7 @@
         // printDatagrid 要打印的datagrid
         function CreateFormPage(strPrintName, printDatagrid) {
             tableString = "";
-            tableString += "<h1 style='font-size: 66px;text-align: center;'>点货单</h1>";
+            tableString += "<h3 style='font-size: 25px;text-align: center;'>点货单</h3>";
             tableString += '<table cellspacing="0" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
@@ -239,7 +240,7 @@
                                     }
                                 }
                             }
-                            for (var i = 0; i < columns[index].length; ++i) {
+                            for (var i = 1; i < columns[index].length; ++i) {
                                 if (!columns[index][i].hidden) {
                                     tableString += '\n<th width="'
                                         + columns[index][i].width + '"';
@@ -287,16 +288,30 @@
                         tableString += ' style="text-align:' + nl[j].a + ';"';
                     }
                     tableString += '>';
+                    
+                    
+                    
                     if (e + 2 == nl[j].f.length) {
                         tableString += rows[i][nl[j].f.substring(0, e)];
+                        console.log(tableString);
                     } else {
-                        var tdStr = rows[i][nl[j].f];
+                    	var tdStr;
+                    	if(rows[i][nl[j].f]=="[object Object]"){
+                    		tdStr = rows[i][nl[j].f].name;
+                    	}
+                    	else{
+                    		tdStr = rows[i][nl[j].f];
+                    	}
+                        /* var tdStr = rows[i][nl[j].f];*/
                         if (tdStr == null) {
                             tdStr = "";
-                        }
+                        } 
                         console.log(tdStr);
                         tableString += tdStr;
-                    }
+                    } 
+                    
+                    
+                    
                     tableString += '</td>';
                 });
                 tableString += '\n</tr>';

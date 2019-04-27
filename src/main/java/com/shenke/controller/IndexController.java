@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.shenke.repository.SaleListProductRepository;
+import com.shenke.util.QRCode;
 import com.shenke.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -102,11 +103,13 @@ public class IndexController {
 	// 根据数据库中的信息输出二维码
 	@ResponseBody
 	@RequestMapping("/static/erweima")
-	public Map<String, Object> erweima(String url) throws Exception {
+	public Map<String, Object> erweima(HttpServletRequest request, String url) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		String urlInfo = this.getURLInfo(url, "utf-8");
-		System.out.println("图片路径：");
-		System.out.println(urlInfo);
+		System.out.println(url);
+		String urlInfo = QRCode.getQRCode(request, url);
+//		String urlInfo = this.getURLInfo(url, "utf-8");
+//		System.out.println("图片路径：");
+//		System.out.println(urlInfo);
 		map.put("success", true);
 		map.put("url", urlInfo);
 		return map;

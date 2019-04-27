@@ -65,7 +65,7 @@ canvas {
 					function(data) {
 						if(data.success) {
 							if(data.rolesSize==1) {
-								var roleId = result.roleList[0].id;
+								var roleId = data.roles[0].id;
 								$.post(
 										"/user/saveRole",
 										{

@@ -594,8 +594,8 @@
         var saleListProductId
 
         function weigh() {
-            if (!$("#banzu").val() || $("#staff").val()) {
-                $.messager.alert("系统提示","<span style='color: red'>未设置班组和人员信息</span>")
+            if (!$("#banzu").val() || !$("#staff").val()) {
+                $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
                 return;
             }
             $("#printButton").show();
@@ -630,8 +630,8 @@
                                         producionProcessId: producionProcessId,
                                         jitaiId: jitaiId,
                                         clerkName: clerkName,
-                                        group:$("#banzu").val()
-                                    }, function(result) {
+                                        group: $("#banzu").val()
+                                    }, function (result) {
                                         if (result.success) {
                                             // ddOpen();
                                             reload();
@@ -685,7 +685,7 @@
         var url = "https://cli.im/api/qrcode/code?text=";
 
         function print() {
-            url = "https://cli.im/api/qrcode/code?text=";
+            url = "";
             $.post("/admin/storage/selectByMaxId", function (result) {
                 if (result.success) {
                     var row = result.row;
@@ -699,16 +699,14 @@
                         }
                         json.id = j + json.id;
                     }
-                    for (var key in json) {
-                        url = url + key + ":" + json[key];
-                    }
-
+                    url = "id:" + json.id;
                     $.post("/static/erweima", {
                         url: url
                     }, function (result) {
-                        var url = "<img style='width:auto;height: 100%;' src='";
-                        url += result.url;
-                        url += "'/>";
+                       // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                        var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                        // url += result.url;
+                        // url += "'/>";
                         tableString = "";
                         tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
                         "</td>";
@@ -726,8 +724,8 @@
                             tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
                         }
                         tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
-                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台："+$("#jitaiName").val() +"</td></tr>";
-                        tableString += "<tr><td>班组：" + $("#banzu").val() + "</td><td>质检："+$("#staff").val() +"</td></tr>";
+                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + $("#jitaiName").val() + "</td></tr>";
+                        tableString += "<tr><td>班组：" + $("#banzu").val() + "</td><td>质检：" + $("#staff").val() + "</td></tr>";
                         Date.prototype.format = function (format) {
                             var o = {
                                 "M+": this.getMonth() + 1,
