@@ -14,6 +14,9 @@ public class MyWebAppConfiguration extends WebMvcConfigurerAdapter{
     * @return:
     * @Author: Andy
     * @Date:
+     *
+     *
+     *
     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
