@@ -16,41 +16,129 @@
     <script type="text/javascript" src="/static/js/date.js"></script>
     <script type="text/javascript">
         //点击确定按钮
-        function loaddg(){
+        function loaddg() {
             addSelect();
-            $.post("/admin/storage/detail",json,function(result){
+            $.post("/admin/storage/detail", json, function (result) {
                 if (result.success) {
-
+                    $("#dg").datagrid("loadData", result.rows);
                 }
 
             });
         }
+
         //添加选择条件
-        var json= {};
-        function addSelect(){
-            if ($("#saleDate").datebox("getText")) {
-                json.date = $("#saleDate").datebox("getText");
+        var json = {};
+
+        function addSelect() {
+            json = {};
+            if ($("#saleDate").datebox("getValue")) {
+                json.date = $("#saleDate").datebox("getValue");
             }
-            if ($("#client").combobox("getValue")) {
-                json.client = $("#client").combobox("getValue");
+            if ($("#client").combobox("getText")) {
+                json.client = $("#client").combobox("getText");
             }
-            console.log(json);
+            if ($("#peasant").val()) {
+                json.peasant = $("#peasant").val();
+            }
+            if ($("#product").combobox("getText")) {
+                json.product = $("#product").combobox("getText");
+            }
         }
-       $(document).ready(function() {
+
+        //清空
+        function resett() {
+            $("#client").combobox("reset");
+            $("#saleDate").datebox("reset");
+            $("#peasant").val("");
+            $("#product").combobox("reset");
+            $("#dg").datagrid("reload");
+        }
+
+        //设置排序
+        function orderBy(order) {
+            json.order = "";
+            json.order = order;
+
+            $.ajax({
+                type:"POST",
+                async:false,
+                url:"/admin/storage/detail",
+                data:json,
+                success:function (result) {
+                    if (result.success) {
+                        $("#dg").datagrid("loadData", result.rows);
+                    }
+                }
+            });
+
+            var rows = $("#dg").datagrid("getRows");
+            var rsArr = [];
+            var rw = {};
+            var od = rows[0]["peasant"];
+            var sum = 0;
+            var count = 0;
+            var index;
+            for (var i = 0; i < rows.length; i++) {
+                index = i;
+                if (od == rows[i]["peasant"]) {
+                    count++;
+                    sum+=Number(rows[i]["realityweight"]);
+                    if (i == rows.length - 1) {
+                        rw.index = index + 1;
+                        rw.count = count;
+                        rw.sum = sum;
+                        rsArr.push(rw);
+                        rw = {};
+                        od = rows[i]["peasant"];
+                        sum = 0;
+                        count = 0;
+                    }
+                } else {
+                    rw.index = index;
+                    rw.count = count;
+                    rw.sum = sum;
+                    rsArr.push(rw);
+                    rw = {};
+                    od = rows[i]["peasant"];
+                    sum = 0;
+                    count = 0;
+                }
+            }
+            for (var i = rsArr.length - 1; i >= 0; i--) {
+                console.log(rsArr[i]);
+                $("#dg").datagrid("insertRow", {
+                    index: rsArr[i]["index"],
+                    row:{
+                        clientname:"小计",
+                        peasant:"",
+                        saleNumber:"",
+                        name:"",
+                        model:"",
+                        length:"",
+                        price:"",
+                        realityweight:rsArr[i]["sum"],
+                        deliveryTime:"总数量：" + rsArr[i]["count"]
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
             //加载dg的列
-           $("#dg").datagrid({
-               columns: [[
-                   {field: 'code',title:'订单号',width:100,align:'center'},
-                   {field:'name',title:'产品名称',width:100,align:'center'},
-                   {field:'price',title:'客户名称',width:100,align:'center'},
-                   {field:'price',title:'农户名称',width:100,align:'center'},
-                   {field:'price',title:'幅宽m',width:100,align:'center'},
-                   {field:'price',title:'长度m',width:100,align:'center'},
-                   {field:'price',title:'厚度mm',width:100,align:'center'},
-                   {field:'price',title:'重量kg',width:100,align:'center'}
-               ]]
-           });
-       });
+            $("#dg").datagrid({
+                columns: [[
+                    {field: 'clientname', title: '购货单位', width: 100, align: 'center'},
+                    {field: 'peasant', title: '农户名称', width: 100, align: 'center'},
+                    {field: 'saleNumber', title: '订单号', width: 150, align: 'center'},
+                    {field: 'name', title: '产品名称', width: 200, align: 'center'},
+                    {field: 'model', title: '幅宽m', width: 100, align: 'center'},
+                    {field: 'length', title: '长度m', width: 100, align: 'center'},
+                    {field: 'price', title: '厚度mm', width: 100, align: 'center'},
+                    {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
+                    {field: 'deliveryTime', title: '出库时间', width: 100, align: 'center'},
+                ]]
+            });
+        });
     </script>
 </head>
 <body class="easyui-layout">
@@ -58,21 +146,31 @@
      style="padding: 20px 10px 0 10px; border: 0px;">
     <fieldset style="border-color: #E7F0FF">
         <legend>
-            产品出库明细表
+            查询条件
         </legend>
         <form id="fm" method="post">
             <table cellspacing="8px">
                 <tr>
-                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text" id="saleDate" name="saleDate"
-                                                          class="easyui-datebox"
-                                                          demandd="true" data-options="editable:false" size="10"/>
-                    </td>
                     <td>&nbsp;&nbsp;购货单位：<input class="easyui-combobox" id="client" style="width: 100px" required="true"
                                                 demandd="true"
                                                 data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
+                    <td>出库时间：<input type="text" id="saleDate" name="saleDate"
+                                    class="easyui-datebox"
+                                    demandd="true" data-options="editable:false" size="10"/>
+                    </td>
+                    <td>农户名称： <input id="peasant"
+                                     name="peasant" style="width: 100px"/></td>
+                    <td>产品名称： <input id="product"
+                                     name="product" style="width: 100px" class="easyui-combobox"
+                                     url="/admin/product/productList"
+                                     data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name'">
+                    </td>
                     <td>
-                        <a class="easyui-linkbutton" iconCls="icon-ok" href="javascript:loaddg()">确定</a>
+                        <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:loaddg()">查询</a>
+                    </td>
+                    <td>
+                        <a class="easyui-linkbutton" iconCls="icon-cancel" href="javascript:resett()">清空</a>
                     </td>
                 </tr>
             </table>
@@ -81,8 +179,7 @@
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-           singleSelect="true" fit="true" toolbar="#tb">
-
+           singleSelect="true" fit="true" toolbar="#tb" url="/admin/storage/truck?state=装车">
     </table>
 
     <div id="tb">
@@ -90,6 +187,16 @@
             <a href="javascript:printdg()" ;
                class="easyui-linkbutton"
                iconCls="icon-print" plain="true">打印</a>
+            <a href="javascript:orderBy('clientname')" ;
+               class="easyui-linkbutton" plain="true">客户</a>
+            <a href="javascript:orderBy('model')" ;
+               class="easyui-linkbutton" plain="true">幅宽</a>
+            <a href="javascript:orderBy('length')" ;
+               class="easyui-linkbutton" plain="true">长度</a>
+            <a href="javascript:orderBy('price')" ;
+               class="easyui-linkbutton" plain="true">厚度</a>
+            <a href="javascript:orderBy('realityweight')" ;
+               class="easyui-linkbutton" plain="true">重量</a>
         </div>
     </div>
 </div>

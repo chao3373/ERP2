@@ -58,7 +58,7 @@ public class SaleListAdminController {
 	 */
 	@RequestMapping("/genCode")
 	public String genCode() throws Exception {
-		StringBuffer code = new StringBuffer("AM");
+		StringBuffer code = new StringBuffer("XS");
 		code.append(DateUtil.getCurrentDateStr());
 		String saleNumber = saleListService.getTodayMaxSaleNumber();
 		if (saleNumber != null) {
@@ -229,5 +229,19 @@ public class SaleListAdminController {
 		map.put("success", true);
 		map.put("arr", saleListNo);
 		return map;
+	}
+
+	/**
+	 *	修改订单中的信息
+	 *
+	 * @param dao
+	 * @return
+	 */
+	@RequestMapping("/saveTwo")
+	public Map<String, Object> saveTwo(SaleList saleList) {
+		Map<String, Object> resultMap = new HashMap<>();
+		saleListService.saveTwo(saleList);
+		resultMap.put("success", true);
+		return resultMap;
 	}
 }

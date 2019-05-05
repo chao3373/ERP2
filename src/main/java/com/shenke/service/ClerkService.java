@@ -61,5 +61,15 @@ public interface ClerkService {
 	 * @return
 	 */
 	public List<Clerk> findByName(String string);
+
+	/**
+	 * 模糊查询所有生产员工
+	* @Description:
+	* @Param:
+	* @return:
+	* @Author: Andy
+	* @Date:
+	*/
+	public List<Clerk> findByProName(String name);
 	
 }

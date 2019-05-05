@@ -29,8 +29,17 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
 	 * @return
 	 * 
 	 */
-	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1", nativeQuery=true)
+	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = 2", nativeQuery=true)
 	public List<Clerk> findByName(String string);
+
+	/**
+	 * 下拉框模糊查询生产部人员
+	 * @param string
+	 * @return
+	 *
+	 */
+	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = 3", nativeQuery=true)
+	public List<Clerk> findByProName(String string);
 
 	/**
 	 * 根据名称查询员工信息

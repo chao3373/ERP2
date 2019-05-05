@@ -64,4 +64,5 @@ public interface SaleListService {
 
     public void saveOne(SaleList saleList);
 
+    public void saveTwo(SaleList saleList);
 }

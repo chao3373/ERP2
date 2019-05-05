@@ -1,7 +1,9 @@
 package com.shenke.service;
 
+import java.awt.*;
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.shenke.entity.Clerk;
 import com.shenke.entity.JieSuan;
@@ -114,7 +116,15 @@ public interface StorageService {
      */
     public List<JieSuan> FindByGroup(String client);
 
-    List<Storage> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group);
+    List<Storage> searchLiftMoney(Map<String, Object> map);
 
     public void setLocation(Integer parseInt, Integer location);
+
+    public void save(Storage storage);
+
+    public void save(Storage storage, Integer num);
+
+    public List<Storage> findByState(String state);
+
+    public List<Storage> detail(Map<String, Object> map1);
 }

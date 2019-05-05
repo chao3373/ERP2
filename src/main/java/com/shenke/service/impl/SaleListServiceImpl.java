@@ -109,4 +109,9 @@ public class SaleListServiceImpl implements SaleListService {
 	public void saveOne(SaleList saleList) {
 		saleListRepository.save(saleList);
 	}
+
+    @Override
+    public void saveTwo(SaleList saleList) {
+
+    }
 }

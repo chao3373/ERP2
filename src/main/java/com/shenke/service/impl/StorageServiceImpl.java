@@ -1,9 +1,8 @@
 package com.shenke.service.impl;
 
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,6 +12,7 @@ import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +53,7 @@ public class StorageServiceImpl implements StorageService {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
         JitaiProductionAllot jitaiProductionAllot = jitaiProductionAllotRepository.findOne(jitaiProductionAllotId);
         JiTai jiTai = jiTaiRepository.findOne(jitaiId);
-         Integer count = saleListProduct.getAccomplishNumber();
+        Integer count = saleListProduct.getAccomplishNumber();
         Clerk clerk = clerkRepository.findByNam(clerkName);
         if (count == null || count == 0) {
             count = 1;
@@ -187,7 +187,7 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String getTodayMaxOutNumber() {
         // TODO Auto-generated method stub
-        return  storageRepository.getTodayMaxOutNumber();
+        return storageRepository.getTodayMaxOutNumber();
     }
 
     @Override
@@ -199,32 +199,52 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<Storage> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group) {
+    public List<Storage> searchLiftMoney(Map<String, Object> map) {
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty(saleNumber)) {
-                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), saleNumber));
+                if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), (String) map.get("saleNumber")));
                 }
-                if (location!=null) {
-                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), location));
+                if (map.get("location") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), map.get("location")));
                 }
-                if (jitai!=null) {
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), jitai));
+                if (map.get("jitai") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
                 }
-                if (StringUtil.isNotEmpty(productDate)) {
-                    try {
-                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyyy-MM-dd").parse(productDate)));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
+                    predicate.getExpressions().add(cb.like(root.get("dateInProduced"), "%" + map.get("productDate") + "%"));
                 }
-                if (clerk!=null) {
-                    predicate.getExpressions().add(cb.equal(root.get("clerk"), clerk));
+                if (map.get("clerk") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), map.get("clerk")));
                 }
-                if (group!=null) {
-                    predicate.getExpressions().add(cb.equal(root.get("group"), group));
+                if (map.get("group") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("group").get("id"), map.get("group")));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("state"))) {
+                    predicate.getExpressions().add(cb.like(root.get("state"), "%" + map.get("state") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("name"))) {
+                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("name") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("client"))) {
+                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("mode"))) {
+                    predicate.getExpressions().add(cb.like(root.get("model"), "%" + map.get("mode") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("price"))) {
+                    predicate.getExpressions().add(cb.like(root.get("price"), "%" + map.get("price") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("color"))) {
+                    predicate.getExpressions().add(cb.like(root.get("color"), "%" + map.get("color") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("address"))) {
+                    predicate.getExpressions().add(cb.like(root.get("saleList").get("address"), "%" + map.get("address") + "%"));
                 }
                 predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
                 return predicate;
@@ -235,6 +255,90 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void setLocation(Integer parseInt, Integer location) {
         storageRepository.setLocation(parseInt, location);
+    }
+
+    @Override
+    public void save(Storage storage) {
+        storageRepository.save(storage);
+    }
+
+    @Override
+    public void save(Storage storage, Integer num) {
+        if (num != null) {
+            for (int i = 0; i < num; i++) {
+                Storage storage1 = new Storage();
+                storage1.setName(storage.getName());
+                storage1.setModel(storage.getModel());
+                storage1.setPrice(storage.getPrice());
+                storage1.setLength(storage.getLength());
+                storage1.setColor(storage.getColor());
+                storage1.setWeight(storage.getWeight());
+                storage1.setDao(storage.getDao());
+                storage1.setBrand(storage.getBrand());
+                storage1.setPack(storage.getPack());
+                storage1.setLetter(storage.getLetter());
+                storage1.setPatu(storage.getPatu());
+                storage1.setMeter(storage.getMeter());
+                storage1.setClientname(storage.getClientname());
+                storage1.setState(storage.getState());
+                storage1.setLocation(storage.getLocation());
+                storageRepository.save(storage1);
+            }
+        }
+    }
+
+    @Override
+    public List<Storage> findByState(String state) {
+        return storageRepository.findByState(state);
+    }
+
+    @Override
+    public List<Storage> detail(Map<String, Object> map) {
+        if (map.get("order")!=null && map.get("order") != ""){
+            return storageRepository.findAll(new Specification<Storage>() {
+                public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    Predicate predicate = cb.conjunction();
+                    if (map.get("date") != null) {
+                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("client"))) {
+                        predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+                        predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("product"))) {
+                        predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+                    }
+
+                    predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+
+                    return predicate;
+                }
+            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
+        }
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (map.get("date") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("client"))) {
+                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("product"))) {
+                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+                }
+
+                predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+
+                return predicate;
+            }
+        });
     }
 
 }

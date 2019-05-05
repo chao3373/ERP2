@@ -49,7 +49,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @Query(value = "select * from t_sale_list_product where state like '%审核通过%'", nativeQuery = true)
      * public List<SaleListProduct> listProductSucceed();
      */
-    @Query(value = "select * from t_storage where state like '%生产完成%'", nativeQuery = true)
+    @Query(value = "select * from t_storage where state like '%生产完成%' or state like '%提货%'", nativeQuery = true)
     public List<Storage> outSuccess();
 
     /**
@@ -121,4 +121,15 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set location_id = ?2 where id = ?1", nativeQuery = true)
     public void setLocation(Integer parseInt, Integer location);
+
+    /**
+     * 查询所有已经装车的商品
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+    @Query(value = "select * from t_storage where state like ?1", nativeQuery = true)
+    public List<Storage> findByState(String state);
 }

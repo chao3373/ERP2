@@ -105,5 +105,20 @@ public class ClerkAdminController {
 		}
 		return clerkService.findByName("%" + q + "%");
 	}
+
+	/**
+	 * 下拉框模糊查询生产员工
+	 *
+	 * @param q
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/clerkProList")
+	public List<Clerk> clerkProList(String q) throws Exception {
+		if (q == null) {
+			q = "";
+		}
+		return clerkService.findByProName("%" + q + "%");
+	}
 	
 }

@@ -1,6 +1,8 @@
 package com.shenke.controller.admin;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,9 +10,12 @@ import javax.annotation.Resource;
 
 import com.shenke.entity.JieSuan;
 import com.shenke.entity.Log;
+import com.shenke.entity.Storage;
+import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.shenke.service.StorageService;
@@ -30,6 +35,9 @@ public class StorageAdminController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private SaleListProductRepository saleListProductRepository;
 
     /**
      * 入库
@@ -73,6 +81,25 @@ public class StorageAdminController {
             int id = Integer.parseInt(idArr[i]);
             logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
             storageService.outStorage(id, new Date(System.currentTimeMillis()));
+        }
+        map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 手动出库
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+    @RequestMapping("/outKu")
+    public Map<String, Object> out(String ids) {
+        Map<String, Object> map = new HashMap<>();
+        String[] idArr = ids.split(",");
+        for (int i = 0; i < idArr.length; i++) {
+            storageService.updateStateById("装车",Integer.parseInt(idArr[i]), new Date(System.currentTimeMillis()));
         }
         map.put("success", true);
         return map;
@@ -146,7 +173,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/genCode")
     public String genCode() throws Exception {
-        StringBuffer code = new StringBuffer("AMCK");
+        StringBuffer code = new StringBuffer("CK");
         code.append(DateUtil.getCurrentDateStr());
         String saleNumber = storageService.getTodayMaxOutNumber();
         if (saleNumber != null) {
@@ -177,11 +204,27 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group) {
-        System.out.println(saleNumber + "=====" + location + "=====" + jitai + "=====" + productDate + "=====" + clerk + "=====" + group);
+    public Map<String, Object> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group, String peasant, String state, String name, String client, String mode, String price, String color, String address) {
         Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+
+        map1.put("saleNumber", saleNumber);
+        map1.put("location", location);
+        map1.put("jitai", jitai);
+        map1.put("productDate", productDate);
+        map1.put("clerk", clerk);
+        map1.put("group", group);
+        map1.put("peasant", peasant);
+        map1.put("state", state);
+        map1.put("name", name);
+        map1.put("client", client);
+        map1.put("mode", mode);
+        map1.put("price", price);
+        map1.put("color", color);
+        map1.put("address", address);
+
         map.put("success", true);
-        map.put("rows", storageService.searchLiftMoney(saleNumber, location, jitai, productDate, clerk, group));
+        map.put("rows", storageService.searchLiftMoney(map1));
         return map;
     }
 
@@ -202,6 +245,73 @@ public class StorageAdminController {
             storageService.setLocation(Integer.parseInt(split[i]), location);
         }
         map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 手动添加库存信息
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
+    @RequestMapping("/saveAdd")
+    public Map<String, Object> saveAdd(Storage storage) {
+        System.out.println(storage);
+        System.out.println(storage.getNum());
+        storageService.save(storage, storage.getNum());
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 查询所有已经装车的商品
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+    @RequestMapping("/truck")
+    public Map<String, Object> truck(String state) {
+        Map<String, Object> map = new HashMap<>();
+        if (state == null) {
+            state = "%%";
+        } else {
+            state = "%" + state + "%";
+        }
+        map.put("rows", storageService.findByState(state));
+        System.out.println(state);
+        return map;
+    }
+
+    /**
+     * 按条件查询出库明细表
+    * @Description:
+    * @Param:
+    * @return:
+    * @Author: Andy
+    * @Date:
+    */
+    @RequestMapping("/detail")
+    public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+        if (StringUtil.isNotEmpty(date)) {
+            map1.put("date", new SimpleDateFormat("yyyy-MM-dd").parse(date));
+        } else {
+            map1.put("date", null);
+        }
+        map1.put("client", client);
+        map1.put("peasant", peasant);
+        map1.put("product", product);
+        map1.put("order", order);
+
+        map.put("success", true);
+        map.put("rows", storageService.detail(map1));
         return map;
     }
 }

@@ -38,7 +38,7 @@ public class Storage {
 
     @ManyToOne
     @JoinColumn(name = "locationId")
-    private Location location;
+    private Location location;//仓位
 
     @ManyToOne
     @JoinColumn(name = "groupId")

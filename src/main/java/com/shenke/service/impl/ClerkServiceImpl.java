@@ -97,5 +97,9 @@ public class ClerkServiceImpl implements ClerkService {
 	public List<Clerk> findByName(String string) {
 		return clerkRepository.findByName(string);
 	}
-	
+
+	@Override
+	public List<Clerk> findByProName(String string) {
+		return clerkRepository.findByProName(string);
+	}
 }
