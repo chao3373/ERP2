@@ -1,5 +1,10 @@
 package com.shenke.util;
 
+import com.shenke.service.StorageService;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+
 /**
  * 字符串工具类
  * 
@@ -7,6 +12,9 @@ package com.shenke.util;
  *
  */
 public class StringUtil {
+
+	@Resource
+	private StorageService storageService;
 
 	/**
 	 * 判断是否为空
@@ -51,5 +59,4 @@ public class StringUtil {
 		}
 		return codeNum;
 	}
-
 }

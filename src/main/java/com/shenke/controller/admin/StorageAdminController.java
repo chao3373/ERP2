@@ -164,26 +164,6 @@ public class StorageAdminController {
         return map;
     }
 
-
-    /**
-     * 获取出库单号
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/genCode")
-    public String genCode() throws Exception {
-        StringBuffer code = new StringBuffer("CK");
-        code.append(DateUtil.getCurrentDateStr());
-        String saleNumber = storageService.getTodayMaxOutNumber();
-        if (saleNumber != null) {
-            code.append(StringUtil.formatCode(saleNumber));
-        } else {
-            code.append("00001");
-        }
-        return code.toString();
-    }
-
     @RequestMapping("/findbygroup")
     public Map<String, Object> FindByGroup(String client) {
         Map<String, Object> map = new HashMap<>();

@@ -127,4 +127,6 @@ public interface StorageService {
     public List<Storage> findByState(String state);
 
     public List<Storage> detail(Map<String, Object> map1);
+
+    public void updateOutNumberById(Integer parseInt) throws Exception;
 }

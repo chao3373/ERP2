@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import com.shenke.entity.*;
 import com.shenke.repository.*;
+import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
 import org.springframework.data.domain.Sort;
@@ -339,6 +340,30 @@ public class StorageServiceImpl implements StorageService {
                 return predicate;
             }
         });
+    }
+
+    @Override
+    public void updateOutNumberById(Integer parseInt) throws Exception {
+        storageRepository.updateOutNumberById(this.genCode(),parseInt);
+    }
+
+    /**
+     * @Description: 生成出库单号
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
+    public String genCode() throws Exception {
+        StringBuffer code = new StringBuffer("CK");
+        code.append(DateUtil.getCurrentDateStr());
+        String saleNumber = this.getTodayMaxOutNumber();
+        if (saleNumber != null) {
+            code.append(StringUtil.formatCode(saleNumber));
+        } else {
+            code.append("00001");
+        }
+        return code.toString();
     }
 
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+
+import com.shenke.util.StringUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +63,6 @@ public class PlantAdminController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/save")
-	@RequiresPermissions(value = "厂商设置")
 	public Map<String, Object> save(Plant plant) throws Exception {
 		Map<String, Object> resultMap = new HashMap<>();
 		if (plant.getId() != null) {
@@ -90,6 +91,21 @@ public class PlantAdminController {
 		plantService.deleteById(id);
 		resultMap.put("success", true);
 		return resultMap;
+	}
+
+	/** 
+	* @Description: 模糊查询所有厂商 
+	* @Param:
+	* @return:  
+	* @Author: Andy
+	* @Date:  
+	*/
+	@RequestMapping("/plantList")
+	public List<Plant> plantList(String q) {
+		if (StringUtil.isEmpty(q)) {
+			q = "";
+		}
+		return plantService.findByName("%" + q + "%");
 	}
 
 }

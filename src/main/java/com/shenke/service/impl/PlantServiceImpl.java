@@ -92,4 +92,9 @@ public class PlantServiceImpl implements PlantService {
 		plantRepository.delete(id);
 	}
 
+    @Override
+    public List<Plant> findByName(String s) {
+        return plantRepository.findByName(s);
+    }
+
 }

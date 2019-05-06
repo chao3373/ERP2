@@ -61,4 +61,13 @@ public interface PlantService {
 	 * @param id
 	 */
 	public void deleteById(Integer id);
+
+	/** 
+	* @Description: 模糊查询所有厂商 
+	* @Param:
+	* @return:  
+	* @Author: Andy
+	* @Date:  
+	*/
+    public List<Plant> findByName(String s);
 }
