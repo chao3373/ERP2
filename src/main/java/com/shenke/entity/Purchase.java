@@ -2,6 +2,7 @@ package com.shenke.entity;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 /**
  * @Description: 采购单实体类
@@ -18,26 +19,18 @@ public class Purchase {
     @GeneratedValue
     private Integer id;
 
-    @Column(length = 50)
-    private String PurchaseNumber;//采购单号
+    @ManyToOne
+    @Column(name = "plantId")
+    private Plant plant;//供货商
 
     @Column(length = 50)
-    private String supplier;//供货商
+    private String PurchaseNumber;//采购单号
 
     @Column(length = 50)
     private String principal;//负责人
 
     @Column(length = 50)
     private String PurchasingAgent;//采购人
-
-    @Column(nullable = true)
-    private Double weight;//重量
-
-    @Column(nullable = true)
-    private Double price;//价格
-
-    @Column(nullable = true)
-    private Double money;//金额
 
     private Date purchaseDate;//采购日期
 
@@ -66,23 +59,32 @@ public class Purchase {
     @Column(nullable = true)
     private Double arrearageMoney;//未付金额
 
+    @Column(nullable = true)
+    private Double sumMoney;//总金额
+
+    @Column(nullable = true)
+    private Double sumWeight;//总重量
+
+    @Column(length = 500)
+    private String remark;//备注
+
     @Transient
     private Date startDate;//开始日期，查询用
 
     @Transient
     private Date endDate;//结束日期，查询用
 
+    @Transient
+    private List<PurchaseGoods>  purchaseGoodsList = null;//该采购单中采购商品的集合
+
     @Override
     public String toString() {
         return "Purchase{" +
                 "id=" + id +
+                ", plant=" + plant +
                 ", PurchaseNumber='" + PurchaseNumber + '\'' +
-                ", supplier='" + supplier + '\'' +
                 ", principal='" + principal + '\'' +
                 ", PurchasingAgent='" + PurchasingAgent + '\'' +
-                ", weight=" + weight +
-                ", price=" + price +
-                ", money=" + money +
                 ", purchaseDate=" + purchaseDate +
                 ", outDate=" + outDate +
                 ", carNumber='" + carNumber + '\'' +
@@ -93,9 +95,45 @@ public class Purchase {
                 ", paymentDate=" + paymentDate +
                 ", paymentMoney=" + paymentMoney +
                 ", arrearageMoney=" + arrearageMoney +
+                ", sumMoney=" + sumMoney +
+                ", sumWeight=" + sumWeight +
+                ", remark='" + remark + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", purchaseGoodsList=" + purchaseGoodsList +
                 '}';
+    }
+
+    public Plant getPlant() {
+        return plant;
+    }
+
+    public void setPlant(Plant plant) {
+        this.plant = plant;
+    }
+
+    public Double getSumWeight() {
+        return sumWeight;
+    }
+
+    public void setSumWeight(Double sumWeight) {
+        this.sumWeight = sumWeight;
+    }
+
+    public List<PurchaseGoods> getPurchaseGoodsList() {
+        return purchaseGoodsList;
+    }
+
+    public void setPurchaseGoodsList(List<PurchaseGoods> purchaseGoodsList) {
+        this.purchaseGoodsList = purchaseGoodsList;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Integer getId() {
@@ -114,14 +152,6 @@ public class Purchase {
         PurchaseNumber = purchaseNumber;
     }
 
-    public String getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
-    }
-
     public String getPrincipal() {
         return principal;
     }
@@ -138,28 +168,12 @@ public class Purchase {
         PurchasingAgent = purchasingAgent;
     }
 
-    public Double getWeight() {
-        return weight;
+    public Double getSumMoney() {
+        return sumMoney;
     }
 
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Double getMoney() {
-        return money;
-    }
-
-    public void setMoney(Double money) {
-        this.money = money;
+    public void setSumMoney(Double sumMoney) {
+        this.sumMoney = sumMoney;
     }
 
     public Date getPurchaseDate() {

@@ -49,9 +49,9 @@
    $(document).ready(
       function() {
          window.setInterval("showTime()", 1000);
-         $("#userInfo").load("/user/loadUserInfo"); // 加载用户信息
+//      加载用户信息
          var content = "<iframe frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/common/index.html'></iframe>";
-         
+		  $("#userInfo").load("/user/loadUserInfo"); //
          $("#tabs").tabs("add", {
 	        title : "首页",
 	        iconCls : "menu-25",
