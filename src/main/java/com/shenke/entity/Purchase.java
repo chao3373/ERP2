@@ -20,7 +20,7 @@ public class Purchase {
     private Integer id;
 
     @ManyToOne
-    @Column(name = "plantId")
+    @JoinColumn(name = "plantId")
     private Plant plant;//供货商
 
     @Column(length = 50)

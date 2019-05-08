@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>采购入库</title>
-    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
     <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
     <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
@@ -113,28 +113,28 @@
         }
 
         //确认修改
-        function addGood2(){
+        function addGood2() {
             var row = $("#dg").datagrid("getSelected");
             var index = $("#dg").datagrid("getRowIndex", row);
-            $("#dg").datagrid("updateRow",{
-               index: index,
-               row: {
-                   name: $("#name2").val(),
-                   weight: Number($("#weight2").val()).toFixed(2),
-                   price: Number($("#price2").val()).toFixed(2),
-                   money: $("#money2").val()
-               }
+            $("#dg").datagrid("updateRow", {
+                index: index,
+                row: {
+                    name: $("#name2").val(),
+                    weight: Number($("#weight2").val()).toFixed(2),
+                    price: Number($("#price2").val()).toFixed(2),
+                    money: $("#money2").val()
+                }
             });
             $("#dlg2").dialog("close");
         }
 
         //关闭修改
-        function closeDlg2(){
+        function closeDlg2() {
             $("#dlg2").dialog("close");
         }
 
         //编辑车辆信息
-        function editCar(){
+        function editCar() {
             $("#dlg3").dialog("open");
         }
 
@@ -144,16 +144,35 @@
         }
 
         //关闭编辑车辆信息
-        function closeEditCar(){
+        function closeEditCar() {
             $("#dlg3").dialog("close");
         }
 
         //点击保存按钮
-        function savePurchaseGoods(){
+        function savePurchaseGoods() {
             var json = {};
             json.plant = $("#plant").combobox("getValue");
+            json.PurchaseNumber = $("#dh").text();
+            json.principal = $("#principal").val();
+            json.PurchasingAgent = $("#PurchasingAgent").val();
+            json.purchaseDate = $("#purchaseDate").datebox("getValue");
+            json.outDate = $("#outDate").datebox("getValue");
+            json.carNumber = $("#carNumber").val();
+            json.tonnage = $("#tonnage").val();
+            json.carrier = $("#carrier").val();
+            json.sumMoney = $("#amountPayable").val();
+            var rows = $("#dg").datagrid("getRows");
+            json.sumWeight = rows[rows.length - 1].weight;
+            json.remark = $("#remarks").val();
+            console.log(json);
+            json.goodsJson = JSON.stringify($("#dg").datagrid("getData").rows);
             $.ajax({
+                type: "post",
+                url: "/admin/purchase/save",
+                data: json,
+                success: function (result) {
 
+                }
             });
         }
 
@@ -254,6 +273,11 @@
                                                             class="easyui-datebox" required="true"
                                                             data-options="editable:false" size="18"/>
                     </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;发货日期：<input type="text" id="outDate" name="outDate"
+                                                            class="easyui-datebox" required="true"
+                                                            data-options="editable:false" size="18"/>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -341,12 +365,21 @@
     <a href="javascript:closeDlg2()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
-<div id="dlg3" class="easyui-dialog" title="编辑车辆信息" style="width: 600px;height: 140px;text-align: center; padding: 20px;"
+<div id="dlg3" class="easyui-dialog" title="编辑车辆信息"
+     style="width: 400px;height: 180px;text-align: center; padding: 20px;"
      closed="true" buttons="#dlg3-tb">
     <table>
-        <span style="padding: 5px;">车牌号：<input type="text" style="width: 88px;"/></span>
-        <span style="padding: 5px;">吨位（t）：<input type="text" style="width: 88px;"/></span>
-        <span style="padding: 5px;">承运人：<input type="text" style="width: 88px;"/></span>
+        <tr>
+            <td><span style="padding: 5px;">车牌号：<input type="text" style="width: 88px;" id="carNumber"/></span></td>
+            <td><span style="padding: 5px;">吨位（t）：<input type="text" style="width: 88px;" id="tonnage"/></span></td>
+        </tr>
+        <tr>
+            <td><span style="padding: 5px;">承运人：<input type="text" style="width: 88px;" id="carrier"/></span></td>
+            <td><span style="padding: 5px;">运&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;费&nbsp;：<input id="freight"
+                                                                                                      type="number"
+                                                                                                      style="width: 88px;"/></span>
+            </td>
+        </tr>
     </table>
 </div>
 
