@@ -347,6 +347,21 @@ public class StorageServiceImpl implements StorageService {
         storageRepository.updateOutNumberById(this.genCode(),parseInt);
     }
 
+    @Override
+    public List<Storage> selectClientNameByOutDate(Date s) {
+        return storageRepository.selectClientNameByOutDate(s);
+    }
+
+    @Override
+    public List<Storage> selectOutByOutNumber(String outNumber) {
+        return storageRepository.selectOutByOutNumber(outNumber);
+    }
+
+    @Override
+    public String selectCountByNameAndOutNumber(String name, String outNumber) {
+        return storageRepository.selectCountByNameAndOutNumber(name, outNumber);
+    }
+
     /**
      * @Description: 生成出库单号
      * @Param:

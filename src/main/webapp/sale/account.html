@@ -1,402 +1,792 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>产品出库结算单</title>
-<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="/static/js/date.js"></script>
-<script type="text/javascript">
+    <meta charset="UTF-8">
+    <title>产品出库结算单</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+        //打印
+        function printdg() {
+            CreateFormPage("datagrid", $("#dg"));
+        }
 
 
-	var editIndex = undefined;
-	function endEditing(){
-		if (editIndex == undefined){return true}
-		if ($('#dg').datagrid('validateRow', editIndex)){
-			var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'danwei'});
-			var productname = $(ed.target).combobox('getText');
-			$('#dg').datagrid('getRows')[editIndex]['productname'] = productname;
-			$('#dg').datagrid('endEdit', editIndex);
-			editIndex = undefined;
-			return true;
-		} else {
-			return false;
-		}
-	}
-	function onClickRow(index){
-		if (editIndex != index){
-				$('#dg').datagrid('endEdit', editIndex)
-				$('#dg').datagrid('beginEdit', index);
-				setEditing(index);
-		}
-				editIndex = index;
-	}
-	
-	//计算两列的乘积
-	function setEditing(index){
-		console.log("这是第几行"+index);
-        var editors = $('#dg').datagrid('getEditors', index);    
-        var moneyEditor = editors[3];
-        var countEditor = editors[2];    
-        var summoneyEditor = editors[4];    
-        moneyEditor.target.bind("change", function(){    
-            calculate();
-        });    
-        countEditor.target.bind("change", function(){    
-            calculate();    
-        });    
-        function calculate(){    
-            var cost = (moneyEditor.target.val())*(countEditor.target.val());
-            console.log(cost);
-            summoneyEditor.target.numberbox("setValue",cost);    
-        }    
-    }
-	
-	//回车键保存
-	$(document).keyup(function(event) {
-		if (event.keyCode == 13) {
-			accept();
-		}
-	});
-	
-	function append(){
-		if (endEditing()){
-			$('#dg').datagrid('appendRow',{status:'P'});
-			editIndex = $('#dg').datagrid('getRows').length-1;
-			$('#dg').datagrid('selectRow', editIndex)
-					.datagrid('beginEdit', editIndex);
-		}
-	}
-	function removeit(){
-		if (editIndex == undefined){return}
-		$('#dg').datagrid('cancelEdit', editIndex)
-				.datagrid('deleteRow', editIndex);
-		editIndex = undefined;
-	}
-	function accept(){
-		if (endEditing()){
-			$('#dg').datagrid('acceptChanges');
-		}
-	}
-	function reject(){
-		$('#dg').datagrid('rejectChanges');
-		editIndex = undefined;
-	}
-	function getChanges(){
-		var rows = $('#dg').datagrid('getChanges');
-		alert(rows.length+' rows are changed!');
-	}
-	
-	
-	//单号
-	var url;
-	$(document).ready(function() {
-		$("#dh").load("/admin/storage/genCode");
-		
-		//获取当前的时间
-		$("#saleDate").datebox("setValue", genTodayStr());
-	});
+        //开始打印
+        var tableString;
+        // strPrintName 打印任务名
+        // printDatagrid 要打印的datagrid
+        function CreateFormPage(strPrintName, printDatagrid) {
+            updatecount();
+            tableString = "";
+            tableString += "<h3 style='font-size: 28px;text-align: center; margin:2px;padding:0px'>" + "<u>" + "出库结算单" + "</u>";
+            tableString += "</h3>";
 
-	//将数据库中信息分组显示出来
-	function ok() {
-		if (!$("#clientId").combobox("getText")) {
-			$.messager.alert("系统提示", "请选择客户");
-			return;
-		}
-		$.post("/admin/storage/findbygroup", {
-			client : $("#clientId").combobox("getText")
-		}, function(result) {
-			if (result.success) {
-				console.log(result.data);
-				$("#dg").datagrid("loadData", result.data);
-				/* console.log(result.data[0][0]);
-				console.log($("#clientId").combobox("getValue"));
-				console.log($("#clientId").combobox("getText"));
-				$("#dg").datagrid("load", {
-					"name" : $("#clientId").combobox("getText"),
-					"size" : $("#clientId").combobox("getText"),
-					"danwei" : $("#clientId").combobox("getText"),
-					"money" : $("#clientId").combobox("getText"),
-					"summoney" : $("#clientId").combobox("getText"),
-					"num" :$("#clientId").combobox("getText")
-				}); */
-			}
-		}, "json");
-	}
-	
-	//打印
-	function printdg() {
-		CreateFormPage("datagrid", $("#dg"));
-	}
-	
-	
-	var tableString;
-	// strPrintName 打印任务名
-	// printDatagrid 要打印的datagrid
-	function CreateFormPage(strPrintName, printDatagrid) {
-		tableString = "";
-		tableString += "<h1 style='font-size: 28px;text-align: center;'>出库结算单</h1>";
-		tableString += "<h3>收货单位:" + $("#clientId").combobox("getText") 
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收货人:"+$("#lankman").val()
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出库单号:"+$("#dh").text()
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填制日期："+ $("#saleDate").datebox("getValue")+"</h3>";
-		tableString += '<table cellspacing="0" class="pb">';
-		var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
-		var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
-		var nameList = '';
+            tableString += "<p style='margin:5px; padding:0px'><span style='color: black; margin-left: 260px;'>收货单位:" + $("#clientId").combobox("getText") + "</span>";
+            tableString += "<span style='color: black; margin-left: 208px;'>填制日期：" + $("#saleDate").datebox("getValue") + "</span>";
+            tableString += "<span id='dh' style='color: black; margin-left: 200px;'>单号：</span></p>";
 
-		// 载入title
-		if (typeof columns != 'undefined' && columns != '') {
-			$(columns)
-					.each(
-							function(index) {
-								tableString += '\n<tr>';
-								if (typeof frozenColumns != 'undefined'
-										&& typeof frozenColumns[index] != 'undefined') {
-									for (var i = 0; i < frozenColumns[index].length; ++i) {
-										if (!frozenColumns[index][i].hidden) {
-											tableString += '\n<th width="'
-													+ frozenColumns[index][i].width
-													+ '"';
-											if (typeof frozenColumns[index][i].rowspan != 'undefined'
-													&& frozenColumns[index][i].rowspan > 1) {
-												tableString += ' rowspan="'
-														+ frozenColumns[index][i].rowspan
-														+ '"';
-											}
-											if (typeof frozenColumns[index][i].colspan != 'undefined'
-													&& frozenColumns[index][i].colspan > 1) {
-												tableString += ' colspan="'
-														+ frozenColumns[index][i].colspan
-														+ '"';
-											}
-											if (typeof frozenColumns[index][i].field != 'undefined'
-													&& frozenColumns[index][i].field != '') {
-												nameList += ',{"f":"'
-														+ frozenColumns[index][i].field
-														+ '", "a":"'
-														+ frozenColumns[index][i].align
-														+ '"}';
-											}
-											tableString += '>'
-													+ frozenColumns[0][i].title
-													+ '</th>';
-										}
-									}
-								}
-								for (var i = 0; i < columns[index].length; ++i) {
-									if (!columns[index][i].hidden) {
-										tableString += '\n<th width="'
-												+ columns[index][i].width + '"';
-										if (typeof columns[index][i].rowspan != 'undefined'
-												&& columns[index][i].rowspan > 1) {
-											tableString += ' rowspan="'
-													+ columns[index][i].rowspan
-													+ '"';
-										}
-										if (typeof columns[index][i].colspan != 'undefined'
-												&& columns[index][i].colspan > 1) {
-											tableString += ' colspan="'
-													+ columns[index][i].colspan
-													+ '"';
-										}
-										if (typeof columns[index][i].field != 'undefined'
-												&& columns[index][i].field != '') {
-											nameList += ',{"f":"'
-													+ columns[index][i].field
-													+ '", "a":"'
-													+ columns[index][i].align
-													+ '"}';
-										}
-										tableString += '>'
-												+ columns[index][i].title
-												+ '</th>';
-									}
-								}
-								tableString += '\n</tr>';
-							});
-		}
-		// 载入内容
-		var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
-		console.log(rows);
-		console.log(nameList);
-		var nl = eval('([' + nameList.substring(1) + '])');
-		console.log(nl);
-		for (var i = 0; i < rows.length; ++i) {
-			tableString += '\n<tr>';
-			$(nl).each(function(j) {
-				var e = nl[j].f.lastIndexOf('_0');
+            tableString += '<div style="text-align: center;" margin:0 auto;>';
+            tableString += '<table cellspacing="0" class="pb" width="800" >';
+            tableString += '<tr>';
+            tableString += '<td  style="vertical-align: top; padding: 0px;" >';
+            tableString += '<table cellspacing="0" class="pb" style="border:0px">';
+            tableString += '<table cellspacing="0" class="pb" style="border:0px">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
 
-				tableString += '\n<td';
-				if (nl[j].a != 'undefined' && nl[j].a != '') {
-					tableString += ' style="text-align:' + nl[j].a + ';"';
-				}
-				tableString += '>';
-				if (e + 2 == nl[j].f.length) {
-					tableString += rows[i][nl[j].f.substring(0, e)];
-				} else {
-					var tdStr = rows[i][nl[j].f];
-					if (tdStr == null) {
-						tdStr = "";
-					}
-					console.log(tdStr);
-					tableString += tdStr;
-				}
-				tableString += '</td>';
-			});
-			tableString += '\n</tr>';
-		}
-		tableString += '\n</table>';
-		
-		
-		tableString += "<h6>负责人："+$("#fuzeren").combobox("getText")
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填制人："+$("#tianzhiren").combobox("getText")
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;提货仓库："+$("#tihuocangku").combobox("getText")
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业务员："+$("#yewuyuan").combobox("getText")
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配送车号："+$("#chehao").val()
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配送人："+$("#peisongren").combobox("getText")
-		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系方式："+$("#tel").val()+"</h6>";
-		
-		
-		if (window.showModalDialog) {
-			window
-					.showModalDialog(
-							"/sale/print.html",
-							tableString,
-							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-		} else {
-			window
-					.open(
-							"/sale/print.html",
-							tableString,
-							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-			console.log(tableString);
-		}
-	}
-	
-</script>
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function (index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 0; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+
+                            /* tableString += '<th width="162">'+"往来款项"+'</th>';
+                            tableString += '<th width="162">'+"金额（元）"+'</th>'; */
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            console.log(nameList);
+            var nl = eval('([' + nameList.substring(1) + '])');
+            console.log(nl);
+            for (var i = 0; i < rows.length; ++i) { //rows.length
+                tableString += '\n<tr>';
+                $(nl).each(function (j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        if (tdStr == null) {
+                            tdStr = "";
+                        }
+                        console.log(tdStr);
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                /* if(i==0){
+                    tableString += '<td style="text-align: center;">'+"前项余款";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#yukuan").val();
+                    tableString += '</td>';
+                }
+                if(i==1){
+                    tableString += '<td style="text-align: center;">'+"前项欠款";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#qiankuan").val();
+                    tableString += '</td>';
+                }
+                if(i==2){
+                    tableString += '<td style="text-align: center;">'+"本次交现金";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#xianjin").val();
+                    tableString += '</td>';
+                }
+                if(i==3){
+                    tableString += '<td style="text-align: center;">'+"本次交票据";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#piaoju").val();
+                    tableString += '</td>';
+                }
+                if(i==4){
+                    tableString += '<td>';
+                    tableString += '</td>';
+                    tableString += '<td>';
+                    tableString += '</td>';
+                }
+                if(i==5){
+                    tableString += '<td>';
+                    tableString += '</td>';
+                    tableString += '<td>';
+                    tableString += '</td>';
+                }
+                if(i==6){
+                    tableString += '<td style="text-align: center;">'+"本次结算后余款";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#jyukuan").val();
+                    tableString += '</td>';
+                }
+                if(i==7){
+                    tableString += '<td style="text-align: center;">'+"本次结算后欠款";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">'+$("#jqiankuan").val();
+                    tableString += '</td>';
+                }				 */
+                tableString += '\n</tr>';
+            }
+            if (rows.length < 7) {
+                for (var j = 0; j < 7 - rows.length + 1; ++j) {
+                    tableString += '<tr>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td >' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '</tr>';
+                }
+            }
+
+
+            tableString += '\n</table>';
+            tableString += '\n</td>';
+            tableString += '\n<td style="padding: 0px;">';
+            tableString += '<table cellspacing="0" class="pb">';
+
+
+            tableString += '<tr>';
+            tableString += '<th width="162">' + "往来款项" + '</th>';
+            tableString += '<th width="162">' + "金额（元）" + '</th>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "前项余款";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + $("#yukuan").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "前项欠款";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + $("#qiankuan").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "本次交现金";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;" >' + $("#xianjin").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "本次交票据";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + $("#piaoju").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "*";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + "*";
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "*";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + "*";
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "本次结算后余款";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + $("#jyukuan").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+
+            tableString += '<tr>';
+            tableString += '<td style="text-align: center;">' + "本次结算后欠款";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center;">' + $("#jqiankuan").val();
+            tableString += '</td>';
+            tableString += '</tr>';
+
+            if (rows.length > 7) {
+                for (var i = 0; i < rows.length - 7 - 1; i++) {
+                    tableString += '<tr>';
+                    tableString += '<td style="text-align: center;">' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '<td style="text-align: center;">' + "&nbsp;&nbsp;&nbsp;";
+                    tableString += '</td>';
+                    tableString += '</tr>';
+                }
+            }
+
+
+            tableString += '\n</table>';
+            tableString += '\n</table>';
+            tableString += '\n</tr>';
+
+
+            tableString += '\n<tr>';
+            //tableString += '\n<td>';
+            tableString += '<table cellspacing="0" class="pb" width="800">';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;送&nbsp;&nbsp;货&nbsp;&nbsp;记&nbsp;&nbsp;录&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="162">' + '&nbsp;&nbsp;&nbsp;';
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;车&nbsp;&nbsp;号&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#chehao").val();
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;送&nbsp;&nbsp;货&nbsp;&nbsp;人&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#songhuoren").combobox("getText");
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;件&nbsp;&nbsp;数&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#updatecount").val();
+            tableString += '</td>';
+            tableString += '\n</table>';
+
+            //tableString += '\n</td>';
+            tableString += '\n</tr>';
+
+
+            tableString += '\n<tr>';
+            //tableString += '\n<td>';
+            tableString += '<table cellspacing="0" class="pb" width="800">';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;负&nbsp;&nbsp;责&nbsp;&nbsp;人&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#fuzeren").combobox("getText");
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;填&nbsp;&nbsp;制&nbsp;&nbsp;人&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#tianzhiren").combobox("getText");
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;保&nbsp;&nbsp;管&nbsp;&nbsp;员&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#baoguanyuan").combobox("getText");
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;销&nbsp;&nbsp;售&nbsp;&nbsp;员&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#xiaoshouyuan").combobox("getText");
+            tableString += '</td>';
+            tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;收&nbsp;&nbsp;货&nbsp;&nbsp;人&nbsp;&nbsp;";
+            tableString += '</td>';
+            tableString += '<td style="text-align: center" width="100">' + $("#lankman").val();
+            tableString += '</td>';
+            tableString += '\n</table>';
+
+            //tableString += '\n</td>';
+            tableString += '\n</tr>';
+            tableString += '\n</table>';
+            tableString += '\n</div>';
+
+
+            //tableString += '\n</td>';
+
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "/sale/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "/sale/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                console.log(tableString);
+            }
+        }
+
+
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {
+                updateEnd();
+            }
+        });
+
+
+        //入口函数
+        $(function () {
+            //加载单号
+            //$("#dh").load("/admin/storage/findoutnumber");
+
+
+            //加载列
+            $("#dg").datagrid({
+                columns: [[
+                    //{field: 'cb', checkbox: "true", align: "center"},
+                    {field: 'name', title: '产品名称', width: '150', align: 'center'},
+                    {field: 'guige', title: '规格', width: '150', align: 'center'},
+                    {field: 'danwei', title: '计量单位', width: '150', align: 'center'},
+                    {field: 'count', title: '发货数', width: '150', align: 'center'},
+                    {field: 'money', title: '单价（元）', width: '150', align: 'center'},
+                    {field: 'summoney', title: '总金额（元）', width: '150', align: 'center'}
+                    //{field: 'outNumber', title: '出库单号', width: '100', align: 'center'}
+                ]]
+            });
+
+            /* //合计
+            $("#dg").datagrid("insertRow", {
+                index: 0,
+                row: {
+                    name: '合计',
+                    guige: '',
+                    danwei: '',
+                    count: 0,
+                    money: '',
+                    summoney: 0
+                }
+            });
+     */
+
+            //当输入框金额和重量发生变化时触发 (修改)
+
+            $("#money2").change(function () {
+                var n = $("#count2").val() * $("#money2").val();
+                $("#summoney2").val(n.toFixed(2));
+            });
+        });
+
+
+        //将数据库中信息分组显示出来
+        function ok() {
+            if (!$("#clientId").combobox("getText")) {
+                $.messager.alert("系统提示", "请选择客户");
+                return;
+            }
+            $.post("/admin/storage/findbygroup", {
+                client: $("#clientId").combobox("getText")
+            }, function (result) {
+                if (result.success) {
+                    console.log(result.data);
+                    $("#dg").datagrid("loadData", result.data);
+                }
+            }, "json");
+
+
+            $.post("/admin/storage/findoutnumber", {
+                client: $("#clientId").combobox("getText")
+            }, function (result) {
+                if (result.success) {
+                    console.log(result.data);
+                    //$("#dg").datagrid("loadData", result.data);
+                    /* $("#dh").html(result.data); */
+                    //$("#dh").load(result.data);
+                }
+            }, "json");
+        }
+
+        //修改合计行
+        function updateEnd() {
+
+            var row = $("#dg").datagrid("getRows");
+            if (row.length == 0) {
+                return;
+            }
+            var index = row.length - 1;
+            if (row[index].name == "合计") {
+                $("#dg").datagrid("deleteRow", index);
+            }
+            var a = 0;
+            var b = 0;
+
+            for (var i = 0; i < row.length; i++) {
+                a += Number(row[i].count);
+                b += Number(row[i].summoney);
+            }
+
+
+            $('#dg').datagrid('appendRow', {
+                name: '合计',
+                guige: '',
+                danwei: '',
+                count: a,
+                money: '',
+                summoney: b.toFixed(2)
+            });
+        }
+
+        function add() {
+            topAdd();
+            updateEnd();
+            reSet();
+            closeDlg()
+        }
+
+        //在最订部添加一行
+        function topAdd() {
+            $("#dg").datagrid("insertRow", {
+                index: 0,
+                row: {
+                    name: '合计',
+                    guige: '',
+                    danwei: '',
+                    count: a,
+                    money: '',
+                    summoney: b.toFixed(2)
+                }
+            });
+        }
+
+        //重置面板中的值
+        function reSet() {
+            $("#guige2").val("");
+            $("#count2").val("");
+            $("#summoney2").val("");
+            $("#money2").val("");
+        }
+
+        //关闭添加商品对话框
+        function closeDlg() {
+            $("#dlg").dialog("close");
+        }
+
+
+        //点击完善信息
+        function saveSelectRows() {
+            var rows = $("#dg").datagrid("getSelections");
+            if (rows.length != 1) {
+                $.messager.alert("系统提示", "<span style='color: red;'>请选择一行要修改的数据！</span>")
+                return;
+            }
+            if (rows[0].name == "合计") {
+                $.messager.alert("系统提示", "<span style='color: red;'>无法修改！</span>")
+            } else {
+
+                //$("#name2").val(rows[0].name);
+                $("#guige2").val(rows[0].guige);
+                $("#danwei2").val(rows[0].danwei);
+                $.ajax({
+                    type: "POST",
+                    url:"/admin/storage/selectCountByNameAndOutNumber?name=" + rows[0].name + "&outNumber=" + $("#dh").text(),
+                    success: function(result){
+                        $("#count2").val(result);
+                    }
+                });
+                $("#money2").val(rows[0].money);
+                $("#summoney2").val(rows[0].summoney);
+                $("#dlg").dialog("open");
+            }
+        }
+
+
+        //弹出框点击确定
+        function add() {
+            var row = $("#dg").datagrid("getSelected");
+            var index = $("#dg").datagrid("getRowIndex", row);
+            $("#dg").datagrid("updateRow", {
+                index: index,
+                row: {
+                    guige: $("#guige2").val(),
+                    danwei: $("#danwei2").val(),
+                    count: $("#count2").val(),
+                    money: $("#money2").val(),
+                    summoney: Number($("#summoney2").val()).toFixed(2)
+                }
+            });
+            //updateEnd();
+            $("#dlg").dialog("close");
+        }
+
+        function updatecount() {
+            var row = $("#dg").datagrid("getRows");
+            var index = row.length - 1;
+            $("#updatecount").val(row[index].count);
+        }
+
+        //点击选择出库单
+        function selectOutNumber() {
+            $("#outNumber").combobox("disable");
+            $("#dlg2").dialog("open");
+            $("#outDate").datebox({
+                onSelect: function (date) {
+                    $("#outNumber").combobox({
+                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datebox("getValue"),
+                        valueField: 'outNumber',
+                        textField: 'clientname',
+                        panelHeight: 'auto'
+                    });
+                    $("#outNumber").combobox("enable");
+                }
+            });
+        }
+
+        //关闭添加出库单面板
+        function closeDlg2() {
+            $("#dlg2").dialog("close");
+        }
+
+        //添加出库单
+        function addOutNumber() {
+            $("#dg").datagrid({
+                url:"/admin/storage/selectOutByOutNumber?outNumber=" + $("#outNumber").combobox("getValue")
+            });
+            $("#dh").text($("#outNumber").combobox("getValue"));
+            closeDlg2();
+        }
+
+
+    </script>
 </head>
 <body class="easyui-layout">
-	<div data-options="region:'north'"
-		style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
-		<fieldset style="border-color: #E7F0FF">
-			<legend>
-				出库单号：<span id="dh"></span>
-			</legend>
-			<form id="form" method="post">
-				<table cellspacing="8px">
-					<tr>
-						<td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text"
-							id="saleDate" name="saleDate" class="easyui-datebox"
-							demandd="true" data-options="editable:false" size="10" />
-						</td>
-						<td>&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
-							id="clientId" name="clientId" style="width: 100px"
-							required="true" demandd="true"
-							data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'" />
-						</td>
-						<td>&nbsp;&nbsp;配送车号：<input type="text" id="chehao"
-							required="true" name="chehao" size="10" />
-						</td>
-						<td width="180px">&nbsp;&nbsp;配送人：<input
-							class="easyui-combobox" id="peisongren" name="peisongren"
-							style="width: 100px"
-							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
-						</td>
-						<td>联系方式：<input type="text" id="tel" required="true"
-							name="tel" size="15" />
-						</td>
-						<td rowspan="2"><a href="javascript:ok()"
-							class="easyui-linkbutton" iconCls="icon-ok">确定</a></td>
+<div data-options="region:'north'"
+     style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>
+            出库单号：<span id="dh"></span>
+        </legend>
+        <form id="form" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text"
+                                                          id="saleDate" name="saleDate" class="easyui-datebox"
+                                                          demandd="true" data-options="editable:false" size="10"/>
+                    </td>
+                    <td>&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
+                                                id="clientId" name="clientId" style="width: 100px"
+                                                required="true" demandd="true"
+                                                data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                    </td>
+                    <td>&nbsp;&nbsp;车&nbsp;&nbsp;号：<input type="text" id="chehao"
+                                                          required="true" name="chehao" size="10"/>
+                    </td>
+                    <td width="180px">&nbsp;&nbsp;送货人：<input
+                            class="easyui-combobox" id="songhuoren" name="songhuoren"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td>联系方式：<input type="text" id="tel" required="true"
+                                    name="tel" size="15"/>
+                    </td>
+                    <td><input type="hidden" id="updatecount" name="updatecount"/>
+                    </td>
+                    <td rowspan="2"><a href="javascript:ok()"
+                                       class="easyui-linkbutton" iconCls="icon-ok">确定</a></td>
 
-					</tr>
-					<tr>
-						<td width="180px">负责人：<input class="easyui-combobox"
-							id="fuzeren" name="fuzeren" style="width: 100px"
-							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
-						</td>
-						<td width="180px">&nbsp;&nbsp;填&nbsp;&nbsp;制&nbsp;人：<input
-							class="easyui-combobox" id="tianzhiren" name="tianzhiren"
-							style="width: 100px"
-							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
-						</td>
-						<td width="180px">&nbsp;&nbsp;提货仓库：<input
-							class="easyui-combobox" id="tihuocangku" name="tihuocangku"
-							style="width: 100px"
-							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/entrepot/entrepotList'" />
-						</td>
-						<td width="180px">&nbsp;&nbsp;业务员：<input
-							class="easyui-combobox" id="yewuyuan" name="yewuyuan"
-							style="width: 100px"
-							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
-						</td>
-						<td>收&nbsp;&nbsp;货&nbsp;&nbsp;人：<input type="text"
-							id="lankman" required="true" name="lankman" size="15" />
-						</td>
-					</tr>
-				</table>
-			</form>
-		</fieldset>
-	</div>
-	<div data-options="region:'center'" style="padding: 10px; border: 1px">
-		<table id="dg" class="easyui-datagrid" 
-			data-options="iconCls: 'icon-edit',
-				singleSelect: true,
-				toolbar: '#tb',
-				url: 'datagrid_data1.json',
-				method: 'get',
-				onClickRow: onClickRow
-			" >
-			<thead>
-				<th field="name" width="162" align="center">产品名称</th>
-				<th data-options="field:'size',width:162,align:'center',editor:{type:'numberbox',options:{precision:1}}">规格</th>
-				<!-- <th field="danwei" width="162" align="center">计量单位</th> -->
-				<th data-options="field:'danwei',width:162,align:'center',
-						formatter:function(value,row){
-							return row.productname;
-						},
-						editor:{
-							type:'combobox',
-							options:{
-								valueField:'danwei',
-								textField:'productname',
-								method:'get',
-								url:'products.json',
-								required:true
-							}
-						}">计量单位</th>
-				<!-- <th field="count" width="162" align="center">发货数</th> -->
-				<th data-options="field:'count',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">发货数</th>
-				<!-- <th field="money" width="162" align="center">单价(元)</th> -->
-				<th data-options="field:'money',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">单价(元)</th>
-				<th data-options="field:'summoney',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">金额(元)</th>
-				<!-- <th field="summoney" width="162" align="center">金额(元)</th> -->
 
-			</thead>
-		</table>
+                </tr>
+                <tr>
+                    <td width="180px">负责人：<input class="easyui-combobox"
+                                                 id="fuzeren" name="fuzeren" style="width: 100px"
+                                                 data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td width="180px">&nbsp;&nbsp;填&nbsp;&nbsp;制&nbsp;人：<input
+                            class="easyui-combobox" id="tianzhiren" name="tianzhiren"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td width="180px">&nbsp;&nbsp;保管员：<input
+                            class="easyui-combobox" id="baoguanyuan" name="baoguanyuan"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td width="180px">&nbsp;&nbsp;销售员：<input
+                            class="easyui-combobox" id="xiaoshouyuan" name="xiaoshouyuan"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                    </td>
+                    <td>收&nbsp;&nbsp;货&nbsp;&nbsp;人：<input type="text"
+                                                           id="lankman" required="true" name="lankman" size="15"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
 
-		<div id="tb">
-			<div style="padding: 2px">
-				<a href="javascript:printdg()" ;
-					class="easyui-linkbutton"
-					iconCls="icon-print" plain="true">打印</a>
-				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
-				
-			</div>
-		</div>
-	</div>
 
-	<div id="dlg-buttons4">
-		<a href="javascript:saveSelectRows()" class="easyui-linkbutton"
-			iconCls="icon-ok">确定</a> <a href="javascript:closeSelectRows()"
-			class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-	</div>
+<div data-options="region:'east',title:'结算记录            单位（元）'"
+     style="width: 250px;" style=" padding: 10px; border: 0px;">
+    <form id="form" method="post">
+        <table cellspacing="8px">
+            <tr>
+                <td>前&nbsp;项&nbsp;余&nbsp;款：<input type="text" id="yukuan"
+                                                  required="true" name="yukuan" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td>前&nbsp;项&nbsp;欠&nbsp;款：<input type="text" id="qiankuan"
+                                                  required="true" name="qiankuan" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td>本次交现金：<input type="text" id="xianjin" required="true"
+                                 name="xianjin" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td>本次交票据：<input type="text" id="piaoju" required="true"
+                                 name="piaoju" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td>本次结算后余款：<input type="text" id="jyukuan" required="true"
+                                   name="jyukuan" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+            <tr>
+
+                <td>本次结算后欠款：<input type="text" id="jqiankuan" required="true"
+                                   name="jqiankuan" size="10px"/>&nbsp;元
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<div data-options="region:'center'" style="padding: 10px; border: 1px;">
+    <table id="dg" class="easyui-datagrid" fit="true" rownumbers="true" toolbar="#tb" singleSelect="true">
+
+    </table>
+
+    <div id="tb">
+        <div style="padding: 2px">
+            <a href="javascript:printdg()" ;
+               class="easyui-linkbutton"
+               iconCls="icon-print" plain="true">打印</a>
+            <a href="javascript:saveSelectRows()" class="easyui-linkbutton"
+               iconCls="icon-edit" plain="true">设置规格和单价</a>
+            <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
+               iconCls="icon-add" plain="true">选择出库单</a>
+        </div>
+    </div>
+</div>
+
+<div id="dlg-tb">
+    <a href="javascript:add()" class="easyui-linkbutton"
+       iconCls="icon-ok">确定</a> <a href="javascript:closeDlg()"
+                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+
+</div>
+
+
+<div id="dlg" class="easyui-dialog" title="完善信息" style="width: 400px;height: 180px;"
+     closed="true" buttons="#dlg-tb">
+    <table id="dlg2tb">
+        <tr>
+            <!-- 	        <td>产品名称：<input type="text" id="name2" readonly required="true"/></td> -->
+            <td>规格：<input type="text" id="guige2" required="true"/></td>
+            <!-- <td>计量单位：<input type="text" id="danwei2" required="true"/></td> -->
+            <td>发货数：<input type="number" id="count2" readonly required="true"/></td>
+        </tr>
+        <tr>
+            <td>单价（元）：<input type="number" id="money2" required="true"/></td>
+            <td>总金额（元）：<input type="number" id="summoney2" readonly style="background-color: #ccc;"/></td>
+        </tr>
+    </table>
+</div>
+
+<div id="dlg2" class="easyui-dialog" title="选择出库单" style="width: 666px;height: 180px; padding: 20px;"
+     closed="true" buttons="#dlg2-tb">
+    <table>
+        <tr>
+            <td>选择出库日期：<input id="outDate" class="easyui-datebox" size="15"/></td>
+        </tr>
+        <tr>
+            <td>选择出库单号：<input id="outNumber" class="easyui-combobox" size="15"/></td>
+        </tr>
+    </table>
+</div>
+<div id="dlg2-tb">
+    <a href="javascript:addOutNumber()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+    <a href="javascript:closeDlg2()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+
+</div>
 </body>
 </html>

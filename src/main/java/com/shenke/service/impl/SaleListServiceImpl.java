@@ -3,10 +3,7 @@ package com.shenke.service.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -79,6 +76,12 @@ public class SaleListServiceImpl implements SaleListService {
 						predicate.getExpressions()
 								.add(cb.lessThanOrEqualTo(root.get("saleDate"), saleList.getSaleDate()));
 					}
+
+					Subquery<String> subquery = query.subquery(String.class);
+					Root<SaleListProduct> from = subquery.from(SaleListProduct.class);
+					subquery.select(from.get("saleList").get("id")).where(cb.like(from.get("state"), "%下单%"));
+
+					predicate.getExpressions().add(cb.and(root.get("id").in(subquery)));
 				}
 				return predicate;
 			}

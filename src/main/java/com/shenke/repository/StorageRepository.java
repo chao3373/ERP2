@@ -143,4 +143,28 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set out_number = ?1 where id = ?2", nativeQuery = true)
     public void updateOutNumberById(String genCode, int parseInt);
+
+    /**
+     *根据出库日期获取
+     */
+
+    @Query(value = "SELECT * FROM t_storage WHERE delivery_time = ?1 AND state='装车' GROUP BY clientname, out_number", nativeQuery = true)
+    public List<Storage> selectClientNameByOutDate(Date s);
+
+    /***
+     * 根据出库单号查询
+     * @param outNumber
+     * @return
+     */
+    @Query(value = "SELECT * FROM t_storage WHERE out_number =?1", nativeQuery = true)
+    public List<Storage> selectOutByOutNumber(String outNumber);
+
+    /***
+     * 根据商品名称和出库单号查询数量
+     * @param name
+     * @param outNumber
+     * @return
+     */
+    @Query(value = "SELECT COUNT(*) FROM t_storage WHERE NAME =?1 AND out_number = ?2", nativeQuery = true)
+    public String selectCountByNameAndOutNumber(String name, String outNumber);
 }

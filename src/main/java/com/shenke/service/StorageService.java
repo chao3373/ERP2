@@ -4,7 +4,6 @@ import java.awt.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
-
 import com.shenke.entity.Clerk;
 import com.shenke.entity.JieSuan;
 import com.shenke.entity.Storage;
@@ -129,4 +128,10 @@ public interface StorageService {
     public List<Storage> detail(Map<String, Object> map1);
 
     public void updateOutNumberById(Integer parseInt) throws Exception;
+
+    public List<Storage> selectClientNameByOutDate(Date s);
+
+    public List<Storage> selectOutByOutNumber(String outNumber);
+
+    public String selectCountByNameAndOutNumber(String name, String outNumber);
 }

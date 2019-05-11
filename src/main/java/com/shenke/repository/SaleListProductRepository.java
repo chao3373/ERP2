@@ -1,9 +1,12 @@
 package com.shenke.repository;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
+
+import com.shenke.entity.Storage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,11 +22,11 @@ public interface SaleListProductRepository
 
 	/**
 	 * 根据销售单id查询订单中的所有未审核的商品信息
-	 * 
+	 *
 	 * @param saleListId
 	 * @return
 	 */
-	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1 ORDER BY state", nativeQuery = true)
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1 AND (state LIKE '%下单%' OR state LIKE '%审核失败%')", nativeQuery = true)
 	public List<SaleListProduct> listBySaleListId(Integer saleListId);
 
 	/**
@@ -177,4 +180,6 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set accomplish_number = ?1 where id = ?2", nativeQuery = true)
 	public void updateAccomplishNumberById(Integer count, Integer producionProcessId);
+
+
 }

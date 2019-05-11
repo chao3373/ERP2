@@ -294,4 +294,33 @@ public class StorageAdminController {
         map.put("rows", storageService.detail(map1));
         return map;
     }
+
+    /**
+     *  根据出库时间获取客户名称
+     */
+    @RequestMapping("/selectClientNameByOutDate")
+    public List<Storage> selectClientNameByOutDate(String outDate) throws ParseException {
+        return storageService.selectClientNameByOutDate(new Date(new SimpleDateFormat("yyyy-MM-dd").parse(outDate).getTime()));
+    }
+
+    /**
+     * 根据出库单号查询
+     * */
+    @RequestMapping("/selectOutByOutNumber")
+    public List<Storage> selectOutByOutNumber(String outNumber){
+        System.out.println(outNumber);
+        return storageService.selectOutByOutNumber(outNumber);
+    }
+
+    /***
+     * 根据商品名称和出库单号查询数量
+     * @param name
+     * @param outNumber
+     * @return
+     */
+    @RequestMapping("/selectCountByNameAndOutNumber")
+    public String selectCountByNameAndOutNumber(String name, String outNumber) {
+        System.out.println("name======================" + name + "outNumber===============" + outNumber);
+        return storageService.selectCountByNameAndOutNumber(name, outNumber);
+    }
 }

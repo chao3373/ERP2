@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>产品出库结算单</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+<link rel="stylesheet" type="text/css"
+	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+<script type="text/javascript">
+
+
+	var editIndex = undefined;
+	function endEditing(){
+		if (editIndex == undefined){return true}
+		if ($('#dg').datagrid('validateRow', editIndex)){
+			var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'danwei'});
+			var productname = $(ed.target).combobox('getText');
+			$('#dg').datagrid('getRows')[editIndex]['productname'] = productname;
+			$('#dg').datagrid('endEdit', editIndex);
+			editIndex = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	function onClickRow(index){
+		if (editIndex != index){
+				$('#dg').datagrid('endEdit', editIndex)
+				$('#dg').datagrid('beginEdit', index);
+				setEditing(index);
+		}
+				editIndex = index;
+	}
+	
+	//计算两列的乘积
+	function setEditing(index){
+		console.log("这是第几行"+index);
+        var editors = $('#dg').datagrid('getEditors', index);    
+        var moneyEditor = editors[3];
+        var countEditor = editors[2];    
+        var summoneyEditor = editors[4];    
+        moneyEditor.target.bind("change", function(){    
+            calculate();
+        });    
+        countEditor.target.bind("change", function(){    
+            calculate();    
+        });    
+        function calculate(){    
+            var cost = (moneyEditor.target.val())*(countEditor.target.val());
+            console.log(cost);
+            summoneyEditor.target.numberbox("setValue",cost);    
+        }    
+    }
+	
+	//回车键保存
+	$(document).keyup(function(event) {
+		if (event.keyCode == 13) {
+			accept();
+		}
+	});
+	
+	function append(){
+		if (endEditing()){
+			$('#dg').datagrid('appendRow',{status:'P'});
+			editIndex = $('#dg').datagrid('getRows').length-1;
+			$('#dg').datagrid('selectRow', editIndex)
+					.datagrid('beginEdit', editIndex);
+		}
+	}
+	function removeit(){
+		if (editIndex == undefined){return}
+		$('#dg').datagrid('cancelEdit', editIndex)
+				.datagrid('deleteRow', editIndex);
+		editIndex = undefined;
+	}
+	function accept(){
+		if (endEditing()){
+			$('#dg').datagrid('acceptChanges');
+		}
+	}
+	function reject(){
+		$('#dg').datagrid('rejectChanges');
+		editIndex = undefined;
+	}
+	function getChanges(){
+		var rows = $('#dg').datagrid('getChanges');
+		alert(rows.length+' rows are changed!');
+	}
+	
+	
+	//单号
+	var url;
+	$(document).ready(function() {
+		$("#dh").load("/admin/storage/genCode");
+		
+		//获取当前的时间
+		$("#saleDate").datebox("setValue", genTodayStr());
+	});
+
+	//将数据库中信息分组显示出来
+	function ok() {
+		if (!$("#clientId").combobox("getText")) {
+			$.messager.alert("系统提示", "请选择客户");
+			return;
+		}
+		$.post("/admin/storage/findbygroup", {
+			client : $("#clientId").combobox("getText")
+		}, function(result) {
+			if (result.success) {
+				console.log(result.data);
+				$("#dg").datagrid("loadData", result.data);
+				/* console.log(result.data[0][0]);
+				console.log($("#clientId").combobox("getValue"));
+				console.log($("#clientId").combobox("getText"));
+				$("#dg").datagrid("load", {
+					"name" : $("#clientId").combobox("getText"),
+					"size" : $("#clientId").combobox("getText"),
+					"danwei" : $("#clientId").combobox("getText"),
+					"money" : $("#clientId").combobox("getText"),
+					"summoney" : $("#clientId").combobox("getText"),
+					"num" :$("#clientId").combobox("getText")
+				}); */
+			}
+		}, "json");
+	}
+	
+	//打印
+	function printdg() {
+		CreateFormPage("datagrid", $("#dg"));
+	}
+	
+	
+	var tableString;
+	// strPrintName 打印任务名
+	// printDatagrid 要打印的datagrid
+	function CreateFormPage(strPrintName, printDatagrid) {
+		tableString = "";
+		tableString += "<h1 style='font-size: 28px;text-align: center;'>出库结算单</h1>";
+		tableString += "<h3>收货单位:" + $("#clientId").combobox("getText") 
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收货人:"+$("#lankman").val()
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出库单号:"+$("#dh").text()
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填制日期："+ $("#saleDate").datebox("getValue")+"</h3>";
+		tableString += '<table cellspacing="0" class="pb">';
+		var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+		var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+		var nameList = '';
+
+		// 载入title
+		if (typeof columns != 'undefined' && columns != '') {
+			$(columns)
+					.each(
+							function(index) {
+								tableString += '\n<tr>';
+								if (typeof frozenColumns != 'undefined'
+										&& typeof frozenColumns[index] != 'undefined') {
+									for (var i = 0; i < frozenColumns[index].length; ++i) {
+										if (!frozenColumns[index][i].hidden) {
+											tableString += '\n<th width="'
+													+ frozenColumns[index][i].width
+													+ '"';
+											if (typeof frozenColumns[index][i].rowspan != 'undefined'
+													&& frozenColumns[index][i].rowspan > 1) {
+												tableString += ' rowspan="'
+														+ frozenColumns[index][i].rowspan
+														+ '"';
+											}
+											if (typeof frozenColumns[index][i].colspan != 'undefined'
+													&& frozenColumns[index][i].colspan > 1) {
+												tableString += ' colspan="'
+														+ frozenColumns[index][i].colspan
+														+ '"';
+											}
+											if (typeof frozenColumns[index][i].field != 'undefined'
+													&& frozenColumns[index][i].field != '') {
+												nameList += ',{"f":"'
+														+ frozenColumns[index][i].field
+														+ '", "a":"'
+														+ frozenColumns[index][i].align
+														+ '"}';
+											}
+											tableString += '>'
+													+ frozenColumns[0][i].title
+													+ '</th>';
+										}
+									}
+								}
+								for (var i = 0; i < columns[index].length; ++i) {
+									if (!columns[index][i].hidden) {
+										tableString += '\n<th width="'
+												+ columns[index][i].width + '"';
+										if (typeof columns[index][i].rowspan != 'undefined'
+												&& columns[index][i].rowspan > 1) {
+											tableString += ' rowspan="'
+													+ columns[index][i].rowspan
+													+ '"';
+										}
+										if (typeof columns[index][i].colspan != 'undefined'
+												&& columns[index][i].colspan > 1) {
+											tableString += ' colspan="'
+													+ columns[index][i].colspan
+													+ '"';
+										}
+										if (typeof columns[index][i].field != 'undefined'
+												&& columns[index][i].field != '') {
+											nameList += ',{"f":"'
+													+ columns[index][i].field
+													+ '", "a":"'
+													+ columns[index][i].align
+													+ '"}';
+										}
+										tableString += '>'
+												+ columns[index][i].title
+												+ '</th>';
+									}
+								}
+								tableString += '\n</tr>';
+							});
+		}
+		// 载入内容
+		var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+		console.log(rows);
+		console.log(nameList);
+		var nl = eval('([' + nameList.substring(1) + '])');
+		console.log(nl);
+		for (var i = 0; i < rows.length; ++i) {
+			tableString += '\n<tr>';
+			$(nl).each(function(j) {
+				var e = nl[j].f.lastIndexOf('_0');
+
+				tableString += '\n<td';
+				if (nl[j].a != 'undefined' && nl[j].a != '') {
+					tableString += ' style="text-align:' + nl[j].a + ';"';
+				}
+				tableString += '>';
+				if (e + 2 == nl[j].f.length) {
+					tableString += rows[i][nl[j].f.substring(0, e)];
+				} else {
+					var tdStr = rows[i][nl[j].f];
+					if (tdStr == null) {
+						tdStr = "";
+					}
+					console.log(tdStr);
+					tableString += tdStr;
+				}
+				tableString += '</td>';
+			});
+			tableString += '\n</tr>';
+		}
+		tableString += '\n</table>';
+		
+		
+		tableString += "<h6>负责人："+$("#fuzeren").combobox("getText")
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填制人："+$("#tianzhiren").combobox("getText")
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;提货仓库："+$("#tihuocangku").combobox("getText")
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业务员："+$("#yewuyuan").combobox("getText")
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配送车号："+$("#chehao").val()
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配送人："+$("#peisongren").combobox("getText")
+		+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系方式："+$("#tel").val()+"</h6>";
+		
+		
+		if (window.showModalDialog) {
+			window
+					.showModalDialog(
+							"/sale/print.html",
+							tableString,
+							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+		} else {
+			window
+					.open(
+							"/sale/print.html",
+							tableString,
+							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+			console.log(tableString);
+		}
+	}
+	
+</script>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north'"
+		style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+		<fieldset style="border-color: #E7F0FF">
+			<legend>
+				出库单号：<span id="dh"></span>
+			</legend>
+			<form id="form" method="post">
+				<table cellspacing="8px">
+					<tr>
+						<td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text"
+							id="saleDate" name="saleDate" class="easyui-datebox"
+							demandd="true" data-options="editable:false" size="10" />
+						</td>
+						<td>&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
+							id="clientId" name="clientId" style="width: 100px"
+							required="true" demandd="true"
+							data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'" />
+						</td>
+						<td>&nbsp;&nbsp;配送车号：<input type="text" id="chehao"
+							required="true" name="chehao" size="10" />
+						</td>
+						<td width="180px">&nbsp;&nbsp;配送人：<input
+							class="easyui-combobox" id="peisongren" name="peisongren"
+							style="width: 100px"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
+						</td>
+						<td>联系方式：<input type="text" id="tel" required="true"
+							name="tel" size="15" />
+						</td>
+						<td rowspan="2"><a href="javascript:ok()"
+							class="easyui-linkbutton" iconCls="icon-ok">确定</a></td>
+
+					</tr>
+					<tr>
+						<td width="180px">负责人：<input class="easyui-combobox"
+							id="fuzeren" name="fuzeren" style="width: 100px"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
+						</td>
+						<td width="180px">&nbsp;&nbsp;填&nbsp;&nbsp;制&nbsp;人：<input
+							class="easyui-combobox" id="tianzhiren" name="tianzhiren"
+							style="width: 100px"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
+						</td>
+						<td width="180px">&nbsp;&nbsp;提货仓库：<input
+							class="easyui-combobox" id="tihuocangku" name="tihuocangku"
+							style="width: 100px"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/entrepot/entrepotList'" />
+						</td>
+						<td width="180px">&nbsp;&nbsp;业务员：<input
+							class="easyui-combobox" id="yewuyuan" name="yewuyuan"
+							style="width: 100px"
+							data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'" />
+						</td>
+						<td>收&nbsp;&nbsp;货&nbsp;&nbsp;人：<input type="text"
+							id="lankman" required="true" name="lankman" size="15" />
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</div>
+	<div data-options="region:'center'" style="padding: 10px; border: 1px">
+		<table id="dg" class="easyui-datagrid" 
+			data-options="iconCls: 'icon-edit',
+				singleSelect: true,
+				toolbar: '#tb',
+				url: 'datagrid_data1.json',
+				method: 'get',
+				onClickRow: onClickRow
+			" >
+			<thead>
+				<th field="name" width="162" align="center">产品名称</th>
+				<th data-options="field:'size',width:162,align:'center',editor:{type:'numberbox',options:{precision:1}}">规格</th>
+				<!-- <th field="danwei" width="162" align="center">计量单位</th> -->
+				<th data-options="field:'danwei',width:162,align:'center',
+						formatter:function(value,row){
+							return row.productname;
+						},
+						editor:{
+							type:'combobox',
+							options:{
+								valueField:'danwei',
+								textField:'productname',
+								method:'get',
+								url:'products.json',
+								required:true
+							}
+						}">计量单位</th>
+				<!-- <th field="count" width="162" align="center">发货数</th> -->
+				<th data-options="field:'count',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">发货数</th>
+				<!-- <th field="money" width="162" align="center">单价(元)</th> -->
+				<th data-options="field:'money',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">单价(元)</th>
+				<th data-options="field:'summoney',width:162,align:'center',editor:{type:'numberbox',options:{precision:2}}">金额(元)</th>
+				<!-- <th field="summoney" width="162" align="center">金额(元)</th> -->
+
+			</thead>
+		</table>
+
+		<div id="tb">
+			<div style="padding: 2px">
+				<a href="javascript:printdg()" ;
+					class="easyui-linkbutton"
+					iconCls="icon-print" plain="true">打印</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+				
+			</div>
+		</div>
+	</div>
+
+	<div id="dlg-buttons4">
+		<a href="javascript:saveSelectRows()" class="easyui-linkbutton"
+			iconCls="icon-ok">确定</a> <a href="javascript:closeSelectRows()"
+			class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+</body>
+</html>
