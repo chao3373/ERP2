@@ -15,7 +15,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.shenke.entity.Product;
 import com.shenke.repository.SaleListProductRepository;
+import com.shenke.service.ProductService;
 import com.shenke.util.QRCode;
 import com.shenke.util.StringUtil;
 import org.jsoup.Jsoup;
@@ -39,6 +41,9 @@ public class IndexController {
 
 	@Resource
 	private SaleListProductRepository saleListProductRepository;
+
+	@Resource
+	private ProductService productService;
 
 	@RequestMapping("/")
 	public String index() {
@@ -135,4 +140,19 @@ public class IndexController {
 		return href;
 
 	}
+
+    @ResponseBody
+	@RequestMapping("/static/selectProduct")
+	public List<Product> selectProductByName(String s) {
+		if (s == null) {
+			s = "";
+		}
+		return productService.findByName("%" + s + "%");
+	}
+
+	@ResponseBody
+	@RequestMapping("/static/xiadan")
+	public String xiadan() {
+	    return "下单成功";
+    }
 }

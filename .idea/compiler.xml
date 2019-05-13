@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="ERP" />
         <module name="ERP2" />
+        <module name="idea-werk" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
