@@ -33,7 +33,7 @@ public class ProductAdminController {
 	/**
 	 * 分页查询产品及原料信息
 	 * 
-	 * @param goods
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return

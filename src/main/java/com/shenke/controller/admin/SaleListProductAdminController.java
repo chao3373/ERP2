@@ -163,4 +163,15 @@ public class SaleListProductAdminController {
         map.put("rows", informNumber);
         return map;
     }
+
+    /***
+     * 根据订单状态查询订单
+     */
+    @RequestMapping("/listProductByState")
+    public Map<String, Object> listProductByState(String state) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", saleListProductService.listProductByState(state));
+        return map;
+    }
 }

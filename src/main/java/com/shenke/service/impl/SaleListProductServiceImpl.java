@@ -174,4 +174,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 		return saleListProductRepository.selectNoAccomplish(jitaiId);
 	}
 
+    @Override
+    public List<SaleListProduct> listProductByState(String state) {
+        return saleListProductRepository.listProductByState(state);
+    }
+
 }

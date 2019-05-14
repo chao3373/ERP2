@@ -64,35 +64,35 @@ public class ProductionAdminController {
 
 		}
 
-		List<SaleListProduct> list = saleListProductService.fandAll(idList);
-
-		for (SaleListProduct saleListProduct : list) {
-			logService.save(new Log(Log.ADD_ACTION, "添加生产通知单"));
-			for (int i = 0; i < saleListProduct.getNum(); i++) {
-				JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
-				jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
-				jitaiProductionAllot.setInformNumber(informNumber);
-				jitaiProductionAllot.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
-				jitaiProductionAllot.setProductionMessage("幅宽： " + saleListProduct.getModel() + "，厚度："
-						+ saleListProduct.getPrice() + "，长度：" + saleListProduct.getLength() + "，颜色："
-						+ saleListProduct.getColor() + "，要求：" + saleListProduct.getDemand());
-				jitaiProductionAllot.setTaskQuantity(saleListProduct.getSumwight());
-				jitaiProductionAllot.setAllorTime(new Date(System.currentTimeMillis()));
-				jitaiProductionAllot.setAllotState(saleListProduct.getState());
-				jitaiProductionAllot.setIssueState("未下发");
-				jitaiProductionAllot.setSaleListProduct(saleListProduct);
-				Integer countSaleListProduct = jitaiProductionAllotService
-						.countBySaleListProductId(saleListProduct.getId());
-				jitaiProductionAllot.setNum(countSaleListProduct == null ? 0 : countSaleListProduct);
-				jitaiProductionAllotService.save(jitaiProductionAllot);
+//		List<SaleListProduct> list = saleListProductService.fandAll(idList);
+//
+//		for (SaleListProduct saleListProduct : list) {
+//			logService.save(new Log(Log.ADD_ACTION, "添加生产通知单"));
+//			for (int i = 0; i < saleListProduct.getNum(); i++) {
+//				JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
+//				jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
+//				jitaiProductionAllot.setInformNumber(informNumber);
+//				jitaiProductionAllot.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
+//				jitaiProductionAllot.setProductionMessage("幅宽： " + saleListProduct.getModel() + "，厚度："
+//						+ saleListProduct.getPrice() + "，长度：" + saleListProduct.getLength() + "，颜色："
+//						+ saleListProduct.getColor() + "，要求：" + saleListProduct.getDemand());
+//				jitaiProductionAllot.setTaskQuantity(saleListProduct.getSumwight());
+//				jitaiProductionAllot.setAllorTime(new Date(System.currentTimeMillis()));
+//				jitaiProductionAllot.setAllotState(saleListProduct.getState());
+//				jitaiProductionAllot.setIssueState("未下发");
+//				jitaiProductionAllot.setSaleListProduct(saleListProduct);
+//				Integer countSaleListProduct = jitaiProductionAllotService
+//						.countBySaleListProductId(saleListProduct.getId());
+//				jitaiProductionAllot.setNum(countSaleListProduct == null ? 0 : countSaleListProduct);
+//				jitaiProductionAllotService.save(jitaiProductionAllot);
 //				List<JitaiProductionAllot> jitaiProductionAllots = jitaiProductionAllotService
 //						.findBySaleListProductId(saleListProduct.getId());
 //				for (JitaiProductionAllot jitaiProductionAllo : jitaiProductionAllots) {
 //					jitaiProductionAllotService.updateNum(countSaleListProduct,
 //							jitaiProductionAllo.getSaleListProduct().getId());
 //				}
-			}
-		}
+//			}
+//		}
 
 		map.put("success", true);
 		return map;

@@ -26,7 +26,7 @@ public interface SaleListProductRepository
 	 * @param saleListId
 	 * @return
 	 */
-	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1 AND (state LIKE '%下单%' OR state LIKE '%审核失败%')", nativeQuery = true)
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1", nativeQuery = true)
 	public List<SaleListProduct> listBySaleListId(Integer saleListId);
 
 	/**

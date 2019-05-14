@@ -123,4 +123,11 @@ public interface SaleListProductService {
 	* @Date:
 	*/
 	public List<SaleListProduct> selectNoAccomplish(Integer jitaiId);
+
+	/***
+	 * 根据订单状态查询订单
+	 * @param state
+	 * @return
+	 */
+    public List<SaleListProduct> listProductByState(String state);
 }
