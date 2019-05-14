@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.shenke.entity.JitaiProductionAllot;
 import com.shenke.util.StringUtil;
 import org.springframework.data.domain.Sort;
@@ -69,6 +70,8 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
 	@Override
 	public List<SaleListProduct> screen(Map<String, Object> condition) {
+
+
 		List<Order> orders = new ArrayList<Order>();
 
 		Specification<SaleListProduct> specification = new Specification<SaleListProduct>() {
@@ -100,8 +103,8 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 				if (condition.get("lengthSort") != null) {
 					predicate.getExpressions().add(cb.and(cb.equal(root.get("length"), condition.get("lengthSort"))));
 				}
-				if (condition.get("meter") != null) {
-					predicate.getExpressions().add(cb.and(cb.equal(root.get("meter"), condition.get("meter"))));
+				if (condition.get("realityprice") != null) {
+					predicate.getExpressions().add(cb.and(cb.equal(root.get("realityprice"), condition.get("realityprice"))));
 				}
 				if (condition.get("oneweight") != null) {
 					predicate.getExpressions().add(cb.and(cb.equal(root.get("oneweight"), condition.get("oneweight"))));

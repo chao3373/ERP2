@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import com.shenke.entity.Clerk;
+import com.shenke.entity.Count;
 import com.shenke.entity.JieSuan;
 import com.shenke.entity.Storage;
 
@@ -134,4 +135,6 @@ public interface StorageService {
     public List<Storage> selectOutByOutNumber(String outNumber);
 
     public String selectCountByNameAndOutNumber(String name, String outNumber);
+
+    public List<Count> FindBySaleListId();
 }

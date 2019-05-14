@@ -98,8 +98,9 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/screen")
-    public Map<String, Object> screen(String modeSort, String priceSort, String lengthSort, String client, String meter,
+    public Map<String, Object> screen(String modeSort, String priceSort, String lengthSort, String client, String realityprice,
                                       String oneweight, String sumwight, String realitymodel) {
+
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> condition = new HashMap<String, Object>();
 
@@ -107,10 +108,11 @@ public class SaleListProductAdminController {
         condition.put("priceSort", priceSort);
         condition.put("lengthSort", lengthSort);
         condition.put("client", client);
-        condition.put("meter", meter);
+        condition.put("realityprice", realityprice);
         condition.put("oneweight", oneweight);
         condition.put("sumwight", sumwight);
         condition.put("realitymodel", realitymodel);
+
 
         List<SaleListProduct> screen = saleListProductService.screen(condition);
         map.put("success", true);

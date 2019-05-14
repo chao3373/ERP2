@@ -4,10 +4,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+
 import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
@@ -314,6 +312,8 @@ public class StorageServiceImpl implements StorageService {
 
                     predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
+                    query.groupBy(root.get("saleListProduct").get("id"));
+
                     return predicate;
                 }
             }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
@@ -337,6 +337,7 @@ public class StorageServiceImpl implements StorageService {
 
                 predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
+                query.groupBy(root.get("saleListProduct").get("id"));
                 return predicate;
             }
         });
@@ -362,6 +363,8 @@ public class StorageServiceImpl implements StorageService {
         return storageRepository.selectCountByNameAndOutNumber(name, outNumber);
     }
 
+
+
     /**
      * @Description: 生成出库单号
      * @Param:
@@ -379,6 +382,18 @@ public class StorageServiceImpl implements StorageService {
             code.append("00001");
         }
         return code.toString();
+    }
+
+    /***
+     *
+     * 根据
+     * @param
+     * @return
+     */
+    @Override
+    public List<Count> FindBySaleListId() {
+        List<Count> cast = EntityUtils.castEntity(storageRepository.FindBySaleListId(), Count.class);
+        return cast;
     }
 
 }

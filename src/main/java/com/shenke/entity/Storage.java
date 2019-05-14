@@ -168,6 +168,8 @@ public class Storage {
 
     private String remark;// 备注
 
+    private String printstate;//打印状态
+
     @Override
     public String toString() {
         return "Storage{" +
@@ -223,7 +225,16 @@ public class Storage {
                 ", starDate=" + starDate +
                 ", endDate=" + endDate +
                 ", remark='" + remark + '\'' +
+                ", printstate='" + printstate + '\'' +
                 '}';
+    }
+
+    public String getPrintstate() {
+        return printstate;
+    }
+
+    public void setPrintstate(String printstate) {
+        this.printstate = printstate;
     }
 
     public Location getLocation() {

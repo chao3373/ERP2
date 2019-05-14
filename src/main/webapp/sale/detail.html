@@ -55,6 +55,7 @@
 
         //设置排序
         function orderBy(order) {
+            addSelect();
             json.order = "";
             json.order = order;
 
@@ -131,10 +132,19 @@
                     {field: 'price', title: '厚度mm', width: 100, align: 'center'},
                     {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
                     {field: 'deliveryTime', title: '出库时间', width: 100, align: 'center'},
+                    {field: 'sum', title: '产品数量', width: 100, align: 'center'}
                 ]]
             });
+
+            $.post("/admin/storage/findbySalelistId", json,
+                function (result) {
+                if (result.success) {
+                    console.log(result.data);
+                    $("#dg").datagrid("loadData", result.data);
+                }
+            }, "json");
         });
-        
+
         
         
       //打印
@@ -275,6 +285,39 @@
     			console.log(tableString);
     		}
     	}
+
+        //点击选择出库单
+        function selectOutNumber() {
+            $("#outNumber").combobox("disable");
+            $("#dlg2").dialog("open");
+            $("#outDate").datebox({
+                onSelect: function (date) {
+                    $("#outNumber").combobox({
+                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datebox("getValue"),
+                        valueField: 'outNumber',
+                        textField: 'clientname',
+                        panelHeight: 'auto'
+                    });
+                    $("#outNumber").combobox("enable");
+                }
+            });
+        }
+
+        //添加出库单
+        function addOutNumber() {
+            $("#dg").datagrid({
+                url:"/admin/storage/selectOutByOutNumber?outNumber=" + $("#outNumber").combobox("getValue")
+            });
+            $("#dh").text($("#outNumber").combobox("getValue"));
+            closeDlg2();
+        }
+
+        function closeDlg2() {
+            $("#dlg2").dialog("close");
+        }
+
+
+
     </script>
 </head>
 <body class="easyui-layout">
@@ -306,7 +349,7 @@
                         <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:loaddg()">查询</a>
                     </td>
                     <td>
-                        <a class="easyui-linkbutton" iconCls="icon-cancel" href="javascript:resett()">清空</a>
+                        <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:resett()">刷新</a>
                     </td>
                 </tr>
             </table>
@@ -315,7 +358,7 @@
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-           singleSelect="true" fit="true" toolbar="#tb" url="/admin/storage/truck?state=装车">
+           singleSelect="true" fit="true" toolbar="#tb" url="/admin/storage/findbySalelistId">
     </table>
 
     <div id="tb">
@@ -327,14 +370,35 @@
                class="easyui-linkbutton" plain="true">农户</a>
             <a href="javascript:orderBy('model')" ;
                class="easyui-linkbutton" plain="true">幅宽</a>
-            <a href="javascript:orderBy('length')" ;
+            <a href="javascript:orderBy('name')" ;
+               class="easyui-linkbutton" plain="true">产品名称</a>
+            <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
+               iconCls="icon-add" plain="true">选择出库单</a>
+            <!--<a href="javascript:orderBy('length')" ;
                class="easyui-linkbutton" plain="true">长度</a>
             <a href="javascript:orderBy('price')" ;
                class="easyui-linkbutton" plain="true">厚度</a>
             <a href="javascript:orderBy('realityweight')" ;
-               class="easyui-linkbutton" plain="true">重量</a>
+               class="easyui-linkbutton" plain="true">重量</a>-->
         </div>
     </div>
+</div>
+
+<div id="dlg2" class="easyui-dialog" title="选择出库单" style="width: 666px;height: 180px; padding: 20px;"
+     closed="true" buttons="#dlg2-tb">
+    <table>
+        <tr>
+            <td>选择出库日期：<input id="outDate" class="easyui-datebox" size="15"/></td>
+        </tr>
+        <tr>
+            <td>选择出库单号：<input id="outNumber" class="easyui-combobox" size="15"/></td>
+        </tr>
+    </table>
+</div>
+<div id="dlg2-tb">
+    <a href="javascript:addOutNumber()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+    <a href="javascript:closeDlg2()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+
 </div>
 </body>
 </html>

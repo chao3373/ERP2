@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 
+import com.shenke.entity.Count;
 import com.shenke.entity.JieSuan;
 import com.shenke.entity.Log;
 import com.shenke.entity.Storage;
@@ -289,7 +290,9 @@ public class StorageAdminController {
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-
+        System.out.println("*****************************************");
+        System.out.println(map1);
+        System.out.println("*****************************************");
         map.put("success", true);
         map.put("rows", storageService.detail(map1));
         return map;
@@ -322,5 +325,24 @@ public class StorageAdminController {
     public String selectCountByNameAndOutNumber(String name, String outNumber) {
         System.out.println("name======================" + name + "outNumber===============" + outNumber);
         return storageService.selectCountByNameAndOutNumber(name, outNumber);
+    }
+
+    /***
+     * 根据Salelist
+     * @param client
+     * @return
+     */
+    @RequestMapping("/findbySalelistId")
+    public Map<String, Object> FindBySaleListId() {
+        Map<String,Object> map = new HashMap<>();
+        List<Count> findBySaleListId = storageService.FindBySaleListId();
+        map.put("success",true);
+        map.put("data",findBySaleListId);
+
+        System.out.println("***************Controllor*****************");
+        System.out.println(map);
+        System.out.println("******************************************");
+
+        return map;
     }
 }

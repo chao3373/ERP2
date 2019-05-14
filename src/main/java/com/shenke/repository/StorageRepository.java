@@ -167,4 +167,20 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Query(value = "SELECT COUNT(*) FROM t_storage WHERE NAME =?1 AND out_number = ?2", nativeQuery = true)
     public String selectCountByNameAndOutNumber(String name, String outNumber);
+
+
+    /***
+     *
+     * g根据销售单号聚合查询
+     * @param client
+     * @return
+     */
+    @Query( value = "select clientname,peasant,sale_number,name,model,length,price,realityweight,delivery_time,count(*) FROM t_storage GROUP BY sale_list_product_id" , nativeQuery = true)
+    public List<Object[]> FindBySaleListId();
+
+
+
+    /*@Query( value = "select clientname,peasant,sale_number,name,model,length,price,realityweight,delivery_time,count(*) FROM t_storage GROUP BY sale_list_product_id" , nativeQuery = true)
+    public List<Object[]> FindBySaleListIdOne();*/
+
 }
