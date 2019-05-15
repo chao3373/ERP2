@@ -85,15 +85,25 @@ public class SaleListAdminController {
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+        System.out.println("===============================");
+        System.out.println(clerkId);
+        System.out.println(sellId);
+
         // SaleList数据封装
         SaleList saleList = new SaleList();
         saleList.setSaleDate(sdf.parse(saleDate));
-        Clerk clerk = new Clerk();
-        clerk.setId(clerkId);
-        saleList.setClerk(clerk);
-        Sell sell = new Sell();
-        sell.setId(sellId);
-        saleList.setSell(sell);
+        if (clerkId != null) {
+            Clerk clerk = new Clerk();
+            clerk.setId(clerkId);
+            saleList.setClerk(clerk);
+        }
+        if (sellId != null) {
+            {
+                Sell sell = new Sell();
+                sell.setId(sellId);
+                saleList.setSell(sell);
+            }
+        }
         Client client = new Client();
         client.setId(clientId);
         saleList.setClient(client);

@@ -81,7 +81,7 @@ public interface JitaiProductionAllotService {
 
 	/**
 	 * 根据通知单号查询生产通知单
-	 * @param string
+	 * @param
 	 * @return
 	 */
 	public JitaiProductionAllot findOne(Integer informNumber);
@@ -95,7 +95,7 @@ public interface JitaiProductionAllotService {
 
 	/**
 	 * 根据id获取生产通知单
-	 * @param string
+	 * @param
 	 */
 	public JitaiProductionAllot findById(Integer id);
 

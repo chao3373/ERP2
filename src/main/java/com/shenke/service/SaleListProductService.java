@@ -130,4 +130,11 @@ public interface SaleListProductService {
 	 * @return
 	 */
     public List<SaleListProduct> listProductByState(String state);
+
+	/***
+	 * 获取最大的通知单号
+	 * @return
+	 */
+	public Long findMaxInfornNumber();
+
 }
