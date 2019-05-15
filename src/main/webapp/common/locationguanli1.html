@@ -77,7 +77,7 @@
             }, "json");
         }
 
-        //清空筛选条件,并初始化筛选属性的值
+        //刷新筛选条件,并初始化筛选属性的值
         function clertCondition() {
             loadData();
             json = {};
@@ -498,7 +498,7 @@
 
 
                 <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                                 iconCls="icon-cancel" plain="true">清空</a>
+                                                 iconCls="icon-cancel" plain="true">刷新</a>
 
                 </td>
             </tr>
@@ -558,16 +558,16 @@
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>幅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宽（m）&nbsp;：</td>
                 <td><input type="text" id="model" name="model"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
             </tr>
             <tr>
                 <td>厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（mm）：</td>
                 <td><input type="text" id="price" name="price"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（m） ：</td>
                 <td><input type="text" id="length" name="length"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
             </tr>
             <tr>
                 <td>颜&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色
@@ -579,12 +579,12 @@
                     ：
                 </td>
                 <td><input type="text" id="num" name="num"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <tr>
                 <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
                 <td><input type="text" id="weight" name="weight"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>剖&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刀&nbsp;：</td>
                 <td><input type="text" id="dao" name="dao"
@@ -628,7 +628,7 @@
                     产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
                 </td>
                 <td><input type="text" id="meter" name="meter"
-                           class="easyui-numberbox" style="width: 120px"/></td>
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
                 <td><input type="text" id="clientname" name="clientname"

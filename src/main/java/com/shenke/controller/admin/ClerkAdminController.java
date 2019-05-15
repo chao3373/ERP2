@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+
+import com.shenke.entity.Pack;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +35,7 @@ public class ClerkAdminController {
 	/**
 	 * 分页查询员工信息
 	 * 
-	 * @param goods
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return
@@ -55,7 +57,7 @@ public class ClerkAdminController {
 	/**
 	 * 添加或者修改员工信息
 	 * 
-	 * @param goods
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -119,6 +121,11 @@ public class ClerkAdminController {
 			q = "";
 		}
 		return clerkService.findByProName("%" + q + "%");
+	}
+
+	@RequestMapping("/findByName")
+	public Clerk findByName(String clerk) {
+		return clerkService.finName(clerk);
 	}
 	
 }

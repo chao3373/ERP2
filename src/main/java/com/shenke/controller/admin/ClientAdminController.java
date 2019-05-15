@@ -34,7 +34,7 @@ public class ClientAdminController {
 	/**
 	 * 分页查询产品及原料信息
 	 * 
-	 * @param goods
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return
@@ -57,7 +57,7 @@ public class ClientAdminController {
 	/**
 	 * 添加或者修改产品及原料信息
 	 * 
-	 * @param goods
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -118,4 +118,13 @@ public class ClientAdminController {
 		return clientService.findByName("%" + q + "%");
 	}
 
+	/***
+	 * 根据name查询
+	 * @param name
+	 * @return
+	 */
+	@RequestMapping("/findByName")
+	public Client findByName(String name) {
+		return clientService.findName(name);
+	}
 }

@@ -51,4 +51,5 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
 	*/
 	@Query(value = "select * from t_clerk where name = ?1", nativeQuery = true)
 	public Clerk findByNam(String name);
+
 }

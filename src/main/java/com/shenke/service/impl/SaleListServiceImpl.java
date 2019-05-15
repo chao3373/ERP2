@@ -76,12 +76,12 @@ public class SaleListServiceImpl implements SaleListService {
 						predicate.getExpressions()
 								.add(cb.lessThanOrEqualTo(root.get("saleDate"), saleList.getSaleDate()));
 					}
-
-					Subquery<String> subquery = query.subquery(String.class);
-					Root<SaleListProduct> from = subquery.from(SaleListProduct.class);
-					subquery.select(from.get("saleList").get("id")).where(cb.like(from.get("state"), "%下单%"));
-
-					predicate.getExpressions().add(cb.and(root.get("id").in(subquery)));
+//只显示未审核的
+//					Subquery<String> subquery = query.subquery(String.class);
+//					Root<SaleListProduct> from = subquery.from(SaleListProduct.class);
+//					subquery.select(from.get("saleList").get("id")).where(cb.like(from.get("state"), "%下单%"));
+//
+//					predicate.getExpressions().add(cb.and(root.get("id").in(subquery)));
 				}
 				return predicate;
 			}
@@ -115,6 +115,6 @@ public class SaleListServiceImpl implements SaleListService {
 
     @Override
     public void saveTwo(SaleList saleList) {
-
+		saleListRepository.save(saleList);
     }
 }

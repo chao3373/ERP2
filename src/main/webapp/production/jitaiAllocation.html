@@ -160,7 +160,7 @@
                     });
         }
 
-        //清空条件并重新加载数据
+        //刷新条件并重新加载数据
         function reset() {
             $("#allorTime").datebox("reset");
             $("#jitai").combobox("reset");
@@ -269,7 +269,7 @@
 <body style="margin: 1px">
 <table id="dg" title="机台生产分配" class="easyui-datagrid"
        fitColumns="false" rownumbers="true"
-       url="/admin/jitaiProductionAllot/selectByIssueState?issueState=未下发"
+       url="/admin/saleListProduct/listProductByState?state=分配机台"
        toolbar="#tb" fit="true">
 </table>
 
@@ -284,7 +284,7 @@
                                                    style="width: 98px"/>
             </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-                                           iconCls="icon-cancel" href="javascript:reset()">清空</a>
+                                           iconCls="icon-cancel" href="javascript:reset()">刷新</a>
             </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
                                            iconCls="icon-add" href="javascript:issue()">下发</a>

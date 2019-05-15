@@ -71,5 +71,6 @@ public interface ClerkService {
 	* @Date:
 	*/
 	public List<Clerk> findByProName(String name);
-	
+
+    public Clerk finName(String name);
 }
