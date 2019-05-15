@@ -449,19 +449,19 @@
             }, "json");
 
 
-            $.post("/admin/storage/findoutnumber", {
+           /* $.post("/admin/storage/findoutnumber", {
                 client: $("#clientId").combobox("getText")
             }, function (result) {
                 if (result.success) {
                     console.log(result.data);
                     //$("#dg").datagrid("loadData", result.data);
-                    /* $("#dh").html(result.data); */
+                    /!* $("#dh").html(result.data); *!/
                     //$("#dh").load(result.data);
                 }
-            }, "json");
+            }, "json");*/
         }
 
-        //修改合计行
+        //修改合计
         function updateEnd() {
 
             var row = $("#dg").datagrid("getRows");
