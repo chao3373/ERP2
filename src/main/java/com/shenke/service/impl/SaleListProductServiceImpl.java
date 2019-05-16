@@ -182,4 +182,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         return saleListProductRepository.listProductByState(state);
     }
 
+    @Override
+    public Long findMaxInfornNumber() {
+        return saleListProductRepository.findMaxInfornNumber();
+    }
+
 }

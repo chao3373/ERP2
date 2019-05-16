@@ -182,4 +182,11 @@ public interface SaleListProductRepository
 	public void updateAccomplishNumberById(Integer count, Integer producionProcessId);
 
 
+	/***
+	 * 查询最大的通知单号
+	 * @return
+	 */
+	@Query(value = "SELECT MAX(inform_number) FROM t_sale_list_product", nativeQuery = true)
+    public Long findMaxInfornNumber();
+
 }

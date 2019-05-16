@@ -104,7 +104,7 @@ public class ProductionAdminController {
 	 * @return
 	 */
 	public Long getInformNumber() {
-		if (jitaiProductionAllotService.findMaxInfornNumber() != null) {
+		if (saleListProductService.findMaxInfornNumber() != null) {
 			return jitaiProductionAllotService.findMaxInfornNumber() + 1;
 		} else {
 			return 1L;
