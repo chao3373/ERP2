@@ -402,7 +402,9 @@
                     //{field: 'cb', checkbox: "true", align: "center"},
                     {field: 'name', title: '产品名称', width: '150', align: 'center'},
                     {field: 'guige', title: '规格', width: '150', align: 'center'},
-                    {field: 'danwei', title: '计量单位', width: '150', align: 'center'},
+                    {field: 'danwei', title: '计量单位', width: '150', align: 'center', formatter:function(val, row) {
+                        return"KG";
+                        }},
                     {field: 'count', title: '发货数', width: '150', align: 'center'},
                     {field: 'money', title: '单价（元）', width: '150', align: 'center'},
                     {field: 'summoney', title: '总金额（元）', width: '150', align: 'center'}
@@ -548,6 +550,7 @@
                         $("#count2").val(result);
                     }
                 });
+                //$("#count2").val(rows[0].count);
                 $("#money2").val(rows[0].money);
                 $("#summoney2").val(rows[0].summoney);
                 $("#dlg").dialog("open");
