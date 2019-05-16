@@ -189,4 +189,19 @@ public interface SaleListProductRepository
 	@Query(value = "SELECT MAX(inform_number) FROM t_sale_list_product", nativeQuery = true)
     public Long findMaxInfornNumber();
 
+	/***+
+	 * 根据机台id查询
+	 * @param jitai
+	 * @return
+	 */
+	@Query(value = "select * from t_sale_list_product where jitai_id = ?1", nativeQuery = true)
+    public List<SaleListProduct> findByJitaiId(Integer jitai);
+
+	/***
+	 * 修改机台
+	 * @param jitai
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set jitai_id = ?1 where id = ?2", nativeQuery = true)
+	public void alertJitai(Integer jitai, Integer id);
 }

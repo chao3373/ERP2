@@ -2,7 +2,6 @@ package com.shenke.controller.admin;
 
 import java.util.*;
 import javax.annotation.Resource;
-
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -174,6 +173,51 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", saleListProductService.listProductByState(state));
+        return map;
+    }
+
+    /***
+     * 根据机台id查询
+     * @param jitai
+     * @return
+     */
+    @RequestMapping("/findByJitaiId")
+    public Map<String, Object> findByJitaiId(Integer jitai) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("rows", saleListProductService.findByJitaiId(jitai));
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 修改机台
+     * @param jitai
+     * @return
+     */
+    @RequestMapping("/alertJitai")
+    public Map<String, Object> alertJitai(Integer jitai, String idsStr) {
+        Map<String, Object> map = new HashMap<>();
+        String[] ids = idsStr.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            saleListProductService.alertJitai(jitai, Integer.parseInt(ids[i]));
+        }
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 修改状态和下发状态
+     * @return
+     */
+    @RequestMapping("/issue")
+    public Map<String, Object> issue(String idStr) {
+        Map<String, Object> map = new HashMap<>();
+        String[] ids = idStr.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            saleListProductService.updateIussueState("下发机台：" + saleListProductService.findById(Integer.parseInt(ids[i])).getJiTai().getName(), Integer.parseInt(ids[i]));
+            saleListProductService.updateState("下发机台：" + saleListProductService.findById(Integer.parseInt(ids[i])).getJiTai().getName(), Integer.parseInt(ids[i]));
+        }
+        map.put("success", true);
         return map;
     }
 }

@@ -137,4 +137,24 @@ public interface SaleListProductService {
 	 */
 	public Long findMaxInfornNumber();
 
+    /***
+     * 根据机台id查询
+     * @param jitai
+     * @return
+     */
+    List<SaleListProduct> findByJitaiId(Integer jitai);
+
+
+    /***
+     * 修改机台
+     * @param jitai
+     */
+    public void alertJitai(Integer jitai, Integer id);
+
+    /***
+     * 根据id进行查询
+     * @param id
+     * @return
+     */
+    public SaleListProduct findById(Integer id);
 }

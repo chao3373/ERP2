@@ -187,4 +187,18 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         return saleListProductRepository.findMaxInfornNumber();
     }
 
+    @Override
+    public List<SaleListProduct> findByJitaiId(Integer jitai) {
+        return saleListProductRepository.findByJitaiId(jitai);
+    }
+
+	@Override
+	public void alertJitai(Integer jitai, Integer id) {
+		saleListProductRepository.alertJitai(jitai, id);
+	}
+
+	@Override
+	public SaleListProduct findById(Integer id) {
+		return saleListProductRepository.findOne(id);
+	}
 }

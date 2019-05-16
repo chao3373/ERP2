@@ -58,8 +58,12 @@
                     if (result.jitai.weight) {
                         $("#printWeight").prop("checked", true);
                     }
-                    $("#banzu").val(result.jitai.group.name);
-                    $("#staff").val(result.jitai.clerk.name);
+                    if (result.jitai.group) {
+                        $("#banzu").val(result.jitai.group.name);
+                    }
+                    if (result.jitai.clerk) {
+                        $("#staff").val(result.jitai.clerk.name);
+                    }
                 }
             });
         }
@@ -93,7 +97,12 @@
             $("#dg")
                 .datagrid(
                     {
-                        columns: [[{
+                        columns: [[ {
+                            field: 'cb',
+                            checkbox: "true",
+                            hidden:"true",
+                            align: "center"
+                        },{
                             field: 'id',
                             title: 'id',
                             width: 100,
@@ -199,29 +208,19 @@
                             width: 300,
                             align: 'center'
                         }]],
-                        onClickRow: function (index, row) {
-                            informNumber = row.informNumber;
+                        onSelect: function (rowIndex, rowData) {
+                            informNumber = rowData.informNumber;
                             $("#yaoqiu").show();
-                            $("#yaoqiu").text(row.demand);
+                            $("#yaoqiu").text(rowData.demand);
                             clearInterval(timer);
                             timer = setInterval(goLeft, 20);
                             var jitai = $("#selectJitai").combobox(
                                 "getValue");
-                            $
-                                .ajax({
-                                    type: "post",
-                                    url: "/admin/jitaiProductionAllot/selectBySaleListProductId",
-                                    data: {
-                                        id: row.id
-                                    },
-                                    success: function (result) {
-                                        if (result.success) {
-                                            $("#dg2").datagrid(
-                                                'loadData',
-                                                result.rows);
-                                        }
-                                    }
-                                });
+                            $('#dg2').datagrid('loadData',{total:0,rows:[]});
+                            var count = $("#dg").datagrid("getSelected").num;
+                            for (var i = 0; i < count; i++) {
+                                $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
+                            }
                         }
                     });
         }
@@ -414,12 +413,15 @@
                     $(this).datagrid('unselectRow', rowIndex);
                 },
                 rowStyler: function (index, row) {
-                    if (index == 0) {
+                    if (index < dabaoCount) {
                         return 'background-color:green;color:white';
                     }
                 }
             });
         }
+
+        var dabaoNum;
+        var dabaoCount;
 
         //加载该分配到该机台的所有没有生产完成的通知单号
         function loadInformNumber() {
@@ -702,7 +704,7 @@
                     $.post("/static/erweima", {
                         url: url
                     }, function (result) {
-                       // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                        // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
                         var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
                         // url += result.url;
                         // url += "'/>";
@@ -882,6 +884,23 @@
             });
         }
 
+        //设置打包数量
+        function setDabao() {
+            $("#dabao").numberbox("disable");
+            dabaoNum = $("#dabao").numberbox("getValue");
+            dabaoCount = dabaoNum;
+            var row = $("#dg").datagrid("getSelected");
+            var rowIndex = $("#dg").datagrid("getRowIndex", row);
+            $("#dg").datagrid("selectRow", rowIndex);
+            console.log("count" + dabaoCount);
+            /*$('#dg2').datagrid('loadData',{total:0,rows:[]});*/
+        }
+
+        //修改打包数量
+        function editDabao() {
+            $("#dabao").numberbox("enable");
+        }
+
         $(document).ready(function () {
             loadColum();
             loadDg2Colum();
@@ -889,6 +908,10 @@
             disabledInput();
             set();
             $("#yaoqiu").hide();
+            $("#dabao").numberbox("setValue", 1);
+            dabaoNum = $("#dabao").numberbox("getValue");
+            dabaoCount = dabaoNum;
+            setDabao();
         });
     </script>
 </head>
@@ -931,6 +954,11 @@
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
                                      class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设置打包数量：<input class="easyui-numberbox" id="dabao" size="5"/><a
+        href="javascript:setDabao()"
+        class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a><a href="javascript:editDabao()"
+                                                                          class="easyui-linkbutton" iconCls="icon-edit"
+                                                                          plain="true">修改</a>
 </div>
 
 <div region="south" style="height: 88px;" title="通知单号">

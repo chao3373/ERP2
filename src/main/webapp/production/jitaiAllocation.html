@@ -178,18 +178,17 @@
                 json.allorTime = $("#allorTime").datebox("getValue");
             }
             json.issueState = "未下发";
-            $.post("/admin/jitaiProductionAllot/screen", json, function (result) {
+            $.post("/admin/saleListProduct/findByJitaiId", json, function (result) {
                 if (result.success) {
                     $("#dg").datagrid('loadData', result.rows);
                 }
             });
         }
 
-        //所有下发的通知单的id
-        var ids = [];
-
         //点击下发按钮时触发
         function issue() {
+            //所有下发的通知单的id
+            var ids = [];
             if ($("#dg").datagrid("getSelections").length < 1) {
                 $.messager.alert("系统提示",
                     "<span style='color:red;'>请选择要下发的通知单！</span>");
@@ -200,11 +199,11 @@
                 text: '数据正在处理中，请稍后....'
             });
             for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
-                ids.push($("#dg").datagrid("getSelections")[i].saleListProduct.id);
+                ids.push($("#dg").datagrid("getSelections")[i].id);
             }
 
             var idStr = ids.join(",");
-            $.post("/admin/jitaiProductionAllot/issue", {
+            $.post("/admin/saleListProduct/issue", {
                 idStr: idStr
             }, function (result) {
                 if (result.success) {
@@ -229,15 +228,14 @@
                 return;
             }
 
-            var informNumbers = [];
+            var ids = [];
             var jitai = $("#alertJitai").combobox("getValue");
             for (var i = 0; i < $("#dg").datagrid("getSelections").length; i++) {
-                informNumbers
-                    .push($("#dg").datagrid("getSelections")[i].informNumber);
+                ids.push($("#dg").datagrid("getSelections")[i].id);
             }
-            var informNumberStr = informNumbers.join(",");
-            $.post("/admin/jitaiProductionAllot/alertJitai", {
-                informNumberStr: informNumberStr,
+            var idsStr = ids.join(",");
+            $.post("/admin/saleListProduct/alertJitai", {
+                idsStr: idsStr,
                 jitai: jitai
             }, function (result) {
                 if (result.success) {
@@ -289,14 +287,14 @@
             <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
                                            iconCls="icon-add" href="javascript:issue()">下发</a>
             </td>
-            <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：-->
-            <!--<input id="alertJitai" class="easyui-combobox"-->
-            <!--url="/admin/jitai/findAll" name="mode" valueField="id"-->
-            <!--panelHeight="auto" textField="name" style="width: 98px" />-->
-            <!--</td>-->
-            <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"-->
-            <!--iconCls="icon-ok" href="javascript:alertJitai()">修改</a>-->
-            <!--</td>-->
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：
+            <input id="alertJitai" class="easyui-combobox"
+            url="/admin/jitai/findAll" name="mode" valueField="id"
+            panelHeight="auto" textField="name" style="width: 98px" />
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
+            iconCls="icon-ok" href="javascript:alertJitai()">修改</a>
+            </td>
         </tr>
     </table>
 </div>
