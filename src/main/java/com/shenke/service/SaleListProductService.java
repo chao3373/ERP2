@@ -137,4 +137,12 @@ public interface SaleListProductService {
 	 */
 	public Long findMaxInfornNumber();
 
+	/**
+	 * 修改信息
+	 *
+	 * @param
+	 */
+	public void save(SaleListProduct saleListProduct);
+
+
 }

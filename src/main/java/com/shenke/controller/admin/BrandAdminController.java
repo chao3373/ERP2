@@ -33,7 +33,7 @@ public class BrandAdminController {
 	/**
 	 * 分页查询商标信息
 	 * 
-	 * @param role
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return

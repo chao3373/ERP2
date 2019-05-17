@@ -193,6 +193,7 @@ public class SaleListAdminController {
             return null;
         }
         map.put("rows", saleListProductService.listBySaleListId(saleListId));
+        System.out.println(map);
         return map;
     }
 
@@ -265,4 +266,18 @@ public class SaleListAdminController {
         System.out.println(resultMap);
         return resultMap;
     }
+
+    /**
+     * 添加或修改仓库信息
+     */
+    @RequestMapping("/saveInfo")
+    public Map<String, Object> save(SaleListProduct saleListProduct) {
+        System.out.println(saleListProduct);
+        System.out.println("controller");
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.save(saleListProduct);
+        map.put("success", true);
+        return map;
+    }
+
 }

@@ -26,12 +26,6 @@ public class JiTai {
     @JoinColumn(name = "clerkId")
     private Clerk clerk;//员工
 
-    private Boolean weight;//重量
-
-    private Boolean color;//颜色
-
-    private Boolean dao;//剖刀
-
     private Boolean clientName;//客户
 
     @Column(length = 500)
@@ -69,30 +63,6 @@ public class JiTai {
         this.clerk = clerk;
     }
 
-    public Boolean getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Boolean weight) {
-        this.weight = weight;
-    }
-
-    public Boolean getColor() {
-        return color;
-    }
-
-    public void setColor(Boolean color) {
-        this.color = color;
-    }
-
-    public Boolean getDao() {
-        return dao;
-    }
-
-    public void setDao(Boolean dao) {
-        this.dao = dao;
-    }
-
     public Boolean getClientName() {
         return clientName;
     }
@@ -116,9 +86,6 @@ public class JiTai {
                 ", name='" + name + '\'' +
                 ", group=" + group +
                 ", clerk=" + clerk +
-                ", weight=" + weight +
-                ", color=" + color +
-                ", dao=" + dao +
                 ", clientName=" + clientName +
                 ", remark='" + remark + '\'' +
                 '}';
