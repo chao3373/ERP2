@@ -45,7 +45,6 @@
         function setPrint() {
             $.post("/admin/jitai/findOne", {jitai: $("#selectJitai").combobox("getValue")}, function (result) {
                 if (result.success) {
-                    console.log(result.jitai);
                     if (result.jitai.color) {
                         $("#printLabel").prop("checked", true);
                     }
@@ -185,7 +184,7 @@
                             title: '完成数',
                             width: 100,
                             align: 'center',
-                            formatter: function (value, row, index) {
+                            formatter: function (value, row) {
                                 if (row.accomplishNumber) {
                                     return row.accomplishNumber;
                                 } else {
@@ -209,6 +208,7 @@
                             align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
+                            console.log(rowData);
                             informNumber = rowData.informNumber;
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
@@ -217,7 +217,7 @@
                             var jitai = $("#selectJitai").combobox(
                                 "getValue");
                             $('#dg2').datagrid('loadData',{total:0,rows:[]});
-                            var count = $("#dg").datagrid("getSelected").num;
+                            var count = rowData.num - rowData.accomplishNumber;
                             for (var i = 0; i < count; i++) {
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
                             }
@@ -513,7 +513,6 @@
             $.post("/admin/print/getPrintSet",
                 function (result) {
                     if (result.success) {
-                        console.log(result);
                         if (result.biaoqian) {
                             $("#printLabel").prop("checked", true);
                         }
@@ -613,9 +612,7 @@
                     function (weight) {
                         if (weight) {
                             saleListProductId = $("#dg2").datagrid(
-                                "getRows")[0].saleListProduct.id;
-                            var jitaiProductionAllotId = $("#dg2")
-                                .datagrid("getRows")[0].id;
+                                "getRows")[0].id;
                             var producionProcessId = $("#dg").datagrid(
                                 "getSelected").id;
                             var jitaiId = $("#selectJitai").combobox(
@@ -625,18 +622,30 @@
                                 .post(
                                     "/admin/storage/add",
                                     {
-                                        weight: weight,
-                                        saleListProductId: saleListProductId,
-                                        jitaiProductionAllotId: jitaiProductionAllotId,
-                                        producionProcessId: producionProcessId,
-                                        jitaiId: jitaiId,
+                                        realityweight: Number(weight),
+                                        saleListProduct: saleListProductId,
+                                        saleList: producionProcessId,
+                                        jiTai: jitaiId,
                                         clerkName: clerkName,
-                                        group: $("#banzu").val()
+                                        groupName: $("#banzu").val()
                                     }, function (result) {
                                         if (result.success) {
                                             // ddOpen();
+                                            dabaoCount--;
+                                            var flg = false;
+                                            if (dabaoCount == 0) {
+                                                dabaoCount = dabaoNum;
+                                                flg = true;
+                                            }
                                             reload();
-                                            print();
+                                            reSelect();
+                                            console.log($("#dg2").datagrid("getRows"));
+                                            if ($("#dg2").datagrid("getRows").length == 1) {
+                                                flg = true;
+                                            }
+                                            if (flg) {
+                                                print();
+                                            }
                                         }
                                     });
                             // reload();
@@ -657,7 +666,6 @@
                 id: saleListProductId
             }, function (result) {
                 if (result.success) {
-                    console.log(result.rows);
                     $("#dg2").datagrid('loadData', result.rows);
                 }
             });
@@ -764,7 +772,6 @@
                                     "print.html",
                                     tableString,
                                     "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                            console.log(tableString);
                         }
                     })
                 }
@@ -889,6 +896,11 @@
             $("#dabao").numberbox("disable");
             dabaoNum = $("#dabao").numberbox("getValue");
             dabaoCount = dabaoNum;
+            reSelect();
+        }
+
+        //重新选择当前选中的行
+        function reSelect() {
             var row = $("#dg").datagrid("getSelected");
             var rowIndex = $("#dg").datagrid("getRowIndex", row);
             $("#dg").datagrid("selectRow", rowIndex);

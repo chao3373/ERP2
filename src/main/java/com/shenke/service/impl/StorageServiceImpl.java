@@ -11,6 +11,7 @@ import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -45,77 +46,84 @@ public class StorageServiceImpl implements StorageService {
     private GroupRepository groupRepository;
 
     @Override
-    public void add(Double weight, Integer saleListProductId, Integer jitaiProductionAllotId,
-                    Integer producionProcessId, Integer jitaiId, String clerkName, String group) {
+    public void add(Storage storage, String clerkName, String groupName) {
 
-        Group byName = groupRepository.findByGrouptName(group);
-        SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
-        JitaiProductionAllot jitaiProductionAllot = jitaiProductionAllotRepository.findOne(jitaiProductionAllotId);
-        JiTai jiTai = jiTaiRepository.findOne(jitaiId);
+        Group group = groupRepository.findByGrouptName(groupName);
+        SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Integer count = saleListProduct.getAccomplishNumber();
         Clerk clerk = clerkRepository.findByNam(clerkName);
+        Double realityweight = storage.getRealityweight();
+
         if (count == null || count == 0) {
             count = 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProductId);
+            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
         } else if (count == saleListProduct.getNum() - 1) {
             count += 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProductId);
-            saleListProductRepository.updateState("生产完成：" + jiTai.getName(), saleListProductId);
-            saleListProductRepository.updateIussueState("生产完成：" + jiTai.getName(), saleListProductId);
+            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+            saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
         } else {
             count += 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProductId);
+            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
         }
 
-        jitaiProductionAllotRepository.updateStateById("生产完成：" + jiTai.getName(), jitaiProductionAllotId);
-
-        Storage storage = new Storage();
-
-        storage.setAccomplishState("完成");
-        storage.setAllorTime(jitaiProductionAllot.getAllorTime());
-        storage.setAllotState(jitaiProductionAllot.getAllotState());
-        storage.setBrand(saleListProduct.getBrand());
-        storage.setClientname(saleListProduct.getClientname());
+        BeanUtils.copyProperties(saleListProduct, storage);
+        storage.setId(null);
         storage.setClerk(clerk);
-        storage.setColor(saleListProduct.getColor());
-        storage.setDao(saleListProduct.getDao());
-        storage.setDemand(saleListProduct.getDemand());
-        storage.setInformNumber(jitaiProductionAllot.getInformNumber());
-        storage.setIssueState(jitaiProductionAllot.getIssueState());
-        storage.setJiTai(jiTai);
-        storage.setJitaiProductionAllot(jitaiProductionAllot);
-        storage.setLabel(saleListProduct.getLabel());
-        storage.setLength(saleListProduct.getLength());
-        storage.setLetter(saleListProduct.getLetter());
-        storage.setMeter(saleListProduct.getMeter());
-        storage.setModel(saleListProduct.getModel());
-        storage.setName(saleListProduct.getName());
-        storage.setNum(saleListProduct.getNum());
-        storage.setNumsquare(saleListProduct.getNumsquare());
-        storage.setOneweight(saleListProduct.getOneweight());
-        storage.setPack(saleListProduct.getPack());
-        storage.setPatu(saleListProduct.getPatu());
-        storage.setPeasant(saleListProduct.getPeasant());
-        storage.setPrice(saleListProduct.getPrice());
-        storage.setProductionMessage(jitaiProductionAllot.getProductionMessage());
-        storage.setRealitymodel(saleListProduct.getRealitymodel());
-        storage.setRealityprice(saleListProduct.getRealityprice());
-        storage.setRealityweight(weight);
-        storage.setSaleList(saleListProduct.getSaleList());
-        storage.setSaleListProduct(saleListProduct);
-        storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
-        storage.setSquare(saleListProduct.getSquare());
-        storage.setState("生产完成：" + saleListProduct.getJiTai().getName());
-        storage.setSumwight(saleListProduct.getSumwight());
-        storage.setTaskQuantity(jitaiProductionAllot.getTaskQuantity());
-        storage.setTheoryweight(saleListProduct.getTheoryweight());
-        storage.setWeight(saleListProduct.getWeight());
-        storage.setWeightway(saleListProduct.getWeightway());
-        storage.setWightset(saleListProduct.getWightset());
-        storage.setDateInProduced(new Date(System.currentTimeMillis()));
-        storage.setClerk(clerk);
-
+        storage.setGroup(group);
+        storage.setRealityweight(realityweight);
         storageRepository.save(storage);
+
+//
+//        jitaiProductionAllotRepository.updateStateById("生产完成：" + jiTai.getName(), jitaiProductionAllotId);
+//
+//        Storage storage = new Storage();
+//
+//        storage.setAccomplishState("完成");
+//        storage.setAllorTime(jitaiProductionAllot.getAllorTime());
+//        storage.setAllotState(jitaiProductionAllot.getAllotState());
+//        storage.setBrand(saleListProduct.getBrand());
+//        storage.setClientname(saleListProduct.getClientname());
+//        storage.setClerk(clerk);
+//        storage.setColor(saleListProduct.getColor());
+//        storage.setDao(saleListProduct.getDao());
+//        storage.setDemand(saleListProduct.getDemand());
+//        storage.setInformNumber(jitaiProductionAllot.getInformNumber());
+//        storage.setIssueState(jitaiProductionAllot.getIssueState());
+//        storage.setJiTai(jiTai);
+//        storage.setJitaiProductionAllot(jitaiProductionAllot);
+//        storage.setLabel(saleListProduct.getLabel());
+//        storage.setLength(saleListProduct.getLength());
+//        storage.setLetter(saleListProduct.getLetter());
+//        storage.setMeter(saleListProduct.getMeter());
+//        storage.setModel(saleListProduct.getModel());
+//        storage.setName(saleListProduct.getName());
+//        storage.setNum(saleListProduct.getNum());
+//        storage.setNumsquare(saleListProduct.getNumsquare());
+//        storage.setOneweight(saleListProduct.getOneweight());
+//        storage.setPack(saleListProduct.getPack());
+//        storage.setPatu(saleListProduct.getPatu());
+//        storage.setPeasant(saleListProduct.getPeasant());
+//        storage.setPrice(saleListProduct.getPrice());
+//        storage.setProductionMessage(jitaiProductionAllot.getProductionMessage());
+//        storage.setRealitymodel(saleListProduct.getRealitymodel());
+//        storage.setRealityprice(saleListProduct.getRealityprice());
+//        storage.setRealityweight(weight);
+//        storage.setSaleList(saleListProduct.getSaleList());
+//        storage.setSaleListProduct(saleListProduct);
+//        storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
+//        storage.setSquare(saleListProduct.getSquare());
+//        storage.setState("生产完成：" + saleListProduct.getJiTai().getName());
+//        storage.setSumwight(saleListProduct.getSumwight());
+//        storage.setTaskQuantity(jitaiProductionAllot.getTaskQuantity());
+//        storage.setTheoryweight(saleListProduct.getTheoryweight());
+//        storage.setWeight(saleListProduct.getWeight());
+//        storage.setWeightway(saleListProduct.getWeightway());
+//        storage.setWightset(saleListProduct.getWightset());
+//        storage.setDateInProduced(new Date(System.currentTimeMillis()));
+//        storage.setClerk(clerk);
+//
+//        storageRepository.save(storage);
 
     }
 

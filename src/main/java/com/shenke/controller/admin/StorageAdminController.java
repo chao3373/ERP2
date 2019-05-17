@@ -46,9 +46,10 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/add")
-    public Map<String, Object> add(Double weight, Integer saleListProductId, Integer jitaiProductionAllotId,
-                                   Integer producionProcessId, Integer jitaiId, String clerkName, String group) {
-        storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
+    public Map<String, Object> add(Storage storage, String clerkName, String groupName) {
+        System.out.println(storage);
+        //storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
+        storageService.add(storage, clerkName, groupName);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
         return map;
