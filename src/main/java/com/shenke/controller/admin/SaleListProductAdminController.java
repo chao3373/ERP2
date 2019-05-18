@@ -176,16 +176,4 @@ public class SaleListProductAdminController {
         map.put("rows", saleListProductService.listProductByState(state));
         return map;
     }
-
-    /***
-     * 修改或保存SaleListProduct
-     * @param saleListProduct
-     * @return
-     */
-    @RequestMapping("/saveInfo")
-    public Map<String, Object> saveInfo(SaleListProduct saleListProduct) {
-        Map<String, Object> map =  new HashMap<>();
-        System.out.println(saleListProduct);
-        return map;
-    }
 }

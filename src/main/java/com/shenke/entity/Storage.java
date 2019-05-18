@@ -21,10 +21,6 @@ public class Storage {
     private SaleListProduct saleListProduct;
 
     @ManyToOne
-    @JoinColumn(name = "jitaiProductionAllotId")
-    private JitaiProductionAllot jitaiProductionAllot;
-
-    @ManyToOne
     @JoinColumn(name = "jiTaiId")
     private JiTai jiTai;
 
@@ -175,7 +171,7 @@ public class Storage {
         return "Storage{" +
                 "id=" + id +
                 ", saleListProduct=" + saleListProduct +
-                ", jitaiProductionAllot=" + jitaiProductionAllot +
+                ", jitaiProductionAllot=" +
                 ", jiTai=" + jiTai +
                 ", saleList=" + saleList +
                 ", clerk=" + clerk +
@@ -267,14 +263,6 @@ public class Storage {
 
     public void setSaleListProduct(SaleListProduct saleListProduct) {
         this.saleListProduct = saleListProduct;
-    }
-
-    public JitaiProductionAllot getJitaiProductionAllot() {
-        return jitaiProductionAllot;
-    }
-
-    public void setJitaiProductionAllot(JitaiProductionAllot jitaiProductionAllot) {
-        this.jitaiProductionAllot = jitaiProductionAllot;
     }
 
     public JiTai getJiTai() {

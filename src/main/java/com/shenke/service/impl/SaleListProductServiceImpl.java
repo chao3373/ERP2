@@ -187,20 +187,4 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         return saleListProductRepository.findMaxInfornNumber();
     }
 
-
-	/**
-	 * 修改信息
-	 *
-	 * @param
-	 */
-	public void save(SaleListProduct saleListProduct){
-		System.out.println("impl");
-        System.out.println("**********************************");
-        System.out.println(saleListProduct);
-        System.out.println("**********************************");
-
-		saleListProductRepository.save(saleListProduct);
-	}
-
-
 }

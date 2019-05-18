@@ -45,7 +45,6 @@
         function setPrint() {
             $.post("/admin/jitai/findOne", {jitai: $("#selectJitai").combobox("getValue")}, function (result) {
                 if (result.success) {
-                    console.log(result.jitai);
                     if (result.jitai.color) {
                         $("#printLabel").prop("checked", true);
                     }
@@ -58,8 +57,12 @@
                     if (result.jitai.weight) {
                         $("#printWeight").prop("checked", true);
                     }
-                    $("#banzu").val(result.jitai.group.name);
-                    $("#staff").val(result.jitai.clerk.name);
+                    if (result.jitai.group) {
+                        $("#banzu").val(result.jitai.group.name);
+                    }
+                    if (result.jitai.clerk) {
+                        $("#staff").val(result.jitai.clerk.name);
+                    }
                 }
             });
         }
@@ -93,7 +96,12 @@
             $("#dg")
                 .datagrid(
                     {
-                        columns: [[{
+                        columns: [[ {
+                            field: 'cb',
+                            checkbox: "true",
+                            hidden:"true",
+                            align: "center"
+                        },{
                             field: 'id',
                             title: 'id',
                             width: 100,
@@ -176,7 +184,7 @@
                             title: '完成数',
                             width: 100,
                             align: 'center',
-                            formatter: function (value, row, index) {
+                            formatter: function (value, row) {
                                 if (row.accomplishNumber) {
                                     return row.accomplishNumber;
                                 } else {
@@ -199,29 +207,20 @@
                             width: 300,
                             align: 'center'
                         }]],
-                        onClickRow: function (index, row) {
-                            informNumber = row.informNumber;
+                        onSelect: function (rowIndex, rowData) {
+                            console.log(rowData);
+                            informNumber = rowData.informNumber;
                             $("#yaoqiu").show();
-                            $("#yaoqiu").text(row.demand);
+                            $("#yaoqiu").text(rowData.demand);
                             clearInterval(timer);
                             timer = setInterval(goLeft, 20);
                             var jitai = $("#selectJitai").combobox(
                                 "getValue");
-                            $
-                                .ajax({
-                                    type: "post",
-                                    url: "/admin/jitaiProductionAllot/selectBySaleListProductId",
-                                    data: {
-                                        id: row.id
-                                    },
-                                    success: function (result) {
-                                        if (result.success) {
-                                            $("#dg2").datagrid(
-                                                'loadData',
-                                                result.rows);
-                                        }
-                                    }
-                                });
+                            $('#dg2').datagrid('loadData',{total:0,rows:[]});
+                            var count = rowData.num - rowData.accomplishNumber;
+                            for (var i = 0; i < count; i++) {
+                                $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
+                            }
                         }
                     });
         }
@@ -414,12 +413,15 @@
                     $(this).datagrid('unselectRow', rowIndex);
                 },
                 rowStyler: function (index, row) {
-                    if (index == 0) {
+                    if (index < dabaoCount) {
                         return 'background-color:green;color:white';
                     }
                 }
             });
         }
+
+        var dabaoNum;
+        var dabaoCount;
 
         //加载该分配到该机台的所有没有生产完成的通知单号
         function loadInformNumber() {
@@ -511,7 +513,6 @@
             $.post("/admin/print/getPrintSet",
                 function (result) {
                     if (result.success) {
-                        console.log(result);
                         if (result.biaoqian) {
                             $("#printLabel").prop("checked", true);
                         }
@@ -611,9 +612,7 @@
                     function (weight) {
                         if (weight) {
                             saleListProductId = $("#dg2").datagrid(
-                                "getRows")[0].saleListProduct.id;
-                            var jitaiProductionAllotId = $("#dg2")
-                                .datagrid("getRows")[0].id;
+                                "getRows")[0].id;
                             var producionProcessId = $("#dg").datagrid(
                                 "getSelected").id;
                             var jitaiId = $("#selectJitai").combobox(
@@ -623,18 +622,30 @@
                                 .post(
                                     "/admin/storage/add",
                                     {
-                                        weight: weight,
-                                        saleListProductId: saleListProductId,
-                                        jitaiProductionAllotId: jitaiProductionAllotId,
-                                        producionProcessId: producionProcessId,
-                                        jitaiId: jitaiId,
+                                        realityweight: Number(weight),
+                                        saleListProduct: saleListProductId,
+                                        saleList: producionProcessId,
+                                        jiTai: jitaiId,
                                         clerkName: clerkName,
-                                        group: $("#banzu").val()
+                                        groupName: $("#banzu").val()
                                     }, function (result) {
                                         if (result.success) {
                                             // ddOpen();
+                                            dabaoCount--;
+                                            var flg = false;
+                                            if (dabaoCount == 0) {
+                                                dabaoCount = dabaoNum;
+                                                flg = true;
+                                            }
                                             reload();
-                                            print();
+                                            reSelect();
+                                            console.log($("#dg2").datagrid("getRows"));
+                                            if ($("#dg2").datagrid("getRows").length == 1) {
+                                                flg = true;
+                                            }
+                                            if (flg) {
+                                                print();
+                                            }
                                         }
                                     });
                             // reload();
@@ -655,7 +666,6 @@
                 id: saleListProductId
             }, function (result) {
                 if (result.success) {
-                    console.log(result.rows);
                     $("#dg2").datagrid('loadData', result.rows);
                 }
             });
@@ -702,7 +712,7 @@
                     $.post("/static/erweima", {
                         url: url
                     }, function (result) {
-                       // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                        // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
                         var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
                         // url += result.url;
                         // url += "'/>";
@@ -762,7 +772,6 @@
                                     "print.html",
                                     tableString,
                                     "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                            console.log(tableString);
                         }
                     })
                 }
@@ -882,6 +891,26 @@
             });
         }
 
+        //设置打包数量
+        function setDabao() {
+            $("#dabao").numberbox("disable");
+            dabaoNum = $("#dabao").numberbox("getValue");
+            dabaoCount = dabaoNum;
+            reSelect();
+        }
+
+        //重新选择当前选中的行
+        function reSelect() {
+            var row = $("#dg").datagrid("getSelected");
+            var rowIndex = $("#dg").datagrid("getRowIndex", row);
+            $("#dg").datagrid("selectRow", rowIndex);
+        }
+
+        //修改打包数量
+        function editDabao() {
+            $("#dabao").numberbox("enable");
+        }
+
         $(document).ready(function () {
             loadColum();
             loadDg2Colum();
@@ -889,6 +918,10 @@
             disabledInput();
             set();
             $("#yaoqiu").hide();
+            $("#dabao").numberbox("setValue", 1);
+            dabaoNum = $("#dabao").numberbox("getValue");
+            dabaoCount = dabaoNum;
+            setDabao();
         });
     </script>
 </head>
@@ -931,6 +964,11 @@
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
                                      class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设置打包数量：<input class="easyui-numberbox" id="dabao" size="5"/><a
+        href="javascript:setDabao()"
+        class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a><a href="javascript:editDabao()"
+                                                                          class="easyui-linkbutton" iconCls="icon-edit"
+                                                                          plain="true">修改</a>
 </div>
 
 <div region="south" style="height: 88px;" title="通知单号">
