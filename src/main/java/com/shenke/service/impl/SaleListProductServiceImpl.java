@@ -187,4 +187,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         return saleListProductRepository.findMaxInfornNumber();
     }
 
+	@Override
+	public void save(SaleListProduct saleListProduct) {
+		saleListProductRepository.save(saleListProduct);
+	}
+
 }

@@ -601,23 +601,8 @@
                 $.messager
                     .confirm(
                         "系统提示",
-                        "<span style='color: red;'>未选择任何订单信息将列出所有" + value
-                        + "订单商品信息</span>",
-                        function (r) {
-                            if (r) {
-                                if (value == "未审核") {
-                                    value = "下单";
-                                }
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/admin/saleList/listProductByState",
-                                    data: {state: value},
-                                    success: function (result) {
-                                        $("#dg2").datagrid("load", result);
-                                    }
-                                });
-                            }
-                        });
+                        "<span style='color: red;'>请选择一条销售信息</span>");
+                return;
             } else {
                 if (value == "未审核") {
                     value = "下单";
@@ -876,35 +861,28 @@
         var a;
         //修改saleListProduct
         function editSaleListProduct() {
-            console.log($("#dg2").datagrid("getSelections"));
-            // console.log("----------");
-            // console.log($("#dg2").datagrid("getRows"));
             var row = $("#dg2").datagrid("getSelections");
-            console.log(row);
             if (row.length != 1) {
                 $.messager.alert("系统提示", "<span style='color: red;'>请选择一行要修改的数据！！</span>");
                 return;
             }
             var rows = row[0];
-            console.log(rows);
+           // console.log(rows);
             a = rows.accomplishNumber == null ? 0 : rows.accomplishNumber;
             if (rows.state == "提货" || rows.state == "装车") {
                 $.messager.alert("系统提示", "<span style='color: red;'>产品已生产完成！不可修改！！</span>");
             }else {
                 if (rows.state == "审核通过" || rows.state == "下单") {
-                    $("#jiTai").val(null);
-                    $("#informNumber").val(null);
-                    $("#state").val(rows.state);
+                    rows.jiTai = null;
+                    rows.informNumber = null;
                 } else if (rows.state.startsWith("生产完成")) {
                     rows.state = "下发机台：" + row[0].jiTai.name;
-                    console.log(row[0]);
                     rows.jiTai = row[0].jiTai.id;
-                    rows.saleList = row[0].saleList.id;
-                    console.log(rows);
-
                 }
                 $("#dlg2").dialog("open").dialog("setTitle", "修改商标信息");
-                $("#saleList").val(rows.saleList.id);
+                $("#saleList").val(rows.saleList);
+                rows.saleList = row[0].saleList.id;
+
                 $("#fm2").form("load", rows);
             }
         }
@@ -934,7 +912,6 @@
                     if (!$(this).form("validate")) {
                         return false;
                     }
-
                     if (a >= $("#num").val()) {
                         $.messager.alert("系统提示", "生产已完成，数量无法减少！");
                         return false;
@@ -942,7 +919,8 @@
                     return true;
                 },
                 success: function (result) {
-                    if (result.success) {
+                    var results = eval('(' + result + ')')
+                    if (results.success) {
                         alert("保存成功！");
                         window.location.reload();
                     } else {
@@ -1034,8 +1012,17 @@
 					label: '审核通过',
 					value: '审核通过'
 				},{
-					label: '审核失败',
-					value: '审核失败'
+					label: '下发机台',
+					value: '下发机台'
+				},{
+					label: '生产完成',
+					value: '生产完成'
+				},{
+					label: '提货',
+					value: '提货'
+				},{
+					label: '装车',
+					value: '装车'
 				}],
 		    onSelect: function(rec){
 		    	auditQuery(rec.value);
@@ -1306,6 +1293,8 @@
                 <td><input type="text" id="informNumber" name="informNumber"
                            class="easyui-validatebox" style="width: 120px"/></td>
                 <td><input type="text" id="state" name="state"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>id<input type="text" id="id" name="id"
                            class="easyui-validatebox" style="width: 120px"/></td>
 
             </tr>
