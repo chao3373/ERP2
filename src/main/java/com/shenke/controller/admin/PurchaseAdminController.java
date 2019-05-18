@@ -1,6 +1,8 @@
 package com.shenke.controller.admin;
 
 import com.shenke.entity.Log;
+import com.shenke.entity.Plant;
+import com.shenke.entity.Purchase;
 import com.shenke.service.LogService;
 import com.shenke.service.PurchaseService;
 import com.shenke.util.DateUtil;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,9 +36,35 @@ public class PurchaseAdminController {
     /**
      *保存采购单
      */
-    public Map<String, Object> save() {
+    @RequestMapping("/save")
+    public Map<String, Object> save(Integer plant,String PurchaseNumber,String principal,
+                                    String PurchasingAgent,String purchaseDate,String outDate,String carNumber,
+                                    Double tonnage,String carrier,Double sumMoney,Double sumWeight,
+                                    String remark,String goodsJson) throws Exception {
         Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+
+        //数据封装
+        Purchase purchase = new Purchase();
+
+        Plant plant1 = new Plant();
+        plant1.setId(plant);
+        purchase.setPurchaseNumber(PurchaseNumber);
+        purchase.setPrincipal(principal);
+        purchase.setPurchasingAgent(PurchasingAgent);
+
+        //purchase.setPurchaseDate(Date purchaseDate);
+        // purchase.setOutDate(outDate outDate);
+        purchase.setCarNumber(carNumber);
+        purchase.setTonnage(tonnage);
+        purchase.setCarrier(carrier);
+        purchase.setSumMoney(sumMoney);
+        purchase.setSumWeight(sumWeight);
+        purchase.setRemark(remark);
+
+        purchaseService.save(purchase);
+        map.put("success",true);
         return map;
     }
 

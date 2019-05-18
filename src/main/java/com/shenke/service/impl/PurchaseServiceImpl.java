@@ -1,5 +1,6 @@
 package com.shenke.service.impl;
 
+import com.shenke.entity.Purchase;
 import com.shenke.repository.PurchaseRepository;
 import com.shenke.service.PurchaseService;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public String getTodayMaxPurchaseNumber() {
         return purchaseRepository.getTodayMaxPurchaseNumber();
+    }
+
+    @Override
+    public void save(Purchase purchase) {
+        purchaseRepository.save(purchase);
     }
 }

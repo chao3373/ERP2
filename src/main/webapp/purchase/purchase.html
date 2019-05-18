@@ -171,7 +171,12 @@
                 url: "/admin/purchase/save",
                 data: json,
                 success: function (result) {
-
+                    if(result.success){
+                        $.messager.alert("系统提示","保存成功！");
+                    }
+                    else{
+                        $.messager.alert("系统提示","保存失败！");
+                    }
                 }
             });
         }
@@ -206,7 +211,7 @@
             $("#price").change(function () {
                 if ($("#weight").val()) {
                     var num = $("#weight").val() * $("#price").val();
-                    $("#money").val(num.toFixed(2));
+                    $("#money").val(num.toFixed(2));//将值存入 并且保留两位小数
                 }
             });
             $("#weight").change(function () {

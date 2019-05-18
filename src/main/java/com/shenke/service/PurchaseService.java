@@ -1,5 +1,7 @@
 package com.shenke.service;
 
+import com.shenke.entity.Purchase;
+
 public interface PurchaseService {
 
     /** 
@@ -10,5 +12,7 @@ public interface PurchaseService {
     * @Date:  
     */
     public String getTodayMaxPurchaseNumber();
+
+    public void save(Purchase purchase);
 
 }
