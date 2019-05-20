@@ -1,9 +1,12 @@
 package com.shenke.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
 
 import com.shenke.entity.*;
@@ -11,6 +14,7 @@ import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
+import org.apache.commons.collections.list.PredicatedList;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,6 +58,7 @@ public class StorageServiceImpl implements StorageService {
         Clerk clerk = clerkRepository.findByNam(clerkName);
         Double realityweight = storage.getRealityweight();
 
+
         if (count == null || count == 0) {
             count = 1;
             saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
@@ -72,6 +77,8 @@ public class StorageServiceImpl implements StorageService {
         storage.setClerk(clerk);
         storage.setGroup(group);
         storage.setRealityweight(realityweight);
+        storage.setDateInProduced(new Date(System.currentTimeMillis()));
+        storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storageRepository.save(storage);
 
 //
@@ -253,7 +260,6 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty((String) map.get("address"))) {
                     predicate.getExpressions().add(cb.like(root.get("saleList").get("address"), "%" + map.get("address") + "%"));
                 }
-                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
                 return predicate;
             }
         });
@@ -301,7 +307,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<Storage> detail(Map<String, Object> map) {
-        if (map.get("order")!=null && map.get("order") != ""){
+        if (map.get("order") != null && map.get("order") != "") {
             return storageRepository.findAll(new Specification<Storage>() {
                 public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     Predicate predicate = cb.conjunction();
@@ -353,7 +359,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void updateOutNumberById(Integer parseInt) throws Exception {
-        storageRepository.updateOutNumberById(this.genCode(),parseInt);
+        storageRepository.updateOutNumberById(this.genCode(), parseInt);
     }
 
     @Override
@@ -370,7 +376,6 @@ public class StorageServiceImpl implements StorageService {
     public String selectCountByNameAndOutNumber(String name, String outNumber) {
         return storageRepository.selectCountByNameAndOutNumber(name, outNumber);
     }
-
 
 
     /**
@@ -402,6 +407,21 @@ public class StorageServiceImpl implements StorageService {
     public List<Count> FindBySaleListId() {
         List<Count> cast = EntityUtils.castEntity(storageRepository.FindBySaleListId(), Count.class);
         return cast;
+    }
+
+    @Override
+    public Integer countBySaleListProductId(Integer id) {
+        Long count = storageRepository.count(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (id != null && id != 0) {
+                    predicates.add(cb.equal(root.get("saleListProduct").get("id"), id));
+                }
+                return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+            }
+        });
+        return count.intValue();
     }
 
 }

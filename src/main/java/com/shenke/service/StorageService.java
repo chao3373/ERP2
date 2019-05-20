@@ -131,4 +131,6 @@ public interface StorageService {
     public String selectCountByNameAndOutNumber(String name, String outNumber);
 
     public List<Count> FindBySaleListId();
+
+    Integer countBySaleListProductId(Integer id);
 }

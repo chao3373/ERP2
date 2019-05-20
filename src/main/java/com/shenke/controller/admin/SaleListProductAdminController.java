@@ -192,4 +192,35 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
+
+    /***
+     * 修改机台
+     */
+    @RequestMapping("/alertJitai")
+    public Map<String, Object> alertJitai(String idsStr, Integer jitai) {
+        Map<String, Object> map = new HashMap<>();
+        String[] ids = idsStr.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            saleListProductService.updateJitaiId(Integer.parseInt(ids[i]), jitai);
+        }
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 下发机台
+     * @return
+     */
+    @RequestMapping("/issue")
+    public Map<String, Object> issue(String idStr){
+        Map<String, Object> map = new HashMap<>();
+        String[] ids = idStr.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(ids[i]));
+            saleListProductService.updateState("下发机台：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+            saleListProductService.updateIussueState("下发机台：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+        }
+        map.put("success", true);
+        return map;
+    }
 }

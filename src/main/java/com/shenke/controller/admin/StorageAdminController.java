@@ -295,7 +295,14 @@ public class StorageAdminController {
         System.out.println(map1);
         System.out.println("*****************************************");
         map.put("success", true);
-        map.put("rows", storageService.detail(map1));
+        List<Storage> storageList = storageService.detail(map1);
+        for (Storage storage: storageList) {
+            storage.setSum( storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
+        }
+        System.out.println("--------------------------------------------");
+        System.out.println(storageList);
+        System.out.println("--------------------------------------------");
+        map.put("rows", storageList);
         return map;
     }
 
@@ -330,7 +337,7 @@ public class StorageAdminController {
 
     /***
      * 根据Salelist
-     * @param client
+     * @param
      * @return
      */
     @RequestMapping("/findbySalelistId")
@@ -338,12 +345,11 @@ public class StorageAdminController {
         Map<String,Object> map = new HashMap<>();
         List<Count> findBySaleListId = storageService.FindBySaleListId();
         map.put("success",true);
-        map.put("data",findBySaleListId);
+        map.put("rows",findBySaleListId);
 
         System.out.println("***************Controllor*****************");
         System.out.println(map);
         System.out.println("******************************************");
-
         return map;
     }
 }

@@ -26,7 +26,7 @@
                 return;
             }
             if (!$("#pandianji").combobox("getValue")) {
-                $.messager.alert("系统提示","<span style='color: red;'>请选择盘点机！</span>");
+                $.messager.alert("系统提示", "<span style='color: red;'>请选择盘点机！</span>");
                 return;
             }
             var strIds = [];
@@ -131,256 +131,86 @@
                         field: 'cb',
                         checkbox: "true",
                         align: "center"
+                    }, {
+                        field: 'id',
+                        title: 'id',
+                        width: 100,
+                        hidden: 'true',
+                        align: 'center'
+                    }, {
+                        field: 'informNumber',
+                        title: 'informNumber',
+                        width: 100,
+                        hidden: 'true',
+                        align: 'center'
+                    }, {
+                        field: 'saleListProduct',
+                        title: 'saleListProductId',
+                        width: 100,
+                        align: 'center',
+                        formatter: function (value, row) {
+                            if (row.saleListProduct) {
+                                return row.saleListProduct.id;
+                            } else {
+                                return "";
+                            }
+                        }
+                    }, {
+                        field: 'saleNumber',
+                        title: '订单号',
+                        width: 100,
+                        align: 'center'
                     },{
-                    field: 'id',
-                    title: 'id',
-                    width: 100,
-                    hidden: 'true',
-                    align: 'center'
-                }, {
-                    field: 'informNumber',
-                    title: 'informNumber',
-                    width: 100,
-                    hidden: 'true',
-                    align: 'center'
-                }, {
-                    field: 'saleListProduct',
-                    title: 'saleListProductId',
-                    width: 100,
-                    hidden: 'true',
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        if (row.saleListProduct) {
-                            return row.saleListProduct.id;
-                        } else {
-                            return "";
-                        }
-                    }
-                }, {
-                    field: 'saleNumber',
-                    title: '订单号',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'peasant',
-                    title: '农户名称',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'productionMessage',
-                    title: '商品信息',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'meter',
-                    title: '生产米数',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'dateInProduced',
-                    title: '生产日期',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'letter',
-                    title: '印字',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'issue_state',
-                    title: '下放机台',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'label',
-                    title: 'label',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'clientname',
-                    title: '客户',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'name',
-                    title: '名称',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'oneweight',
-                    title: '单件重量',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'color',
-                    title: '颜色',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'model',
-                    title: '幅宽',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'realitymodel',
-                    title: '实际幅宽',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'length',
-                    title: '长度',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'price',
-                    title: '厚度',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'realityprice',
-                    title: '实际厚度',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'dao',
-                    title: '剖刀',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'pack',
-                    title: '包装',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'accomplishState',
-                    title: '是否完成',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'taskQuantity',
-                    title: '工作数量',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'brand',
-                    title: '品牌',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'patu',
-                    title: '纸管',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'allorTime',
-                    title: '分配时间',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'allorState',
-                    title: '分配机台',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'jitai_production_allot_id',
-                    title: '机台产品分配ID',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'sumwight',
-                    title: '订重',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'theoryweight',
-                    title: '理论重',
-                    width: 100,
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        if (row.theoryweight) {
-                            return row.theoryweight;
-                        } else {
-                            return "";
-                        }
-                    }
-                }, {
-                    field: 'sumwight',
-                    title: '总重',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'realityweight',
-                    title: '实际重量',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'weightway',
-                    title: '称重方式',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'weightset',
-                    title: '称重设置',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'numsquare',
-                    title: '平方米',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'square',
-                    title: '单件平米',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'state',
-                    title: '下发机台2',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'jiTai',
-                    title: '机台ID',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'num',
-                    title: '下发数',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'accomplishNumber',
-                    title: '完成数',
-                    width: 100,
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        if (row.accomplishNumber) {
-                            return row.accomplishNumber;
-                        } else {
-                            return 0;
-                        }
-                    }
-                }, {
-                    field: 'num',
-                    title: '和件数',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'label',
-                    title: '标签名',
-                    width: 100,
-                    align: 'center'
-                }, {
-                    field: 'demand',
-                    title: '要求',
-                    width: 300,
-                    align: 'center'
-                }, {
-                    field: 'remark',
-                    title: '备注',
-                    width: 100,
-                    align: 'center'
-                }]],
+                        field: 'clientname',
+                        title: '客户',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'peasant',
+                        title: '农户名称',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'name',
+                        title: '名称',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'color',
+                        title: '颜色',
+                        width: 100,
+                        align: 'center'
+                    }, {
+                        field: 'model',
+                        title: '幅宽',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'length',
+                        title: '长度',
+                        width: 100,
+                        align: 'center'
+                    }, {
+                        field: 'price',
+                        title: '厚度',
+                        width: 100,
+                        align: 'center'
+                    }, {
+                        field: 'realityweight',
+                        title: '重量',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'dateInProduced',
+                        title: '生产日期',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'remark',
+                        title: '备注',
+                        width: 100,
+                        align: 'center'
+                    }]],
 
             });
 
@@ -399,7 +229,6 @@
             $("#address").val("");
             $("#saleNumber").val("");
             refreshData();
-
         }
 
 
@@ -411,7 +240,7 @@
 
         //添加条件筛选时刷新数据
         function refreshData() {
-            $.post("/admin/storage/screen", json, function (result) {
+            $.post("/admin/storage/searchLiftMoney", json, function (result) {
                 if (result.success) {
                     $("#dg").datagrid('loadData', result.rows);
                 }
@@ -818,11 +647,11 @@
                                                       demandd="true" data-options="editable:false" size="10"/>
                 </td>
                 <!--<td>&nbsp;&nbsp;单号：<input type="text" id="danhao"-->
-                                          <!--required="true" name="danhao" size="10"/>-->
+                <!--required="true" name="danhao" size="10"/>-->
                 <!--</td>-->
                 <!--<td>&nbsp;&nbsp;生成发货单：<input type="text"-->
-                                             <!--id="shengchengfahuodan" required="true" name="shengchengfahuodan"-->
-                                             <!--size="10"/>-->
+                <!--id="shengchengfahuodan" required="true" name="shengchengfahuodan"-->
+                <!--size="10"/>-->
                 <!--</td>-->
                 <td width="180px">&nbsp;&nbsp;盘点机：<input
                         class="easyui-combobox" id="pandianji" name="pandianji"

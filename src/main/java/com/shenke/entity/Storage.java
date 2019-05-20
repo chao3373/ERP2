@@ -1,5 +1,6 @@
 package com.shenke.entity;
 
+import java.io.Serializable;
 import java.sql.Date;
 import javax.persistence.*;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "t_storage")
-public class Storage {
+public class Storage{
 
     @Id
     @GeneratedValue
@@ -132,19 +133,6 @@ public class Storage {
     @Column(length = 500)
     private String productionMessage;// 产品信息
 
-    private Double taskQuantity;// 任务量
-
-    private Date allorTime;// 分配时间
-
-    @Column(length = 50)
-    private String allotState;// 分配状态
-
-    @Column(length = 50)
-    private String issueState;// 下发状态
-
-    @Column(length = 50)
-    private String accomplishState;// 完成状态
-
     private Date dateInProduced;// 生产日期
 
     @Column(length = 50)
@@ -162,6 +150,9 @@ public class Storage {
     @Transient
     private Date endDate;//结束时间查询用到
 
+    @Transient
+    private Integer sum;//数量
+
     private String remark;// 备注
 
     private String printstate;//打印状态
@@ -171,7 +162,6 @@ public class Storage {
         return "Storage{" +
                 "id=" + id +
                 ", saleListProduct=" + saleListProduct +
-                ", jitaiProductionAllot=" +
                 ", jiTai=" + jiTai +
                 ", saleList=" + saleList +
                 ", clerk=" + clerk +
@@ -208,11 +198,6 @@ public class Storage {
                 ", informNumber=" + informNumber +
                 ", saleNumber='" + saleNumber + '\'' +
                 ", productionMessage='" + productionMessage + '\'' +
-                ", taskQuantity=" + taskQuantity +
-                ", allorTime=" + allorTime +
-                ", allotState='" + allotState + '\'' +
-                ", issueState='" + issueState + '\'' +
-                ", accomplishState='" + accomplishState + '\'' +
                 ", dateInProduced=" + dateInProduced +
                 ", serialNumber='" + serialNumber + '\'' +
                 ", deliveryTime=" + deliveryTime +
@@ -220,11 +205,20 @@ public class Storage {
                 ", outNumber='" + outNumber + '\'' +
                 ", starDate=" + starDate +
                 ", endDate=" + endDate +
+                ", count=" + sum +
                 ", remark='" + remark + '\'' +
                 ", printstate='" + printstate + '\'' +
                 '}';
     }
 
+
+    public Integer getSum() {
+        return sum;
+    }
+
+    public void setSum(Integer sum) {
+        this.sum = sum;
+    }
     public String getPrintstate() {
         return printstate;
     }
@@ -535,46 +529,6 @@ public class Storage {
 
     public void setProductionMessage(String productionMessage) {
         this.productionMessage = productionMessage;
-    }
-
-    public Double getTaskQuantity() {
-        return taskQuantity;
-    }
-
-    public void setTaskQuantity(Double taskQuantity) {
-        this.taskQuantity = taskQuantity;
-    }
-
-    public Date getAllorTime() {
-        return allorTime;
-    }
-
-    public void setAllorTime(Date allorTime) {
-        this.allorTime = allorTime;
-    }
-
-    public String getAllotState() {
-        return allotState;
-    }
-
-    public void setAllotState(String allotState) {
-        this.allotState = allotState;
-    }
-
-    public String getIssueState() {
-        return issueState;
-    }
-
-    public void setIssueState(String issueState) {
-        this.issueState = issueState;
-    }
-
-    public String getAccomplishState() {
-        return accomplishState;
-    }
-
-    public void setAccomplishState(String accomplishState) {
-        this.accomplishState = accomplishState;
     }
 
     public Date getDateInProduced() {

@@ -66,6 +66,7 @@
                 data:json,
                 success:function (result) {
                     if (result.success) {
+                        console.log(result.rows);
                         $("#dg").datagrid("loadData", result.rows);
                     }
                 }
@@ -82,7 +83,7 @@
             var i;
             for (i = 0; i < rows.length; i++) {
                 if (od == rows[i][order]) {
-                    count++;
+                    count+=Number(rows[i]["sum"]);
                     sum+=Number(rows[i]["realityweight"]);
                 } else {
                     rw.index = i;
@@ -112,8 +113,8 @@
                         model:"",
                         length:"",
                         price:"",
-                        realityweight:rsArr[i]["sum"],
-                        deliveryTime:"总数量：" + rsArr[i]["count"]
+                        realityweight:"总重量：" + rsArr[i]["sum"],
+                        sum:"总数量：" + rsArr[i]["count"]
                     }
                 });
             }
@@ -135,18 +136,8 @@
                     {field: 'sum', title: '产品数量', width: 100, align: 'center'}
                 ]]
             });
-
-            $.post("/admin/storage/findbySalelistId", json,
-                function (result) {
-                if (result.success) {
-                    console.log(result.data);
-                    $("#dg").datagrid("loadData", result.data);
-                }
-            }, "json");
         });
 
-        
-        
       //打印
     	function printdg() {
     		CreateFormPage("datagrid", $("#dg"));

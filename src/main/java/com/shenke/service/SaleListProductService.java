@@ -144,4 +144,5 @@ public interface SaleListProductService {
 	 */
 	public void save(SaleListProduct saleListProduct);
 
+	SaleListProduct findById(int parseInt);
 }

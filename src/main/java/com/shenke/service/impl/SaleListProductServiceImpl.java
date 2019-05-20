@@ -192,4 +192,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 		saleListProductRepository.save(saleListProduct);
 	}
 
+	@Override
+	public SaleListProduct findById(int parseInt) {
+		return saleListProductRepository.findOne(parseInt);
+	}
+
 }
