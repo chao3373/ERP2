@@ -592,7 +592,7 @@
 
         //点击称重时弹出对话框
         var saleListProductId
-
+        var sumWeigh = 0;
         function weigh() {
             if (!$("#banzu").val() || !$("#staff").val()) {
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
@@ -632,6 +632,7 @@
                                         if (result.success) {
                                             // ddOpen();
                                             dabaoCount--;
+                                            sumWeigh+=Number(weight);
                                             var flg = false;
                                             if (dabaoCount == 0) {
                                                 dabaoCount = dabaoNum;
@@ -721,7 +722,7 @@
                         "</td>";
                         tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
                         if ($('#printWeight').is(':checked')) {
-                            tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
+                            tableString += "<tr><td colspan='2'>总重量：" + sumWeigh + "kg</td></tr>";
                         }
                         if ($('#printLabel').is(':checked')) {
                             tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";

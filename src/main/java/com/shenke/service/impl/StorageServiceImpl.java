@@ -79,6 +79,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setRealityweight(realityweight);
         storage.setDateInProduced(new Date(System.currentTimeMillis()));
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
+        storage.setState("生产完成:" + storage.getJiTai().getName());
         storageRepository.save(storage);
 
 //
@@ -260,6 +261,17 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty((String) map.get("address"))) {
                     predicate.getExpressions().add(cb.like(root.get("saleList").get("address"), "%" + map.get("address") + "%"));
                 }
+
+                Subquery subQuery = query.subquery(String.class);
+
+                Root from = subQuery.from(Storage.class);
+                subQuery.select(from.get("id")).where(cb.like(from.get("state"), "%生产完成%"));
+//                Predicate state1 = cb.like(from.get("state"), "%装车%");
+//                Predicate state = cb.like(from.get("state"), "%提货%");
+//                Predicate or = cb.or(state1);
+
+                predicate.getExpressions().add(cb.or(root.get("id").in(subQuery)));
+
                 return predicate;
             }
         });

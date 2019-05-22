@@ -49,7 +49,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @Query(value = "select * from t_sale_list_product where state like '%审核通过%'", nativeQuery = true)
      * public List<SaleListProduct> listProductSucceed();
      */
-    @Query(value = "select * from t_storage where state like '%生产完成%' or state like '%提货%'", nativeQuery = true)
+
+    @Query(value = "select  * from t_storage where id not in (select id from t_storage where state like'提货' or state like '装车')",nativeQuery = true)
     public List<Storage> outSuccess();
 
     /**
@@ -172,10 +173,10 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     /***
      *
      * g根据销售单号聚合查询
-     * @param client
+     * @param
      * @return
      */
-    @Query( value = "select clientname,peasant,sale_number,name,model,length,price,realityweight,delivery_time,count(*) FROM t_storage GROUP BY sale_list_product_id" , nativeQuery = true)
+    @Query( value = "select clientname,peasant,sale_number,name,model,length,price,realityweight,delivery_time,count(*) FROM t_storage WHERE state LIKE '%装车%' GROUP BY sale_list_product_id " , nativeQuery = true)
     public List<Object[]> FindBySaleListId();
 
 

@@ -80,36 +80,52 @@
 
         //删除选中行
         function deletePurchaseListGoods() {
-            $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除这些数据吗!</span>", function (r) {
-                if (r) {
-                    var rows = $("#dg").datagrid("getSelections");
-                    var rowNumbers = [];
-                    for (var i = 0; i < rows.length; i++) {
-                        rowNumbers.push($("#dg").datagrid("getRowIndex", rows[i]));
-                    }
-                    for (var i = rowNumbers.length - 1; i >= 0; i--) {
-                        $("#dg").datagrid("deleteRow", rowNumbers[i]);
-                    }
-                    updateEnd();
-                    updateAmountPayable();
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length>0){
+                if(rows[0].name=="合计"){
+                    $.messager.alert("系统提示", "<span style='color: red;'>滚！</span>")
                 }
-            });
+                else{
+                    $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除这些数据吗!</span>", function (r) {
+                        if (r) {
+                            var rows = $("#dg").datagrid("getSelections");
+                            var rowNumbers = [];
+                            for (var i = 0; i < rows.length; i++) {
+                                rowNumbers.push($("#dg").datagrid("getRowIndex", rows[i]));
+                            }
+                            for (var i = rowNumbers.length - 1; i >= 0; i--) {
+                                $("#dg").datagrid("deleteRow", rowNumbers[i]);
+                            }
+                            updateEnd();
+                            updateAmountPayable();
+                        }
+                    });
+                }
+            }
+            else{
+                $.messager.alert("系统提示", "<span style='color: red;'>请选择一条要删除的数据！</span>")
+            }
         }
 
         //点击修改按钮
         function openPurchaseListGoodsModifyDialog() {
             var rows = $("#dg").datagrid("getSelections");
-            if (rows.length != 1) {
-                $.messager.alert("系统提示", "<span style='color: red;'>请选择一行要修改的数据！</span>")
-                return;
+            if(rows[0].name=="合计"){
+                $.messager.alert("系统提示", "<span style='color: red;'>滚！</span>")
             }
+            else{
+                if (rows.length != 1) {
+                    $.messager.alert("系统提示", "<span style='color: red;'>请选择一行要修改的数据！</span>")
+                    return;
+                }
 
-            $("#name2").val(rows[0].name);
-            $("#weight2").val(rows[0].weight);
-            $("#price2").val(rows[0].price);
-            $("#money2").val(rows[0].money);
+                $("#name2").val(rows[0].name);
+                $("#weight2").val(rows[0].weight);
+                $("#price2").val(rows[0].price);
+                $("#money2").val(rows[0].money);
 
-            $("#dlg2").dialog("open");
+                $("#dlg2").dialog("open");
+            }
         }
 
         //确认修改
@@ -125,6 +141,8 @@
                     money: $("#money2").val()
                 }
             });
+            updateEnd();
+            updateAmountPayable();
             $("#dlg2").dialog("close");
         }
 
@@ -336,8 +354,8 @@
      closed="true" buttons="#dlg-tb">
     <table id="dlgtb">
         <tr>
-            <td>名称：<input type="text" id="name" required="true"/></td>
-            <td>重量：<input type="number" id="weight" required="true"/></td>
+            <td>名称：<input type="text" id="name" required="required"/></td>
+            <td>重量：<input type="number" id="weight" required="required"/></td>
         </tr>
         <tr>
             <td>单价：<input type="number" id="price" required="true"/></td>
