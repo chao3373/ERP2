@@ -204,4 +204,24 @@ public class JitaiProductionAllotController {
     public List<JitaiProductionAllot> selectByIssueState(String issueState) {
         return jitaiProductionAllotService.selectByIssueState(issueState);
     }
+
+
+    @RequestMapping("/searchJitai")
+    public Map<String, Object> searchLiftMoney(String saleNumber, Integer jitai, String allorTime,String allorState) {
+        System.out.println("allorTime:"+allorTime);
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+
+        map1.put("saleNumber", saleNumber);
+        map1.put("jitai", jitai);
+        map1.put("allorTime", allorTime);
+        map1.put("allorState",allorState);
+
+        map.put("success", true);
+        map.put("rows", jitaiProductionAllotService.searchJitai(map1));
+
+        System.out.println(map);
+
+        return map;
+    }
 }

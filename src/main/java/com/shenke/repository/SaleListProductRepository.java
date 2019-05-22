@@ -63,7 +63,7 @@ public interface SaleListProductRepository
 	 * @param state
 	 */
 	@Query(value = "select * from t_sale_list_product where state like %?1%", nativeQuery = true)
-	public List<SaleListProduct> listProductByState(String state);
+	public List<SaleListProduct> 	listProductByState(String state);
 
 	/**
 	 * 根据订单审核状态和销售单id查询所有订单信息

@@ -2,6 +2,7 @@ package com.shenke.service.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -161,6 +162,34 @@ public class JitaiProductionAllotServiceImpl implements JitaiProductionAllotServ
     public List<JitaiProductionAllot> selectByIssueState(String issueState) {
         issueState = "%" + issueState + "%";
         return jitaiProductionAllotRepository.selectByIssueState(issueState);
+    }
+
+    @Override
+    public List<JitaiProductionAllot> searchJitai(Map<String, Object> map) {
+
+        System.out.println(map);
+
+        return jitaiProductionAllotRepository.findAll(new Specification<JitaiProductionAllot>() {
+            @Override
+            public Predicate toPredicate(Root<JitaiProductionAllot> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                System.out.println("123142536475846352524524626");
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), (String) map.get("saleNumber")));
+                }
+                if (map.get("jitai") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("allorTime"))) {
+                    predicate.getExpressions().add(cb.like(root.get("allorTime"), "%" + map.get("allorTime") + "%"));
+                }
+                if (map.get("allorState") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("allorState").get("id"), map.get("allorState")));
+                }
+                return predicate;
+
+            }
+        });
     }
 
 }

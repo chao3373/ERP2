@@ -223,4 +223,14 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
+
+
+    @RequestMapping("/findAll")
+    public Map<String,Object> findAll(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleListProduct> list = saleListProductService.fandAll();
+        map.put("rows",list);
+        System.out.println(map);
+        return  map;
+    }
 }
