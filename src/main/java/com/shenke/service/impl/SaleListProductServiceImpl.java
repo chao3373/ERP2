@@ -197,6 +197,10 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 		return saleListProductRepository.findOne(parseInt);
 	}
 
+	@Override
+	public List<SaleListProduct> findJitaiProduct() {
+		return saleListProductRepository.findJitaiProduct();
+	}
 
 
 }

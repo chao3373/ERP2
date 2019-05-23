@@ -160,5 +160,11 @@ public interface SaleListProductService {
 
 	SaleListProduct findById(int parseInt);
 
+	/***
+	 * 根据机台生产查询
+	 * @return
+	 */
+	public  List<SaleListProduct> findJitaiProduct();
+
 
 }

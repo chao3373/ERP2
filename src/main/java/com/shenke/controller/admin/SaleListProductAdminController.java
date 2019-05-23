@@ -233,4 +233,14 @@ public class SaleListProductAdminController {
         System.out.println(map);
         return  map;
     }
+
+    @RequestMapping("/findJitaiProduct")
+    public Map<String,Object> findJitaiProduct(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleListProduct> list = saleListProductService.findJitaiProduct();
+        map.put("rows",list);
+        System.out.println(list);
+        return map;
+    }
+
 }
