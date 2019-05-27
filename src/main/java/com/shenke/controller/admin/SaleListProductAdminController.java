@@ -223,4 +223,45 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
+
+
+    @RequestMapping("/findAll")
+    public Map<String,Object> findAll(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleListProduct> list = saleListProductService.fandAll();
+        map.put("rows",list);
+        System.out.println(map);
+        return  map;
+    }
+
+    @RequestMapping("/findJitaiProduct")
+    public Map<String,Object> findJitaiProduct(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleListProduct> list = saleListProductService.findJitaiProduct();
+        map.put("rows",list);
+        System.out.println(list);
+        return map;
+    }
+
+    @RequestMapping("/searchJitai")
+    public Map<String, Object> searchLiftMoney(String saleNumber, Integer jitai, String saleDate,String deliveryDate,String allorState,String state) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+
+        map1.put("saleNumber", saleNumber);
+        map1.put("jitai", jitai);
+        map1.put("saleDate", saleDate);
+        map1.put("allorState",allorState);
+        map1.put("deliveryDate",deliveryDate);
+        map1.put("state",state);
+
+
+        map.put("success", true);
+        map.put("rows", saleListProductService.searchJitai(map1));
+
+        System.out.println(map);
+
+        return map;
+    }
+
 }

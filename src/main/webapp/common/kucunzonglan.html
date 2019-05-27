@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>当前库存查询</title>
+    <title>库存总览</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -14,7 +14,7 @@
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
     <script type="text/javascript">
-        var json = {};
+        /*var json = {};
         //按回车键查询
         $(document).keyup(function (event) {
             if (event.keyCode == 13) {
@@ -80,15 +80,11 @@
             $("#peasant").val("");
         }
 
-
+*/
         function loadData() {
             //加载数据
             $("#dg").datagrid({
                 columns: [[{
-                    field: 'cb',
-                    checkbox: "true",
-                    align: "center"
-                }, {
                     field: 'id',
                     title: 'id',
                     width: 100,
@@ -142,9 +138,8 @@
                     width: 100,
                     align: 'center',
                     formatter: function (val, row) {
-                        console.log(row.locationId);
                         if (row.location) {
-                            //val = row.location.name;
+                            val = row.location.name;
                             return row.location.name;
                         }
                         return;
@@ -175,7 +170,7 @@
             });
 
         }
-
+/*
         //设置仓位
         function setLocation() {
             if ($("#dg").datagrid("getSelections").length < 1) {
@@ -325,7 +320,7 @@
                     	else{
                     		tdStr = rows[i][nl[j].f];
                     	}
-                        /* var tdStr = rows[i][nl[j].f];*/
+                        /!* var tdStr = rows[i][nl[j].f];*!/
                         if (tdStr == null) {
                             tdStr = "";
                         } 
@@ -355,32 +350,29 @@
                 console.log(tableString);
             }
         }
-
+*/
         $(document).ready(function () {
             loadData();
-            /* $("#clientId").combobox({
-                panelHeight: 'auto',
-                valueField: 'id',
-                textField: 'name',
-                url: '/admin/client/clientList',
-                onSelect: function (client) {
-                    client = client.name;
-                    selectClient(client);
-                }
-            }); */
-
-            
         });
 
     </script>
 </head>
 <body style="margin: 1px">
-<table id="dg" class="easyui-datagrid" fitColumns="false"
-       rownumbers="true" url="/admin/storage/outSuccess"
+<!--<table id="dg" class="easyui-datagrid" fitColumns="false"
+       rownumbers="true" url="/admin/storage/findAll"
        toolbar="#tb" fit="true">
+</table>-->
+<table id="dg"  class="easyui-datagrid" fitColumns="true"
+        rownumbers="true" singleSelect="true"
+       url="/admin/storage/findAll" fit="true" toolbar="#tb">
+    <!--<thead>
+    <th field="id" width="20" align="center">编号</th>
+    <th field="name" width="50" align="center">产品名称</th>
+
+    </thead>-->
 </table>
 
-<div id="tb" style="padding: 15px;">
+<!--<div id="tb" style="padding: 15px;">
     <table>
         <tr>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
@@ -439,6 +431,6 @@
             </td>
         </tr>
     </table>
-</div>
+</div>-->
 </body>
 </html>

@@ -1,7 +1,10 @@
 package com.shenke.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -161,6 +164,37 @@ public class JitaiProductionAllotServiceImpl implements JitaiProductionAllotServ
     public List<JitaiProductionAllot> selectByIssueState(String issueState) {
         issueState = "%" + issueState + "%";
         return jitaiProductionAllotRepository.selectByIssueState(issueState);
+    }
+
+    @Override
+    public List<JitaiProductionAllot> searchJitai(Map<String, Object> map) {
+
+        System.out.println(map);
+
+        return jitaiProductionAllotRepository.findAll(new Specification<JitaiProductionAllot>() {
+            @Override
+            public Predicate toPredicate(Root<JitaiProductionAllot> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), (String) map.get("saleNumber")));
+                }
+                if (map.get("jitai") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("allorTime"))) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("allorTime"), new SimpleDateFormat("yyyy-MM-dd").parse((String) map.get("allorTime"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (map.get("allorState") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("allorState").get("id"), map.get("allorState")));
+                }
+                return predicate;
+
+            }
+        });
     }
 
 }

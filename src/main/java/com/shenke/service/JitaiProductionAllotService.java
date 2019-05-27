@@ -1,6 +1,7 @@
 package com.shenke.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.shenke.entity.JiTai;
@@ -137,4 +138,7 @@ public interface JitaiProductionAllotService {
 	* @Date:
 	*/
     public List<JitaiProductionAllot> selectByIssueState(String issueState);
+
+
+	List<JitaiProductionAllot> searchJitai(Map<String, Object> map);
 }

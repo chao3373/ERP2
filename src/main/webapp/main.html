@@ -73,7 +73,7 @@
          });
          
         $("#tree").tree({
-        	lines:true,
+			animate: true,
        	 	url:'/user/loadMenuInfo?parentId=-1',
        	 	onLoadSuccess:function() {
        		 $("#tree").tree("expandAll");

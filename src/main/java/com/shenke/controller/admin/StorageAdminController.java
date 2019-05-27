@@ -291,17 +291,13 @@ public class StorageAdminController {
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-        System.out.println("*****************************************");
         System.out.println(map1);
-        System.out.println("*****************************************");
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage: storageList) {
             storage.setSum( storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
         }
-        System.out.println("--------------------------------------------");
         System.out.println(storageList);
-        System.out.println("--------------------------------------------");
         map.put("rows", storageList);
         return map;
     }
@@ -331,7 +327,6 @@ public class StorageAdminController {
      */
     @RequestMapping("/selectCountByNameAndOutNumber")
     public String selectCountByNameAndOutNumber(String name, String outNumber) {
-        System.out.println("name======================" + name + "outNumber===============" + outNumber);
         return storageService.selectCountByNameAndOutNumber(name, outNumber);
     }
 
@@ -347,9 +342,9 @@ public class StorageAdminController {
         map.put("success",true);
         map.put("rows",findBySaleListId);
 
-        System.out.println("***************Controllor*****************");
         System.out.println(map);
-        System.out.println("******************************************");
         return map;
     }
+
+
 }

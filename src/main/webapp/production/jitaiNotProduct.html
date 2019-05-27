@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>库存总览</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+        var json = {};
+        //按回车键查询
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {
+                screenSale();
+            }
+        });
+
+        //添加筛选条件
+        function addScreen() {
+            json = {};
+            if ($("#saleNumber").val()) {
+                json.saleNumber = $("#saleNumber").val();
+            }
+            if ($("#saleDate").datebox("getText")) {
+                json.saleDate = $("#saleDate").datebox("getText");
+            }
+            if ($("#deliveryDate").datebox("getText")) {
+                json.deliveryDate = $("#deliveryDate").datebox("getText");
+            }
+            if ($("#state").combobox("getValue")) {
+                json.state = $("#state").combobox("getValue");
+            }
+            if ($("#allorState").combobox("getValue")) {
+                json.allorState = $("#allorState").combobox("getValue");
+            }
+            if ($("#jitai").combobox("getValue")) {
+                json.jitai = $("#jitai").combobox("getValue");
+            }
+            console.log(json);
+        }
+
+        //按照条件筛选订单信息
+        function screenSale() {
+            addScreen();
+            refreshData();
+        }
+
+        //添加条件筛选时刷新数据
+        function refreshData() {
+            $.post("/admin/saleListProduct/searchJitai", json, function (result) {
+                if (result.success) {
+                    $("#dg").datagrid('loadData', result.rows);
+                }
+            }, "json");
+        }
+
+        //刷新筛选条件,并初始化筛选属性的值
+        function clertCondition() {
+            loadData();
+            json = {};
+            $("#saleNumber").val("");
+            $("#jitai").combobox("reset");
+            $("#saleDate").datebox("reset");
+            $("#deliveryDate").datebox("reset");
+            $("#allorState").combobox("reset");
+            $("#state").combobox("reset");
+        }
+
+
+        /*//显示时间数据时先进行格式化
+        function formatDate(val, row) {
+            var dateType = "";
+            var date = new Date();
+            date.setTime(val);
+            dateType = date.format("yyyy-MM-dd");
+            return dateType;
+        }
+*/
+
+        //加载数据
+        function loadData() {
+            //加载数据
+            $("#dg").datagrid({
+                columns: [[{
+                    field: 'cb',
+                    checkbox: "true",
+                    align: "center",
+                    hidden: "true"
+                }, {
+                    field: "id",
+                    title: "id号",
+                    width: "120",
+                    align: "center",
+                    hidden: "true"
+                }, {
+                    field: "saleNumber",
+                    title: "订单号",
+                    width: "100",
+                    align: "center",
+                    formatter: function (value, rows) {
+                        if (rows.saleList) {
+                            return rows.saleList.saleNumber;
+                        } else {
+                            return "";
+                        }
+                    }
+                },{
+                    field: 'name',
+                    title: "产品名称",
+                    width: "100",
+                    align: "center"
+                },{
+                    field: "JITAI",
+                    title: "所属机台",
+                    width: "100",
+                    align: "center",
+                    formatter: function (value, rows) {
+                        if (rows.jiTai) {
+                            return rows.jiTai.name;
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: "peasant",
+                    title: "农户名称",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "state",
+                    title: "订单状态",
+                    width: "100",
+                    align: "center"
+                },{
+                    field: "issueState",
+                    title: "下发状态",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "clientname",
+                    title: "客户名称",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "saleDate",
+                    title: "销售时间",
+                    width: "100",
+                    align: "center",
+                    formatter: function (value, rows) {
+                        console.log(rows);
+                        if (rows.saleList) {
+                            var date = new Date(rows.saleList.saleDate);
+                            var m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth();
+                            var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
+                            return (date.getFullYear() + "-" + m + "-" + d);
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: "deliveryDate",
+                    title: "出库时间",
+                    width: "100",
+                    align: "center",
+                    formatter: function (value, rows) {
+                        if (rows.saleList) {
+                            var date = new Date(rows.saleList.deliveryDate);
+                            var m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth();
+                            var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
+                            return (date.getFullYear() + "-" + m + "-" + d);
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: "model",
+                    title: "幅宽（m）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "price",
+                    title: "厚度（mm）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "length",
+                    title: "长度（m）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "meter",
+                    title: "生产米数",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "color",
+                    title: "颜色",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "oneweight",
+                    title: "单件重量（kg）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "num",
+                    title: "订货数量",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "sumwight",
+                    title: "总重量（kg）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "realitymodel",
+                    title: "实际幅宽（m）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "demand",
+                    title: "要求",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "wightset",
+                    title: "重量设置",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "dao",
+                    title: "剖刀",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "brand",
+                    title: "商标",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "pack",
+                    title: "包装",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "letter",
+                    title: "印字",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "realityweight",
+                    title: "实际重量（kg）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "realityprice",
+                    title: "实际厚度（mm）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "theoryweight",
+                    title: "理论重量（kg）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "square",
+                    title: "单件平米",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "numsquare",
+                    title: "总平米",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "weightway",
+                    title: "称重方式",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "label",
+                    title: "标签名称",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "weight",
+                    title: "重量（kg）",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "patu",
+                    title: "纸管",
+                    width: "100",
+                    align: "center"
+                }, {
+                    field: "remark",
+                    title: "备注",
+                    width: "100",
+                    align: "center"
+                }]]
+            });
+        }
+
+        /*
+                //设置仓位
+                function setLocation() {
+                    if ($("#dg").datagrid("getSelections").length < 1) {
+                        $.messager.alert("系统提示", "<span style='color: red'>请选择要设置仓位和记录！</span>");
+                        return;
+                    }
+                    if (!$("#cang").combobox("getValue")) {
+                        $.messager.alert("系统提示", "<span style='color: red'>请选择要设置仓位和记录！</span>");
+                        return;
+                    }
+                    var rows = $("#dg").datagrid("getSelections");
+                    var ids = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        ids.push(rows[i].id);
+                    }
+                    var idsstr = ids.join(",");
+                    $.post("/admin/storage/setLocation", {
+                        ids: idsstr,
+                        location: $("#cang").combobox("getValue")
+                    }, function (result) {
+                        if (result.success) {
+                            $("#dg").datagrid("reload");
+                        }
+                    });
+                }
+
+                //打印
+                function printdg() {
+                      $("#dg").datagrid("appendRow", {
+                        saleNumber: '总计',
+                        dateInProduced: $("#dg").datagrid("getRows").length
+                    });
+                    //window.print();
+                   // CreateFormPage("datagrid", $("#dg"));
+                    $("#dg").datagrid("reload");
+                    CreateFormPage("datagrid", $("#dg"));
+                }
+
+                var tableString;
+                // strPrintName 打印任务名
+                // printDatagrid 要打印的datagrid
+                function CreateFormPage(strPrintName, printDatagrid) {
+                    tableString = "";
+                    tableString += "<h3 style='font-size: 25px;text-align: center;'>点货单</h3>";
+                    tableString += '<div style="text-aligh:center; width:100%;"><table cellspacing="0" class="pb">';
+                    var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+                    var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+                    var nameList = '';
+                    // 载入title
+                    if (typeof columns != 'undefined' && columns != '') {
+                        $(columns)
+                            .each(
+                                function (index) {
+                                    tableString += '\n<tr>';
+                                    if (typeof frozenColumns != 'undefined'
+                                        && typeof frozenColumns[index] != 'undefined') {
+                                        for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                            if (!frozenColumns[index][i].hidden) {
+                                                tableString += '\n<th width="'
+                                                    + frozenColumns[index][i].width
+                                                    + '"';
+                                                if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                                    && frozenColumns[index][i].rowspan > 1) {
+                                                    tableString += ' rowspan="'
+                                                        + frozenColumns[index][i].rowspan
+                                                        + '"';
+                                                }
+                                                if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                                    && frozenColumns[index][i].colspan > 1) {
+                                                    tableString += ' colspan="'
+                                                        + frozenColumns[index][i].colspan
+                                                        + '"';
+                                                }
+                                                if (typeof frozenColumns[index][i].field != 'undefined'
+                                                    && frozenColumns[index][i].field != '') {
+                                                    nameList += ',{"f":"'
+                                                        + frozenColumns[index][i].field
+                                                        + '", "a":"'
+                                                        + frozenColumns[index][i].align
+                                                        + '"}';
+                                                }
+                                                tableString += '>'
+                                                    + frozenColumns[0][i].title
+                                                    + '</th>';
+                                            }
+                                        }
+                                    }
+                                    for (var i = 1; i < columns[index].length; ++i) {
+                                        if (!columns[index][i].hidden) {
+                                            tableString += '\n<th width="'
+                                                + columns[index][i].width + '"';
+                                            if (typeof columns[index][i].rowspan != 'undefined'
+                                                && columns[index][i].rowspan > 1) {
+                                                tableString += ' rowspan="'
+                                                    + columns[index][i].rowspan
+                                                    + '"';
+                                            }
+                                            if (typeof columns[index][i].colspan != 'undefined'
+                                                && columns[index][i].colspan > 1) {
+                                                tableString += ' colspan="'
+                                                    + columns[index][i].colspan
+                                                    + '"';
+                                            }
+                                            if (typeof columns[index][i].field != 'undefined'
+                                                && columns[index][i].field != '') {
+                                                nameList += ',{"f":"'
+                                                    + columns[index][i].field
+                                                    + '", "a":"'
+                                                    + columns[index][i].align
+                                                    + '"}';
+                                            }
+                                            tableString += '>'
+                                                + columns[index][i].title
+                                                + '</th>';
+                                        }
+                                    }
+                                    tableString += '\n</tr>';
+                                });
+                    }
+                    // 载入内容
+                    var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+                    console.log(rows);
+                    console.log(nameList);
+                    var nl = eval('([' + nameList.substring(1) + '])');
+                    console.log(nl);
+                    for (var i = 0; i < rows.length; ++i) {
+                        tableString += '\n<tr>';
+                        $(nl).each(function (j) {
+                            var e = nl[j].f.lastIndexOf('_0');
+
+                            tableString += '\n<td';
+                            if (nl[j].a != 'undefined' && nl[j].a != '') {
+                                tableString += ' style="text-align:' + nl[j].a + ';"';
+                            }
+                            tableString += '>';
+
+
+
+                            if (e + 2 == nl[j].f.length) {
+                                tableString += rows[i][nl[j].f.substring(0, e)];
+                                console.log(tableString);
+                            } else {
+                                var tdStr;
+                                if(rows[i][nl[j].f]=="[object Object]"){
+                                    tdStr = rows[i][nl[j].f].name;
+                                }
+                                else{
+                                    tdStr = rows[i][nl[j].f];
+                                }
+                                /!* var tdStr = rows[i][nl[j].f];*!/
+                                if (tdStr == null) {
+                                    tdStr = "";
+                                }
+                                console.log(tdStr);
+                                tableString += tdStr;
+                            }
+
+
+
+                            tableString += '</td>';
+                        });
+                        tableString += '\n</tr>';
+                    }
+                    tableString += '\n</table></div>';
+                    if (window.showModalDialog) {
+                        window
+                            .showModalDialog(
+                                "print.html",
+                                tableString,
+                                "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                    } else {
+                        window
+                            .open(
+                                "print.html",
+                                tableString,
+                                "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                        console.log(tableString);
+                    }
+                }
+        */
+        $(document).ready(function () {
+            loadData();
+
+
+        });
+
+    </script>
+</head>
+<body style="margin: 1px"  class="easyui-layout">
+
+
+<div data-options="region:'north'"
+     style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+
+        <form id="form" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/></td>
+                    <td>&nbsp;&nbsp;选择机台： <input
+                            class="easyui-combobox" id="jitai" name="jitai"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+                    </td>
+                    <td>&nbsp;&nbsp;销售时间： <input type="text" id="saleDate" name="saleDate" class="easyui-datebox"
+                                                 demandd="true" size="15"/>
+                    </td>
+
+
+                    <td>&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                            iconCls="icon-reload">刷新</a></td>
+
+
+
+                </tr>
+               <tr>
+                   <td>&nbsp;&nbsp;订单状态： <input id="state" class="easyui-combobox"
+                                                data-options="
+                                    panelHeight: 'auto',
+                                    valueField: 'label',
+                                    textField: 'value',
+                                    data: [{
+                                            label: '下发机台',
+                                            value: '下发机台'
+                                        },{
+                                            label: '分配机台',
+                                            value: '分配机台'
+                                        },{
+                                            label: '生产完成',
+                                            value: '生产完成'
+                                        }],
+                                    onSelect: function(rec){
+                                        return rec.value;
+                                    }"/></td>
+                   <td>&nbsp;&nbsp;下发状态： <input id="allorState" class="easyui-combobox"
+                                                data-options="
+                                    panelHeight: 'auto',
+                                    valueField: 'label',
+                                    textField: 'value',
+                                    data: [{
+                                            label: '未下发',
+                                            value: '未下发'
+                                        },{
+                                            label: '下发机台',
+                                            value: '下发机台'
+                                        },{
+                                            label: '生产完成',
+                                            value: '生产完成'
+                                        }],
+                                    onSelect: function(rec){
+                                        return rec.value;
+                                    }"/></td>
+                   <td>&nbsp;&nbsp;出库时间： <input type="text" id="deliveryDate" name="deliveryDate" class="easyui-datebox"
+                                                demandd="true" size="15"/>
+                   </td>
+                   <td> &nbsp;&nbsp;<a href="javascript:screenSale()"
+                                      class="easyui-linkbutton" iconCls="icon-search">查询</a></td>
+
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+
+
+<div data-options="region:'center'" style="padding: 10px; border: 1px;">
+    <table id="dg" class="easyui-datagrid"
+           rownumbers="true" singleSelect="true"
+           url="/admin/saleListProduct/findJitaiProduct" fit="true" toolbar="#tb">
+    </table>
+
+    <div id="tb" style="padding: 15px;">
+       <table>
+            <tr>
+               <!-- <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
+                        class="easyui-combobox" id="jitai" name="jitai"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+                </td>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;分配时间： <input type="text" id="allorTime" name="allorTime" class="easyui-datebox"
+                                                                                                demandd="true" size="15"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单状态： <input id="allorState" class="easyui-combobox"
+                                                         data-options="
+                panelHeight: 'auto',
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                        label: '下发机台',
+                        value: '下发机台'
+                    },{
+                        label: '生产完成',
+                        value: '生产完成'
+                    }],
+                onSelect: function(rec){
+                    auditQuery(rec.value);
+                }"/>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                </td>
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                                                 iconCls="icon-reload">刷新</a>
+
+-->
+
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

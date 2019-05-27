@@ -63,7 +63,7 @@ public interface SaleListProductRepository
 	 * @param state
 	 */
 	@Query(value = "select * from t_sale_list_product where state like %?1%", nativeQuery = true)
-	public List<SaleListProduct> listProductByState(String state);
+	public List<SaleListProduct> 	listProductByState(String state);
 
 	/**
 	 * 根据订单审核状态和销售单id查询所有订单信息
@@ -204,4 +204,13 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set jitai_id = ?1 where id = ?2", nativeQuery = true)
 	public void alertJitai(Integer jitai, Integer id);
+
+
+	/***
+	 * 根据机台生产情况进行查询
+	 * @param
+	 * @return
+	 */
+	@Query(value = "select * from t_sale_list_product where state like '%生产完成%' or state like'%下发机台%' or state like '%分配机台%'" , nativeQuery = true)
+	public List<SaleListProduct> findJitaiProduct();
 }

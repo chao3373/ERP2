@@ -1,5 +1,7 @@
 package com.shenke.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,5 +198,54 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 	public SaleListProduct findById(int parseInt) {
 		return saleListProductRepository.findOne(parseInt);
 	}
+
+	@Override
+	public List<SaleListProduct> findJitaiProduct() {
+		return saleListProductRepository.findJitaiProduct();
+	}
+
+
+	@Override
+	public List<SaleListProduct> searchJitai(Map<String, Object> map) {
+
+		System.out.println(map);
+
+		return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+			@Override
+			public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (StringUtil.isNotEmpty((String) map.get("saleDate"))) {
+					try {
+						predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleDate"), new SimpleDateFormat("yyyy-MM-dd").parse((String) map.get("saleDate"))));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				if (map.get("jitai") != null) {
+					predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
+				}
+				if (StringUtil.isNotEmpty((String) map.get("deliveryDate"))) {
+					try {
+						predicate.getExpressions().add(cb.equal(root.get("saleList").get("deliveryDate"), new SimpleDateFormat("yyyy-MM-dd").parse((String) map.get("deliveryDate"))));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
+					predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleNumber"), map.get("saleNumber")));
+				}
+				if (map.get("allorState") != null) {
+					//predicate.getExpressions().add(cb.like(root.get("saleNumber"), (String) map.get("saleNumber")));
+					predicate.getExpressions().add(cb.like(root.get("issueState"), "%"+map.get("allorState")+"%"));
+				}
+				if (map.get("state") != null) {
+					predicate.getExpressions().add(cb.like(root.get("state"), "%"+map.get("state")+"%"));
+				}
+				return predicate;
+
+			}
+		});
+	}
+
 
 }
