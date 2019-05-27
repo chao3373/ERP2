@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>订单追踪</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+        });
+
+        function screenSale(){
+            var salenumber = $("#saleNumber").val();
+            if(salenumber == ""){
+                $.messager.alert("系统提示", "请输入订单号！");
+                return;
+            }
+            $.post("/admin/saleList/findSaleListId",{
+                saleNumber : salenumber
+            },function(result){
+                if(result.success){
+
+                }
+
+            },"json");
+        }
+
+
+    </script>
+</head>
+<body style="margin: 1px"  class="easyui-layout">
+<div data-options="region:'center'" style="padding: 10px; border: 1px;">
+    <table id="dg" class="easyui-datagrid"
+           rownumbers="true" singleSelect="true"
+           toolbar="#tb"  fit="true" >
+    </table>
+
+   <div id="tb" style="padding: 15px;">
+       <table>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                </td>
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                                                 iconCls="icon-reload">刷新</a>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

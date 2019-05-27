@@ -24,4 +24,8 @@ public interface SaleListRepository extends JpaRepository<SaleList, Integer>, Jp
 	@Query(value="SELECT * FROM t_sale_list WHERE id IN (SELECT sale_list_id FROM t_sale_list_product WHERE state LIKE '%审核失败%' OR state LIKE '%下单%')", nativeQuery = true)
 	public List<Integer> getSaleListNo();
 
+
+	@Query( value = "select * from t_sale_list where sale_number =?1" , nativeQuery = true)
+	public List<SaleList> findSaleListId(String saleNumber);
+
 }

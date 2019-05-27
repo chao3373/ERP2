@@ -29,7 +29,7 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
 	 * @return
 	 * 
 	 */
-	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = 2", nativeQuery=true)
+	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = (select id from t_dep where name like '%销售%')", nativeQuery=true)
 	public List<Clerk> findByName(String string);
 
 	/**
@@ -38,7 +38,7 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
 	 * @return
 	 *
 	 */
-	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = 3", nativeQuery=true)
+	@Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = (select id from t_dep where name like '%生产%')", nativeQuery=true)
 	public List<Clerk> findByProName(String string);
 
 	/**

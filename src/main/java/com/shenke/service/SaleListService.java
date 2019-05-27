@@ -32,7 +32,7 @@ public interface SaleListService {
 	 * 根据条件查询所有销售订单信息
 	 * @param saleList
 	 * @param desc
-	 * @param string
+	 * @param
 	 * @return
 	 */
 	public List<SaleList> list(SaleList saleList, Direction desc, String... properties);
@@ -65,4 +65,11 @@ public interface SaleListService {
     public void saveOne(SaleList saleList);
 
     public void saveTwo(SaleList saleList);
+
+	/***
+	 * 根据传入的销售单号查询id
+	 * @param saleNumber
+	 * @return
+	 */
+	public List<SaleList> findSaleListId(String saleNumber);
 }

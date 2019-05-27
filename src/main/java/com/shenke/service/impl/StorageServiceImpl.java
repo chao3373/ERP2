@@ -435,4 +435,10 @@ public class StorageServiceImpl implements StorageService {
         });
         return count.intValue();
     }
+
+    public List<Storage> findSaleListNumber(){
+        return storageRepository.findSaleListNumber();
+    }
+
+
 }

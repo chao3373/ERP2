@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.jws.Oneway;
 
 import com.shenke.entity.Count;
 import com.shenke.entity.JieSuan;
@@ -346,5 +347,24 @@ public class StorageAdminController {
         return map;
     }
 
+    /***
+     * 查询所有的库存
+     * @return
+     */
+    @RequestMapping("/findAll")
+    public Map<String,Object> findAll(){
+        Map<String,Object> map = new HashMap<>();
+        List<Storage> list = storageService.findAll();
+        map.put("rows",list);
+        return map;
+    }
+
+    @RequestMapping("/findSaleListNumber1")
+    public Map<String,Object> findSaleListNumber(){
+        Map<String,Object> map = new HashMap<>();
+        List<Storage> list = storageService.findSaleListNumber();
+        map.put("rows",list);
+        return map;
+    }
 
 }
