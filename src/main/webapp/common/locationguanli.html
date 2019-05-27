@@ -142,8 +142,9 @@
                     width: 100,
                     align: 'center',
                     formatter: function (val, row) {
+                        console.log(row.locationId);
                         if (row.location) {
-                            val = row.location.name;
+                            //val = row.location.name;
                             return row.location.name;
                         }
                         return;

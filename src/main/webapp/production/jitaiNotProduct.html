@@ -28,15 +28,22 @@
             if ($("#saleNumber").val()) {
                 json.saleNumber = $("#saleNumber").val();
             }
-            if ($("#allorTime").datebox("getText")) {
-                json.allorTime = $("#allorTime").datebox("getText");
+            if ($("#saleDate").datebox("getText")) {
+                json.saleDate = $("#saleDate").datebox("getText");
             }
-            if ($("#jitai").combobox("getValue")) {
-                json.jitai = $("#jitai").combobox("getValue");
+            if ($("#deliveryDate").datebox("getText")) {
+                json.deliveryDate = $("#deliveryDate").datebox("getText");
+            }
+            if ($("#state").combobox("getValue")) {
+                json.state = $("#state").combobox("getValue");
             }
             if ($("#allorState").combobox("getValue")) {
                 json.allorState = $("#allorState").combobox("getValue");
             }
+            if ($("#jitai").combobox("getValue")) {
+                json.jitai = $("#jitai").combobox("getValue");
+            }
+            console.log(json);
         }
 
         //按照条件筛选订单信息
@@ -47,7 +54,7 @@
 
         //添加条件筛选时刷新数据
         function refreshData() {
-            $.post("/admin/jitaiProductionAllot/searchJitai", json, function (result) {
+            $.post("/admin/saleListProduct/searchJitai", json, function (result) {
                 if (result.success) {
                     $("#dg").datagrid('loadData', result.rows);
                 }
@@ -60,8 +67,10 @@
             json = {};
             $("#saleNumber").val("");
             $("#jitai").combobox("reset");
-            $("#allorTime").datebox("reset");
+            $("#saleDate").datebox("reset");
+            $("#deliveryDate").datebox("reset");
             $("#allorState").combobox("reset");
+            $("#state").combobox("reset");
         }
 
 
@@ -93,11 +102,28 @@
                 }, {
                     field: "saleNumber",
                     title: "订单号",
-                    width: "120",
+                    width: "100",
                     align: "center",
                     formatter: function (value, rows) {
                         if (rows.saleList) {
                             return rows.saleList.saleNumber;
+                        } else {
+                            return "";
+                        }
+                    }
+                },{
+                    field: 'name',
+                    title: "产品名称",
+                    width: "100",
+                    align: "center"
+                },{
+                    field: "JITAI",
+                    title: "所属机台",
+                    width: "100",
+                    align: "center",
+                    formatter: function (value, rows) {
+                        if (rows.jiTai) {
+                            return rows.jiTai.name;
                         } else {
                             return "";
                         }
@@ -110,7 +136,12 @@
                 }, {
                     field: "state",
                     title: "订单状态",
-                    width: "135",
+                    width: "100",
+                    align: "center"
+                },{
+                    field: "issueState",
+                    title: "下发状态",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "clientname",
@@ -149,11 +180,6 @@
                         }
                     }
                 }, {
-                    field: 'name',
-                    title: "产品名称",
-                    width: "200",
-                    align: "center"
-                }, {
                     field: "model",
                     title: "幅宽（m）",
                     width: "100",
@@ -176,7 +202,7 @@
                 }, {
                     field: "color",
                     title: "颜色",
-                    width: "50",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "oneweight",
@@ -201,32 +227,32 @@
                 }, {
                     field: "demand",
                     title: "要求",
-                    width: "200",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "wightset",
                     title: "重量设置",
-                    width: "200",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "dao",
                     title: "剖刀",
-                    width: "150",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "brand",
                     title: "商标",
-                    width: "150",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "pack",
                     title: "包装",
-                    width: "200",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "letter",
                     title: "印字",
-                    width: "200",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "realityweight",
@@ -251,7 +277,7 @@
                 }, {
                     field: "numsquare",
                     title: "总平米",
-                    width: "50",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "weightway",
@@ -271,7 +297,7 @@
                 }, {
                     field: "patu",
                     title: "纸管",
-                    width: "50",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "remark",
@@ -471,91 +497,129 @@
 
     </script>
 </head>
-<body style="margin: 1px">
-<table id="dg" class="easyui-datagrid"
-       rownumbers="true" singleSelect="true"
-       url="/admin/saleListProduct/findJitaiProduct" fit="true" toolbar="#tb">
-
-    <!--<thead>
-    <th field="saleDate" width="100" align="center"
-        formatter="formatDate">销售日期
-    </th>
-    &lt;!&ndash;<th field="deliveryDate" width="100" align="center" >发货时间</th>&ndash;&gt;
-    </thead>-->
-</table>
+<body style="margin: 1px"  class="easyui-layout">
 
 
-<div id="tb" style="padding: 15px;">
-    <table>
-        <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
-                    class="easyui-combobox" id="jitai" name="jitai"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
-            </td>
+<div data-options="region:'north'"
+     style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
 
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;分配时间： <input type="text" id="allorTime" name="allorTime" class="easyui-datebox"
-                                                     demandd="true" size="15"/>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;订单状态： <input id="allorState" class="easyui-combobox"
-                                                     data-options="
-			panelHeight: 'auto',
-		    valueField: 'label',
-		    textField: 'value',
-		    data: [{
-					label: '下发机台',
-					value: '下发机台'
-				},{
-					label: '生产完成',
-					value: '生产完成'
-				}],
-		    onSelect: function(rec){
-		    	auditQuery(rec.value);
-		    }"/>
-
-            <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
-                                            class="easyui-linkbutton" iconCls="icon-search">查询</a>
-            </td>
-            <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                             iconCls="icon-reload">刷新</a>
-
-                <!--</td>
-                <td></td>
-                <td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input
-                        class="easyui-combobox" id="cang" name="location"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
-                </td>
-                <td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"
-                                                             iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; <a
-                        href="javascript:printdg()" class="easyui-linkbutton"
-                        iconCls="icon-print" plain="true">打印</a>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input
-                        type="text" id="productDate" name="productDate" class="easyui-datebox"
-                        demandd="true" size="15"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input
-                        class="easyui-combobox" id="group" name="group"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input
-                        class="easyui-combobox" id="clerk" name="clerk"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
-                        class="easyui-combobox" id="clientname" name="clientname"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
-                </td>-->
+        <form id="form" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/></td>
+                    <td>&nbsp;&nbsp;选择机台： <input
+                            class="easyui-combobox" id="jitai" name="jitai"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+                    </td>
+                    <td>&nbsp;&nbsp;销售时间： <input type="text" id="saleDate" name="saleDate" class="easyui-datebox"
+                                                 demandd="true" size="15"/>
+                    </td>
 
 
-        </tr>
+                    <td>&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                            iconCls="icon-reload">刷新</a></td>
+
+
+
+                </tr>
+               <tr>
+                   <td>&nbsp;&nbsp;订单状态： <input id="state" class="easyui-combobox"
+                                                data-options="
+                                    panelHeight: 'auto',
+                                    valueField: 'label',
+                                    textField: 'value',
+                                    data: [{
+                                            label: '下发机台',
+                                            value: '下发机台'
+                                        },{
+                                            label: '分配机台',
+                                            value: '分配机台'
+                                        },{
+                                            label: '生产完成',
+                                            value: '生产完成'
+                                        }],
+                                    onSelect: function(rec){
+                                        return rec.value;
+                                    }"/></td>
+                   <td>&nbsp;&nbsp;下发状态： <input id="allorState" class="easyui-combobox"
+                                                data-options="
+                                    panelHeight: 'auto',
+                                    valueField: 'label',
+                                    textField: 'value',
+                                    data: [{
+                                            label: '未下发',
+                                            value: '未下发'
+                                        },{
+                                            label: '下发机台',
+                                            value: '下发机台'
+                                        },{
+                                            label: '生产完成',
+                                            value: '生产完成'
+                                        }],
+                                    onSelect: function(rec){
+                                        return rec.value;
+                                    }"/></td>
+                   <td>&nbsp;&nbsp;出库时间： <input type="text" id="deliveryDate" name="deliveryDate" class="easyui-datebox"
+                                                demandd="true" size="15"/>
+                   </td>
+                   <td> &nbsp;&nbsp;<a href="javascript:screenSale()"
+                                      class="easyui-linkbutton" iconCls="icon-search">查询</a></td>
+
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+
+
+<div data-options="region:'center'" style="padding: 10px; border: 1px;">
+    <table id="dg" class="easyui-datagrid"
+           rownumbers="true" singleSelect="true"
+           url="/admin/saleListProduct/findJitaiProduct" fit="true" toolbar="#tb">
     </table>
+
+    <div id="tb" style="padding: 15px;">
+       <table>
+            <tr>
+               <!-- <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
+                        class="easyui-combobox" id="jitai" name="jitai"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+                </td>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;分配时间： <input type="text" id="allorTime" name="allorTime" class="easyui-datebox"
+                                                                                                demandd="true" size="15"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单状态： <input id="allorState" class="easyui-combobox"
+                                                         data-options="
+                panelHeight: 'auto',
+                valueField: 'label',
+                textField: 'value',
+                data: [{
+                        label: '下发机台',
+                        value: '下发机台'
+                    },{
+                        label: '生产完成',
+                        value: '生产完成'
+                    }],
+                onSelect: function(rec){
+                    auditQuery(rec.value);
+                }"/>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                </td>
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                                                 iconCls="icon-reload">刷新</a>
+
+-->
+
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
 </html>

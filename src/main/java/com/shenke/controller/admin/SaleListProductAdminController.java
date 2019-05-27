@@ -243,4 +243,25 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    @RequestMapping("/searchJitai")
+    public Map<String, Object> searchLiftMoney(String saleNumber, Integer jitai, String saleDate,String deliveryDate,String allorState,String state) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+
+        map1.put("saleNumber", saleNumber);
+        map1.put("jitai", jitai);
+        map1.put("saleDate", saleDate);
+        map1.put("allorState",allorState);
+        map1.put("deliveryDate",deliveryDate);
+        map1.put("state",state);
+
+
+        map.put("success", true);
+        map.put("rows", saleListProductService.searchJitai(map1));
+
+        System.out.println(map);
+
+        return map;
+    }
+
 }

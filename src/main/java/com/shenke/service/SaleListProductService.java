@@ -166,5 +166,7 @@ public interface SaleListProductService {
 	 */
 	public  List<SaleListProduct> findJitaiProduct();
 
+	List<SaleListProduct> searchJitai(Map<String, Object> map);
+
 
 }
