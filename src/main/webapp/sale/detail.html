@@ -310,10 +310,10 @@
         //导出
         function daochu(dg) {
             var rows = $(dg).datagrid("getRows");
-            console.log(rows);
+            //console.log(rows);
             //转换成json格式
             var json = JSON.stringify(rows);
-            console.log(json);
+            //console.log(json);
             //把key转换成中文格式
             var a = json.replace(/clientname/g, "客户名称").replace(/peasant/g, "农户名称").replace(/saleNumber/g, "订单号").replace(/name/g, "产品名称").replace(/model/g, "幅宽").replace(/length/g, "长度").replace(/price/g, "厚度").replace(/realityweight/g, "重量").replace(/deliveryTime/g, "出库时间").replace(/sum/g, "数量");
             console.log(a);

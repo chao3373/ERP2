@@ -94,6 +94,61 @@
             });
         });
 
+
+        //导出
+        function daochu(dg) {
+            var fields = $("#dg").datagrid('getColumnFields');
+            var datagridTitle = new Array();
+            for (var i = 0; i < fields.length; i++) {
+                var option = $("#dg").datagrid('getColumnOption', fields[i]);
+                if (option.field != "checkItem" && option.hidden != "true") { //过滤勾选框和隐藏列
+                    var obj = {};
+                    obj.title = option.title;
+                    obj.field = option.field;
+                    if (option.formatter) {
+                        obj.formatter = option.formatter;
+                    }
+                    datagridTitle.push(obj);
+                }
+            }
+            console.log(datagridTitle);
+
+            var jsonarr = [];
+            var rows = $(dg).datagrid("getRows");
+            for (let i = 0; i < rows.length; i++) {
+                var json = {};
+                console.log(rows[i]);
+                for (let j = 0; j < datagridTitle.length; j++) {
+                    var st = datagridTitle[j].title;
+                    if (datagridTitle[j].formatter) {
+                        json[datagridTitle[j].title] =  datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);
+                    } else {
+                        json[datagridTitle[j].title] =  rows[i][datagridTitle[j].field];
+                    }
+                }
+                console.log(JSON.stringify(json));
+                jsonarr.push(JSON.stringify(json));
+            }
+
+            jsonarr = "[" + jsonarr.join(",") + "]";
+            console.log(jsonarr);
+            alert(jsonarr);
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/daochu?title=订单追踪",
+                data: {a : jsonarr},
+                success: function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","导出成功");
+                    }
+                    return;
+                }
+            });
+
+        }
+
+
         function screenSale(){
             var salenumber = $("#saleNumber").val();
             if(salenumber == ""){
@@ -129,6 +184,10 @@
                 </td>
                 <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
                                                  iconCls="icon-reload">刷新</a>
+                </td>
+                <td>
+                    <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:daochu('#dg')">导出</a>
+                </td>
             </tr>
         </table>
     </div>
