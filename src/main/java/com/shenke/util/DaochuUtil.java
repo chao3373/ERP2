@@ -7,7 +7,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -22,6 +25,7 @@ public class DaochuUtil {
         JsonParser jsonParser = new JsonParser();
         JsonArray asJsonArray = jsonParser.parse(str).getAsJsonArray();
         ArrayList<Map<String, String>> mapArrayList = CollUtil.newArrayList();
+        Map map1 = gson.fromJson(asJsonArray.get(0), Map.class);
         int size = 0;
         for (JsonElement user : asJsonArray) {
             //使用GSON，直接转成Bean对象
@@ -30,10 +34,14 @@ public class DaochuUtil {
             size = map.size();
         }
 
+        System.out.println(mapArrayList);
+
 
 //        FileOutputStream fileOut=new FileOutputStream("d:\\工作簿.xls");
         // 通过工具类创建writer
-        ExcelWriter writer = ExcelUtil.getWriter("d:/123.xls");
+        String path = "D:\\下载文件\\出库明细表\\" + new Date().getTime() + ".xls";
+        System.out.println(path);
+        ExcelWriter writer = ExcelUtil.getWriter(path);
         // 合并单元格后的标题行，使用默认标题样式
         writer.merge(size - 1, title);
         // 一次性写出内容，使用默认样式，强制输出标题

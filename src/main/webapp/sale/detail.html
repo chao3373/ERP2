@@ -60,11 +60,11 @@
             json.order = order;
 
             $.ajax({
-                type:"POST",
-                async:false,
-                url:"/admin/storage/detail",
-                data:json,
-                success:function (result) {
+                type: "POST",
+                async: false,
+                url: "/admin/storage/detail",
+                data: json,
+                success: function (result) {
                     if (result.success) {
                         console.log(result.rows);
                         $("#dg").datagrid("loadData", result.rows);
@@ -83,8 +83,8 @@
             var i;
             for (i = 0; i < rows.length; i++) {
                 if (od == rows[i][order]) {
-                    count+=Number(rows[i]["sum"]);
-                    sum+=Number(rows[i]["realityweight"]);
+                    count += Number(rows[i]["sum"]);
+                    sum += Number(rows[i]["realityweight"]);
                 } else {
                     rw.index = i;
                     rw.count = count;
@@ -105,16 +105,16 @@
                 console.log(rsArr[i]);
                 $("#dg").datagrid("insertRow", {
                     index: rsArr[i]["index"],
-                    row:{
-                        clientname:"小计",
-                        peasant:"",
-                        saleNumber:"",
-                        name:"",
-                        model:"",
-                        length:"",
-                        price:"",
-                        realityweight:"总重量：" + rsArr[i]["sum"],
-                        sum:"总数量：" + rsArr[i]["count"]
+                    row: {
+                        clientname: "小计",
+                        peasant: "",
+                        saleNumber: "",
+                        name: "",
+                        model: "",
+                        length: "",
+                        price: "",
+                        realityweight: "总重量：" + rsArr[i]["sum"],
+                        sum: "总数量：" + rsArr[i]["count"]
                     }
                 });
             }
@@ -138,144 +138,144 @@
             });
         });
 
-      //打印
-    	function printdg() {
-    		CreateFormPage("datagrid", $("#dg"));
-    	}
-    	
-    	
-    	var tableString;
-    	// strPrintName 打印任务名
-    	// printDatagrid 要打印的datagrid
-    	function CreateFormPage(strPrintName, printDatagrid) {
-    		tableString = "";
-    		tableString += "<div style='text-align: center;'><h1>产品出库明细表</h1>";
-    		tableString += "<p><span style='color: black; margin-left: -47px;'>购货单位:" + $("#client").combobox("getText")+"</span>";
-    		tableString += "<span style='color: black; margin-left: 300px;'>出库时间："+ $("#saleDate").datebox("getValue")+"</span></p>"; 
-    		tableString += '<table cellspacing="0" class="pb">';
-    		var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
-    		var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
-    		var nameList = '';
+        //打印
+        function printdg() {
+            CreateFormPage("datagrid", $("#dg"));
+        }
 
-    		// 载入title
-    		if (typeof columns != 'undefined' && columns != '') {
-    			$(columns)
-    					.each(
-    							function(index) {
-    								tableString += '\n<tr>';
-    								if (typeof frozenColumns != 'undefined'
-    										&& typeof frozenColumns[index] != 'undefined') {
-    									for (var i = 0; i < frozenColumns[index].length; ++i) {
-    										if (!frozenColumns[index][i].hidden) {
-    											tableString += '\n<th width="'
-    													+ frozenColumns[index][i].width
-    													+ '"';
-    											if (typeof frozenColumns[index][i].rowspan != 'undefined'
-    													&& frozenColumns[index][i].rowspan > 1) {
-    												tableString += ' rowspan="'
-    														+ frozenColumns[index][i].rowspan
-    														+ '"';
-    											}
-    											if (typeof frozenColumns[index][i].colspan != 'undefined'
-    													&& frozenColumns[index][i].colspan > 1) {
-    												tableString += ' colspan="'
-    														+ frozenColumns[index][i].colspan
-    														+ '"';
-    											}
-    											if (typeof frozenColumns[index][i].field != 'undefined'
-    													&& frozenColumns[index][i].field != '') {
-    												nameList += ',{"f":"'
-    														+ frozenColumns[index][i].field
-    														+ '", "a":"'
-    														+ frozenColumns[index][i].align
-    														+ '"}';
-    											}
-    											tableString += '>'
-    													+ frozenColumns[0][i].title
-    													+ '</th>';
-    										}
-    									}
-    								}
-    								for (var i = 0; i < columns[index].length; ++i) {
-    									if (!columns[index][i].hidden) {
-    										tableString += '\n<th width="'
-    												+ columns[index][i].width + '"';
-    										if (typeof columns[index][i].rowspan != 'undefined'
-    												&& columns[index][i].rowspan > 1) {
-    											tableString += ' rowspan="'
-    													+ columns[index][i].rowspan
-    													+ '"';
-    										}
-    										if (typeof columns[index][i].colspan != 'undefined'
-    												&& columns[index][i].colspan > 1) {
-    											tableString += ' colspan="'
-    													+ columns[index][i].colspan
-    													+ '"';
-    										}
-    										if (typeof columns[index][i].field != 'undefined'
-    												&& columns[index][i].field != '') {
-    											nameList += ',{"f":"'
-    													+ columns[index][i].field
-    													+ '", "a":"'
-    													+ columns[index][i].align
-    													+ '"}';
-    										}
-    										tableString += '>'
-    												+ columns[index][i].title
-    												+ '</th>';
-    									}
-    								}
-    								tableString += '\n</tr>';
-    							});
-    		}
-    		// 载入内容
-    		var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
-    		console.log(rows);
-    		console.log(nameList);
-    		var nl = eval('([' + nameList.substring(1) + '])');
-    		console.log(nl);
-    		for (var i = 0; i < rows.length; ++i) {
-    			tableString += '\n<tr>';
-    			$(nl).each(function(j) {
-    				var e = nl[j].f.lastIndexOf('_0');
 
-    				tableString += '\n<td';
-    				if (nl[j].a != 'undefined' && nl[j].a != '') {
-    					tableString += ' style="text-align:' + nl[j].a + ';"';
-    				}
-    				tableString += '>';
-    				if (e + 2 == nl[j].f.length) {
-    					tableString += rows[i][nl[j].f.substring(0, e)];
-    				} else {
-    					var tdStr = rows[i][nl[j].f];
-    					if (tdStr == null) {
-    						tdStr = "";
-    					}
-    					console.log(tdStr);
-    					tableString += tdStr;
-    				}
-    				tableString += '</td>';
-    			});
-    			tableString += '\n</tr>';
-    		}
-    		tableString += '\n</table> </div>';
-    		
-    		
-    		if (window.showModalDialog) {
-    			window
-    					.showModalDialog(
-    							"/sale/print.html",
-    							tableString,
-    							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-    		} else {
-    			window
-    					.open(
-    							"/sale/print.html",
-    							tableString,
-    							"location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-    			console.log(tableString);
-    		}
-    	}
+        var tableString;
+        // strPrintName 打印任务名
+        // printDatagrid 要打印的datagrid
+        function CreateFormPage(strPrintName, printDatagrid) {
+            tableString = "";
+            tableString += "<div style='text-align: center;'><h1>产品出库明细表</h1>";
+            tableString += "<p><span style='color: black; margin-left: -47px;'>购货单位:" + $("#client").combobox("getText") + "</span>";
+            tableString += "<span style='color: black; margin-left: 300px;'>出库时间：" + $("#saleDate").datebox("getValue") + "</span></p>";
+            tableString += '<table cellspacing="0" class="pb">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
+
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function (index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 0; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            console.log(rows);
+            console.log(nameList);
+            var nl = eval('([' + nameList.substring(1) + '])');
+            console.log(nl);
+            for (var i = 0; i < rows.length; ++i) {
+                tableString += '\n<tr>';
+                $(nl).each(function (j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        if (tdStr == null) {
+                            tdStr = "";
+                        }
+                        console.log(tdStr);
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                tableString += '\n</tr>';
+            }
+            tableString += '\n</table> </div>';
+
+
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "/sale/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "/sale/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                console.log(tableString);
+            }
+        }
 
         //点击选择出库单
         function selectOutNumber() {
@@ -297,7 +297,7 @@
         //添加出库单
         function addOutNumber() {
             $("#dg").datagrid({
-                url:"/admin/storage/selectOutByOutNumber?outNumber=" + $("#outNumber").combobox("getValue")
+                url: "/admin/storage/selectOutByOutNumber?outNumber=" + $("#outNumber").combobox("getValue")
             });
             $("#dh").text($("#outNumber").combobox("getValue"));
             closeDlg2();
@@ -307,6 +307,26 @@
             $("#dlg2").dialog("close");
         }
 
+        //导出
+        function daochu(dg) {
+            var rows = $(dg).datagrid("getRows");
+            console.log(rows);
+            //转换成json格式
+            var json = JSON.stringify(rows);
+            console.log(json);
+            //把key转换成中文格式
+            var a = json.replace(/clientname/g, "客户名称").replace(/peasant/g, "农户名称").replace(/saleNumber/g, "订单号").replace(/name/g, "产品名称").replace(/model/g, "幅宽").replace(/length/g, "长度").replace(/price/g, "厚度").replace(/realityweight/g, "重量").replace(/deliveryTime/g, "出库时间").replace(/sum/g, "数量");
+            console.log(a);
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/daochu?title=产品出库明细表",
+                data: {a: a},
+                success: function (result) {
+
+                }
+            });
+        }
 
 
     </script>
@@ -341,6 +361,9 @@
                     </td>
                     <td>
                         <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:resett()">刷新</a>
+                    </td>
+                    <td>
+                        <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:daochu('#dg')">导出</a>
                     </td>
                 </tr>
             </table>
