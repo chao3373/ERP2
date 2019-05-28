@@ -116,8 +116,8 @@ public class SaleListProduct {
 
 	private Integer accomplishNumber;// 完成数量
 
-	@Column(length = 50)
-	private String accomplishState;// 完成状态
+	/*@Column(length = 50)
+	private String accomplishState;// 完成状态*/
 
 	@Column(length = 50)
 	private String issueState;// 下发状态
@@ -132,6 +132,50 @@ public class SaleListProduct {
 
 	@Transient
 	private int saleTotal;// 销售总数
+
+	public String getIssueState() {
+		return issueState;
+	}
+
+	public void setIssueState(String issueState) {
+		this.issueState = issueState;
+	}
+
+	public Long getInformNumber() {
+		return informNumber;
+	}
+
+	public void setInformNumber(Long informNumber) {
+		this.informNumber = informNumber;
+	}
+
+	public JiTai getJiTai() {
+		return jiTai;
+	}
+
+	public void setJiTai(JiTai jiTai) {
+		this.jiTai = jiTai;
+	}
+
+	public Integer getAccomplishNumber() {
+		return accomplishNumber;
+	}
+
+	public void setAccomplishNumber(Integer accomplishNumber) {
+		this.accomplishNumber = accomplishNumber;
+	}
+
+	/*public String getAccomplishState() {
+		return accomplishState;
+	}
+
+	public void setAccomplishState(String accomplishState) {
+		this.accomplishState = accomplishState;
+	}*/
+
+	public Integer getId() {
+		return id;
+	}
 
 	@Override
 	public String toString() {
@@ -168,57 +212,12 @@ public class SaleListProduct {
 				", peasant='" + peasant + '\'' +
 				", clientname='" + clientname + '\'' +
 				", accomplishNumber=" + accomplishNumber +
-				", accomplishState='" + accomplishState + '\'' +
 				", issueState='" + issueState + '\'' +
 				", informNumber=" + informNumber +
 				", remark='" + remark + '\'' +
 				", queryName='" + queryName + '\'' +
 				", saleTotal=" + saleTotal +
 				'}';
-	}
-
-	public String getIssueState() {
-		return issueState;
-	}
-
-	public void setIssueState(String issueState) {
-		this.issueState = issueState;
-	}
-
-	public Long getInformNumber() {
-		return informNumber;
-	}
-
-	public void setInformNumber(Long informNumber) {
-		this.informNumber = informNumber;
-	}
-
-	public JiTai getJiTai() {
-		return jiTai;
-	}
-
-	public void setJiTai(JiTai jiTai) {
-		this.jiTai = jiTai;
-	}
-
-	public Integer getAccomplishNumber() {
-		return accomplishNumber;
-	}
-
-	public void setAccomplishNumber(Integer accomplishNumber) {
-		this.accomplishNumber = accomplishNumber;
-	}
-
-	public String getAccomplishState() {
-		return accomplishState;
-	}
-
-	public void setAccomplishState(String accomplishState) {
-		this.accomplishState = accomplishState;
-	}
-
-	public Integer getId() {
-		return id;
 	}
 
 	public void setId(Integer id) {

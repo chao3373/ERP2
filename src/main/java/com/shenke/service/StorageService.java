@@ -134,4 +134,7 @@ public interface StorageService {
 
     Integer countBySaleListProductId(Integer id);
 
+    public List<Storage> findSaleListNumber();
+
+
 }

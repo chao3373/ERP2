@@ -117,4 +117,9 @@ public class SaleListServiceImpl implements SaleListService {
     public void saveTwo(SaleList saleList) {
 		saleListRepository.save(saleList);
     }
+
+    @Override
+    public List<SaleList>  findSaleListId(String saleNumber){
+		return saleListRepository.findSaleListId(saleNumber);
+	}
 }

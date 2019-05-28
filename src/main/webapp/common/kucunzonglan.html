@@ -106,11 +106,6 @@
                     width: 150,
                     align: 'center'
                 }, {
-                    field: 'dateInProduced',
-                    title: '生产日期',
-                    width: 100,
-                    align: 'center'
-                }, {
                     field: 'clerk',
                     title: '员工名称',
                     width: 100,
@@ -122,24 +117,15 @@
                         return;
                     }
                 }, {
-                    field: 'group',
-                    title: '班组',
-                    width: 100,
-                    align: 'center',
-                    formatter: function (val, row) {
-                        if (row.group) {
-                            return row.group.name;
-                        }
-                        return;
-                    }
-                }, {
                     field: 'location',
                     title: '仓位',
                     width: 100,
                     align: 'center',
                     formatter: function (val, row) {
+                        console.log(row);
+                        console.log(row.location);
+
                         if (row.location) {
-                            val = row.location.name;
                             return row.location.name;
                         }
                         return;
