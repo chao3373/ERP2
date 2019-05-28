@@ -440,5 +440,10 @@ public class StorageServiceImpl implements StorageService {
         return storageRepository.findSaleListNumber();
     }
 
+    @Override
+    public List<Storage> findStorage(String saleNumber) {
+        return storageRepository.findStorage(saleNumber);
+    }
+
 
 }

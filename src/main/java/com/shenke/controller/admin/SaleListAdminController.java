@@ -267,16 +267,4 @@ public class SaleListAdminController {
         return resultMap;
     }
 
-    @RequestMapping ("/findSaleListId")
-    public Map<String,Object> findSaleListId(String saleNumber){
-        Map<String,Object> map = new HashMap<>();
-        List<SaleList> list = saleListService.findSaleListId(saleNumber);
-        System.out.println("**************************");
-        System.out.println(list);
-        System.out.println("**************************");
-
-
-        return map;
-    }
-
 }

@@ -213,4 +213,5 @@ public interface SaleListProductRepository
 	 */
 	@Query(value = "select * from t_sale_list_product where state like '%生产完成%' or state like'%下发机台%' or state like '%分配机台%'" , nativeQuery = true)
 	public List<SaleListProduct> findJitaiProduct();
+
 }

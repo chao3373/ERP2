@@ -192,4 +192,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      FROM t_sale_list_product
     AS a,t_sale_list AS b,t_storage AS c  GROUP BY sale_number
      */
+
+    @Query (value = "select * from t_storage where sale_number = ?1 group by sale_list_product_id", nativeQuery = true)
+    public List<Storage> findStorage(String saleNumber);
 }

@@ -169,4 +169,5 @@ public interface SaleListProductService {
 	List<SaleListProduct> searchJitai(Map<String, Object> map);
 
 
+
 }

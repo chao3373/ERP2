@@ -16,6 +16,82 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+
+            $("#dg").datagrid({
+                columns: [[
+                    {
+                        field: 'id',
+                        title: '编号',
+                        width: 100,
+                        align: 'center',
+                        hidden: 'true'
+                    },{
+                        field: 'clientname',
+                        title: '客户名称',
+                        width: 130,
+                        align: 'center',
+
+                    },{
+                        field: 'name',
+                        title: '产品名称',
+                        width: 130,
+                        align: 'center'
+                    }, {
+                        field: 'accomplishNumber',
+                        title: '完成数量',
+                        width: 130,
+                        align: 'center',
+                        formatter: function (value, row) {
+                            if (row.saleListProduct) {
+                                return row.saleListProduct.accomplishNumber;
+                            }
+                            return "";
+                        }
+                    }, {
+                        field: 'num',
+                        title: '总数量',
+                        width: 130,
+                        align: 'center',
+                        formatter: function (value, row) {
+                            if (row.saleListProduct) {
+                                return row.saleListProduct.num;
+                            }
+                            return "";
+                        }
+                    }, {
+                        field: 'state',
+                        title: '订单状态',
+                        width: 130,
+                        align: 'center',
+                        formatter: function (value, row) {
+                            if (row.saleListProduct) {
+                                return row.saleListProduct.state;
+                            }
+                            return "";
+                        }
+                    }, {
+                        field: 'saleDate',
+                        title: '销售日期',
+                        width: 130,
+                        align: 'center',
+                        formatter: function (value, row) {
+                            if (row.saleList) {
+                               // return row.saleList.saleDate;
+                                var date = new Date(row.saleList.saleDate);
+                                var m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth();
+                                var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
+                                return (date.getFullYear() + "-" + m + "-" + d);
+                            }
+                            return "";
+                        }
+                    }, {
+                        field: 'dateInProduced',
+                        title: '生产日期',
+                        width: 130,
+                        align: 'center'
+                    }]]
+
+            });
         });
 
         function screenSale(){
@@ -24,13 +100,11 @@
                 $.messager.alert("系统提示", "请输入订单号！");
                 return;
             }
-            $.post("/admin/saleList/findSaleListId",{
+            $.post("/admin/storage/findSaleListId",{
                 saleNumber : salenumber
             },function(result){
-                if(result.success){
-
-                }
-
+                console.log(result);
+               $("#dg").datagrid("loadData", result.rows);
             },"json");
         }
 
@@ -43,6 +117,7 @@
            rownumbers="true" singleSelect="true"
            toolbar="#tb"  fit="true" >
     </table>
+
 
    <div id="tb" style="padding: 15px;">
        <table>

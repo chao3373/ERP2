@@ -367,4 +367,12 @@ public class StorageAdminController {
         return map;
     }
 
+    @RequestMapping ("/findSaleListId")
+    public Map<String,Object> findStorage(String saleNumber){
+        Map<String,Object> map = new HashMap<>();
+        List<Storage> list1 = storageService.findStorage(saleNumber);
+        map.put("rows",list1);
+        return map;
+    }
+
 }

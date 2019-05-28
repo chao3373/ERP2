@@ -136,5 +136,7 @@ public interface StorageService {
 
     public List<Storage> findSaleListNumber();
 
+    public List<Storage> findStorage(String saleNumber);
+
 
 }
