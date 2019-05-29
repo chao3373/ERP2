@@ -495,6 +495,208 @@
 
         });
 
+
+
+        //导出
+        function daochu(dg) {
+            var fields = $("#dg").datagrid('getColumnFields');
+            var datagridTitle = new Array();
+            for (var i = 0; i < fields.length; i++) {
+                var option = $("#dg").datagrid('getColumnOption', fields[i]);
+                if (option.field != "checkItem" && option.hidden != "true") { //过滤勾选框和隐藏列
+                    var obj = {};
+                    obj.title = option.title;
+                    obj.field = option.field;
+                    if (option.formatter) {
+                        obj.formatter = option.formatter;
+                    }
+                    datagridTitle.push(obj);
+                }
+            }
+            console.log(datagridTitle);
+
+            var jsonarr = [];
+            var rows = $(dg).datagrid("getRows");
+            for (let i = 0; i < rows.length; i++) {
+                var json = {};
+                console.log(rows[i]);
+                for (let j = 0; j < datagridTitle.length; j++) {
+                    var st = datagridTitle[j].title;
+                    if (datagridTitle[j].formatter) {
+                        json[datagridTitle[j].title] =  datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);
+                    } else {
+                        json[datagridTitle[j].title] =  rows[i][datagridTitle[j].field];
+                    }
+                }
+                console.log(JSON.stringify(json));
+                jsonarr.push(JSON.stringify(json));
+            }
+
+            jsonarr = "[" + jsonarr.join(",") + "]";
+            console.log(jsonarr);
+            alert(jsonarr);
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/daochu?title=机台生产情况统计",
+                data: {a : jsonarr},
+                success: function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","导出成功");
+                    }
+                    return;
+                }
+            });
+
+        }
+
+
+        //打印
+        function printdg() {
+            CreateFormPage("datagrid", $("#dg"));
+        }
+
+
+        //打印开始
+        var tableString;
+        // strPrintName 打印任务名
+        // printDatagrid 要打印的datagrid
+        function CreateFormPage(strPrintName, printDatagrid) {
+            tableString = "";
+            tableString += "<h3 style='font-size: 66px;text-align: center;'>机台生产情况统计</h3>";
+            /*tableString += "<h3>销售日期：" + $("#saleDate").datebox("getValue")
+                    + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;购货单位："
+                    + $("#clientId").combobox("getText")
+                    + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 销售方式："
+                    + $("#sellId").combobox("getText")
+                    + " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业务员： "
+                    + $("#clerkId").combobox("getText")
+                    + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系人："
+                    + $("#lankman").val()
+                    + " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户电话："
+                    + $("#tel").val()
+                    + " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户地址： "
+                    + $("#address").val()
+                    + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发货时间："
+                    + $("#deliveryDate").datebox("getValue") + "</h3>";*/
+            tableString += '<table cellspacing="0" class="pb">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
+
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function(index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 1; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            var nl = eval('([' + nameList.substring(1) + '])');
+            for (var i = 0; i < rows.length; ++i) {
+                tableString += '\n<tr>';
+                $(nl).each(function(j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        if (tdStr == null) {
+                            tdStr = "";
+                        }
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                tableString += '\n</tr>';
+            }
+            tableString += '\n</table>';
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            }
+        }
+
     </script>
 </head>
 <body style="margin: 1px"  class="easyui-layout">
@@ -583,40 +785,10 @@
     <div id="tb" style="padding: 15px;">
        <table>
             <tr>
-               <!-- <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
-                        class="easyui-combobox" id="jitai" name="jitai"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
-                </td>
-
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;分配时间： <input type="text" id="allorTime" name="allorTime" class="easyui-datebox"
-                                                                                                demandd="true" size="15"/>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单状态： <input id="allorState" class="easyui-combobox"
-                                                         data-options="
-                panelHeight: 'auto',
-                valueField: 'label',
-                textField: 'value',
-                data: [{
-                        label: '下发机台',
-                        value: '下发机台'
-                    },{
-                        label: '生产完成',
-                        value: '生产完成'
-                    }],
-                onSelect: function(rec){
-                    auditQuery(rec.value);
-                }"/>
-
-                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
-                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
-                </td>
-                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                                 iconCls="icon-reload">刷新</a>
-
--->
-
+                    <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:daochu('#dg')">导出</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:printdg()" class="easyui-linkbutton" iconCls="icon-print">打印</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </tr>
         </table>
     </div>

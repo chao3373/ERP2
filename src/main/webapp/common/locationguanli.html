@@ -219,7 +219,7 @@
         // printDatagrid 要打印的datagrid
         function CreateFormPage(strPrintName, printDatagrid) {
             tableString = "";
-            tableString += "<h3 style='font-size: 25px;text-align: center;'>点货单</h3>";
+            tableString += "<h3 style='font-size: 25px;text-align: center;'>库存统计</h3>";
             tableString += '<div style="text-aligh:center; width:100%;"><table cellspacing="0" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
@@ -399,7 +399,7 @@
             <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称： <input id="peasant" style="width: 100px"/>
 
             <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                             iconCls="icon-cancel">刷新</a>
+                                             iconCls="icon-reload">刷新</a>
 
             </td>
             <td></td>
