@@ -5,27 +5,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Date;
 import java.util.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.*;
 import com.shenke.entity.Product;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.ProductService;
 import com.shenke.util.DaochuUtil;
 import com.shenke.util.QRCode;
-import com.shenke.util.ReadExcelUtil;
 import com.shenke.util.StringUtil;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -111,6 +102,7 @@ public class IndexController {
     @ResponseBody
     @RequestMapping("/static/erweima")
     public Map<String, Object> erweima(HttpServletRequest request, String url) throws Exception {
+        System.out.println(url);
         Map<String, Object> map = new HashMap<String, Object>();
         System.out.println(url);
         String urlInfo = QRCode.getQRCode(request, url);
@@ -119,6 +111,7 @@ public class IndexController {
 //		System.out.println(urlInfo);
         map.put("success", true);
         map.put("url", urlInfo);
+        System.out.println(map);
         return map;
     }
 

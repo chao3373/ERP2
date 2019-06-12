@@ -159,7 +159,7 @@ public class ToLeadController {
                         case 7:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("单件重量kg", getStringCellValue(cell));
-                                saleListProduct.setOneweight(Double.parseDouble(getStringCellValue(cell)));
+                                saleListProduct.setOneweight((double) Math.round(Double.parseDouble(getStringCellValue(cell))));
                             }
                             break;
                         case 8:
@@ -171,7 +171,7 @@ public class ToLeadController {
                         case 9:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("总重量", getStringCellValue(cell));
-                                saleListProduct.setSumwight(Double.parseDouble(getStringCellValue(cell)));
+                                saleListProduct.setSumwight((double) Math.round(Double.parseDouble(getStringCellValue(cell))));
                             }
                             break;
                         case 10:

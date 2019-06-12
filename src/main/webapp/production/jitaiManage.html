@@ -96,12 +96,12 @@
             $("#dg")
                 .datagrid(
                     {
-                        columns: [[ {
+                        columns: [[{
                             field: 'cb',
                             checkbox: "true",
-                            hidden:"true",
+                            hidden: "true",
                             align: "center"
-                        },{
+                        }, {
                             field: 'id',
                             title: 'id',
                             width: 100,
@@ -208,7 +208,6 @@
                             align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
-                            console.log(rowData);
                             informNumber = rowData.informNumber;
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
@@ -216,7 +215,7 @@
                             timer = setInterval(goLeft, 20);
                             var jitai = $("#selectJitai").combobox(
                                 "getValue");
-                            $('#dg2').datagrid('loadData',{total:0,rows:[]});
+                            $('#dg2').datagrid('loadData', {total: 0, rows: []});
                             var count = rowData.num - rowData.accomplishNumber;
                             for (var i = 0; i < count; i++) {
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
@@ -591,8 +590,10 @@
         }
 
         //点击称重时弹出对话框
-        var saleListProductId
+        var saleListProductId;
         var sumWeigh = 0;
+        var aweight = 0;
+
         function weigh() {
             if (!$("#banzu").val() || !$("#staff").val()) {
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
@@ -611,6 +612,7 @@
                     '请输入重量：',
                     function (weight) {
                         if (weight) {
+                            aweight = weight;
                             saleListProductId = $("#dg2").datagrid(
                                 "getRows")[0].id;
                             var producionProcessId = $("#dg").datagrid(
@@ -632,7 +634,7 @@
                                         if (result.success) {
                                             // ddOpen();
                                             dabaoCount--;
-                                            sumWeigh+=Number(weight);
+                                            sumWeigh += Number(weight);
                                             var flg = false;
                                             if (dabaoCount == 0) {
                                                 dabaoCount = dabaoNum;
@@ -640,12 +642,12 @@
                                             }
                                             reload();
                                             reSelect();
-                                            console.log($("#dg2").datagrid("getRows"));
                                             if ($("#dg2").datagrid("getRows").length == 1) {
                                                 flg = true;
                                             }
                                             if (flg) {
                                                 print();
+                                                sumWeigh = 0;
                                             }
                                         }
                                     });
@@ -682,7 +684,6 @@
                         informNumber: informNumber
                     }, function (result) {
                         if (result.success) {
-                            console.log(result.rows);
                             $("#dg").datagrid('loadData', result.rows);
                             $("#dg").datagrid("selectRow", selectIndex);
                         }
@@ -696,88 +697,97 @@
 
         function print() {
             url = "";
-            $.post("/admin/storage/selectByMaxId", function (result) {
-                if (result.success) {
-                    var row = result.row;
-                    var json = {};
-                    json.id = row.id + "";//条码
-                    console.log("id的长度：" + json.id.length);
-                    if (json.id.length < 8) {
-                        var j = "";
-                        for (var i = 8 - json.id.length; i > 0; i--) {
-                            j += "0";
-                        }
-                        json.id = j + json.id;
-                    }
-                    url = "id:" + json.id;
-                    $.post("/static/erweima", {
-                        url: url
-                    }, function (result) {
-                        // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
-                        var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
-                        // url += result.url;
-                        // url += "'/>";
-                        tableString = "";
-                        tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
-                        "</td>";
-                        tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
-                        if ($('#printWeight').is(':checked')) {
-                            tableString += "<tr><td colspan='2'>总重量：" + sumWeigh + "kg</td></tr>";
-                        }
-                        if ($('#printLabel').is(':checked')) {
-                            tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
-                        }
-                        if ($('#printLength').is(':checked')) {
-                            tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
-                        }
-                        if ($('#printThickness').is(':checked')) {
-                            tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
-                        }
-                        tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
-                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + $("#jitaiName").val() + "</td></tr>";
-                        tableString += "<tr><td>班组：" + $("#banzu").val() + "</td><td>质检：" + $("#staff").val() + "</td></tr>";
-                        Date.prototype.format = function (format) {
-                            var o = {
-                                "M+": this.getMonth() + 1,
-                                "d+": this.getDate(),
-                                "h+": this.getHours(),
-                                "m+": this.getMinutes(),
-                                "s+": this.getSeconds(),
-                                "q+": Math.floor((this.getMonth() + 3) / 3),
-                                "S": this.getMilliseconds()
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/admin/storage/selectByMaxId",
+                success: function (result) {
+                    if (result.success) {
+                        var row = result.row;
+                        var json = {};
+                        json.id = row.id + "";//条码
+                        if (json.id.length < 8) {
+                            var j = "";
+                            for (var i = 8 - json.id.length; i > 0; i--) {
+                                j += "0";
                             }
-                            if (/(y+)/.test(format)) {
-                                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                            }
+                            json.id = j + json.id;
+                        }
+                        url = "id:" + json.id;
+                        $.ajax({
+                            type: "POST", async: false, url: "/static/erweima", data: {
+                                url: url
+                            }, success: function (result) {
+                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                                var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                                // url += result.url;
+                                // url += "'/>";
+                                tableString = "";
+                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                                "</td>";
+                                tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
+                                if ($('#printWeight').is(':checked')) {
+                                    if (dabaoNum!=1) {
+                                        tableString += "<tr><td colspan='2'>重量：" + aweight + "kg x " + dabaoNum + "件</td></tr>";
+                                    }else {
+                                        tableString += "<tr><td colspan='2'>重量：" + aweight + "kg</td></tr>";
+                                    }
+                                }
+                                if ($('#printLabel').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
+                                }
+                                if ($('#printLength').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
+                                }
+                                if ($('#printThickness').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
+                                }
+                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
+                                tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + $("#jitaiName").val() + "</td></tr>";
+                                tableString += "<tr><td>班组：" + $("#banzu").val() + "</td><td>质检：" + $("#staff").val() + "</td></tr>";
+                                Date.prototype.format = function (format) {
+                                    var o = {
+                                        "M+": this.getMonth() + 1,
+                                        "d+": this.getDate(),
+                                        "h+": this.getHours(),
+                                        "m+": this.getMinutes(),
+                                        "s+": this.getSeconds(),
+                                        "q+": Math.floor((this.getMonth() + 3) / 3),
+                                        "S": this.getMilliseconds()
+                                    }
+                                    if (/(y+)/.test(format)) {
+                                        format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                    }
 
-                            for (var k in o) {
-                                if (new RegExp("(" + k + ")").test(format)) {
-                                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+                                    for (var k in o) {
+                                        if (new RegExp("(" + k + ")").test(format)) {
+                                            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+                                        }
+                                    }
+                                    return format;
+                                }
+                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                                +"</td></tr></table>";
+                                tableString += "</div>";
+                                if (window.showModalDialog) {
+                                    window
+                                        .showModalDialog(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                    console.log(tableString);
+                                } else {
+                                    window
+                                        .open(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                                 }
                             }
-                            return format;
-                        }
-                        tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
-                        +"</td></tr></table>";
-                        tableString += "</div>";
-                        if (window.showModalDialog) {
-                            window
-                                .showModalDialog(
-                                    "print.html",
-                                    tableString,
-                                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                            console.log(tableString);
-                        } else {
-                            window
-                                .open(
-                                    "print.html",
-                                    tableString,
-                                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                        }
-                    })
+                        });
+                    }
                 }
-
-            })
+            });
             ddClose();
         }
 
