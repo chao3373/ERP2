@@ -1,6 +1,8 @@
 package com.shenke.service.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -220,48 +222,47 @@ public class StorageServiceImpl implements StorageService {
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
-                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), (String) map.get("saleNumber")));
+                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), (String) map.get("saleNumber")));
                 }
-                if (map.get("location") != null) {
+                /*if (map.get("location") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("location").get("id"), map.get("location")));
                 }
                 if (map.get("jitai") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
-                }
+                }*/
                 if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
-                    predicate.getExpressions().add(cb.like(root.get("dateInProduced"), "%" + map.get("productDate") + "%"));
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
+                /*
                 if (map.get("clerk") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), map.get("clerk")));
                 }
                 if (map.get("group") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("group").get("id"), map.get("group")));
                 }
+                */
                 if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
-                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                    predicate.getExpressions().add(cb.equal(root.get("peasant"), map.get("peasant")));
                 }
-                if (StringUtil.isNotEmpty((String) map.get("state"))) {
-                    predicate.getExpressions().add(cb.like(root.get("state"), "%" + map.get("state") + "%"));
+                if (StringUtil.isNotEmpty((String) map.get("realityweight"))) {
+                    predicate.getExpressions().add(cb.equal(root.get("realityweight"), map.get("realityweight")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("name"))) {
-                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("name") + "%"));
+                    predicate.getExpressions().add(cb.equal(root.get("name"),map.get("name")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("client"))) {
-                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"),map.get("client")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("mode"))) {
-                    predicate.getExpressions().add(cb.like(root.get("model"), "%" + map.get("mode") + "%"));
+                    predicate.getExpressions().add(cb.equal(root.get("model"), map.get("mode")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("price"))) {
-                    predicate.getExpressions().add(cb.like(root.get("price"), "%" + map.get("price") + "%"));
+                    predicate.getExpressions().add(cb.equal(root.get("price"), map.get("price")));
                 }
-                if (StringUtil.isNotEmpty((String) map.get("color"))) {
-                    predicate.getExpressions().add(cb.like(root.get("color"), "%" + map.get("color") + "%"));
-                }
-                if (StringUtil.isNotEmpty((String) map.get("address"))) {
-                    predicate.getExpressions().add(cb.like(root.get("saleList").get("address"), "%" + map.get("address") + "%"));
-                }
-
                 Subquery subQuery = query.subquery(String.class);
 
                 Root from = subQuery.from(Storage.class);

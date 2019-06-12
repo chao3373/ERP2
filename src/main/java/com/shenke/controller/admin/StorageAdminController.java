@@ -187,24 +187,30 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, Integer location, Integer jitai, String productDate, Integer clerk, Integer group, String peasant, String state, String name, String client, String mode, String price, String color, String address) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight,String productDate,String pleasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
 
         map1.put("saleNumber", saleNumber);
-        map1.put("location", location);
-        map1.put("jitai", jitai);
+        map1.put("pleasant", pleasant);
         map1.put("productDate", productDate);
-        map1.put("clerk", clerk);
-        map1.put("group", group);
-        map1.put("peasant", peasant);
-        map1.put("state", state);
+        map1.put("realityweight", realityweight);
+        //map1.put("location", location);
+        //map1.put("jitai", jitai);
+        //map1.put("productDate", productDate);
+        //map1.put("clerk", clerk);
+        //ap1.put("group", group);
+        //map1.put("peasant", peasant);
+        //map1.put("state", state);
         map1.put("name", name);
         map1.put("client", client);
         map1.put("mode", mode);
         map1.put("price", price);
-        map1.put("color", color);
-        map1.put("address", address);
+        //map1.put("address", address);
+
+        System.out.println("*****************************");
+        System.out.println(map1);
+        System.out.println("*****************************");
 
         map.put("success", true);
         map.put("rows", storageService.searchLiftMoney(map1));
