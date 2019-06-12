@@ -123,8 +123,22 @@
             refreshData();
         }
 
+        function suan() {
+            var sum = 0;
+            var selectedRows = $("#dg").datagrid("getSelections");
+            console.log(selectedRows[0].realityweight);
+            if(selectedRows.length != 0) {
+                for (var i = 0; i < selectedRows.length; i++) {
+                    sum += selectedRows[i].realityweight;
+                }
+                $("#sumweight").val(sum);
+            }
+            else
+                $("#sumweight").val("0");
+        }
         function loadData() {
             //加载数据
+
             $("#dg").datagrid({
                 columns: [[
                     {
@@ -148,6 +162,7 @@
                         title: 'saleListProductId',
                         width: 100,
                         align: 'center',
+                        hidden:'true',
                         formatter: function (value, row) {
                             if (row.saleListProduct) {
                                 return row.saleListProduct.id;
@@ -211,7 +226,19 @@
                         width: 100,
                         align: 'center'
                     }]],
+                onSelect:function(index,data){
+                    suan()
+                },
 
+                onUnselect:function(index,data){
+                   suan();
+                },
+                onSelectAll:function (data) {
+                    suan();
+                },
+                onUnselectAll:function (data) {
+                    $("#sumweight").val("0");
+                }
             });
 
         }
@@ -225,9 +252,10 @@
             $("#mode").val("");
             $("#name").val("");
             $("#price").val("");
-            $("#color").val("");
-            $("#address").val("");
+            $("#pleasant").val("");
             $("#saleNumber").val("");
+            $("#realityweight").val("");
+            $("#productDate").datebox("reset");
             refreshData();
         }
 
@@ -257,11 +285,11 @@
             if ($("#price").val()) {
                 json.price = $("#price").val();
             }
-            if ($("#color").val()) {
-                json.color = $("#color").val();
+            if ($("#realityweight").val()) {
+                json.realityweight = $("#realityweight").val();
             }
-            if ($("#address").val()) {
-                json.address = $("#address").val();
+            if ($("#pleasant").val()) {
+                json.pleasant = $("#pleasant").val();
             }
             if ($("#saleNumber").val()) {
                 json.saleNumber = $("#saleNumber").val();
@@ -269,12 +297,13 @@
             if ($("#name").val()) {
                 json.name = $("#name").val();
             }
-            /* if($("clientName").combobox("getText")){
-                json.client = $("#clientName".val);
-            } */
             if (client) {
                 json.client = client;
             }
+            if ($("#productDate").datebox("getText")) {
+                json.productDate = $("#productDate").datebox("getText");
+            }
+            console.log(json);
         }
 
 
@@ -633,6 +662,11 @@
             });
         }
 
+        function sumweight(){
+            var selectedRows = $("#dd1").datagrid("getSelections");
+            console.log(selectedRows);
+        }
+
         /* data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'" */
     </script>
 </head>
@@ -741,11 +775,14 @@
                 data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/>
             &nbsp;&nbsp;&nbsp;&nbsp;产品名称：&nbsp;&nbsp;
             <input id="name" name="name" style="width: 100px"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;农户名称：&nbsp;&nbsp;
+            <input id="pleasant" name="pleasant" style="width: 100px"/>
 
             &nbsp;&nbsp;&nbsp;&nbsp;幅宽：&nbsp;&nbsp;<input id="mode" name="mode"
-                                                          style="width: 100px"/> &nbsp;&nbsp;&nbsp;&nbsp;<a
-                href="javascript:searchRole()" class="easyui-linkbutton"
+                                                          style="width: 100px"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:searchRole()" class="easyui-linkbutton"
                 iconCls="icon-search" plain="true">查询</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;合计重量:&nbsp;&nbsp;<input id="sumweight" name="sumweight" style="width: 100px" readonly onselect="sumweight()"/>
         </div>
         <div id="tb2" style="margin: 5px">
             &nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp; <input
@@ -754,10 +791,13 @@
             &nbsp;&nbsp;&nbsp;&nbsp;订单编号：&nbsp;&nbsp;<input id="saleNumber"
                                                             name="saleNumber" style="width: 100px"/>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;颜色：&nbsp;&nbsp;<input id="color" name="color"
+            &nbsp;&nbsp;&nbsp;&nbsp;重量：&nbsp;&nbsp;<input id="realityweight" name="realityweight"
                                                           style="width: 100px"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input type="text"
+                                              id="productDate" name="productDate" class="easyui-datebox"
+                                              demandd="true" data-options="editable:false" size="10"/>
             <a href="javascript:clertCondition()" class="easyui-linkbutton"
-               iconCls="icon-cancel">刷新</a>
+               iconCls="icon-reload">刷新</a>
         </div>
     </div>
 </div>
