@@ -447,4 +447,35 @@ public class StorageServiceImpl implements StorageService {
     }
 
 
+    @Override
+    public List<Storage> JitaiProduct(Map<String, Object> map) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+
+                if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (map.get("group")!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("group"), map.get("group")));
+                }
+                if (( map.get("jitai")!=null)){
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai"),map.get("jitai")));
+                }
+
+                return predicate;
+            }
+        });
+    }
+
+    @Override
+    public List<Storage> select(Storage storage, String dateInProducedd) {
+        return null;
+    }
 }
