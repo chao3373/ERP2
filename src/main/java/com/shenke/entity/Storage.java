@@ -1,7 +1,6 @@
 package com.shenke.entity;
 
-import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -133,13 +132,16 @@ public class Storage{
     @Column(length = 500)
     private String productionMessage;// 产品信息
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateInProduced;// 生产日期
 
     @Column(length = 50)
     private String serialNumber;// 序列号
 
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date deliveryTime;//出库时间
 
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfDelivery;//提货日期
 
     private String outNumber;//出库单号
@@ -156,6 +158,16 @@ public class Storage{
     private String remark;// 备注
 
     private String printstate;//打印状态
+
+    private Integer dabaonum;//打包数量
+
+    public Integer getDabaonum() {
+        return dabaonum;
+    }
+
+    public void setDabaonum(Integer dabaonum) {
+        this.dabaonum = dabaonum;
+    }
 
     @Override
     public String toString() {
@@ -205,12 +217,12 @@ public class Storage{
                 ", outNumber='" + outNumber + '\'' +
                 ", starDate=" + starDate +
                 ", endDate=" + endDate +
-                ", count=" + sum +
+                ", sum=" + sum +
                 ", remark='" + remark + '\'' +
                 ", printstate='" + printstate + '\'' +
+                ", dabaonum=" + dabaonum +
                 '}';
     }
-
 
     public Integer getSum() {
         return sum;
