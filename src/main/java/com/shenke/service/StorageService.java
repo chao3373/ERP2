@@ -139,4 +139,5 @@ public interface StorageService {
     public List<Storage> findStorage(String saleNumber);
 
 
+    List<Storage> select(Storage storage, String dateInProducedd);
 }

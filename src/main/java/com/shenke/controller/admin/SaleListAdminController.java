@@ -82,12 +82,9 @@ public class SaleListAdminController {
     public Map<String, Object> save(String saleDate, String saleNumber, Integer clientId, Integer sellId,
                                     Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson)
             throws Exception {
+        System.out.println(goodsJson);
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-        System.out.println("===============================");
-        System.out.println(clerkId);
-        System.out.println(sellId);
 
         // SaleList数据封装
         SaleList saleList = new SaleList();

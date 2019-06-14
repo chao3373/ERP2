@@ -65,14 +65,16 @@
 
         //按照条件筛选订单信息
         function screenSale() {
-            alert("===");
             $("#fm").form('submit',{
-                url: "/admin/storage/selecttt",
-                success: function (data) {
-                    console.log(data);
+                url: "/admin/storage/select",
+                success: function (resulgt) {
+                    var ruselt = eval('(' + resulgt + ')');
+                    if (ruselt.success){
+                        console.log(ruselt);
+                        $("#dg").datagrid("loadData", ruselt.rows);
+                    }
                 }
             });
-            alert("---");
             // addScreen();
             // refreshData();
         }
@@ -130,6 +132,11 @@
                     width: 100,
                     align: 'center'
                 }, {
+                    field: 'length',
+                    title: '长度',
+                    width: 100,
+                    align: 'center'
+                },{
                     field: 'model',
                     title: '幅宽',
                     width: 100,
@@ -420,13 +427,12 @@
                 </td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input
                         class="easyui-combobox" id="location" name="location"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
+                        style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
                 </td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
                         class="easyui-combobox" id="jitai" name="jiTai"
                         style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'id',url:'/admin/jitai/jitaiList'"/>
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
                 </td>
 
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称： <input id="peasant" name="peasant" style="width: 100px"/>
@@ -449,7 +455,7 @@
             </tr>
             <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input
-                        type="text" id="dateInProduced" name="dateInProduced" class="easyui-datebox"
+                        type="text" id="dateInProduced" name="dateInProducedd" class="easyui-datebox"
                         demandd="true" size="15"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input
                         class="easyui-combobox" id="group" name="group"
@@ -485,7 +491,7 @@
                         style="width: 100px"/>
                 </td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;： <input
-                        id="realitymodel" name="realitymodel"
+                        id="realityweight" name="realityweight"
                         style="width: 100px"/>
                 </td>
 

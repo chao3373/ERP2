@@ -620,8 +620,21 @@
                             var jitaiId = $("#selectJitai").combobox(
                                 "getValue");
                             var clerkName = $("#staff").val();
-                            $
-                                .post(
+
+                            dabaoCount--;
+                            sumWeigh += Number(weight);
+                            var flg = false;
+                            if (dabaoCount == 0) {
+                                dabaoCount = dabaoNum;
+                                flg = true;
+                            }
+                            reload();
+                            reSelect();
+                            if ($("#dg2").datagrid("getRows").length == 1) {
+                                flg = true;
+                            }
+                            if (flg) {
+                                $.post(
                                     "/admin/storage/add",
                                     {
                                         realityweight: Number(weight),
@@ -629,28 +642,17 @@
                                         saleList: producionProcessId,
                                         jiTai: jitaiId,
                                         clerkName: clerkName,
-                                        groupName: $("#banzu").val()
+                                        groupName: $("#banzu").val(),
+                                        dabaonum: dabaoNum
                                     }, function (result) {
                                         if (result.success) {
                                             // ddOpen();
-                                            dabaoCount--;
-                                            sumWeigh += Number(weight);
-                                            var flg = false;
-                                            if (dabaoCount == 0) {
-                                                dabaoCount = dabaoNum;
-                                                flg = true;
-                                            }
-                                            reload();
-                                            reSelect();
-                                            if ($("#dg2").datagrid("getRows").length == 1) {
-                                                flg = true;
-                                            }
-                                            if (flg) {
-                                                print();
-                                                sumWeigh = 0;
-                                            }
+                                            print();
                                         }
                                     });
+                                sumWeigh = 0;
+                            }
+
                             // reload();
                         } else {
                             $.messager

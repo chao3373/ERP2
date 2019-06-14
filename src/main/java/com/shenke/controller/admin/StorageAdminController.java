@@ -19,6 +19,7 @@ import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.shenke.service.StorageService;
 
@@ -385,11 +386,13 @@ public class StorageAdminController {
      * 当前库存查询
      * @return
      */
-    @RequestMapping("/selecttt")
-    public Map<String, Object> select(Storage storage, String saleNumber) {
+    @RequestMapping("/select")
+    public Map<String, Object> select(Storage storage, String dateInProducedd) {
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage);
+        List<Storage> list = storageService.select(storage, dateInProducedd);
+        map.put("success", true);
+        map.put("rows", list);
         return map;
     }
-
 }

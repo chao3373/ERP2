@@ -176,7 +176,9 @@
         //封装订单信息传递后台
         function saveSaleGoods() {
             $("#saleNumber").val($("#dh").text());
-            $("#goodsJson").val(JSON.stringify($("#dg").datagrid("getData").rows));
+            var rows = $("#dg").datagrid("getData").rows;
+            rows.pop();
+            $("#goodsJson").val(JSON.stringify(rows));
             $("#fm").form("submit", {
                 url: "/admin/saleList/save",
                 onSubmit: function () {
@@ -508,11 +510,9 @@
                         var sumweight = 0;
                         var rows = $("#dg").datagrid('getRows');
                         for (let i = 0; i < rows.length; i++) {
-                            console.log(countnum += rows[i].num);
-                            console.log(sumweight += rows[i].sumwight);
+                             countnum += rows[i].num;
+                             sumweight += rows[i].sumwight;
                         }
-                        console.log(rows.length);
-                        console.log(rows);
                         $("#dg").datagrid('appendRow', {
                             name: '合计',
                             num: '总数量：' + countnum,
