@@ -96,7 +96,7 @@ public class ToLeadController {
         // 用来存放内容的map
         Map<String, Object> map = new HashMap<String, Object>();
 
-        // 设置生产米数小数点后面的位数
+        // 设置实际厚度小数点后面的位数
         DecimalFormat df = new DecimalFormat("0.0000"); // DecimalFormat 数字格式化
         DecimalFormat dd = new DecimalFormat("0.00"); //格式化保留两位小数
 
@@ -148,7 +148,7 @@ public class ToLeadController {
                             break;
                         case 5:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
-                                // map.put("生产米数", df.format(Double.parseDouble(getStringCellValue(cell))));
+                                // map.put("实际厚度", df.format(Double.parseDouble(getStringCellValue(cell))));
                                 saleListProduct.setMeter(
                                         Double.parseDouble(df.format(Double.parseDouble(getStringCellValue(cell)))));
                             }

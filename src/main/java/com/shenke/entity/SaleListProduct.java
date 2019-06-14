@@ -106,7 +106,7 @@ public class SaleListProduct {
 	private Double sumwight;// 总重量
 
 	@Column(nullable = true)
-	private Double meter;// 生产米数
+	private Double meter;// 实际厚度
 
 	@Column(length = 50)
 	private String peasant;// 农户名称
