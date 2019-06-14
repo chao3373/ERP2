@@ -49,17 +49,37 @@
             if ($("#peasant").val()) {			//农户名称
                 json.peasant = $("#peasant").val();
             }
+            if ($("#length").val()) {			//农户名称
+                json.length = $("#length").val();
+            }
+            if ($("#model").val()) {			//农户名称
+                json.model = $("#model").val();
+            }
+            if ($("#price").val()) {			//农户名称
+                json.price = $("#price").val();
+            }
+            if ($("#realityweight").val()) {			//农户名称
+                json.realityweight = $("#realityweight").val();
+            }
         }
 
         //按照条件筛选订单信息
         function screenSale() {
-            addScreen();
-            refreshData();
+            alert("===");
+            $("#fm").form('submit',{
+                url: "/admin/storage/selecttt",
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+            alert("---");
+            // addScreen();
+            // refreshData();
         }
 
         //添加条件筛选时刷新数据
         function refreshData() {
-            $.post("/admin/storage/searchLiftMoney", json, function (result) {
+            $.post("/admin/storage/select", json, function (result) {
                 if (result.success) {
                     $("#dg").datagrid('loadData', result.rows);
                 }
@@ -99,15 +119,30 @@
                     title: '订单号',
                     width: 150,
                     align: 'center'
-                },{
+                }, {
                     field: 'clientname',
                     title: '客户名称',
-                    width: 150,
+                    width: 100,
                     align: 'center'
-                },{
+                }, {
                     field: 'peasant',
                     title: '农户名称',
-                    width: 150,
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'model',
+                    title: '幅宽',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'realityweight',
+                    title: '重量',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'price',
+                    title: '厚度',
+                    width: 100,
                     align: 'center'
                 }, {
                     field: 'dateInProduced',
@@ -204,14 +239,14 @@
 
         //打印
         function printdg() {
-          	$("#dg").datagrid("appendRow", {
+            $("#dg").datagrid("appendRow", {
                 saleNumber: '总计',
                 dateInProduced: $("#dg").datagrid("getRows").length
             });
             //window.print();
-           // CreateFormPage("datagrid", $("#dg"));
-            $("#dg").datagrid("reload"); 
-        	CreateFormPage("datagrid", $("#dg"));
+            // CreateFormPage("datagrid", $("#dg"));
+            $("#dg").datagrid("reload");
+            CreateFormPage("datagrid", $("#dg"));
         }
 
         var tableString;
@@ -311,30 +346,27 @@
                         tableString += ' style="text-align:' + nl[j].a + ';"';
                     }
                     tableString += '>';
-                    
-                    
-                    
+
+
                     if (e + 2 == nl[j].f.length) {
                         tableString += rows[i][nl[j].f.substring(0, e)];
                         console.log(tableString);
                     } else {
-                    	var tdStr;
-                    	if(rows[i][nl[j].f]=="[object Object]"){
-                    		tdStr = rows[i][nl[j].f].name;
-                    	}
-                    	else{
-                    		tdStr = rows[i][nl[j].f];
-                    	}
+                        var tdStr;
+                        if (rows[i][nl[j].f] == "[object Object]") {
+                            tdStr = rows[i][nl[j].f].name;
+                        } else {
+                            tdStr = rows[i][nl[j].f];
+                        }
                         /* var tdStr = rows[i][nl[j].f];*/
                         if (tdStr == null) {
                             tdStr = "";
-                        } 
+                        }
                         console.log(tdStr);
                         tableString += tdStr;
-                    } 
-                    
-                    
-                    
+                    }
+
+
                     tableString += '</td>';
                 });
                 tableString += '\n</tr>';
@@ -369,7 +401,7 @@
                 }
             }); */
 
-            
+
         });
 
     </script>
@@ -381,64 +413,86 @@
 </table>
 
 <div id="tb" style="padding: 15px;">
-    <table>
-        <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input
-                    class="easyui-combobox" id="location" name="location"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
-                    class="easyui-combobox" id="jitai" name="jitai"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
-            </td>
-            
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称： <input id="peasant" style="width: 100px"/>
+    <form id="fm">
+        <table>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" name="saleNumber" style="width: 130px"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input
+                        class="easyui-combobox" id="location" name="location"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
+                        class="easyui-combobox" id="jitai" name="jiTai"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'id',url:'/admin/jitai/jitaiList'"/>
+                </td>
 
-            <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                             iconCls="icon-reload">刷新</a>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称： <input id="peasant" name="peasant" style="width: 100px"/>
 
-            </td>
-            <td></td>
-            <td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input
-                    class="easyui-combobox" id="cang" name="location"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
-            </td>
-            <td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"
-                                                         iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; <a
-                    href="javascript:printdg()" class="easyui-linkbutton"
-                    iconCls="icon-print" plain="true">打印</a>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input
-                    type="text" id="productDate" name="productDate" class="easyui-datebox"
-                    demandd="true" size="15"/></td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input
-                    class="easyui-combobox" id="group" name="group"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input
-                    class="easyui-combobox" id="clerk" name="clerk"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
-                    class="easyui-combobox" id="clientname" name="clientname"
-                    style="width: 100px"
-                    data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
-            </td>
-            
-            <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
-                                            class="easyui-linkbutton" iconCls="icon-search">查询</a>
-            </td>
-        </tr>
-    </table>
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                                                 iconCls="icon-reload">刷新</a>
+
+                </td>
+                <td></td>
+                <td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input
+                        class="easyui-combobox" id="cang" name="location"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
+                </td>
+                <td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"
+                                                             iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; <a
+                        href="javascript:printdg()" class="easyui-linkbutton"
+                        iconCls="icon-print" plain="true">打印</a>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input
+                        type="text" id="dateInProduced" name="dateInProduced" class="easyui-datebox"
+                        demandd="true" size="15"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input
+                        class="easyui-combobox" id="group" name="group"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input
+                        class="easyui-combobox" id="clerk" name="clerk"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
+                        class="easyui-combobox" id="clientname" name="clientname"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                </td>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;长&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp;<input
+                        type="text" id="length" name="length"
+                        demandd="true" size="15"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;宽&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度&nbsp;： <input
+                        id="model" name="model"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度&nbsp;： <input
+                        id="price" name="price"
+                        style="width: 100px"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;： <input
+                        id="realitymodel" name="realitymodel"
+                        style="width: 100px"/>
+                </td>
+
+                <td></td>
+            </tr>
+        </table>
+    </form>
 </div>
 </body>
 </html>

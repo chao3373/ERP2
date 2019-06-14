@@ -919,8 +919,10 @@
                     return true;
                 },
                 success: function (result) {
-                    var results = eval('(' + result + ')')
-                    if (results.success) {
+                    // console.log(result);
+                    // console.log(typeof(result));
+                    // var results = eval('(' + result + ')');
+                    if (result.success) {
                         alert("保存成功！");
                         window.location.reload();
                     } else {
