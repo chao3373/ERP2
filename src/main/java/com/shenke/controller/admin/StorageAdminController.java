@@ -381,4 +381,28 @@ public class StorageAdminController {
         return map;
     }
 
+    /***
+     * 查询每个班组的生产产量
+     * @param jitai
+     * @param productDate
+     * @param group
+     * @return
+     */
+    @RequestMapping("/JitaiProduct")
+    public Map<String, Object> JitaiProduct(Integer jitai, String productDate,Integer group) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+
+        map1.put("jitai", jitai);
+        map1.put("productDate", productDate);
+        map1.put("group", group);
+
+        map.put("success", true);
+        map.put("rows", storageService.JitaiProduct(map1));
+
+        System.out.println(map);
+
+        return map;
+    }
+
 }

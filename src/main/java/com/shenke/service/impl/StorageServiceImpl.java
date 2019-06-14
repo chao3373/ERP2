@@ -224,12 +224,6 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
                     predicate.getExpressions().add(cb.equal(root.get("saleNumber"), (String) map.get("saleNumber")));
                 }
-                /*if (map.get("location") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), map.get("location")));
-                }
-                if (map.get("jitai") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
-                }*/
                 if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
                     try {
                         predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
@@ -237,14 +231,6 @@ public class StorageServiceImpl implements StorageService {
                         e.printStackTrace();
                     }
                 }
-                /*
-                if (map.get("clerk") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), map.get("clerk")));
-                }
-                if (map.get("group") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("group").get("id"), map.get("group")));
-                }
-                */
                 if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
                     predicate.getExpressions().add(cb.equal(root.get("peasant"), map.get("peasant")));
                 }
@@ -446,5 +432,31 @@ public class StorageServiceImpl implements StorageService {
         return storageRepository.findStorage(saleNumber);
     }
 
+    @Override
+    public List<Storage> JitaiProduct(Map<String, Object> map) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+
+                if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (map.get("group")!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("group"), map.get("group")));
+                }
+                if (( map.get("jitai")!=null)){
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai"),map.get("jitai")));
+                }
+
+                return predicate;
+            }
+        });
+    }
 
 }

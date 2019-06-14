@@ -110,7 +110,7 @@ public interface StorageService {
      */
     public List<JieSuan> FindByGroup(String client);
 
-    List<Storage> searchLiftMoney(Map<String, Object> map);
+
 
     public void setLocation(Integer parseInt, Integer location);
 
@@ -137,6 +137,10 @@ public interface StorageService {
     public List<Storage> findSaleListNumber();
 
     public List<Storage> findStorage(String saleNumber);
+
+    List<Storage> searchLiftMoney(Map<String, Object> map);
+
+    public List<Storage> JitaiProduct(Map<String, Object> map);
 
 
 }
