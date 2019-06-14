@@ -476,6 +476,53 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<Storage> select(Storage storage, String dateInProducedd) {
-        return null;
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
+                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), storage.getSaleNumber()));
+                }
+                if (storage.getLocation() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), storage.getLocation().getId()));
+                }
+                if (storage.getJiTai() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), storage.getJiTai().getId()));
+                }
+                if (StringUtil.isNotEmpty(storage.getPeasant())) {
+                    predicate.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
+                }
+                if (StringUtil.isNotEmpty(dateInProducedd)) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyyy-MM-dd").parse(dateInProducedd)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (storage.getGroup() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("group"), storage.getGroup()));
+                }
+                if (storage.getClerk() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), storage.getClerk().getId()));
+                }
+                if (StringUtil.isNotEmpty(storage.getClientname())) {
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                }
+                if (storage.getLength() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
+                }
+                if (storage.getModel() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
+                }
+                if (storage.getPrice() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
+                }
+                if (storage.getRealityweight() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
+                }
+                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+                return predicate;
+            }
+        });
     }
 }
