@@ -143,27 +143,20 @@
                             width: 100,
                             align: 'center'
                         }, {
+                            field: 'meter',
+                            title: '实际厚度',
+                            width: 100,
+                            align: 'center'
+                        }, {
                             field: 'dao',
                             title: '剖刀',
                             width: 100,
                             align: 'center'
                         }, {
-                            field: 'sumwight',
-                            title: '订重',
+                            field: 'oneweight',
+                            title: '单件重量',
                             width: 100,
                             align: 'center'
-                        }, {
-                            field: 'theoryweight',
-                            title: '理论重',
-                            width: 100,
-                            align: 'center',
-                            formatter: function (value, row, index) {
-                                if (row.theoryweight) {
-                                    return row.theoryweight;
-                                } else {
-                                    return "";
-                                }
-                            }
                         }, {
                             field: 'sumwight',
                             title: '总重',
