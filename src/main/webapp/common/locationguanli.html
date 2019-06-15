@@ -68,10 +68,13 @@
             $("#fm").form('submit',{
                 url: "/admin/storage/select",
                 success: function (resulgt) {
-                    var ruselt = eval('(' + resulgt + ')');
-                    if (ruselt.success){
-                        console.log(ruselt);
-                        $("#dg").datagrid("loadData", ruselt.rows);
+                    if (resulgt!=null) {
+                        console.log(resulgt);
+                        var ruselt = eval('(' + resulgt + ')');
+                        if (ruselt.success){
+                            console.log(ruselt);
+                            $("#dg").datagrid("loadData", ruselt.rows);
+                        }
                     }
                 }
             });

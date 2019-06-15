@@ -405,4 +405,18 @@ public class StorageAdminController {
         return map;
     }
 
+    /***
+     * 当前库存查询
+     * @return
+     */
+    @RequestMapping("/select")
+    public Map<String, Object> select(Storage storage, String dateInProducedd) {
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(storage);
+        List<Storage> list = storageService.select(storage, dateInProducedd);
+        map.put("success", true);
+        map.put("rows", list);
+        return map;
+    }
+
 }
