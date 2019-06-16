@@ -509,14 +509,14 @@
                         var countnum = 0;
                         var sumweight = 0;
                         var rows = $("#dg").datagrid('getRows');
-                        for (let i = 0; i < rows.length; i++) {
+                        for (var i = 0; i < rows.length; i++) {
                              countnum += rows[i].num;
                              sumweight += rows[i].sumwight;
                         }
                         $("#dg").datagrid('appendRow', {
                             name: '合计',
                             num: '总数量：' + countnum,
-                            sumwight: '总重量：' + sumweight
+                            sumwight: '总重量：' + num.toFixed(2)
                         });
                     }
                 });
