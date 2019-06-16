@@ -690,6 +690,106 @@
         //点击打印按钮触发
         var url = "https://cli.im/api/qrcode/code?text=";
 
+        function printt(id) {
+            url = "";
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/admin/storage/findById?id=" + id,
+                success: function (result) {
+                    console.log(result);
+                    if (result.data != null) {
+                        var row = result.data;
+                        var json = {};
+                        json.id = row.id + "";//条码
+                        if (json.id.length < 8) {
+                            var j = "";
+                            for (var i = 8 - json.id.length; i > 0; i--) {
+                                j += "0";
+                            }
+                            json.id = j + json.id;
+                        }
+                        url = "id:" + json.id;
+                        $.ajax({
+                            type: "POST", async: false, url: "/static/erweima", data: {
+                                url: url
+                            }, success: function (result) {
+                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                                var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                                // url += result.url;
+                                // url += "'/>";
+                                tableString = "";
+                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                                "</td>";
+                                tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
+                                if ($('#printWeight').is(':checked')) {
+                                    if (row.dabaonum != 1) {
+                                        tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg x " + row.dabaonum + "件</td></tr>";
+                                    } else {
+                                        tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
+                                    }
+                                }
+                                if ($('#printLabel').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
+                                }
+                                if ($('#printLength').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
+                                }
+                                if ($('#printThickness').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
+                                }
+                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
+                                tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                tableString += "<tr><td>班组：" + row.group.name + "</td><td>质检：" + row.clerk.name + "</td></tr>";
+                                Date.prototype.format = function (format) {
+                                    var o = {
+                                        "M+": this.getMonth() + 1,
+                                        "d+": this.getDate(),
+                                        "h+": this.getHours(),
+                                        "m+": this.getMinutes(),
+                                        "s+": this.getSeconds(),
+                                        "q+": Math.floor((this.getMonth() + 3) / 3),
+                                        "S": this.getMilliseconds()
+                                    }
+                                    if (/(y+)/.test(format)) {
+                                        format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                    }
+
+                                    for (var k in o) {
+                                        if (new RegExp("(" + k + ")").test(format)) {
+                                            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+                                        }
+                                    }
+                                    return format;
+                                }
+                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                                +"</td></tr></table>";
+                                tableString += "</div>";
+                                if (window.showModalDialog) {
+                                    window
+                                        .showModalDialog(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                    console.log(tableString);
+                                } else {
+                                    window
+                                        .open(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                }
+                            }
+                        });
+                    } else {
+                        $.messager.alert("系统错误", "<span style='color: red'>没有该编号的信息!</span>");
+                        return;
+                    }
+                }
+            });
+            ddClose();
+        }
+
         function print() {
             url = "";
             $.ajax({
@@ -722,9 +822,9 @@
                                 "</td>";
                                 tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
                                 if ($('#printWeight').is(':checked')) {
-                                    if (dabaoNum!=1) {
+                                    if (dabaoNum != 1) {
                                         tableString += "<tr><td colspan='2'>重量：" + aweight + "kg x " + dabaoNum + "件</td></tr>";
-                                    }else {
+                                    } else {
                                         tableString += "<tr><td colspan='2'>重量：" + aweight + "kg</td></tr>";
                                     }
                                 }
@@ -803,96 +903,8 @@
         function rePrint() {
             $.messager.prompt('重新打码', '请输入要重新打码的编号：', function (r) {
                 if (r) {
-                    console.log(r.length);
-                    if (r.length < 8) {
-                        var count = "";
-                        for (var i = 8 - r.length; i > 0; i--) {
-                            count += "0";
-                        }
-                        console.log(count);
-                        r = count + r;
-                    }
-                    console.log(r);
-                    $.post("/admin/storage/findById", {id: r}, function (result) {
-                        var tabid = result.data.id;
-                        var tabname = result.data.name;
-                        var tabmodel = result.data.model;
-                        var tabprice = result.data.price;
-                        var tablength = result.data.length;
-                        var tabrealityweight = result.data.realityweight;
-                        var tabcolor = result.data.color;
-                        var tabdao = result.data.dao;
-                        var tabclientname = result.data.clientname;
-
-                        if (!result.data) {
-                            $.messager.alert("系统提示", "<span style='color: red'>该编号不存在！！</span>");
-                            return;
-                        }
-                        var url = "https://cli.im/api/qrcode/code?text=id:" + r;
-                        console.log(url);
-                        $.post("/static/erweima", {
-                            url: url
-                        }, function (result) {
-                            var url = "<img style='width:auto;height: 100%;' src='";
-                            url += result.url;
-                            url += "'/>";
-                            tableString = "";
-                            tableString += "<div id='tab' style='padding:0 20px; text-align: center;width: 100%;font-size: 37px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='10' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + r + "</div>";
-                            "</td>";
-                            tableString += "<td colspan='2'>产品名称：" + tabname + "</td></tr>";
-                            tableString += "<tr><td>幅宽：" + tabmodel + "m</td><td>厚度：" + tabprice + "mm</td></tr>";
-                            tableString += "<tr><td colspan='2'>长度：" + tablength + "m</td></tr>";
-                            if ($('#printWeight').is(':checked')) {
-                                tableString += "<tr><td colspan='2'>重量：" + tabrealityweight + "kg</td></tr>";
-                            }
-                            if ($('#printLabel').is(':checked')) {
-                                tableString += "<tr><td colspan='2'>颜色：" + tabcolor + "</td></tr>";
-                            }
-                            if ($('#printLength').is(':checked')) {
-                                tableString += "<tr><td colspan='2'>剖刀：" + tabdao + "</td></tr>";
-                            }
-                            if ($('#printThickness').is(':checked')) {
-                                tableString += "<tr><td colspan='2'>客户：" + tabclientname + "</td></tr>";
-                            }
-                            Date.prototype.format = function (format) {
-                                var o = {
-                                    "M+": this.getMonth() + 1,
-                                    "d+": this.getDate(),
-                                    "h+": this.getHours(),
-                                    "m+": this.getMinutes(),
-                                    "s+": this.getSeconds(),
-                                    "q+": Math.floor((this.getMonth() + 3) / 3),
-                                    "S": this.getMilliseconds()
-                                }
-                                if (/(y+)/.test(format)) {
-                                    format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                                }
-
-                                for (var k in o) {
-                                    if (new RegExp("(" + k + ")").test(format)) {
-                                        format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
-                                    }
-                                }
-                                return format;
-                            }
-                            tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
-                            +"</td></tr></table>";
-                            tableString += "</div>";
-                            if (window.showModalDialog) {
-                                window
-                                    .showModalDialog(
-                                        "print.html",
-                                        tableString,
-                                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                            } else {
-                                window
-                                    .open(
-                                        "print.html",
-                                        tableString,
-                                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                            }
-                        })
-                    });
+                    var id = parseInt(r);
+                    printt(id);
                 }
             });
         }
@@ -915,6 +927,107 @@
         //修改打包数量
         function editDabao() {
             $("#dabao").numberbox("enable");
+        }
+
+        //打印测试
+        function printTest() {
+            url = "";
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/admin/storage/findById?id=" + 1,
+                success: function (result) {
+                    console.log(result);
+                    if (result.data != null) {
+                        var row = result.data;
+                        var json = {};
+                        json.id = row.id + "";//条码
+                        if (json.id.length < 8) {
+                            var j = "";
+                            for (var i = 8 - json.id.length; i > 0; i--) {
+                                j += "0";
+                            }
+                            json.id = j + json.id;
+                        }
+                        url = "id:" + json.id;
+                        $.ajax({
+                            type: "POST", async: false, url: "/static/erweima", data: {
+                                url: url
+                            }, success: function (result) {
+                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                                var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                                // url += result.url;
+                                // url += "'/>";
+                                tableString = "";
+                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                                "</td>";
+                                tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
+                                if ($('#printWeight').is(':checked')) {
+                                    if (row.dabaonum != 1) {
+                                        tableString += "<tr><td colspan='2'>重量：999 kg x 999 件</td></tr>";
+                                    } else {
+                                        tableString += "<tr><td colspan='2'>重量：999 kg</td></tr>";
+                                    }
+                                }
+                                if ($('#printLabel').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
+                                }
+                                if ($('#printLength').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
+                                }
+                                if ($('#printThickness').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>客户：测试客户 </td></tr>";
+                                }
+                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
+                                tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                tableString += "<tr><td>班组：" + row.group.name + "</td><td>质检：测试 </td></tr>";
+                                Date.prototype.format = function (format) {
+                                    var o = {
+                                        "M+": this.getMonth() + 1,
+                                        "d+": this.getDate(),
+                                        "h+": this.getHours(),
+                                        "m+": this.getMinutes(),
+                                        "s+": this.getSeconds(),
+                                        "q+": Math.floor((this.getMonth() + 3) / 3),
+                                        "S": this.getMilliseconds()
+                                    }
+                                    if (/(y+)/.test(format)) {
+                                        format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                    }
+
+                                    for (var k in o) {
+                                        if (new RegExp("(" + k + ")").test(format)) {
+                                            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+                                        }
+                                    }
+                                    return format;
+                                }
+                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                                +"</td></tr></table>";
+                                tableString += "</div>";
+                                if (window.showModalDialog) {
+                                    window
+                                        .showModalDialog(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                    console.log(tableString);
+                                } else {
+                                    window
+                                        .open(
+                                            "print.html",
+                                            tableString,
+                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                }
+                            }
+                        });
+                    } else {
+                        $.messager.alert("系统错误", "<span style='color: red'>没有该编号的信息!</span>");
+                        return;
+                    }
+                }
+            });
+            ddClose();
         }
 
         $(document).ready(function () {
@@ -970,6 +1083,8 @@
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
                                      class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:printTest()"
+                                     class="easyui-linkbutton" plain="true">打印测试</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设置打包数量：<input class="easyui-numberbox" id="dabao" size="5"/><a
         href="javascript:setDabao()"
         class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a><a href="javascript:editDabao()"
