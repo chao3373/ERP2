@@ -100,6 +100,7 @@
                                 return "";
                             }
                         }
+<<<<<<< HEAD
                        /* formatter: function (value, row) {
                             alert(row.dateInProduced);
                             var date = new Date(row.dateInProduced);
@@ -107,6 +108,8 @@
                             var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
                             return (date.getFullYear() + "-" + m + "-" + d);
                         }*/
+=======
+>>>>>>> origin/master
                     }]]
 
             });
@@ -184,12 +187,12 @@
             addScreen();
             refreshData();
 
-            var sumweight=0;
-            var sumnum=0;
+            var sumweight = 0;
+            var sumnum = 0;
             var a = $("#dg").datagrid("getRows");
-            for(var i=0;i<a.length;i++){
-                sumweight+=a[i].realityweight;
-                sumnum+=a[i].num;
+            for (var i = 0; i < a.length; i++) {
+                sumweight += a[i].realityweight;
+                sumnum += a[i].num;
             }
             $("#sumnum").val(sumnum);
             $("#sumweight").val(sumweight);
@@ -265,11 +268,11 @@
                 </td>
                 <td>
                     &nbsp;&nbsp;合计重量:&nbsp;<input id="sumweight" name="sumweight" style="width: 100px"
-                                                                    readonly/>
+                                                  readonly/>
                 </td>
                 <td>
-                   &nbsp;&nbsp;合计数量:&nbsp;<input id="sumnum" name="sumnum" style="width: 100px"
-                                                                    readonly/>
+                    &nbsp;&nbsp;合计数量:&nbsp;<input id="sumnum" name="sumnum" style="width: 100px"
+                                                  readonly/>
                 </td>
             </tr>
         </table>
