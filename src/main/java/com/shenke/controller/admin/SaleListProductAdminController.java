@@ -264,4 +264,15 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    /**
+     * 修改完成数量
+     * @param id
+     */
+    @RequestMapping("/updateAccomplishNumber")
+    public Map<String, Object> update(Integer id){
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updateAccomplishNumber(id);
+        map.put("success", true);
+        return map;
+    }
 }

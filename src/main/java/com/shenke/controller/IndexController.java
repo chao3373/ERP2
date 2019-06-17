@@ -6,8 +6,10 @@ import java.net.URL;
 import java.sql.Date;
 import java.util.*;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.shenke.entity.Product;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.ProductService;
@@ -161,6 +163,45 @@ public class IndexController {
         DaochuUtil.daochuExcel(a, title);
         map.put("success", true);
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/static/setAccomplishNumber")
+    public Map<String, Object> getAccomplishNumber(HttpServletRequest request, HttpServletResponse response, Integer sunNum, String accomplishNumber) {
+        Integer acco;
+        if (accomplishNumber.equals("null") || accomplishNumber == null || accomplishNumber == "") {
+            acco = 0;
+        } else {
+            acco = Integer.parseInt(accomplishNumber);
+        }
+        Map<String, Object> map = new HashMap<>();
+        ServletContext servletContext = request.getSession().getServletContext();
+        servletContext.setAttribute("sunNum", sunNum);
+        servletContext.setAttribute("accomplishNumber", acco);
+        map.put("success", true);
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/static/accomplishNumberCount")
+    public Map<String, Object> accomplishNumberCount(HttpServletResponse response, HttpServletRequest request, Integer id, String jiTai) {
+        Map<String, Object> map = new HashMap<>();
+        ServletContext servletContext = request.getSession().getServletContext();
+        Integer accomplishNumber = (Integer) servletContext.getAttribute("accomplishNumber");
+        accomplishNumber++;
+        System.out.println(accomplishNumber);
+        if (Integer.parseInt(servletContext.getAttribute("sunNum").toString()) == accomplishNumber) {
+            saleListProductRepository.updateState("生产完成：" + jiTai, id);
+            saleListProductRepository.updateIussueState("生产完成：" + jiTai, id);
+            map.put("success", false);
+        } else {
+            servletContext.removeAttribute("accomplishNumber");
+            servletContext.setAttribute("accomplishNumber", accomplishNumber);
+            map.put("success", true);
+            map.put("accomplishNumber", accomplishNumber);
+            return map;
+        }
+        return null;
     }
 
 }

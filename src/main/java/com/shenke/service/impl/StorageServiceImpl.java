@@ -56,23 +56,8 @@ public class StorageServiceImpl implements StorageService {
 
         Group group = groupRepository.findByGrouptName(groupName);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
-        Integer count = saleListProduct.getAccomplishNumber();
         Clerk clerk = clerkRepository.findByNam(clerkName);
         Double realityweight = storage.getRealityweight();
-
-
-        if (count == null || count == 0) {
-            count = 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-        } else if (count == saleListProduct.getNum() - 1) {
-            count += 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-        } else {
-            count += 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-        }
 
         BeanUtils.copyProperties(saleListProduct, storage);
         storage.setId(null);
@@ -83,57 +68,6 @@ public class StorageServiceImpl implements StorageService {
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storage.setState("生产完成:" + storage.getJiTai().getName());
         storageRepository.save(storage);
-
-//
-//        jitaiProductionAllotRepository.updateStateById("生产完成：" + jiTai.getName(), jitaiProductionAllotId);
-//
-//        Storage storage = new Storage();
-//
-//        storage.setAccomplishState("完成");
-//        storage.setAllorTime(jitaiProductionAllot.getAllorTime());
-//        storage.setAllotState(jitaiProductionAllot.getAllotState());
-//        storage.setBrand(saleListProduct.getBrand());
-//        storage.setClientname(saleListProduct.getClientname());
-//        storage.setClerk(clerk);
-//        storage.setColor(saleListProduct.getColor());
-//        storage.setDao(saleListProduct.getDao());
-//        storage.setDemand(saleListProduct.getDemand());
-//        storage.setInformNumber(jitaiProductionAllot.getInformNumber());
-//        storage.setIssueState(jitaiProductionAllot.getIssueState());
-//        storage.setJiTai(jiTai);
-//        storage.setJitaiProductionAllot(jitaiProductionAllot);
-//        storage.setLabel(saleListProduct.getLabel());
-//        storage.setLength(saleListProduct.getLength());
-//        storage.setLetter(saleListProduct.getLetter());
-//        storage.setMeter(saleListProduct.getMeter());
-//        storage.setModel(saleListProduct.getModel());
-//        storage.setName(saleListProduct.getName());
-//        storage.setNum(saleListProduct.getNum());
-//        storage.setNumsquare(saleListProduct.getNumsquare());
-//        storage.setOneweight(saleListProduct.getOneweight());
-//        storage.setPack(saleListProduct.getPack());
-//        storage.setPatu(saleListProduct.getPatu());
-//        storage.setPeasant(saleListProduct.getPeasant());
-//        storage.setPrice(saleListProduct.getPrice());
-//        storage.setProductionMessage(jitaiProductionAllot.getProductionMessage());
-//        storage.setRealitymodel(saleListProduct.getRealitymodel());
-//        storage.setRealityprice(saleListProduct.getRealityprice());
-//        storage.setRealityweight(weight);
-//        storage.setSaleList(saleListProduct.getSaleList());
-//        storage.setSaleListProduct(saleListProduct);
-//        storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
-//        storage.setSquare(saleListProduct.getSquare());
-//        storage.setState("生产完成：" + saleListProduct.getJiTai().getName());
-//        storage.setSumwight(saleListProduct.getSumwight());
-//        storage.setTaskQuantity(jitaiProductionAllot.getTaskQuantity());
-//        storage.setTheoryweight(saleListProduct.getTheoryweight());
-//        storage.setWeight(saleListProduct.getWeight());
-//        storage.setWeightway(saleListProduct.getWeightway());
-//        storage.setWightset(saleListProduct.getWightset());
-//        storage.setDateInProduced(new Date(System.currentTimeMillis()));
-//        storage.setClerk(clerk);
-//
-//        storageRepository.save(storage);
 
     }
 
@@ -448,12 +382,37 @@ public class StorageServiceImpl implements StorageService {
 
 
     @Override
+    public List<Storage> KucunSearch(Map<String, Object> map) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty((String) map.get("saleDate"))) {
+                    try {
+                        predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleDate"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("saleDate"))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (map.get("clientname")!=null) {
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), map.get("clientname")));
+                }
+                if (( map.get("saleNumber")!=null)){
+                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"),map.get("saleNumber")));
+                }
+
+                return predicate;
+            }
+        });
+    }
+
+
+    @Override
     public List<Storage> JitaiProduct(Map<String, Object> map) {
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
-
                 if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
                     try {
                         predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
@@ -461,7 +420,6 @@ public class StorageServiceImpl implements StorageService {
                         e.printStackTrace();
                     }
                 }
-
                 if (map.get("group")!=null) {
                     predicate.getExpressions().add(cb.equal(root.get("group"), map.get("group")));
                 }

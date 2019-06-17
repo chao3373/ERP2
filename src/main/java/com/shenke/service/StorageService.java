@@ -142,6 +142,8 @@ public interface StorageService {
 
     public List<Storage> JitaiProduct(Map<String, Object> map);
 
+    public List<Storage> KucunSearch(Map<String, Object> map);
+
 
     List<Storage> select(Storage storage, String dateInProducedd);
 }

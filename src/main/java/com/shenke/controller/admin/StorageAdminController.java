@@ -52,7 +52,9 @@ public class StorageAdminController {
         //storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
         storageService.add(storage, clerkName, groupName);
         Map<String, Object> map = new HashMap<String, Object>();
+        Integer id = storageService.selectByMaxId().getId();
         map.put("success", true);
+        map.put("id", id);
         return map;
     }
 
@@ -392,17 +394,29 @@ public class StorageAdminController {
     public Map<String, Object> JitaiProduct(Integer jitai, String productDate,Integer group) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-
         map1.put("jitai", jitai);
         map1.put("productDate", productDate);
         map1.put("group", group);
-
         map.put("success", true);
         map.put("rows", storageService.JitaiProduct(map1));
-
-        System.out.println(map);
-
         return map;
+    }
+
+    @RequestMapping("/kucunzonglan")
+    public Map<String,Object> KuCunZongLan(String clientname,String saleNumber,String saleDate){
+        System.out.println(saleDate);
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("clientname",clientname);
+        map1.put("saleNumber",saleNumber);
+        map1.put("saleDate",saleDate);
+
+        map.put("success",true);
+        System.out.println(map1);
+        map.put("rows",storageService.KucunSearch(map1));
+        System.out.println(map);
+        return map;
+
     }
 
 }
