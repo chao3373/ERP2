@@ -122,12 +122,13 @@ public class SaleListProductAdminController {
 
     /**
      * 根据机台id，下发状态，通知单号查询
-    * @Description:
-    * @Param:
-    * @return:
-    * @Author: Andy
-    * @Date:
-    */
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
     @RequestMapping("/selectByJitaiIdAndIssueStateAndInformNumber")
     public Map<String, Object> selectByJitaiIdAndIssueStateAndInformNumber(Integer jitaiId, String state, String informNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -147,12 +148,13 @@ public class SaleListProductAdminController {
 
     /**
      * 查询该机台没有所有未完成的生产通知单号
-    * @Description:
-    * @Param:
-    * @return:
-    * @Author: Andy
-    * @Date:
-    */
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
     @RequestMapping("/selectNoAccomplish")
     public Map<String, Object> selectNoAccomplish(Integer jitaiId) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -176,7 +178,6 @@ public class SaleListProductAdminController {
         map.put("rows", saleListProductService.listProductByState(state));
         return map;
     }
-
 
 
     /**
@@ -212,7 +213,7 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/issue")
-    public Map<String, Object> issue(String idStr){
+    public Map<String, Object> issue(String idStr) {
         Map<String, Object> map = new HashMap<>();
         String[] ids = idStr.split(",");
         for (int i = 0; i < ids.length; i++) {
@@ -226,34 +227,34 @@ public class SaleListProductAdminController {
 
 
     @RequestMapping("/findAll")
-    public Map<String,Object> findAll(){
-        Map<String,Object> map = new HashMap<>();
+    public Map<String, Object> findAll() {
+        Map<String, Object> map = new HashMap<>();
         List<SaleListProduct> list = saleListProductService.fandAll();
-        map.put("rows",list);
+        map.put("rows", list);
         System.out.println(map);
-        return  map;
+        return map;
     }
 
     @RequestMapping("/findJitaiProduct")
-    public Map<String,Object> findJitaiProduct(){
-        Map<String,Object> map = new HashMap<>();
+    public Map<String, Object> findJitaiProduct() {
+        Map<String, Object> map = new HashMap<>();
         List<SaleListProduct> list = saleListProductService.findJitaiProduct();
-        map.put("rows",list);
+        map.put("rows", list);
         System.out.println(list);
         return map;
     }
 
     @RequestMapping("/searchJitai")
-    public Map<String, Object> searchLiftMoney(String saleNumber, Integer jitai, String saleDate,String deliveryDate,String allorState,String state) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, Integer jitai, String saleDate, String deliveryDate, String allorState, String state) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
 
         map1.put("saleNumber", saleNumber);
         map1.put("jitai", jitai);
         map1.put("saleDate", saleDate);
-        map1.put("allorState",allorState);
-        map1.put("deliveryDate",deliveryDate);
-        map1.put("state",state);
+        map1.put("allorState", allorState);
+        map1.put("deliveryDate", deliveryDate);
+        map1.put("state", state);
 
 
         map.put("success", true);
@@ -266,12 +267,41 @@ public class SaleListProductAdminController {
 
     /**
      * 修改完成数量
+     *
      * @param id
      */
     @RequestMapping("/updateAccomplishNumber")
-    public Map<String, Object> update(Integer id){
+    public Map<String, Object> update(Integer id) {
         Map<String, Object> map = new HashMap<>();
         saleListProductService.updateAccomplishNumber(id);
+        map.put("success", true);
+        return map;
+    }
+
+    @RequestMapping("/hebingJian")
+    public Map<String, Object> hebingJian(Integer count, Integer id) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.hebingJian(count, id);
+        map.put("success", true);
+        return map;
+    }
+
+    @RequestMapping("/hebingOne")
+    public Map<String, Object> hebingOne(String ids) {
+        Map<String, Object> map = new HashMap<>();
+        String[] idArr = ids.split(",");
+        SaleListProduct byId = saleListProductService.findById(Integer.parseInt(idArr[0]));
+        int length = Integer.parseInt(byId.getLength().toString());
+        StringBuilder hebingLength = new StringBuilder();
+        hebingLength.append(length);
+        for (int i = 1; i < idArr.length; i++) {
+            length += Integer.parseInt(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength().toString());
+            hebingLength.append("+" + Integer.parseInt(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength().toString()));
+            saleListProductService.deleteById(Integer.parseInt(idArr[i]));
+        }
+        byId.setLength((double) length);
+        byId.setHebingLength(hebingLength.toString());
+        save(byId);
         map.put("success", true);
         return map;
     }

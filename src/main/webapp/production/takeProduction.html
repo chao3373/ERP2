@@ -141,16 +141,11 @@
                     sum += selectedRows[i].realityweight;
                 }
                 $("#sumweight").val(sum);
-<<<<<<< HEAD
                 $("#sumnum").val(selectedRows.length);
             } else {
-=======
-            } else
->>>>>>> origin/master
                 $("#sumweight").val("0");
                 $("#sumnum").val("0");
             }
-
         }
 
         function loadData() {
@@ -236,9 +231,6 @@
                         field: 'dateInProduced',
                         title: '生产日期',
                         width: 100,
-<<<<<<< HEAD
-                        align: 'center'
-=======
                         align: 'center',
                         formatter: function (value, row, index) {
                             if (value) {
@@ -262,7 +254,6 @@
                                 return "";
                             }
                         }
->>>>>>> origin/master
                     }, {
                         field: 'remark',
                         title: '备注',

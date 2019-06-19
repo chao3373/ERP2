@@ -170,4 +170,8 @@ public interface SaleListProductService {
 
 
     void updateAccomplishNumber(Integer id);
+
+    void hebingJian(Integer count, Integer id);
+
+	void deleteById(int parseInt);
 }

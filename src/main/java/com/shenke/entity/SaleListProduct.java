@@ -133,6 +133,61 @@ public class SaleListProduct {
 	@Transient
 	private int saleTotal;// 销售总数
 
+	//合并长度
+	private String hebingLength;//合并长度
+
+	@Override
+	public String toString() {
+		return "SaleListProduct{" +
+				"id=" + id +
+				", saleList=" + saleList +
+				", jiTai=" + jiTai +
+				", name='" + name + '\'' +
+				", model=" + model +
+				", price=" + price +
+				", length=" + length +
+				", color='" + color + '\'' +
+				", realitymodel=" + realitymodel +
+				", realityprice=" + realityprice +
+				", realityweight=" + realityweight +
+				", num=" + num +
+				", theoryweight=" + theoryweight +
+				", oneweight=" + oneweight +
+				", square=" + square +
+				", numsquare=" + numsquare +
+				", demand='" + demand + '\'' +
+				", weightway='" + weightway + '\'' +
+				", label='" + label + '\'' +
+				", weight=" + weight +
+				", dao='" + dao + '\'' +
+				", brand='" + brand + '\'' +
+				", pack='" + pack + '\'' +
+				", letter='" + letter + '\'' +
+				", patu='" + patu + '\'' +
+				", wightset='" + wightset + '\'' +
+				", state='" + state + '\'' +
+				", sumwight=" + sumwight +
+				", meter=" + meter +
+				", peasant='" + peasant + '\'' +
+				", clientname='" + clientname + '\'' +
+				", accomplishNumber=" + accomplishNumber +
+				", issueState='" + issueState + '\'' +
+				", informNumber=" + informNumber +
+				", remark='" + remark + '\'' +
+				", queryName='" + queryName + '\'' +
+				", saleTotal=" + saleTotal +
+				", hebingLength='" + hebingLength + '\'' +
+				'}';
+	}
+
+	public String getHebingLength() {
+		return hebingLength;
+	}
+
+	public void setHebingLength(String hebingLength) {
+		this.hebingLength = hebingLength;
+	}
+
 	public String getIssueState() {
 		return issueState;
 	}
@@ -175,49 +230,6 @@ public class SaleListProduct {
 
 	public Integer getId() {
 		return id;
-	}
-
-	@Override
-	public String toString() {
-		return "SaleListProduct{" +
-				"id=" + id +
-				", saleList=" + saleList +
-				", jiTai=" + jiTai +
-				", name='" + name + '\'' +
-				", model=" + model +
-				", price=" + price +
-				", length=" + length +
-				", color='" + color + '\'' +
-				", realitymodel=" + realitymodel +
-				", realityprice=" + realityprice +
-				", realityweight=" + realityweight +
-				", num=" + num +
-				", theoryweight=" + theoryweight +
-				", oneweight=" + oneweight +
-				", square=" + square +
-				", numsquare=" + numsquare +
-				", demand='" + demand + '\'' +
-				", weightway='" + weightway + '\'' +
-				", label='" + label + '\'' +
-				", weight=" + weight +
-				", dao='" + dao + '\'' +
-				", brand='" + brand + '\'' +
-				", pack='" + pack + '\'' +
-				", letter='" + letter + '\'' +
-				", patu='" + patu + '\'' +
-				", wightset='" + wightset + '\'' +
-				", state='" + state + '\'' +
-				", sumwight=" + sumwight +
-				", meter=" + meter +
-				", peasant='" + peasant + '\'' +
-				", clientname='" + clientname + '\'' +
-				", accomplishNumber=" + accomplishNumber +
-				", issueState='" + issueState + '\'' +
-				", informNumber=" + informNumber +
-				", remark='" + remark + '\'' +
-				", queryName='" + queryName + '\'' +
-				", saleTotal=" + saleTotal +
-				'}';
 	}
 
 	public void setId(Integer id) {

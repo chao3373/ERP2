@@ -67,6 +67,10 @@ public class StorageServiceImpl implements StorageService {
         storage.setDateInProduced(new Date(System.currentTimeMillis()));
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storage.setState("生产完成:" + storage.getJiTai().getName());
+        storage.setJiTaiName(storage.getJiTai().getName());
+        storage.setClerkName(clerkName);
+        storage.setGroup(storage.getJiTai().getGroup());
+        storage.setGroupName(storage.getJiTai().getGroup().getName());
         storageRepository.save(storage);
 
     }

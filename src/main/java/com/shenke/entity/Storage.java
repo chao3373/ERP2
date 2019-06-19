@@ -138,6 +138,9 @@ public class Storage{
     @Column(length = 50)
     private String serialNumber;// 序列号
 
+    @Column(length = 100)
+    private String hebingLength;//合并长度
+
 //    @Temporal(TemporalType.TIMESTAMP)
     private Date deliveryTime;//出库时间
 
@@ -159,6 +162,15 @@ public class Storage{
 
     private String printstate;//打印状态
 
+    @Column(length = 20)
+    private String jiTaiName;//机台名称
+
+    @Column(length = 50)
+    private String clerkName;//员工名称
+
+    @Column(length = 10)
+    private String groupName;//班组名称
+
     private Integer dabaonum;//打包数量
 
     public Integer getDabaonum() {
@@ -168,6 +180,7 @@ public class Storage{
     public void setDabaonum(Integer dabaonum) {
         this.dabaonum = dabaonum;
     }
+
 
     @Override
     public String toString() {
@@ -212,6 +225,7 @@ public class Storage{
                 ", productionMessage='" + productionMessage + '\'' +
                 ", dateInProduced=" + dateInProduced +
                 ", serialNumber='" + serialNumber + '\'' +
+                ", hebingLength='" + hebingLength + '\'' +
                 ", deliveryTime=" + deliveryTime +
                 ", dateOfDelivery=" + dateOfDelivery +
                 ", outNumber='" + outNumber + '\'' +
@@ -220,8 +234,43 @@ public class Storage{
                 ", sum=" + sum +
                 ", remark='" + remark + '\'' +
                 ", printstate='" + printstate + '\'' +
+                ", jiTaiName='" + jiTaiName + '\'' +
+                ", clerkName='" + clerkName + '\'' +
+                ", groupName='" + groupName + '\'' +
                 ", dabaonum=" + dabaonum +
                 '}';
+    }
+
+    public String getHebingLength() {
+        return hebingLength;
+    }
+
+    public void setHebingLength(String hebingLength) {
+        this.hebingLength = hebingLength;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getJiTaiName() {
+        return jiTaiName;
+    }
+
+    public void setJiTaiName(String jiTaiName) {
+        this.jiTaiName = jiTaiName;
+    }
+
+    public String getClerkName() {
+        return clerkName;
+    }
+
+    public void setClerkName(String clerkName) {
+        this.clerkName = clerkName;
     }
 
     public Integer getSum() {
