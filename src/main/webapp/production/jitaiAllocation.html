@@ -247,6 +247,13 @@
         }
 
         $(document).ready(function () {
+            $('#dg').datagrid({
+                rowStyler:function(index,row){
+                    if (row.level || row.level != 0) {
+                        return 'background-color:orange;color:blue;font-weight:bold;';
+                    }
+                }
+            });
             //当选择一个日期的时候执行的操作
             $("#allorTime").datebox({
                 onSelect: function (date) {

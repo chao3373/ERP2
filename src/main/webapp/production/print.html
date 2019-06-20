@@ -35,6 +35,12 @@ body {
 			console.log(window.opener.tableString);
 		}
 		window.print();
+		var timeId = setInterval(function () {
+			if (document.getElementsByTagName("img")) {
+				window.close();
+				clearInterval(timeId);
+			}
+		}, 1000)
 	</script>
 </body>
 </html>

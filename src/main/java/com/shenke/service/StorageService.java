@@ -22,6 +22,12 @@ public interface StorageService {
      */
     public void add(Storage storage, String clerkName, String groupName);
 
+    /**
+     * 非标入库单
+     *
+     */
+    public void feibiaoAdd(Storage storage, String clerkName, String groupName);
+
     public List<Storage> fandAll();
 
     /**

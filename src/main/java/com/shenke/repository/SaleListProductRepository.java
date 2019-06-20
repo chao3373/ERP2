@@ -214,4 +214,23 @@ public interface SaleListProductRepository
 	@Query(value = "select * from t_sale_list_product where state like '%生产完成%' or state like'%下发机台%' or state like '%分配机台%'" , nativeQuery = true)
 	public List<SaleListProduct> findJitaiProduct();
 
+	/**
+	 * 订单加急
+	 * @param id
+	 * @param jiajidengji
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set level =?2 where sale_list_id =?1", nativeQuery = true)
+	public void dingdanjiaji(Integer id,String jiajidengji);
+
+
+	/**
+	 * 产品加急
+	 * @param id
+	 * @param jiajidengji
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set level =?2 where id =?1", nativeQuery = true)
+	public void chanpinjiaji(Integer id,String jiajidengji);
+
 }

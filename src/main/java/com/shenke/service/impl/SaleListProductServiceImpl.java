@@ -14,6 +14,7 @@ import javax.persistence.criteria.Subquery;
 
 import com.shenke.util.StringUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -159,7 +160,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 }
                 return predicate;
             }
-        });
+        }, new Sort(Sort.Direction.DESC, "level"));
     }
 
     @Override
@@ -301,5 +302,16 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     @Override
     public void deleteById(int parseInt) {
         saleListProductRepository.delete(parseInt);
+    }
+
+    @Override
+    public void dingdanjiaji(Integer id, String jiajidengji) {
+
+        saleListProductRepository.dingdanjiaji(id,jiajidengji);
+    }
+
+    @Override
+    public void chanpinjiaji(Integer id,String jiajidengji){
+        saleListProductRepository.chanpinjiaji(id,jiajidengji);
     }
 }

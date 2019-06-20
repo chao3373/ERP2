@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>销售订单审核</title>
+    <title>订单加急</title>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
@@ -90,17 +90,16 @@
         function formatUser(val, row) {
             return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
         }
-
-        $(document)
-            .ready(
+        $(document).ready(
                 function () {
                     $('#dg2').datagrid({
-                        rowStyler: function (index, row) {
+                        rowStyler:function(index,row){
                             if (row.level || row.level != 0) {
                                 return 'background-color:orange;color:blue;font-weight:bold;';
                             }
                         }
                     });
+
 
                     $("#dg").datagrid(
                         {
@@ -576,237 +575,7 @@
             }
         }
 
-        //提交审核未通过原因
-        function saveCause() {
-            var cause = "审核失败：" + $("#cause").val();
-            alert(cause);
-            alert("saveCause" + ids);
-            $.post("/admin/saleListProduct/auditFailure", {
-                ids: ids,
-                cause: cause
-            }, function (result) {
-                if (result.success) {
-                    $.messager.alert("系统提示", "审核结果已提交");
-                    $("#dg2").datagrid("reload");
-                } else {
-                    $.messager.alert("系统提示", result.errorInfo);
-                }
-            });
-            closeCause();
-        }
 
-        //关闭审核未通过原因面板
-        function closeCause() {
-            $("#dlg").dialog("close");
-            $("#dialog").dialog("close");
-        }
-
-        //根据审核条件进行订单商品信息的查询
-        function auditQuery(value) {
-            var selectenRows = $("#dg").datagrid("getSelections");
-            if (selectenRows.length != 1) {
-                $.messager
-                    .confirm(
-                        "系统提示",
-                        "<span style='color: red;'>请选择一条销售信息</span>");
-                return;
-            } else {
-                if (value == "未审核") {
-                    value = "下单";
-                }
-                $("#dg2")
-                    .datagrid(
-                        {
-                            url: '/admin/saleList/listProductByState',
-                            queryParams: {
-                                id: selectenRows[0].id,
-                                state: value
-                            },
-                            columns: [[
-                                {
-                                    field: 'cb',
-                                    checkbox: "true",
-                                    align: "center"
-                                },
-                                {
-                                    field: 'state',
-                                    title: "订单状态",
-                                    width: "150",
-                                    align: "center",
-                                    formatter: function (value, row,
-                                                         index) {
-                                        if (row.state == "下单") {
-                                            $("#state").css("color",
-                                                "#FF0000");
-                                            return '<span style="color:#0000FF">'
-                                                + '未审核' + '</span>';
-                                        } else if (row.state
-                                            .indexOf("审核失败") == 0) {
-                                            return '<span style="color:#FF0000">'
-                                                + row.state
-                                                + '</span>';
-                                        } else if (row.state == "审核通过") {
-                                            return '<span style="color:#0B610B">'
-                                                + row.state
-                                                + '</span>';
-                                        } else {
-                                            return '<span style="color:#8A0829">'
-                                                + row.state
-                                                + '</span>';
-                                        }
-                                    }
-                                }, {
-                                    field: 'name',
-                                    title: "产品名称",
-                                    width: "200",
-                                    align: "center"
-                                }, {
-                                    field: "model",
-                                    title: "幅宽（m）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "price",
-                                    title: "厚度（mm）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "length",
-                                    title: "长度（m）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "meter",
-                                    title: "实际厚度",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "color",
-                                    title: "颜色",
-                                    width: "50",
-                                    align: "center"
-                                }, {
-                                    field: "oneweight",
-                                    title: "单件重量（kg）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "num",
-                                    title: "订货数量",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "sumwight",
-                                    title: "总重量（kg）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "realitymodel",
-                                    title: "实际幅宽（m）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "demand",
-                                    title: "要求",
-                                    width: "200",
-                                    align: "center"
-                                }, {
-                                    field: "wightset",
-                                    title: "重量设置",
-                                    width: "200",
-                                    align: "center"
-                                }, {
-                                    field: "dao",
-                                    title: "剖刀",
-                                    width: "150",
-                                    align: "center"
-                                }, {
-                                    field: "brand",
-                                    title: "商标",
-                                    width: "150",
-                                    align: "center"
-                                }, {
-                                    field: "pack",
-                                    title: "包装",
-                                    width: "200",
-                                    align: "center"
-                                }, {
-                                    field: "letter",
-                                    title: "印字",
-                                    width: "200",
-                                    align: "center"
-                                }, {
-                                    field: "peasant",
-                                    title: "农户名称",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "clientname",
-                                    title: "客户名称",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "realityweight",
-                                    title: "实际重量（kg）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "realityprice",
-                                    title: "实际厚度（mm）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "theoryweight",
-                                    title: "理论重量（kg）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "square",
-                                    title: "单件平米",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "numsquare",
-                                    title: "总平米",
-                                    width: "50",
-                                    align: "center"
-                                }, {
-                                    field: "weightway",
-                                    title: "称重方式",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "label",
-                                    title: "标签名称",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "weight",
-                                    title: "重量（kg）",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "patu",
-                                    title: "纸管",
-                                    width: "50",
-                                    align: "center"
-                                }, {
-                                    field: "remark",
-                                    title: "备注",
-                                    width: "100",
-                                    align: "center"
-                                }, {
-                                    field: "saleListId",
-                                    title: "ID",
-                                    width: "100",
-                                    align: "center",
-                                    formatter: function (val, row) {
-                                        return "";
-                                    }
-                                }]]
-                        });
-            }
-        }
 
         function baocun() {
             $.post(url, {
@@ -831,42 +600,9 @@
             });
         }
 
-        function openRoleModifyDialog() {
-            var selectedRows = $("#dg").datagrid("getSelections");
-            if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择一条要修改的数据！");
-                return;
-            }
-            var row = selectedRows[0];
-            $("#dialog").dialog("open").dialog("setTitle", "修改信息");
-            $("#saleNumber").val(row.saleNumber);
-            $("#saleDate").datebox("setValue", strDate(row.saleDate));
-            $("#client").combobox("setValue", row.client.name);
-            $("#clerk").combobox("setValue", row.clerk.name);
-            $("#lankman").val(row.lankman);
-            $("#address").val(row.address);
-            $("#tel").val(row.tel);
-            $("#deliveryDate").datebox("setValue", strDate(row.deliveryDate));//发货时间
-            $("remark").val(row.remark);
-            url = "/admin/saleList/saveTwo?id="
-                + row.id;
-        }
 
-        function resetValue() {
-            $("#client").combobox('reset');
-            $("#clerk").combobox('reset');
-            $("#saleDate").datebox('reset');
-            $("#deliveryDate").datebox('reset');
-            $("#saleNumber").val("");
-            $("#lankman").val("");
-            $("#tel").val("");
-            $("#address").val("");
-            $("#remark").val("");
-
-        }
 
         var a;
-
         //修改saleListProduct
         function editSaleListProduct() {
             var row = $("#dg2").datagrid("getSelections");
@@ -875,11 +611,11 @@
                 return;
             }
             var rows = row[0];
-            // console.log(rows);
+           // console.log(rows);
             a = rows.accomplishNumber == null ? 0 : rows.accomplishNumber;
             if (rows.state == "提货" || rows.state == "装车") {
                 $.messager.alert("系统提示", "<span style='color: red;'>产品已生产完成！不可修改！！</span>");
-            } else {
+            }else {
                 if (rows.state == "审核通过" || rows.state == "下单") {
                     rows.jiTai = null;
                     rows.informNumber = null;
@@ -895,16 +631,6 @@
             }
         }
 
-        function change() {
-            $.post("/admin//", {
-                id: row[0].id,
-                state: "下发机台：",
-            }, function (result) {
-                if (result.success) {
-                    $("#dg").datagrid("reload");
-                }
-            });
-        }
 
         //关闭dig2
         function closeGoodsDialog() {
@@ -939,6 +665,59 @@
                 }
             });
         }
+
+        function dingdanjiaji(){
+            var row = $("#dg").datagrid("getSelections");
+            if($("#up").combobox("getValue")==""){
+                $.messager.alert("系统提示", "请选择加急级别！");
+                return;
+            }
+            $.post("/admin/saleListProduct/dingdanjiaji", {
+                id: row[0].id,
+                jiajidengji: $("#up").combobox("getValue")
+            }, function (result) {
+                if (result.success) {
+                    $("#dg").datagrid("reload");
+                    $("#dg2").datagrid("reload");
+                    $.messager.alert("系统提示", "操作成功！");
+                }
+            });
+        }
+
+        function chanpinjiaji(){
+            var row = $("#dg2").datagrid("getSelections");
+            console.log(row)
+            if($("#down").combobox("getValue")==""){
+                $.messager.alert("系统提示", "请选择加急级别！");
+                return;
+            }
+            for(var i=0;i<row.length;i++){
+                if(row[i].state=="生产完成"){
+                    $.messager.alert("系统提示", "产品已生产完成！");
+                    return;
+                }
+                else {
+                    var ids = [];
+                    for (var i = 0; i < $("#dg2").datagrid("getSelections").length; i++) {
+                        ids.push($("#dg2").datagrid("getSelections")[i].id);
+                    }
+                    var idsStr = ids.join(",");
+                    $.post("/admin/saleListProduct/chanpinjiaji", {
+                        idsStr: idsStr,
+                        jiajidengji: $("#down").combobox("getValue")
+                    }, function (result) {
+                        if (result.success) {
+                            $("#dg2").datagrid("reload");
+                            $.messager.alert("系统提示", "操作成功！");
+                        }
+                    }, "json");
+                }
+            }
+
+
+        }
+
+
 
 
     </script>
@@ -978,19 +757,38 @@
             &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;&nbsp;客户：&nbsp;<input class="easyui-combobox"
-                                              id="s_client" name="client.id" style="width: 200px"
+                                              id="s_client" name="client.id" style="width: 80px"
                                               data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
             &nbsp;&nbsp;&nbsp;业务员：&nbsp;<input class="easyui-combobox"
-                                               id="s_clerk" name="clerk.id" style="width: 100px"
+                                               id="s_clerk" name="clerk.id" style="width: 80px"
                                                data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
             &nbsp;&nbsp;&nbsp;日期：&nbsp; <input id="s_bSaleDate"
                                                class="easyui-datebox" editable=false style="width: 100px"/>
             &nbsp;&nbsp;&nbsp;&nbsp; <input id="s_eSaleDate"
-                                            class="easyui-datebox" editable=false style="width: 100px"/>
+                                             class="easyui-datebox" editable=false style="width: 100px"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-            &nbsp;&nbsp;<a href="javascript:openRoleModifyDialog()"
-                           class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+
+
+            &nbsp;&nbsp;<input class="easyui-combobox" id = "up" style="width: 100px" data-options="
+                            panelHeight:'auto',
+                            valueField: 'label',
+                            textField: 'value',
+                            data: [{
+                                label: '1',
+                                value: '初级加急单'
+                            },{
+                                label: '2',
+                                value: '中级加急单'
+                            },{
+                                label: '3',
+                                value: '高级加急单'
+                            },{
+                                label: '0',
+                                value: '--取消加急--'
+                            }]" />
+            &nbsp;&nbsp;<a href="javascript:dingdanjiaji()"
+               class="easyui-linkbutton" iconCls="icon-ok" plain="true">订单加急</a>
         </fieldset>
     </div>
 </div>
@@ -1003,318 +801,27 @@
 
 <div id="tb2">
     <div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(1)"
-                                         class="easyui-linkbutton" iconCls="icon-ok" plain="true">审核通过</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:auditResult(0)"
-                                         class="easyui-linkbutton" iconCls="icon-no" plain="true">审核失败</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订单状态：&nbsp;
-        <!-- <input id="combo" class="easyui-combobox" style="width:120px;" /> -->
-        <!-- <input id="cc" name="dept" /> -->
-        <input id="cc1" class="easyui-combobox"
-               data-options="
-			panelHeight: 'auto',
-		    valueField: 'label',
-		    textField: 'value',
-		    data: [{
-					label: '未审核',
-					value: '未审核'
-				},{
-					label: '审核通过',
-					value: '审核通过'
-				},{
-					label: '下发机台',
-					value: '下发机台'
-				},{
-					label: '生产完成',
-					value: '生产完成'
-				},{
-					label: '提货',
-					value: '提货'
-				},{
-					label: '装车',
-					value: '装车'
-				}],
-		    onSelect: function(rec){
-		    	auditQuery(rec.value);
-		    }"/>
-        <a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
-           plain="true">修改</a>
+        &nbsp;&nbsp;<input class="easyui-combobox" id = "down" style="width: 100px" data-options="
+                            panelHeight:'auto',
+                            valueField: 'label',
+                            textField: 'value',
+                            data: [{
+                                label: '1',
+                                value: '初级加急单'
+                            },{
+                                label: '2',
+                                value: '中级加急单'
+                            },{
+                                label: '3',
+                                value: '高级加急单'
+                            },{
+                                label: '0',
+                                value: '--取消加急--'
+                            }]" />
+        &nbsp;&nbsp;<a href="javascript:chanpinjiaji()"
+                       class="easyui-linkbutton" iconCls="icon-ok" plain="true">产品加急</a>
     </div>
 </div>
 
-<div id="dlg" class="easyui-dialog" title="审核未通过原因"
-     style="padding: 10px 20px" buttons="#dlg-buttons">
-    &nbsp;&nbsp;&nbsp;原因：
-    <textarea id="cause"
-              style="margin-right: 20px; width: 300px; height: 100px; vertical-align: top; resize: none"></textarea>
-</div>
-
-
-<!-- 弹出来的修改框-->
-<div id="dialog" class="easyui-dialog"
-     style="width: 500px; height: 250px; padding: 10px 20px" closed="true"
-     buttons="#buttons">
-    <!-- data-options="onClose:function(){resetValue()}" -->
-    <form id="fm" method="post">
-        <table>
-            <tr>
-                <td>销售单号：</td>
-                <td><input type="text" id="saleNumber" name="saleNumber"
-                           style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td>销售日期：</td>
-                <td><input type="text"
-                           id="saleDate" name="saleDate" class="easyui-datebox"
-                           demandd="true" data-options="editable:false" size="15"/></td>
-            </tr>
-            <tr>
-                <td>客户：</td>
-                <td><input type="text" id="client" name="client"
-                           class="easyui-combobox" style="width: 119px"
-                           data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td>业务员 ：</td>
-                <td><input type="text" id="clerk" name="clerk"
-                           class="easyui-combobox" style="width: 119px"
-                           data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>联系人：</td>
-                <td><input type="text" id="lankman" name="lankman"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td>客户电话 ：</td>
-                <td><input type="text" id="tel" name="tel"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>客户地址 ：</td>
-                <td><input type="text" id="address" name="address"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td>发货时间：</td>
-                <td><input type="text" id="deliveryDate" name="deliveryDate"
-                           class="easyui-datebox" demandd="true"
-                           data-options="editable:false" size="15"/></td>
-            </tr>
-
-            <tr>
-                <td>备注：</td>
-                <td><input type="text" id="remark" name="remark"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-            </tr>
-        </table>
-    </form>
-</div>
-
-<!-- 修改框中的保存关闭按钮 -->
-<div id="buttons">
-    <a href="javascript:baocun()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeCause()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
-
-<!-- 审核时的确定关闭按钮 -->
-<div id="dlg-buttons">
-    <a href="javascript:saveCause()" class="easyui-linkbutton"
-       iconCls="icon-ok">确定</a> <a href="javascript:closeCause()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
-
-<div id="dlg2" class="easyui-dialog"
-     style="width: 600px; height: 450px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons2" title="修改订单商品信息" data-options="onClose:function(){resetValue()}">
-    <form id="fm2" method="post">
-        <table>
-            <tr>
-                <td>产&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;品&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;&nbsp;称
-                    ：
-                </td>
-                <td><input type="hidden" id="action"/> <input type="hidden"
-                                                              id="rowIndex"/> <input type="text" id="name" name="name"
-                                                                                     class="easyui-combobox"
-                                                                                     style="width: 119px"
-                                                                                     data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/product/productList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>幅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宽（m）&nbsp;：</td>
-                <td><input type="text" id="model" name="model"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（mm）：</td>
-                <td><input type="text" id="price" name="price"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（m） ：</td>
-                <td><input type="text" id="length" name="length"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>颜&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色
-                    ：
-                </td>
-                <td><input type="text" id="color" name="color"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>实际幅宽（m） ：</td>
-                <td><input type="text" id="realitymodel" name="realitymodel"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>实际厚度（mm） ：</td>
-                <td><input type="text" id="realityprice" name="realityprice"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>订&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;：</td>
-                <td><input type="text" id="num" name="num"
-                           class="easyui-numberbox" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>理论重量（k&nbsp;&nbsp;&nbsp;g）：</td>
-                <td><input type="text" id="theoryweight" name="theoryweight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>单件重量（kg）：</td>
-                <td><input type="text" id="oneweight" name="oneweight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>单&nbsp;&nbsp;&nbsp;
-                    件&nbsp;&nbsp;&nbsp;&nbsp;平&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;：
-                </td>
-                <td><input type="text" id="square" name="square"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;平&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;米：</td>
-                <td><input type="text" id="numsquare" name="numsquare"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>要&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;求
-                    ：
-                </td>
-                <td><input type="text" id="demand" name="demand"
-                           class="easyui-combobox" style="width: 120px" id="demandId"
-                           name="demand.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/require/requireList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>称&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;方&nbsp;&nbsp;&nbsp;式
-                    &nbsp;：
-                </td>
-                <td><input type="text" id="weightway" name="weightway"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>标&nbsp;&nbsp;&nbsp;&nbsp;签&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;&nbsp;称&nbsp;&nbsp;：</td>
-                <td><input type="text" id="label" name="label"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>农&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称&nbsp;&nbsp;：</td>
-                <td><input type="text" id="peasant" name="peasant"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
-                <td><input type="text" id="weight" name="weight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>剖&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刀&nbsp;：</td>
-                <td><input type="text" id="dao" name="dao"
-                           class="easyui-combobox" style="width: 120px" id="daoId"
-                           name="dao.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/dao/daoList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>商&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标&nbsp;：</td>
-                <td><input type="text" id="brand" name="brand"
-                           class="easyui-combobox" style="width: 120px" id="brandId"
-                           name="brand.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/brand/brandList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>包&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装&nbsp;：</td>
-                <td><input type="text" id="pack" name="pack"
-                           class="easyui-combobox" style="width: 120px" id="packId"
-                           name="pack.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/pack/packList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>印&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字&nbsp;：</td>
-                <td><input type="text" id="letter" name="letter"
-                           class="easyui-combobox" style="width: 120px" id="letterId"
-                           name="letter.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/letter/letterList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>纸&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;管&nbsp;：</td>
-                <td><input type="text" id="patu" name="patu"
-                           class="easyui-combobox" style="width: 120px" id="patuId"
-                           name="patu.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/patu/patuList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>重&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：</td>
-                <td><input type="text" id="wightset" name="wightset"
-                           class="easyui-combobox" style="width: 120px" id="wightId"
-                           name="wight.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/wight/wightList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>总&nbsp;&nbsp;重&nbsp;&nbsp;量（kg）：</td>
-                <td><input type="text" id="sumwight" name="sumwight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>生&nbsp;&nbsp;&nbsp;
-                    产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
-                </td>
-                <td><input type="text" id="meter" name="meter"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
-                <td><input type="text" id="clientname" name="clientname"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>实&nbsp;&nbsp;&nbsp;际&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;：</td>
-                <td><input type="text" id="realityweight" name="realityweight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;：</td>
-                <td><input type="text" id="remarks" name="remark"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>
-                    <input type="text" id="saleList" name="saleList" class="easyui-validatebox"
-                           style="width: 120px"/>
-                </td>
-                <td><input type="text" id="jiTai" name="jiTai"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td><input type="text" id="accomplishNumber" name="accomplishNumber"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td><input type="text" id="issueState" name="issueState"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td><input type="text" id="informNumber" name="informNumber"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td><input type="text" id="state" name="state"
-                           class="easyui-validatebox" style="width: 120px"/></td>
-                <td>id<input type="text" id="id" name="id"
-                             class="easyui-validatebox" style="width: 120px"/></td>
-
-            </tr>
-        </table>
-    </form>
-</div>
-
-<div id="dlg-buttons2">
-    <a href="javascript:saveGoods()" class="easyui-linkbutton" iconCls="icon-ok">保存</a> <a
-        href="javascript:closeGoodsDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
 </body>
 </html>

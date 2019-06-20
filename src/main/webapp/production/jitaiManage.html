@@ -1165,7 +1165,42 @@
             ddClose();
         }
 
+        //非标入库
+        function feibiao() {
+            $.messager.prompt("请输入重量", "非标准件的重量：", function (r){
+                if (r) {
+                    if (isNaN(r)){
+                        alert("请输入数字！")
+                    } else {
+                        var row = $("#dg").datagrid("getSelected");
+                        $.ajax({
+                            url:"/admin/storage/add",
+                            data:{
+                                saleListProduct: $("#dg").datagrid("getSelected").id,
+                                jiTai: $("#selectJitai").combobox("getValue"),
+                                clerkName: $("#staff").val(),
+                                realityweight: Number(r),
+                                dabaonum: 1
+                            },
+                            success:function (result) {
+                                if (result.success) {
+                                    printt(result.id);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
         $(document).ready(function () {
+            $('#dg').datagrid({
+                rowStyler:function(index,row){
+                    if (row.level || row.level != 0) {
+                        return 'background-color:orange;color:blue;font-weight:bold;';
+                    }
+                }
+            });
             loadColum();
             loadDg2Colum();
             ddClose();
@@ -1216,6 +1251,8 @@
 <div id="tb2">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:weigh()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
+                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">非标入库</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
                                      class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:printTest()" class="easyui-linkbutton" iconCls="icon-reload"

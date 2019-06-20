@@ -174,4 +174,19 @@ public interface SaleListProductService {
     void hebingJian(Integer count, Integer id);
 
 	void deleteById(int parseInt);
+
+	/***
+	 * 订单加急
+	 * @param id
+	 * @param jiajidengji
+	 */
+	public void dingdanjiaji(Integer id, String jiajidengji);
+
+
+	/***
+	 * 产品加急
+	 * @param id
+	 * @param jiajidengji
+	 */
+	public void chanpinjiaji(Integer id,String jiajidengji);
 }

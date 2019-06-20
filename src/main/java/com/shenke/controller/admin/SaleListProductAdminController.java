@@ -305,4 +305,38 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
+
+    /**
+     * 产品加急
+     * @param
+     * @param jiajidengji
+     * @return
+     */
+    @RequestMapping("/chanpinjiaji")
+    public Map<String,Object> chanpinjiaji(String idsStr,String jiajidengji){
+        System.out.println("**********");
+        System.out.println(idsStr);
+        System.out.println("**********");
+        Map<String,Object> map = new HashMap<>();
+        String[] ids = idsStr.split(",");
+        for(int i=0;i<ids.length;i++){
+            saleListProductService.chanpinjiaji(Integer.parseInt(ids[i]),jiajidengji);
+        }
+        map.put("success",true);
+        return map;
+    }
+
+    /***
+     * 订单加急
+     * @param id
+     * @param jiajidengji
+     * @return
+     */
+    @RequestMapping("/dingdanjiaji")
+    public Map<String,Object> dingdanjiaji(Integer id,String jiajidengji){
+        Map<String,Object> map = new HashMap<>();
+        saleListProductService.dingdanjiaji(id,jiajidengji);
+        map.put("success",true);
+        return map;
+    }
 }

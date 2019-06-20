@@ -59,6 +59,23 @@ public class StorageAdminController {
     }
 
     /**
+     * 非标入库
+     *
+     * @return
+     */
+    @RequestMapping("/feibiaoAdd")
+    public Map<String, Object> feibiaoAdd(Storage storage, String clerkName, String groupName) {
+        System.out.println(storage);
+        //storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
+        storageService.feibiaoAdd(storage, clerkName, groupName);
+        Map<String, Object> map = new HashMap<String, Object>();
+        Integer id = storageService.selectByMaxId().getId();
+        map.put("success", true);
+        map.put("id", id);
+        return map;
+    }
+
+    /**
      * 根据订单销售商品id查询入库单
      *
      * @return

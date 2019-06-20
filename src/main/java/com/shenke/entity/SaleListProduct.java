@@ -108,6 +108,8 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double meter;// 实际厚度
 
+	private Integer level;//等级
+
 	@Column(length = 50)
 	private String peasant;// 农户名称
 
@@ -168,6 +170,7 @@ public class SaleListProduct {
 				", state='" + state + '\'' +
 				", sumwight=" + sumwight +
 				", meter=" + meter +
+				", level=" + level +
 				", peasant='" + peasant + '\'' +
 				", clientname='" + clientname + '\'' +
 				", accomplishNumber=" + accomplishNumber +
@@ -178,6 +181,14 @@ public class SaleListProduct {
 				", saleTotal=" + saleTotal +
 				", hebingLength='" + hebingLength + '\'' +
 				'}';
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	public String getHebingLength() {
