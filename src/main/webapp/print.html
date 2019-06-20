@@ -8,7 +8,7 @@
 body {
 	background: white;
 	margin: 0px;
-	padding: 10px 10px;
+	padding: 60px 100px 0 50px;
 	text-align: center;
 }
 	table td {
@@ -19,7 +19,7 @@ body {
 	}
 	table {
 		border-collapse: collapse;
-		text-align: center;
+		text-align: left;
 	}
 </style>
 </head>
@@ -34,13 +34,14 @@ body {
 			document.write(window.opener.tableString);
 			console.log(window.opener.tableString);
 		}
-		// window.print();
-		// var timeId = setInterval(function () {
-		// 	if (document.getElementsByTagName("img")) {
-		// 		window.close();
-		// 		clearInterval(timeId);
-		// 	}
-		// }, 1000)
+		window.print();
+		var timeId = setInterval(function () {
+			if (document.getElementsByTagName("img")) {
+				window.print();
+				window.close();
+				clearInterval(timeId);
+			}
+		}, 1000)
 	</script>
 </body>
 </html>

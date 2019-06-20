@@ -18,6 +18,14 @@
         #dl {
             padding: 15px 0;
         }
+
+        #dd2 input {
+            width: 100px;
+        }
+
+        #fm div {
+            margin: 5px 0;
+        }
     </style>
     <style>
         .datagrid-row-selected {
@@ -118,7 +126,11 @@
                             field: 'clientname',
                             title: '客户',
                             width: 100,
-                            align: 'center'
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'name',
                             title: '名称',
@@ -133,17 +145,29 @@
                             field: 'model',
                             title: '幅宽',
                             width: 100,
-                            align: 'center'
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'length',
                             title: '长度',
                             width: 100,
-                            align: 'center'
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'price',
                             title: '厚度',
                             width: 100,
-                            align: 'center'
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'meter',
                             title: '实际厚度',
@@ -153,7 +177,11 @@
                             field: 'oneweight',
                             title: '重量',
                             width: 100,
-                            align: 'center'
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'sumwight',
                             title: '总重',
@@ -224,7 +252,8 @@
                             for (var i = 0; i < count; i++) {
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
                             }
-                        }
+                        },
+                        remoteSort: false
                     });
         }
 
@@ -489,6 +518,11 @@
         //关闭设置面板
         function ddClose() {
             $("#dd").dialog("close");
+        }
+
+        //关闭查询面板
+        function dd2Close() {
+            $("#dd2").dialog("close");
         }
 
         var biaoqian;
@@ -902,7 +936,7 @@
                                 } else {
                                     window
                                         .open(
-                                            "print.html",
+                                            "..\\print.html",
                                             tableString,
                                             "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                                 }
@@ -1167,22 +1201,22 @@
 
         //非标入库
         function feibiao() {
-            $.messager.prompt("请输入重量", "非标准件的重量：", function (r){
+            $.messager.prompt("请输入重量", "非标准件的重量：", function (r) {
                 if (r) {
-                    if (isNaN(r)){
+                    if (isNaN(r)) {
                         alert("请输入数字！")
                     } else {
                         var row = $("#dg").datagrid("getSelected");
                         $.ajax({
-                            url:"/admin/storage/add",
-                            data:{
+                            url: "/admin/storage/add",
+                            data: {
                                 saleListProduct: $("#dg").datagrid("getSelected").id,
                                 jiTai: $("#selectJitai").combobox("getValue"),
                                 clerkName: $("#staff").val(),
                                 realityweight: Number(r),
                                 dabaonum: 1
                             },
-                            success:function (result) {
+                            success: function (result) {
                                 if (result.success) {
                                     printt(result.id);
                                 }
@@ -1193,14 +1227,53 @@
             });
         }
 
+        //点击要求
+        function yaoqiuAlert() {
+            var yaoqiu = "<span style='color: red; font-size: 20px;'>" + $("#yaoqiu").text() + "</span>";
+            $.messager.alert("要求", yaoqiu);
+        }
+
+        //点击关闭按钮
+        function closedd2() {
+            $("#dd2").dialog('close');
+        }
+
+        //点击查询
+        function select() {
+            $("#dd2").dialog("open");
+        }
+
+        //点击确定按钮条件查询
+        function condition() {
+            $("#jiTai").val($("#selectJitai").combobox('getValue'));
+            $("#fm").form('submit', {
+                url: "/admin/saleListProduct/condition",
+                onSubmit: function () {
+                    if (!$("#selectJitai").combobox('getValue')) {
+                        $.messager.alert("系统提示", "<span style='color: red;'>请选择机台</span>.")
+                    }
+                },
+                success: function (result) {
+                    var obj = eval('(' + result + ')');
+                    if (obj.success) {
+                        $("#dd2").dialog('close');
+                        $.messager.alert("系统提示", "<span style='color: red;'>剩余数量：" + obj.num + "件<br/>剩余重量：" + obj.weight + "kg</span>")
+                    } else {
+                        alert(obj.msg);
+                    }
+                }
+            });
+        }
+
         $(document).ready(function () {
             $('#dg').datagrid({
-                rowStyler:function(index,row){
+                rowStyler: function (index, row) {
                     if (row.level || row.level != 0) {
                         return 'background-color:orange;color:blue;font-weight:bold;';
                     }
                 }
             });
+            dd2Close();
             loadColum();
             loadDg2Colum();
             ddClose();
@@ -1234,9 +1307,12 @@
                                    iconCls="icon-no" href="javascript:end()">停止</a></td>
                 <td>&nbsp;&nbsp;<a id="" class="easyui-linkbutton"
                                    iconCls="icon-help" href="javascript:printSetClick()">设置</a></td>
+                <td>&nbsp;&nbsp;<a id="select" class="easyui-linkbutton"
+                                   iconCls="icon-search" href="javascript:select()">查询</a></td>
             </tr>
         </table>
-        <span id="yaoqiufu" style="display: inline-block; width: 555px; overflow: hidden;"><span id="yaoqiu"
+        <span id="yaoqiufu" style="display: inline-block; width: 500px; overflow: hidden;"><span id="yaoqiu"
+                                                                                                 onclick=javascript:yaoqiuAlert()
                                                                                                  style="font-size: 21px; position: relative; display: inline-block; white-space: nowrap; font-family: 'Arial Black'; color: red;"></span></span>
     </div>
 </div>
@@ -1312,6 +1388,26 @@
        href="javascript:print()">打印</a>
     <a class="easyui-linkbutton"
        iconCls="icon-cancel" href="javascript:ddClose()">关闭</a>
+</div>
+
+<div id="dd2" class="easyui-dialog" title="选择条件" style="width:400px;height:250px;padding: 5px;"
+     data-options="buttons:'#bb2',iconCls:'icon-save',resizable:true,modal:true">
+    <form id="fm">
+        <div>客户：<input type="text" id="clientname" name="clientname" class="easyui-combobox"
+                       data-options="valueField:'name',textField:'name',url:'/admin/client/clientList'"></div>
+        <div>名称：<input type="text" class="easyui-combobox" id="name" name="name"
+                       data-options="valueField:'name',textField:'name',url:'/admin/product/productList'"></div>
+        <div>厚度：<input type="number" id="meter" name="meter"></div>
+        <div>宽度：<input type="number" id="model" name="model"></div>
+        <div>颜色：<input type="text" id="color" name="color"></div>
+        <input type="hidden" id="jiTai" name="jiTai">
+        <div>压边：<input type="text" id="dao" name="dao" class="easyui-combobox"
+                       data-options="valueField:'name',textField:'name',url:'/admin/dao/daoList'"></div>
+    </form>
+</div>
+<div id="bb2">
+    <a href="javascript:condition()" class="easyui-linkbutton">确定</a>
+    <a href="javascript:closedd2()" class="easyui-linkbutton">关闭</a>
 </div>
 </body>
 </html>

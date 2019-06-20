@@ -97,8 +97,7 @@ public class ToLeadController {
         Map<String, Object> map = new HashMap<String, Object>();
 
         // 设置实际厚度小数点后面的位数
-        DecimalFormat df = new DecimalFormat("0.0000"); // DecimalFormat 数字格式化
-        DecimalFormat dd = new DecimalFormat("0.00"); //格式化保留两位小数
+        DecimalFormat dd = new DecimalFormat("0.0000"); //格式化保留两位小数
 
         // 用来存放订单商品的集合
         List<SaleListProduct> list = new ArrayList<SaleListProduct>();
@@ -150,7 +149,7 @@ public class ToLeadController {
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("实际厚度", df.format(Double.parseDouble(getStringCellValue(cell))));
                                 saleListProduct.setMeter(
-                                        Double.parseDouble(df.format(Double.parseDouble(getStringCellValue(cell)))));
+                                        Double.parseDouble(dd.format(Double.parseDouble(getStringCellValue(cell)))));
                             }
                             break;
                         case 6:
@@ -160,7 +159,7 @@ public class ToLeadController {
                         case 7:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("单件重量kg", getStringCellValue(cell));
-                                saleListProduct.setOneweight(Double.parseDouble(dd.format(Double.parseDouble(getStringCellValue(cell)))));
+                                saleListProduct.setOneweight((int) Math.round(Double.parseDouble(getStringCellValue(cell))));
                             }
                             break;
                         case 8:
@@ -172,7 +171,7 @@ public class ToLeadController {
                         case 9:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("总重量", getStringCellValue(cell));
-                                saleListProduct.setSumwight(Double.parseDouble(dd.format(Double.parseDouble(getStringCellValue(cell)))));
+                                saleListProduct.setSumwight((int) Math.round(Double.parseDouble(getStringCellValue(cell))));
                             }
                             break;
                         case 10:

@@ -69,8 +69,7 @@ public class Storage{
     @Column(nullable = true)
     private Double theoryweight;// 理论重量
 
-    @Column(nullable = true)
-    private Double oneweight;// 单件重量
+    private Integer oneweight;// 单件重量
 
     @Column(nullable = true)
     private Double square;// 单件平米
@@ -87,8 +86,7 @@ public class Storage{
     @Column(length = 50)
     private String label;// 标签名称
 
-    @Column(nullable = true)
-    private Double weight;// 重量
+    private Integer weight;// 重量
 
     @Column(length = 50)
     private String dao;// 剖刀
@@ -111,8 +109,7 @@ public class Storage{
     @Column(length = 50)
     private String state;// 订单状态
 
-    @Column(nullable = true)
-    private Double sumwight;// 总重量
+    private Integer sumwight;// 总重量
 
     @Column(nullable = true)
     private Double meter;// 实际厚度
@@ -141,7 +138,7 @@ public class Storage{
     @Column(length = 100)
     private String hebingLength;//合并长度
 
-//    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMfP)
     private Date deliveryTime;//出库时间
 
 //    @Temporal(TemporalType.TIMESTAMP)
@@ -424,14 +421,6 @@ public class Storage{
         this.theoryweight = theoryweight;
     }
 
-    public Double getOneweight() {
-        return oneweight;
-    }
-
-    public void setOneweight(Double oneweight) {
-        this.oneweight = oneweight;
-    }
-
     public Double getSquare() {
         return square;
     }
@@ -470,14 +459,6 @@ public class Storage{
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
     }
 
     public String getDao() {
@@ -536,11 +517,27 @@ public class Storage{
         this.state = state;
     }
 
-    public Double getSumwight() {
+    public Integer getOneweight() {
+        return oneweight;
+    }
+
+    public void setOneweight(Integer oneweight) {
+        this.oneweight = oneweight;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Integer getSumwight() {
         return sumwight;
     }
 
-    public void setSumwight(Double sumwight) {
+    public void setSumwight(Integer sumwight) {
         this.sumwight = sumwight;
     }
 

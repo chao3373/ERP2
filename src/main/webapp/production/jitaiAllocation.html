@@ -49,72 +49,87 @@
                                 align: "center"
                             },
                             {
-                                field: "productionMessage",
-                                title: "产品信息",
-                                width: "250",
-                                align: "center",
-                                formatter: function (value, rows, index) {
-                                    if (rows.saleListProduct) {
-                                        var saleListProduct = rows.saleListProduct;
-                                        return "产品名称: "
-                                            + saleListProduct.name
-                                            + "   农户名称: "
-                                            + saleListProduct.peasant
-                                            + "   客户名称: "
-                                            + saleListProduct.clientname
-                                            + "   幅宽: "
-                                            + saleListProduct.model
-                                            + "   厚度: "
-                                            + saleListProduct.price
-                                            + "   长度: "
-                                            + saleListProduct.length
-                                            + "   颜色: "
-                                            + saleListProduct.color
-                                            + "   数量: "
-                                            + saleListProduct.num
-                                            + "   理论重量: "
-                                            + saleListProduct.theoryweight
-                                            + "   单件重量: "
-                                            + saleListProduct.oneweight
-                                            + "   单件平米: "
-                                            + saleListProduct.square
-                                            + "   总平米: "
-                                            + saleListProduct.numsquare
-                                            + "   要求.: "
-                                            + saleListProduct.demand
-                                            + "   标签名称: "
-                                            + saleListProduct.label
-                                            + "   重量: "
-                                            + saleListProduct.weight
-                                            + "   剖刀: "
-                                            + saleListProduct.dao
-                                            + "   商标: "
-                                            + saleListProduct.brand
-                                            + "   包装: "
-                                            + saleListProduct.pack
-                                            + "   印字: "
-                                            + saleListProduct.letter
-                                            + "   纸管: "
-                                            + saleListProduct.patu
-                                            + "   重量设置: "
-                                            + saleListProduct.wightset
-                                            + "   订单状态: "
-                                            + saleListProduct.state
-                                            + "   总重量: "
-                                            + saleListProduct.sumwight
-                                            + "   实际厚度: "
-                                            + saleListProduct.meter
-                                            + "   备注: "
-                                            + saleListProduct.remark;
-                                    } else {
-                                        return "";
-                                    }
-                                }
+                                field: "name",
+                                title: "产品名称",
+                                width: "500",
+                                align: "center"
                             },
                             {
-                                field: 'sumwight',
-                                title: "任务量",
+                                field: "peasant",
+                                title: "农户名称",
                                 width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "clientname",
+                                title: "客户名称",
+                                width: "150",
+                                align: "center"
+                            },
+                            {
+                                field: "model",
+                                title: "幅宽",
+                                width: "60",
+                                align: "center"
+                            },
+                            {
+                                field: "price",
+                                title: "厚度",
+                                width: "60",
+                                align: "center"
+                            },
+                            {
+                                field: "length",
+                                title: "长度",
+                                width: "60",
+                                align: "center"
+                            },
+                            {
+                                field: "color",
+                                title: "颜色",
+                                width: "60",
+                                align: "center"
+                            },
+                            {
+                                field: "oneweight",
+                                title: "单件重量",
+                                width: "120",
+                                align: "center"
+                            },
+                            {
+                                field: "dao",
+                                title: "压边",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "brand",
+                                title: "商标",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "pack",
+                                title: "包装",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "letter",
+                                title: "印字",
+                                width: "100",
+                                align: "center"
+                            },
+                            {
+                                field: "sumwight",
+                                title: "总重量",
+                                width: "60",
+                                align: "center"
+                            },
+                            {
+                                field: "meter",
+                                title: "实际厚度",
+                                width: "60",
                                 align: "center"
                             },
                             {
@@ -124,24 +139,10 @@
                                 align: "center"
                             },
                             {
-                                field: "allotState",
-                                title: "分配状态",
-                                width: "150",
+                                field: "demand",
+                                title: "要求",
+                                width: "1000",
                                 align: "center"
-                            },
-                            {
-                                field: "issueState",
-                                title: "下发状态",
-                                width: "150",
-                                align: "center",
-                                formatter: function (value, rows, index) {
-                                    if (value == "未下发") {
-                                        return "<span style='color:red;'>未下发</span>";
-                                    } else {
-                                        return "<span style='color:green;'>"
-                                            + value + "</span>";
-                                    }
-                                }
                             },
                             {
                                 field: "saleListProductId",
@@ -246,9 +247,140 @@
 
         }
 
+        //打印
+        function printdgg() {
+            CreateFormPage("datagrid", $("#dg"));
+        }
+
+
+        //打印开始
+        var tableString;
+        // strPrintName 打印任务名
+        // printDatagrid 要打印的datagrid
+        function CreateFormPage(strPrintName, printDatagrid) {
+            tableString = "";
+            tableString += "<h3 style='font-size: 22px;text-align: center;'>生产任务单</h3>";
+            tableString += '<table cellspacing="0" class="pb">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
+
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function (index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 1; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            var nl = eval('([' + nameList.substring(1) + '])');
+            for (var i = 0; i < rows.length; ++i) {
+                tableString += '\n<tr>';
+                $(nl).each(function (j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        if (tdStr == null) {
+                            tdStr = "";
+                        }
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                tableString += '\n</tr>';
+            }
+            tableString += '\n</table>';
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            }
+        }
+
         $(document).ready(function () {
             $('#dg').datagrid({
-                rowStyler:function(index,row){
+                rowStyler: function (index, row) {
                     if (row.level || row.level != 0) {
                         return 'background-color:orange;color:blue;font-weight:bold;';
                     }
@@ -288,20 +420,18 @@
                                                    valueField="id" panelHeight="auto" textField="name"
                                                    style="width: 98px"/>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-                                           iconCls="icon-cancel" href="javascript:reset()">刷新</a>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton" href="javascript:reset()">刷新</a>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-                                           iconCls="icon-add" href="javascript:issue()">下发</a>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton" href="javascript:issue()">下发</a>
             </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：
-            <input id="alertJitai" class="easyui-combobox"
-            url="/admin/jitai/findAll" name="mode" valueField="id"
-            panelHeight="auto" textField="name" style="width: 98px" />
+                <input id="alertJitai" class="easyui-combobox"
+                       url="/admin/jitai/findAll" name="mode" valueField="id"
+                       panelHeight="auto" textField="name" style="width: 98px"/>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton"
-            iconCls="icon-ok" href="javascript:alertJitai()">修改</a>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton" href="javascript:alertJitai()">修改</a>
             </td>
+            <td><a href="javascript:printdgg()" class="easyui-linkbutton">打印</a></td>
         </tr>
     </table>
 </div>

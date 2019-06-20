@@ -96,7 +96,8 @@
                 function () {
                     $('#dg2').datagrid({
                         rowStyler: function (index, row) {
-                            if (row.level || row.level != 0) {
+                            console.log(row);
+                            if (row.level != 0) {
                                 return 'background-color:orange;color:blue;font-weight:bold;';
                             }
                         }

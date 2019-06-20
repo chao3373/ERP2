@@ -189,4 +189,6 @@ public interface SaleListProductService {
 	 * @param jiajidengji
 	 */
 	public void chanpinjiaji(Integer id,String jiajidengji);
+
+    List<SaleListProduct> condition(SaleListProduct saleListProduct);
 }

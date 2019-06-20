@@ -60,8 +60,7 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double theoryweight;// 理论重量
 
-	@Column(nullable = true)
-	private Double oneweight;// 单件重量
+	private Integer oneweight;// 单件重量
 
 	@Column(nullable = true)
 	private Double square;// 单件平米
@@ -78,8 +77,7 @@ public class SaleListProduct {
 	@Column(length = 50)
 	private String label;// 标签名称
 
-	@Column(nullable = true)
-	private Double weight;// 重量
+	private Integer weight;// 重量
 
 	@Column(length = 50)
 	private String dao;// 剖刀
@@ -102,8 +100,7 @@ public class SaleListProduct {
 	@Column(length = 50)
 	private String state;// 订单状态
 
-	@Column(nullable = true)
-	private Double sumwight;// 总重量
+	private Integer sumwight;// 总重量
 
 	@Column(nullable = true)
 	private Double meter;// 实际厚度
@@ -335,11 +332,11 @@ public class SaleListProduct {
 		this.theoryweight = theoryweight;
 	}
 
-	public Double getOneweight() {
+	public Integer getOneweight() {
 		return oneweight;
 	}
 
-	public void setOneweight(Double oneweight) {
+	public void setOneweight(Integer oneweight) {
 		this.oneweight = oneweight;
 	}
 
@@ -383,11 +380,11 @@ public class SaleListProduct {
 		this.label = label;
 	}
 
-	public Double getWeight() {
+	public Integer getWeight() {
 		return weight;
 	}
 
-	public void setWeight(Double weight) {
+	public void setWeight(Integer weight) {
 		this.weight = weight;
 	}
 
@@ -447,11 +444,11 @@ public class SaleListProduct {
 		this.state = state;
 	}
 
-	public Double getSumwight() {
+	public Integer getSumwight() {
 		return sumwight;
 	}
 
-	public void setSumwight(Double sumwight) {
+	public void setSumwight(Integer sumwight) {
 		this.sumwight = sumwight;
 	}
 

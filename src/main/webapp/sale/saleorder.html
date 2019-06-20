@@ -495,29 +495,27 @@
                     success: function (result) {
                         var obj = eval('(' + result + ')');
                         if (obj.success) {
-
+                            var resultt = $.parseJSON(result);
+                            $("#dg").datagrid({
+                                data: resultt.rows
+                            });
+                            var countnum = 0;
+                            var sumweight = 0;
+                            var rows = $("#dg").datagrid('getRows');
+                            for (var i = 0; i < rows.length; i++) {
+                                console.log(rows[i].num);
+                                countnum += rows[i].num;
+                                sumweight += rows[i].sumwight;
+                            }
+                            $("#dg").datagrid('appendRow', {
+                                name: '合计',
+                                num: '总数量：' + countnum,
+                                sumwight: '总重量：' + sumweight
+                            });
                         } else {
                             $.messager.alert("系统提示", "<span style='color:red'>"
                                 + obj.errorInfo + "</span>");
-
                         }
-
-                        var resultt = $.parseJSON(result);
-                        $("#dg").datagrid({
-                            data: resultt.rows
-                        });
-                        var countnum = 0;
-                        var sumweight = 0;
-                        var rows = $("#dg").datagrid('getRows');
-                        for (var i = 0; i < rows.length; i++) {
-                             countnum += rows[i].num;
-                             sumweight += rows[i].sumwight;
-                        }
-                        $("#dg").datagrid('appendRow', {
-                            name: '合计',
-                            num: '总数量：' + countnum,
-                            sumwight: '总重量：' + num.toFixed(2)
-                        });
                     }
                 });
 

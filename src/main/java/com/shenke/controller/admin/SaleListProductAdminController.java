@@ -3,6 +3,7 @@ package com.shenke.controller.admin;
 import java.util.*;
 import javax.annotation.Resource;
 
+import com.shenke.entity.Storage;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -308,21 +309,22 @@ public class SaleListProductAdminController {
 
     /**
      * 产品加急
+     *
      * @param
      * @param jiajidengji
      * @return
      */
     @RequestMapping("/chanpinjiaji")
-    public Map<String,Object> chanpinjiaji(String idsStr,String jiajidengji){
+    public Map<String, Object> chanpinjiaji(String idsStr, String jiajidengji) {
         System.out.println("**********");
         System.out.println(idsStr);
         System.out.println("**********");
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         String[] ids = idsStr.split(",");
-        for(int i=0;i<ids.length;i++){
-            saleListProductService.chanpinjiaji(Integer.parseInt(ids[i]),jiajidengji);
+        for (int i = 0; i < ids.length; i++) {
+            saleListProductService.chanpinjiaji(Integer.parseInt(ids[i]), jiajidengji);
         }
-        map.put("success",true);
+        map.put("success", true);
         return map;
     }
 
@@ -333,10 +335,37 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/dingdanjiaji")
-    public Map<String,Object> dingdanjiaji(Integer id,String jiajidengji){
-        Map<String,Object> map = new HashMap<>();
-        saleListProductService.dingdanjiaji(id,jiajidengji);
-        map.put("success",true);
+    public Map<String, Object> dingdanjiaji(Integer id, String jiajidengji) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.dingdanjiaji(id, jiajidengji);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 按条件查询
+     * @return
+     */
+    @RequestMapping("/condition")
+    public Map<String, Object> condition(SaleListProduct saleListProduct) {
+        Map<String, Object> map = new HashMap<>();
+        List<SaleListProduct> condition = saleListProductService.condition(saleListProduct);
+        Integer num = 0;
+        Integer weight = 0;
+
+        for (SaleListProduct saleListProduct1 : condition) {
+            num += saleListProduct1.getNum();
+            weight += saleListProduct1.getSumwight();
+        }
+
+        if (condition.size() != 0) {
+            map.put("success", true);
+            map.put("num", num);
+            map.put("weight", weight);
+        } else {
+            map.put("success", false);
+            map.put("msg", "没有符合条件的商品");
+        }
         return map;
     }
 }

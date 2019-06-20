@@ -273,9 +273,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         Integer num = saleListProduct.getNum();
         saleListProduct.setNum(num / count);
         double lengthh = saleListProduct.getLength();
-        int length = (int)lengthh;
+        int length = (int) lengthh;
         StringBuilder sb = new StringBuilder();
-        sb.append(length+"");
+        sb.append(length + "");
         Integer countNum = length;
         for (int i = 0; i < count - 1; i++) {
             sb.append("+" + length);
@@ -286,7 +286,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         saleListProductRepository.save(saleListProduct);
         if (num % count != 0) {
             StringBuilder leng = new StringBuilder();
-            leng.append(length+"");
+            leng.append(length + "");
             Integer countNum2 = length;
             for (int i = 0; i < num % count - 1; i++) {
                 leng.append("+" + leng);
@@ -307,11 +307,42 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     @Override
     public void dingdanjiaji(Integer id, String jiajidengji) {
 
-        saleListProductRepository.dingdanjiaji(id,jiajidengji);
+        saleListProductRepository.dingdanjiaji(id, jiajidengji);
     }
 
     @Override
-    public void chanpinjiaji(Integer id,String jiajidengji){
-        saleListProductRepository.chanpinjiaji(id,jiajidengji);
+    public void chanpinjiaji(Integer id, String jiajidengji) {
+        saleListProductRepository.chanpinjiaji(id, jiajidengji);
+    }
+
+    @Override
+    public List<SaleListProduct> condition(SaleListProduct saleListProduct) {
+        return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+            @Override
+            public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty(saleListProduct.getName())) {
+                    predicate.getExpressions().add(cb.equal(root.get("name"), saleListProduct.getName()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), saleListProduct.getClientname()));
+                }
+                if (saleListProduct.getPrice() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("meter"), saleListProduct.getMeter()));
+                }
+                if (saleListProduct.getModel() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("model"), saleListProduct.getModel()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getColor())){
+                    predicate.getExpressions().add(cb.equal(root.get("color"), saleListProduct.getColor()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getDao())){
+                    predicate.getExpressions().add(cb.equal(root.get("dao"), saleListProduct.getDao()));
+                }
+                predicate.getExpressions().add(cb.equal(root.get("jiTai"), saleListProduct.getJiTai()));
+                predicate.getExpressions().add(cb.like(root.get("state"), "%下发机台%"));
+                return predicate;
+            }
+        });
     }
 }
