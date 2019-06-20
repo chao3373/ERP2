@@ -354,7 +354,13 @@ public class SaleListProductAdminController {
         Integer weight = 0;
 
         for (SaleListProduct saleListProduct1 : condition) {
-            num += saleListProduct1.getNum();
+            Integer wancheng;
+            if (saleListProduct1.getAccomplishNumber() != null) {
+                wancheng = saleListProduct1.getAccomplishNumber();
+            } else {
+                wancheng = 0;
+            }
+            num += saleListProduct1.getNum() - wancheng;
             weight += saleListProduct1.getSumwight();
         }
 
