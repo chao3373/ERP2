@@ -333,14 +333,29 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 if (saleListProduct.getModel() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("model"), saleListProduct.getModel()));
                 }
-                if (StringUtil.isNotEmpty(saleListProduct.getColor())){
+                if (StringUtil.isNotEmpty(saleListProduct.getColor())) {
                     predicate.getExpressions().add(cb.equal(root.get("color"), saleListProduct.getColor()));
                 }
-                if (StringUtil.isNotEmpty(saleListProduct.getDao())){
+                if (StringUtil.isNotEmpty(saleListProduct.getDao())) {
                     predicate.getExpressions().add(cb.equal(root.get("dao"), saleListProduct.getDao()));
                 }
                 predicate.getExpressions().add(cb.equal(root.get("jiTai"), saleListProduct.getJiTai()));
                 predicate.getExpressions().add(cb.like(root.get("state"), "%下发机台%"));
+                return predicate;
+            }
+        });
+    }
+
+    @Override
+    public List<SaleListProduct> findByJitaiId(SaleListProduct saleListProduct) {
+        return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+            @Override
+            public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (saleListProduct.getJiTai() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), saleListProduct.getJiTai().getId()));
+                }
+                predicate.getExpressions().add(cb.like(root.get("issueState"), "%" + saleListProduct.getIssueState() + "%"));
                 return predicate;
             }
         });

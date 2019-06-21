@@ -146,7 +146,7 @@ public interface StorageService {
 
     List<Storage> searchLiftMoney(Map<String, Object> map);
 
-    public List<Storage> JitaiProduct(Map<String, Object> map);
+    public List<Storage> JitaiProduct(Storage storage, java.util.Date date, java.util.Date star, java.util.Date end);
 
     public List<Storage> KucunSearch(Map<String, Object> map);
 

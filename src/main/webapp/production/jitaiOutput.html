@@ -16,6 +16,12 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+            var curr_time = new Date();
+            var strDate = curr_time.getFullYear() + "-";
+            strDate += curr_time.getMonth() + 1 + "-";
+            strDate += curr_time.getDate();
+
+            $("#productDate").datebox('setValue', strDate);
 
             $("#dg").datagrid({
                 columns: [[
@@ -100,13 +106,13 @@
                                 return "";
                             }
                         }
-                       /* formatter: function (value, row) {
-                            alert(row.dateInProduced);
-                            var date = new Date(row.dateInProduced);
-                            var m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth();
-                            var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
-                            return (date.getFullYear() + "-" + m + "-" + d);
-                        }*/
+                        /* formatter: function (value, row) {
+                             alert(row.dateInProduced);
+                             var date = new Date(row.dateInProduced);
+                             var m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth();
+                             var d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay();
+                             return (date.getFullYear() + "-" + m + "-" + d);
+                         }*/
                     }]]
 
             });
@@ -167,8 +173,6 @@
         }
 
 
-
-
         //刷新筛选条件,并初始化筛选属性的值
         function clertCondition() {
             /*loadData();
@@ -181,8 +185,36 @@
 
         //按照条件筛选订单信息
         function screenSale() {
-            addScreen();
-            refreshData();
+            // addScreen();
+            // refreshData();
+
+            var obj = {};
+            /*if ($("#saleNumber").val()) {
+                json.saleNumber = $("#saleNumber").val();
+            }*/
+            if ($("#productDate").datebox("getText")) {
+                obj.dateInProducedd = $("#productDate").datebox("getText");
+            }
+            if ($("#group").combobox("getValue")) {
+                obj.groupName = $("#group").combobox("getText");
+            }
+            if ($("#jitai").combobox("getValue")) {
+                obj.jiTaiName = $("#jitai").combobox("getText");
+            }
+            console.log(obj);
+
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/admin/storage/JitaiProduct",
+                data: obj,
+                success: function (result) {
+                    console.log(result.rows);
+                    if (result.success) {
+                        $("#dg").datagrid('loadData', result.rows);
+                    }
+                }
+            });
 
             var sumweight = 0;
             var sumnum = 0;
@@ -194,41 +226,6 @@
             $("#sumnum").val(sumnum);
             $("#sumweight").val(sumweight);
         }
-
-        //添加筛选条件
-        function addScreen() {
-            json = {};
-            /*if ($("#saleNumber").val()) {
-                json.saleNumber = $("#saleNumber").val();
-            }*/
-            if ($("#productDate").datebox("getText")) {
-                json.productDate = $("#productDate").datebox("getText");
-            }
-            if ($("#group").combobox("getValue")) {
-                json.group = $("#group").combobox("getValue");
-            }
-            if ($("#jitai").combobox("getValue")) {
-                json.jitai = $("#jitai").combobox("getValue");
-            }
-            console.log(json);
-        }
-
-
-        //添加条件筛选时刷新数据
-        function refreshData() {
-            $.ajax({
-                type: "POST",
-                async: false,
-                url: "/admin/storage/JitaiProduct", json,
-                success: function (result) {
-                    console.log(result.rows);
-                    if (result.success) {
-                        $("#dg").datagrid('loadData', result.rows);
-                    }
-                }
-            });
-        }
-
 
     </script>
 </head>

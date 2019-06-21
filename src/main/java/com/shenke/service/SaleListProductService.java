@@ -191,4 +191,6 @@ public interface SaleListProductService {
 	public void chanpinjiaji(Integer id,String jiajidengji);
 
     List<SaleListProduct> condition(SaleListProduct saleListProduct);
+
+	List<SaleListProduct> findByJitaiId(SaleListProduct saleListProduct);
 }

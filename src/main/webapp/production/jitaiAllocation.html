@@ -173,10 +173,7 @@
         function screen() {
             var json = {};
             if ($("#jitai").combobox("getValue")) {
-                json.jitai = $("#jitai").combobox("getValue");
-            }
-            if ($("#allorTime").datebox("getValue")) {
-                json.allorTime = $("#allorTime").datebox("getValue");
+                json.jiTai = $("#jitai").combobox("getValue");
             }
             json.issueState = "未下发";
             $.post("/admin/saleListProduct/findByJitaiId", json, function (result) {
@@ -258,8 +255,14 @@
         // strPrintName 打印任务名
         // printDatagrid 要打印的datagrid
         function CreateFormPage(strPrintName, printDatagrid) {
+            var jitainame = "";
+            if ($("#jitai").combobox('getText')){
+                jitainame += $("#jitai").combobox('getText');
+            }else {
+                jitainame += "所有机台";
+            }
             tableString = "";
-            tableString += "<h3 style='font-size: 22px;text-align: center;'>生产任务单</h3>";
+            tableString += "<h3 style='font-size: 22px;text-align: center;'>" + jitainame + "生产任务单</h3>";
             tableString += '<table cellspacing="0" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
@@ -413,8 +416,6 @@
 <div id="tb" style="padding: 15px;">
     <table>
         <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;日期： <input class="easyui-datebox"
-                                                   id="allorTime" style="width: 100px"/></td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;机台： <input id="jitai"
                                                    class="easyui-combobox" url="/admin/jitai/findAll" name="mode"
                                                    valueField="id" panelHeight="auto" textField="name"

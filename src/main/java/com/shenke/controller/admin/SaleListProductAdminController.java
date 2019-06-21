@@ -361,7 +361,7 @@ public class SaleListProductAdminController {
                 wancheng = 0;
             }
             num += saleListProduct1.getNum() - wancheng;
-            weight += saleListProduct1.getSumwight();
+            weight += num * saleListProduct1.getOneweight();
         }
 
         if (condition.size() != 0) {
@@ -372,6 +372,16 @@ public class SaleListProductAdminController {
             map.put("success", false);
             map.put("msg", "没有符合条件的商品");
         }
+        return map;
+    }
+
+    @RequestMapping("/findByJitaiId")
+    public Map<String, Object> findByJitaiId(SaleListProduct saleListProduct) {
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(saleListProduct);
+        List<SaleListProduct> byJitaiId = saleListProductService.findByJitaiId(saleListProduct);
+        map.put("success", true);
+        map.put("rows", byJitaiId);
         return map;
     }
 }

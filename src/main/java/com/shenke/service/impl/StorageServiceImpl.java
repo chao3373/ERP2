@@ -214,10 +214,10 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("realityweight"), map.get("realityweight")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("name"))) {
-                    predicate.getExpressions().add(cb.equal(root.get("name"),map.get("name")));
+                    predicate.getExpressions().add(cb.equal(root.get("name"), map.get("name")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("client"))) {
-                    predicate.getExpressions().add(cb.equal(root.get("clientname"),map.get("client")));
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), map.get("client")));
                 }
                 if (StringUtil.isNotEmpty((String) map.get("mode"))) {
                     predicate.getExpressions().add(cb.equal(root.get("model"), map.get("mode")));
@@ -399,7 +399,7 @@ public class StorageServiceImpl implements StorageService {
         return count.intValue();
     }
 
-    public List<Storage> findSaleListNumber(){
+    public List<Storage> findSaleListNumber() {
         return storageRepository.findSaleListNumber();
     }
 
@@ -422,11 +422,11 @@ public class StorageServiceImpl implements StorageService {
                         e.printStackTrace();
                     }
                 }
-                if (map.get("clientname")!=null) {
+                if (map.get("clientname") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("clientname"), map.get("clientname")));
                 }
-                if (( map.get("saleNumber")!=null)){
-                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"),map.get("saleNumber")));
+                if ((map.get("saleNumber") != null)) {
+                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), map.get("saleNumber")));
                 }
 
                 return predicate;
@@ -436,25 +436,27 @@ public class StorageServiceImpl implements StorageService {
 
 
     @Override
-    public List<Storage> JitaiProduct(Map<String, Object> map) {
+    public List<Storage> JitaiProduct(Storage storage, java.util.Date date, java.util.Date star, java.util.Date end) {
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
-                    try {
-                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                if (StringUtil.isNotEmpty(storage.getGroupName())) {
+                    predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
+                }
+                if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
+                }
+                if (storage.getGroupName() == "夜班") {
+                    if (star != null) {
+                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
                     }
+                    if (end != null){
+                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
+                    }
+                } else {
+                    predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), date));
                 }
-                if (map.get("group")!=null) {
-                    predicate.getExpressions().add(cb.equal(root.get("group"), map.get("group")));
-                }
-                if (( map.get("jitai")!=null)){
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai"),map.get("jitai")));
-                }
-
                 return predicate;
             }
         });

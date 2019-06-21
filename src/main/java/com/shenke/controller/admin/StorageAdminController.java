@@ -110,18 +110,19 @@ public class StorageAdminController {
 
     /**
      * 手动出库
-    * @Description:
-    * @Param:
-    * @return:
-    * @Author: Andy
-    * @Date:
-    */
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
     @RequestMapping("/outKu")
     public Map<String, Object> out(String ids) {
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
         for (int i = 0; i < idArr.length; i++) {
-            storageService.updateStateById("装车",Integer.parseInt(idArr[i]), new Date(System.currentTimeMillis()));
+            storageService.updateStateById("装车", Integer.parseInt(idArr[i]), new Date(System.currentTimeMillis()));
         }
         map.put("success", true);
         return map;
@@ -206,7 +207,7 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight,String productDate,String pleasant) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String pleasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
 
@@ -277,12 +278,13 @@ public class StorageAdminController {
 
     /**
      * 查询所有已经装车的商品
-    * @Description:
-    * @Param:
-    * @return:
-    * @Author: Andy
-    * @Date:
-    */
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
     @RequestMapping("/truck")
     public Map<String, Object> truck(String state) {
         Map<String, Object> map = new HashMap<>();
@@ -298,12 +300,13 @@ public class StorageAdminController {
 
     /**
      * 按条件查询出库明细表
-    * @Description:
-    * @Param:
-    * @return:
-    * @Author: Andy
-    * @Date:
-    */
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
     @RequestMapping("/detail")
     public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
         Map<String, Object> map = new HashMap<>();
@@ -320,8 +323,8 @@ public class StorageAdminController {
         System.out.println(map1);
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
-        for (Storage storage: storageList) {
-            storage.setSum( storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
+        for (Storage storage : storageList) {
+            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
         }
         System.out.println(storageList);
         map.put("rows", storageList);
@@ -329,7 +332,7 @@ public class StorageAdminController {
     }
 
     /**
-     *  根据出库时间获取客户名称
+     * 根据出库时间获取客户名称
      */
     @RequestMapping("/selectClientNameByOutDate")
     public List<Storage> selectClientNameByOutDate(String outDate) throws ParseException {
@@ -338,9 +341,9 @@ public class StorageAdminController {
 
     /**
      * 根据出库单号查询
-     * */
+     */
     @RequestMapping("/selectOutByOutNumber")
-    public List<Storage> selectOutByOutNumber(String outNumber){
+    public List<Storage> selectOutByOutNumber(String outNumber) {
         System.out.println(outNumber);
         return storageService.selectOutByOutNumber(outNumber);
     }
@@ -363,10 +366,10 @@ public class StorageAdminController {
      */
     @RequestMapping("/findbySalelistId")
     public Map<String, Object> FindBySaleListId() {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         List<Count> findBySaleListId = storageService.FindBySaleListId();
-        map.put("success",true);
-        map.put("rows",findBySaleListId);
+        map.put("success", true);
+        map.put("rows", findBySaleListId);
 
         System.out.println(map);
         return map;
@@ -377,60 +380,77 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/findAll")
-    public Map<String,Object> findAll(){
-        Map<String,Object> map = new HashMap<>();
+    public Map<String, Object> findAll() {
+        Map<String, Object> map = new HashMap<>();
         List<Storage> list = storageService.findAll();
-        map.put("rows",list);
+        map.put("rows", list);
         return map;
     }
 
     @RequestMapping("/findSaleListNumber1")
-    public Map<String,Object> findSaleListNumber(){
-        Map<String,Object> map = new HashMap<>();
+    public Map<String, Object> findSaleListNumber() {
+        Map<String, Object> map = new HashMap<>();
         List<Storage> list = storageService.findSaleListNumber();
-        map.put("rows",list);
+        map.put("rows", list);
         return map;
     }
 
-    @RequestMapping ("/findSaleListId")
-    public Map<String,Object> findStorage(String saleNumber){
-        Map<String,Object> map = new HashMap<>();
+    @RequestMapping("/findSaleListId")
+    public Map<String, Object> findStorage(String saleNumber) {
+        Map<String, Object> map = new HashMap<>();
         List<Storage> list1 = storageService.findStorage(saleNumber);
-        map.put("rows",list1);
+        map.put("rows", list1);
         return map;
     }
 
     /***
      * 查询每个班组的生产产量
-     * @param jitai
-     * @param productDate
-     * @param group
+     * @param
+     * @param
+     * @param
      * @return
      */
     @RequestMapping("/JitaiProduct")
-    public Map<String, Object> JitaiProduct(Integer jitai, String productDate,Integer group) {
+    public Map<String, Object> JitaiProduct(Storage storage, String dateInProducedd) {
         Map<String, Object> map = new HashMap<>();
-        Map<String, Object> map1 = new HashMap<>();
-        map1.put("jitai", jitai);
-        map1.put("productDate", productDate);
-        map1.put("group", group);
-        map.put("success", true);
-        map.put("rows", storageService.JitaiProduct(map1));
+        java.util.Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd hh:MM:dd").parse(dateInProducedd + " 00:00:00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (storage.getGroupName() == "夜班") {
+            String star = dateInProducedd + " 17:00:00";
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 12:00:00";
+            try {
+                java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(star);
+                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
+                System.out.println(star);
+                System.out.println(end);
+                System.out.println(stard);
+                System.out.println(endd);
+                map.put("rows", storageService.JitaiProduct(storage, date, stard, endd));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            map.put("rows", storageService.JitaiProduct(storage, date, null, null));
+        }
         return map;
     }
 
     @RequestMapping("/kucunzonglan")
-    public Map<String,Object> KuCunZongLan(String clientname,String saleNumber,String saleDate){
+    public Map<String, Object> KuCunZongLan(String clientname, String saleNumber, String saleDate) {
         System.out.println(saleDate);
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Object> map1 = new HashMap<>();
-        map1.put("clientname",clientname);
-        map1.put("saleNumber",saleNumber);
-        map1.put("saleDate",saleDate);
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("clientname", clientname);
+        map1.put("saleNumber", saleNumber);
+        map1.put("saleDate", saleDate);
 
-        map.put("success",true);
+        map.put("success", true);
         System.out.println(map1);
-        map.put("rows",storageService.KucunSearch(map1));
+        map.put("rows", storageService.KucunSearch(map1));
         System.out.println(map);
         return map;
 
