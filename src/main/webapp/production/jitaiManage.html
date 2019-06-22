@@ -35,7 +35,7 @@
     </style>
     <script type="text/javascript">
         //存放所选择的通知单号
-        var informNumber;
+        var informNumber = null;
 
         var printNum;
 
@@ -236,11 +236,10 @@
                             align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
-                            console.log(rowData);
                             // $.ajax({
                             //     url: "/static/setAccomplishNumber?sunNum=" + rowData.num + "&accomplishNumber=" + rowData.accomplishNumber
                             // });
-                            informNumber = rowData.informNumber;
+                            // informNumber = rowData.informNumber;
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
                             clearInterval(timer);
@@ -724,8 +723,14 @@
                 },
                 success: function (result) {
                     if (result.success) {
-                        $("#dg").datagrid('loadData', result.rows);
-                        $("#dg").datagrid("selectRow", selectIndex);
+                        console.log(result.rows.length);
+                        if (result.rows.length != 0) {
+                            $("#dg").datagrid('loadData', result.rows);
+                            $("#dg").datagrid("selectRow", selectIndex);
+                        } else {
+                            $("#dg").datagrid('loadData', []);
+                            $("#dg2").datagrid('loadData', []);
+                        }
                     }
                 }
             });
@@ -856,7 +861,6 @@
                 async: false,
                 url: "/admin/storage/findById?id=" + id,
                 success: function (result) {
-                    console.log(result);
                     if (result.data != null) {
                         var row = result.data;
                         var json = {};
@@ -927,16 +931,14 @@
                                 tableString += "</td></tr></table></div>";
                                 if (window.showModalDialog) {
                                     window.showModalDialog(
-                                            "..\\print.html",
+                                        "..\\print.html",
                                         tableString,
-                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                                    console.log(tableString);
+                                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                                 } else {
                                     window.open(
-                                            "..\\print.html",
+                                        "..\\print.html",
                                         tableString,
-                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                                    console.log(tableString);
+                                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                                 }
                             }
                         });
@@ -1073,7 +1075,8 @@
                                     }
                                     return format;
                                 }
-                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");+"";
+                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                                +"";
                                 tableString += "</div>";
                                 if (window.showModalDialog) {
                                     window

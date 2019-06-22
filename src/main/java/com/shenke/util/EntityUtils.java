@@ -4,7 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.shenke.repository.StorageRepository;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Resource;
 
 /**
  * @author xiaobu
@@ -14,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class EntityUtils {
+
+	@Resource
+	private static StorageRepository storageRepository;
 
 	/**
 	 * 数组集合转化为指定对象集合 指定的实体对象必须包含所以字段的构造方法，数组的元素的顺序将和构造方法顺序和类型一一对应
@@ -57,6 +64,25 @@ public class EntityUtils {
 		}
 
 		return returnList;
+	}
+
+	/**
+	 * @Description: 生成出库单号
+	 * @Param:
+	 * @return:
+	 * @Author: Andy
+	 * @Date:
+	 */
+	public static String genCode() throws Exception {
+		StringBuffer code = new StringBuffer("CK");
+		code.append(DateUtil.getCurrentDateStr());
+		String saleNumber = storageRepository.getTodayMaxOutNumber();
+		if (saleNumber != null) {
+			code.append(StringUtil.formatCode(saleNumber));
+		} else {
+			code.append("00001");
+		}
+		return code.toString();
 	}
 
 }

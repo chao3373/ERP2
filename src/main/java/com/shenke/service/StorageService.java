@@ -103,13 +103,6 @@ public interface StorageService {
     public Storage findById(Integer id);
 
     /**
-     *
-     * 获取当天最大的出库单号
-     * @return
-     */
-    public String getTodayMaxOutNumber();
-
-    /**
      * 分组查询
      * @param client
      * @return
@@ -127,8 +120,6 @@ public interface StorageService {
     public List<Storage> findByState(String state);
 
     public List<Storage> detail(Map<String, Object> map1);
-
-    public void updateOutNumberById(Integer parseInt) throws Exception;
 
     public List<Storage> selectClientNameByOutDate(Date s);
 
@@ -156,4 +147,6 @@ public interface StorageService {
     void updateByIdAndState(int parseInt, String state);
 
     List<Storage> selectByState(String state);
+
+    void updateOutNumberById(int parseInt, String ck);
 }

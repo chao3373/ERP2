@@ -14,6 +14,7 @@ import com.shenke.entity.Product;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.ProductService;
 import com.shenke.util.DaochuUtil;
+import com.shenke.util.EntityUtils;
 import com.shenke.util.QRCode;
 import com.shenke.util.StringUtil;
 import org.jsoup.Jsoup;
@@ -73,7 +74,7 @@ public class IndexController {
     @ResponseBody
     @RequestMapping("/static/shangchuan")
     public String shangchuan(HttpServletRequest request, HttpServletResponse response, String serialNumber) throws Exception {
-        System.out.println("上传");
+        String ck = EntityUtils.genCode();
         BufferedReader br = request.getReader();
         String str, wholeStr = "";
         while ((str = br.readLine()) != null) {
@@ -84,7 +85,7 @@ public class IndexController {
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
                 storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(System.currentTimeMillis()));
-                storageService.updateOutNumberById(Integer.parseInt(split[i]));
+                storageService.updateOutNumberById(Integer.parseInt(split[i]), ck);
                 saleListProductRepository.updateState("装车：" + storageService.findById(Integer.parseInt(split[i])).getJiTai().getName(), storageService.findById(Integer.parseInt(split[i])).getSaleListProduct().getId());
             }
         }

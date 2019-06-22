@@ -139,11 +139,17 @@ public class SaleListProductAdminController {
             state = "%";
         }
         Long infLong = null;
+        System.out.println(informNumber);
         if (StringUtil.isNotEmpty(informNumber)) {
             infLong = Long.parseLong(informNumber);
         }
-        map.put("success", true);
-        map.put("rows", saleListProductService.selectByJitaiIdAndIssueStateAndInformNumber(jitaiId, state, infLong));
+        if (saleListProductService.selectByJitaiIdAndIssueStateAndInformNumber(jitaiId, state, infLong) != null) {
+            map.put("success", true);
+            map.put("rows", saleListProductService.selectByJitaiIdAndIssueStateAndInformNumber(jitaiId, state, infLong));
+        }else {
+            map.put("success", false);
+        }
+
         return map;
     }
 

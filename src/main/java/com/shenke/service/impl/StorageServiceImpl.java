@@ -164,12 +164,6 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String getTodayMaxOutNumber() {
-        // TODO Auto-generated method stub
-        return storageRepository.getTodayMaxOutNumber();
-    }
-
-    @Override
     public List<JieSuan> FindByGroup(String client) {
         System.out.println(client);
         System.out.println(storageRepository.FindByGroup(client));
@@ -333,11 +327,6 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void updateOutNumberById(Integer parseInt) throws Exception {
-        storageRepository.updateOutNumberById(this.genCode(), parseInt);
-    }
-
-    @Override
     public List<Storage> selectClientNameByOutDate(Date s) {
         return storageRepository.selectClientNameByOutDate(s);
     }
@@ -350,26 +339,6 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String selectCountByNameAndOutNumber(String name, String outNumber) {
         return storageRepository.selectCountByNameAndOutNumber(name, outNumber);
-    }
-
-
-    /**
-     * @Description: 生成出库单号
-     * @Param:
-     * @return:
-     * @Author: Andy
-     * @Date:
-     */
-    public String genCode() throws Exception {
-        StringBuffer code = new StringBuffer("CK");
-        code.append(DateUtil.getCurrentDateStr());
-        String saleNumber = this.getTodayMaxOutNumber();
-        if (saleNumber != null) {
-            code.append(StringUtil.formatCode(saleNumber));
-        } else {
-            code.append("00001");
-        }
-        return code.toString();
     }
 
     /***
@@ -522,5 +491,10 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public List<Storage> selectByState(String state) {
         return storageRepository.selectByState(state);
+    }
+
+    @Override
+    public void updateOutNumberById(int parseInt, String ck) {
+        storageRepository.updateOutNumberById(ck, parseInt);
     }
 }
