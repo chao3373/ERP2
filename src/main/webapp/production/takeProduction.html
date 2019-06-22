@@ -34,17 +34,18 @@
                 strIds.push(selectedRows[i].id);
             }
             ids = strIds.join(",");
-            //审核成功
+
             $.messager.confirm("系统提示", "确定要将这些商品出库吗", function (r) {
                 if (r) {
                     $.post("/admin/storage/out", {
                         ids: ids
                     }, function (result) {
                         if (result.success) {
-                            $('#a').datagrid('loadData', {
-                                total: 0,
-                                rows: []
-                            });
+                            // $('#a').datagrid('loadData', {
+                            //     total: 0,
+                            //     rows: []
+                            // });
+                            $("#a").datagrid('reload');
                         } else {
                             $.messager.alert("系统提示", result.errorInfo);
                         }
@@ -63,7 +64,35 @@
 
         }
 
+        //计算a的总件数和总重量
+        function loadA() {
+            $.ajax({
+                url: "/admin/storage/selectByState?state=准备提货",
+                async: false,
+                success: function (result) {
+                    if (result.success) {
+                        $('#a').datagrid('loadData', result.rows);
+                        var rows = $("#a").datagrid('getRows');
+                        console.log(rows);
+                        console.log(rows.length);
+                        var count = 0;
+                        var sum = 0;
+                        for (var i = 0; i < rows.length; i++) {
+                            count += 1;
+                            sum += rows[i].realityweight;
+                        }
+                        $('#a').datagrid('appendRow', {
+                            name: '合计',
+                            model: '总数量：' + count,
+                            price: '总重量：' + sum
+                        });
+                    }
+                }
+            });
+        }
+
         $(document).ready(function () {
+            loadA();
             loadData();
             $("#clientId").combobox({
                 panelHeight: 'auto',
@@ -101,15 +130,30 @@
                         handler: function () {
                             var b = $("#dg").datagrid("getSelections");
 
+                            var ids = [];
                             var index = [];
                             for (var i = 0; i < b.length; i++) {
-                                $("#a").datagrid("appendRow", b[i]);
+                                // $("#a").datagrid("appendRow", b[i]);
                                 index.push($("#dg").datagrid('getRowIndex', b[i]));
+                                ids.push(b[i].id);
                             }
                             for (var i = index.length - 1; i >= 0; i--) {
-                                console.log(index[i]);
                                 $("#dg").datagrid("deleteRow", index[i]);
                             }
+                            var idArr = ids.join(",");
+                            $.ajax({
+                                url: "/admin/storage/updateByIdsAndState",
+                                data: {idArr: idArr, state: "准备提货"},
+                                async: false,
+                                success: function (result) {
+                                    if (result.success) {
+                                        $("#dd").datagrid('reload');
+                                        loadA();
+                                        // $("#a").datagrid('reload');
+                                        // countA();
+                                    }
+                                }
+                            });
                             $("#dd1").dialog("close");
                         }
                     }, {
@@ -356,15 +400,26 @@
         //删除要打印的行   ok
         function deleteSaleListGoods() {
             var selectedRows = $("#a").datagrid("getSelections");
-            if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择一条要删除打印的出库信息！");
+            if (selectedRows.length < 1) {
+                $.messager.alert("系统提示", "请选择一条要删除的信息！");
                 return;
             }
             $.messager.confirm("系统提示", "您确定要删除这条信息吗?", function (r) {
                 if (r) {
-                    $("#a").datagrid("deleteRow",
-                        $("#a").datagrid("getRowIndex", selectedRows[0]));
-                    setSaleListAmount();
+                    var ids = [];
+                    for (var i = 0; i < selectedRows.length; i++) {
+                        ids.push(selectedRows[i]);
+                    }
+                    var idArr = ids.join(",");
+                    $.ajax({
+                        url: "/admin/storage/updateByIdsAndState",
+                        data: {idArr: idArr, state: "生产完成"},
+                        success: function (result) {
+                            if (result.success) {
+                                $("#a").datagrid('realod');
+                            }
+                        }
+                    });
                 }
             });
         }
@@ -737,17 +792,18 @@
     </form>
 
 </div>
-<div data-options="region:'center'" style="padding: 10px; border: 1px">
+<div data-options="region:'center',url:'/admin/storage/selectByState?state=准备提货'" style="padding: 10px; border: 1px">
     <table id="a" class="easyui-datagrid" style="" rownumbers="true"
            fit="true" toolbar="#top">
         <thead>
+        <th id="cb" fiela="cb" checkbox="true" align="center"></th>
         <th id="nameRow" field="name" width="200" align="center">产品名称</th>
         <th id="modelRow" field="model" width="200" align="center">幅宽（m）</th>
         <th id="priceRow" field="price" width="200" align="center">厚度（mm）</th>
         <th id="lengthRow" field="length" width="200" align="center">长度（m）</th>
         <th id="meterRow" field="meter" width="200" align="center">实际厚度</th>
         <th id="colorRow" field="color" width="200" align="center">颜色</th>
-        <th id="oneweightRow" field="oneweight" width="200" align="center">单件重量（kg）</th>
+        <th id="oneweightRow" field="realityweight" width="200" align="center">重量（kg）</th>
         <th id="numRow" field="num" width="200" align="center">订货数量</th>
         <th id="sumwightRow" field="sumwight" width="200" align="center">总重量</th>
         <th id="realitymodRow" field="realitymodel" width="200"

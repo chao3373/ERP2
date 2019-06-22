@@ -50,7 +50,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * public List<SaleListProduct> listProductSucceed();
      */
 
-    @Query(value = "select  * from t_storage where id not in (select id from t_storage where state like'提货' or state like '装车')",nativeQuery = true)
+    @Query(value = "select  * from t_storage where id not in (select id from t_storage where state like'提货' or state like '装车' or state like '准备提货')",nativeQuery = true)
     public List<Storage> outSuccess();
 
     /**
@@ -195,4 +195,21 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
 
     @Query (value = "select * from t_storage where sale_number = ?1 group by sale_list_product_id", nativeQuery = true)
     public List<Storage> findStorage(String saleNumber);
+
+    /***
+     * 根据id修改状态
+     * @param parseInt
+     * @param state
+     */
+    @Modifying
+    @Query(value = "UPDATE t_storage SET state=?2 WHERE id = ?1", nativeQuery = true)
+    public void updateByIdAndState(int parseInt, String state);
+
+    /***
+     * 根据状态查询
+     * @param state
+     * @return
+     */
+    @Query(value = "select * from t_storage where state = ?1", nativeQuery = true)
+    List<Storage> selectByState(String state);
 }

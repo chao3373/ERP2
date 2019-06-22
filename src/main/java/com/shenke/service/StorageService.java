@@ -152,4 +152,8 @@ public interface StorageService {
 
 
     List<Storage> select(Storage storage, String dateInProducedd);
+
+    void updateByIdAndState(int parseInt, String state);
+
+    List<Storage> selectByState(String state);
 }

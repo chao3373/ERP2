@@ -470,4 +470,34 @@ public class StorageAdminController {
         return map;
     }
 
+    /***
+     *
+     * 根据ids和状态设置状态
+     * @param idArr
+     * @param state
+     * @return
+     */
+    @RequestMapping("/updateByIdsAndState")
+    public Map<String, Object> updateByIdAndState(String idArr, String state) {
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < idArr.split(",").length; i++) {
+            storageService.updateByIdAndState(Integer.parseInt(idArr.split(",")[i]), state);
+        }
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据状态查询
+     * @param state
+     * @return
+     */
+    @RequestMapping("/selectByState")
+    public Map<String, Object> selectByState(String state) {
+        System.out.println(state);
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", storageService.selectByState(state));
+        return map;
+    }
 }

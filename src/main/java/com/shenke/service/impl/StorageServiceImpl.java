@@ -513,4 +513,14 @@ public class StorageServiceImpl implements StorageService {
             }
         });
     }
+
+    @Override
+    public void updateByIdAndState(int parseInt, String state) {
+        storageRepository.updateByIdAndState(parseInt, state);
+    }
+
+    @Override
+    public List<Storage> selectByState(String state) {
+        return storageRepository.selectByState(state);
+    }
 }
