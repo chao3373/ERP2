@@ -924,18 +924,19 @@
                                     return format;
                                 }
                                 tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
-                                +"</td></tr></table>";
-                                tableString += "</div>";
+                                tableString += "</td></tr></table></div>";
                                 if (window.showModalDialog) {
                                     window.showModalDialog(
                                             "..\\print.html",
                                         tableString,
                                             "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                    console.log(tableString);
                                 } else {
                                     window.open(
                                             "..\\print.html",
                                         tableString,
                                             "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                                    console.log(tableString);
                                 }
                             }
                         });
@@ -1072,8 +1073,7 @@
                                     }
                                     return format;
                                 }
-                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
-                                +"</td></tr></table>";
+                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");+"";
                                 tableString += "</div>";
                                 if (window.showModalDialog) {
                                     window

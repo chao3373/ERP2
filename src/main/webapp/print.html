@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -34,8 +33,12 @@
 <script type="text/javascript">
     if (window.dialogArguments) {
         document.write(window.dialogArguments.tableString);
+        document.write("<div style='height: 300px'></div>");
+        document.write(window.dialogArguments.tableString);
         console.log(window.dialogArguments.tableString);
     } else {
+        document.write(window.opener.tableString);
+        document.write("<div style='height: 300px'></div>");
         document.write(window.opener.tableString);
         console.log(window.opener.tableString);
     }
