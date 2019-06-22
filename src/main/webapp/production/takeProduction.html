@@ -404,11 +404,11 @@
                 $.messager.alert("系统提示", "请选择一条要删除的信息！");
                 return;
             }
-            $.messager.confirm("系统提示", "您确定要删除这条信息吗?", function (r) {
+            $.messager.confirm("系统提示", "您确定要删除这些信息吗?", function (r) {
                 if (r) {
                     var ids = [];
                     for (var i = 0; i < selectedRows.length; i++) {
-                        ids.push(selectedRows[i]);
+                        ids.push(selectedRows[i].id);
                     }
                     var idArr = ids.join(",");
                     $.ajax({
@@ -416,7 +416,7 @@
                         data: {idArr: idArr, state: "生产完成"},
                         success: function (result) {
                             if (result.success) {
-                                $("#a").datagrid('realod');
+                                loadA();
                             }
                         }
                     });
@@ -446,22 +446,6 @@
         $(document).ready(function () {
 
             closeSelectRows();
-
-            //双击隐藏该列
-
-            $("#a").datagrid({
-                onClickRow: function (rowIndex, rowData) {
-                    $(this).datagrid('unselectRow', rowIndex);
-                },
-                onDblClickCell: function (index, field, row) {
-                    $.messager.confirm('系统提示', '确定取消打印该列吗？', function (r) {
-                        if (r) {
-                            rowArr.push(field);
-                            $("#a").datagrid("hideColumn", field);
-                        }
-                    });
-                }
-            });
 
         });
 
@@ -792,47 +776,30 @@
     </form>
 
 </div>
-<div data-options="region:'center',url:'/admin/storage/selectByState?state=准备提货'" style="padding: 10px; border: 1px">
-    <table id="a" class="easyui-datagrid" style="" rownumbers="true"
-           fit="true" toolbar="#top">
+<div data-options="region:'center'"
+     style="padding: 10px; border: 1px">
+    <table id="a" class="easyui-datagrid" rownumbers="true" fit="true" toolbar="#top">
         <thead>
-        <th id="cb" fiela="cb" checkbox="true" align="center"></th>
+        <th id="cb" fiela="cb" checkbox="true" align="center" hidden="true"></th>
         <th id="nameRow" field="name" width="200" align="center">产品名称</th>
-        <th id="modelRow" field="model" width="200" align="center">幅宽（m）</th>
-        <th id="priceRow" field="price" width="200" align="center">厚度（mm）</th>
-        <th id="lengthRow" field="length" width="200" align="center">长度（m）</th>
-        <th id="meterRow" field="meter" width="200" align="center">实际厚度</th>
-        <th id="colorRow" field="color" width="200" align="center">颜色</th>
-        <th id="oneweightRow" field="realityweight" width="200" align="center">重量（kg）</th>
-        <th id="numRow" field="num" width="200" align="center">订货数量</th>
-        <th id="sumwightRow" field="sumwight" width="200" align="center">总重量</th>
-        <th id="realitymodRow" field="realitymodel" width="200"
+        <th id="modelRow" field="model" width="100" align="center">幅宽（m）</th>
+        <th id="priceRow" field="price" width="100" align="center">厚度（mm）</th>
+        <th id="lengthRow" field="length" width="66" align="center">长度（m）</th>
+        <th id="meterRow" field="meter" width="66" align="center">实际厚度</th>
+        <th id="colorRow" field="color" width="66" align="center">颜色</th>
+        <th id="oneweightRow" field="realityweight" width="66" align="center">重量（kg）</th>
+        <th id="numRow" field="num" width="66" align="center">订货数量</th>
+        <th id="sumwightRow" field="sumwight" width="66" align="center">总重量</th>
+        <th id="realitymodRow" field="realitymodel" width="66"
             align="center">实际幅宽（m）
         </th>
-        <th id="demandRow" field="demand" width="200" align="center">要求</th>
-        <th id="wightsetRow" field="wightset" width="200" align="center">重量设置</th>
-        <th id="daoRow" field="dao" width="200" align="center">剖刀</th>
-        <th id="brandRow" field="brand" width="200" align="center">商标</th>
-        <th id="packRow" field="pack" width="200" align="center">包装</th>
-        <th id="letterRow" field="letter" width="200" align="center">印字</th>
-        <th id="peasantRow" field="peasant" width="200" align="center">农户名称</th>
-        <th id="clientnameRow" field="clientname" width="200" align="center">客户名称</th>
-        <th id="realityweiRow" field="realityweight" width="200"
-            align="center">实际重量（kg）
-        </th>
-        <th id="realitypriRow" field="realityprice" width="200"
-            align="center">实际厚度（mm）
-        </th>
-        <th id="theoryweigRow" field="theoryweight" width="200"
-            align="center">理论重量（kg）
-        </th>
-        <th id="squareRow" field="square" width="200" align="center">单件平米</th>
-        <th id="numsquareRow" field="numsquare" width="200" align="center">总平米</th>
-        <th id="weightwayRow" field="weightway" width="200" align="center">称重方式</th>
-        <th id="labelRow" field="label" width="200" align="center">标签名称</th>
-        <th id="weightRow" field="weight" width="200" align="center">重量（kg）</th>
-        <th id="patuRow" field="patu" width="200" align="center">纸管</th>
-        <th id="remarkRow" field="remark" width="200" align="center">备注</th>
+        <th id="daoRow" field="dao" width="66" align="center">剖刀</th>
+        <th id="brandRow" field="brand" width="66" align="center">商标</th>
+        <th id="packRow" field="pack" width="66" align="center">包装</th>
+        <th id="peasantRow" field="peasant" width="66" align="center">农户名称</th>
+        <th id="clientnameRow" field="clientname" width="66" align="center">客户名称</th>
+        <th id="patuRow" field="patu" width="66" align="center">纸管</th>
+        <th id="remarkRow" field="remark" width="66" align="center">备注</th>
         </thead>
     </table>
 </div>
