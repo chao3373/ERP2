@@ -494,6 +494,7 @@
                     },
                     success: function (result) {
                         var obj = eval('(' + result + ')');
+                        console.log(typeof(result.success));
                         if (obj.success) {
                             var resultt = $.parseJSON(result);
                             $("#dg").datagrid({
@@ -512,6 +513,8 @@
                                 num: '总数量：' + countnum,
                                 sumwight: '总重量：' + sumweight
                             });
+                        } else if (typeof result['success'] == 'undefined') {
+                            $.messager.alert("系统提示", "<span style='color:red'>格式错误</span>");
                         } else {
                             $.messager.alert("系统提示", "<span style='color:red'>"
                                 + obj.errorInfo + "</span>");

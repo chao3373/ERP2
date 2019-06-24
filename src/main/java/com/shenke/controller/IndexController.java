@@ -82,6 +82,7 @@ public class IndexController {
         }
         System.out.println(wholeStr);
         String[] split = wholeStr.split(",");
+        storageService.findByState("");
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
                 storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(System.currentTimeMillis()));

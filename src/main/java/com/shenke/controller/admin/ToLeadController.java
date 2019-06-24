@@ -63,11 +63,13 @@ public class ToLeadController {
 
     @RequestMapping("/importFile")
     public Map<String, Object> getExcel(@RequestParam("fileName") MultipartFile file) {// MultipartFile
+        System.out.println("文件导入");
         // 接收来自表单的File文件，然后进行服务器的上传
         // new HashMap<>();
-        System.out.println(file);
+//        System.out.println(file);
         // 文件名
         String fileName = file.getOriginalFilename(); // 获取上传时的文件名
+        System.out.println(fileName);
 
         // 获取文件后缀
         String prefix = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -103,8 +105,9 @@ public class ToLeadController {
         List<SaleListProduct> list = new ArrayList<SaleListProduct>();
         // 循环工作表的行
         for (Row row : sheet) {
-            if (row.getRowNum() != 0 && row.getRowNum() != 1
-                    && row.getRowNum() != (sheet.getPhysicalNumberOfRows() - 1)) {
+            System.out.println("行号：" + row.getRowNum());
+            System.out.println("行数：" + sheet.getPhysicalNumberOfRows());
+            if (row.getRowNum() != 0 && row.getRowNum() != 1) {
                 // 创建订单中每个商品的对象
                 SaleListProduct saleListProduct = new SaleListProduct();
                 // 循环每行中的单元格
@@ -281,16 +284,8 @@ public class ToLeadController {
                 map.put("success", true); // 成功
                 map.put("rows", list);
                 list.add(saleListProduct);
-				/*System.out.println("执行三");
-				System.out.println("我是那个list集合"+list);
-			    System.out.println("我是那个map集合"+map);*/
             }
         }
-        // map.put("toal", "");
-        // map.put("rows", list);
-        // System.out.println(map);
-        // System.out.println(list);
-        //System.out.println("执行四");
         logService.save(new Log(Log.ADD_ACTION, "销售订单导入"));
         return map;
     }
