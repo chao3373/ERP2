@@ -145,6 +145,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Override
     public List<SaleListProduct> selectByJitaiIdAndIssueStateAndInformNumber(Integer jitaiId, String state, Long infLong) {
+        System.out.println(state);
         return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
             @Override
             public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -153,7 +154,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                     predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), jitaiId));
                 }
                 if (StringUtil.isNotEmpty(state)) {
-                    predicate.getExpressions().add(cb.like(root.get("issueState"), "%" + state + "%"));
+                    predicate.getExpressions().add(cb.like(root.get("state"), "%" + state + "%"));
                 }
                 if (infLong != null) {
                     predicate.getExpressions().add(cb.equal(root.get("informNumber"), infLong));

@@ -133,11 +133,6 @@ public class SaleListProductAdminController {
     @RequestMapping("/selectByJitaiIdAndIssueStateAndInformNumber")
     public Map<String, Object> selectByJitaiIdAndIssueStateAndInformNumber(Integer jitaiId, String state, String informNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
-        if (StringUtil.isNotEmpty(state)) {
-            state = "%" + state + "%";
-        } else {
-            state = "%";
-        }
         Long infLong = null;
         System.out.println(informNumber);
         if (StringUtil.isNotEmpty(informNumber)) {
@@ -388,6 +383,17 @@ public class SaleListProductAdminController {
         List<SaleListProduct> byJitaiId = saleListProductService.findByJitaiId(saleListProduct);
         map.put("success", true);
         map.put("rows", byJitaiId);
+        return map;
+    }
+
+    @RequestMapping("/deleteByIdArr")
+    public Map<String, Object> deleteByIdArr(String idArr){
+        Map<String, Object> map = new HashMap<>();
+        String[] ids = idArr.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            saleListProductService.deleteById(Integer.parseInt(ids[i]));
+        }
+        map.put("success", true);
         return map;
     }
 }

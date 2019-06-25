@@ -580,8 +580,6 @@
         //提交审核未通过原因
         function saveCause() {
             var cause = "审核失败：" + $("#cause").val();
-            alert(cause);
-            alert("saveCause" + ids);
             $.post("/admin/saleListProduct/auditFailure", {
                 ids: ids,
                 cause: cause
@@ -912,6 +910,34 @@
             $("#dlg2").dialog("close");
         }
 
+        //删除选中的订单商品
+        function deleteSaleListProduct() {
+            if ($("#dg2").datagrid('getSelections').length < 1) {
+                $.messager.alert("系统提示", "<span style='color: red'>请选择一条要删除的信息</span>");
+                return;
+            }
+            $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除选中的信息吗</span>？", function (r) {
+                if (r) {
+                    var rows = $("#dg2").datagrid('getSelections');
+                    var ids = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        ids.push(rows[i].id);
+                    }
+                    var idArr = ids.join(",");
+                    $.ajax({
+                        url: "/admin/saleListProduct/deleteByIdArr",
+                        data: {idArr: idArr},
+                        success: function (result) {
+                            if (result.success) {
+                                $.messager.alert("系统提示", "<span style='color: red;'>删除成功！</span>")
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
         //保存修改
         //封装订单信息传递后台
         function saveGoods() {
@@ -1034,12 +1060,17 @@
 				},{
 					label: '装车',
 					value: '装车'
+				},{
+					label: '审核失败',
+					value: '审核失败'
 				}],
 		    onSelect: function(rec){
 		    	auditQuery(rec.value);
 		    }"/>
         <a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
            plain="true">修改</a>
+        <a href="javascript:deleteSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
+           plain="true">删除</a>
     </div>
 </div>
 
