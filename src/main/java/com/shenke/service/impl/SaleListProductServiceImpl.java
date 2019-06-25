@@ -250,25 +250,37 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     @Override
     public void updateAccomplishNumber(Integer id) {
         SaleListProduct saleListProduct = this.findById(id);
-        Integer count = saleListProduct.getAccomplishNumber();
+        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
         Integer num = saleListProduct.getNum();
-        if (num == 1){
-            count = 1;
-            saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+        System.out.println(count);
+        System.out.println(num);
+        if (count + 1 == num) {
+            count = num;
+            System.out.println(count);
+            System.out.println(num);
+            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
         } else {
-            if (count == null || count == 0) {
-                count = 1;
-                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-            } else if (count == saleListProduct.getNum() - 1) {
-                count += 1;
-                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-                saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-                saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            } else {
-                count += 1;
-                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-            }
+            count+=1;
+            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
         }
+//        if (num == 1) {
+//            count = 1;
+//            saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+//        } else {
+//            if (count == null || count == 0) {
+//                count = 1;
+//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+//            } else if (count == saleListProduct.getNum() - 1) {
+//                count += 1;
+//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+//                saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+//                saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+//            } else {
+//                count += 1;
+//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+//            }
+//        }
     }
 
     @Override
