@@ -416,15 +416,14 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
                 }
-                if (storage.getGroupName() == "夜班") {
-                    if (star != null) {
-                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
-                    }
-                    if (end != null){
-                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
-                    }
-                } else {
-                    predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), date));
+                if (StringUtil.isNotEmpty(storage.getGroupName())){
+                    predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
+                }
+                if (star != null) {
+                    predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+                }
+                if (end != null) {
+                    predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                 }
                 return predicate;
             }

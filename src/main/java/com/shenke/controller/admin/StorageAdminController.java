@@ -412,6 +412,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/JitaiProduct")
     public Map<String, Object> JitaiProduct(Storage storage, String dateInProducedd) {
+        System.out.println(dateInProducedd);
         Map<String, Object> map = new HashMap<>();
         java.util.Date date = null;
         try {
@@ -434,8 +435,18 @@ public class StorageAdminController {
                 e.printStackTrace();
             }
         } else {
-            map.put("rows", storageService.JitaiProduct(storage, date, null, null));
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2])) + " 23:59:59";
+            try {
+                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
+                System.out.println(end);
+                System.out.println(endd);
+                map.put("rows", storageService.JitaiProduct(storage, date, date, endd));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+        System.out.println(map);
+        map.put("success", true);
         return map;
     }
 
