@@ -290,21 +290,23 @@ public class SaleListProductAdminController {
 
     @RequestMapping("/hebingOne")
     public Map<String, Object> hebingOne(String ids) {
+        System.out.println(ids);
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
         SaleListProduct byId = saleListProductService.findById(Integer.parseInt(idArr[0]));
-        int length = Integer.parseInt(byId.getLength().toString());
+        double length = byId.getLength();
         StringBuilder hebingLength = new StringBuilder();
         hebingLength.append(length);
         for (int i = 1; i < idArr.length; i++) {
-            length += Integer.parseInt(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength().toString());
-            hebingLength.append("+" + Integer.parseInt(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength().toString()));
+            length += saleListProductService.findById(Integer.parseInt(idArr[0])).getLength();
+            hebingLength.append("+" + (int)Math.floor(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength()));
             saleListProductService.deleteById(Integer.parseInt(idArr[i]));
         }
-        byId.setLength((double) length);
+        byId.setLength(length);
         byId.setHebingLength(hebingLength.toString());
         save(byId);
         map.put("success", true);
+        System.out.println(map);
         return map;
     }
 

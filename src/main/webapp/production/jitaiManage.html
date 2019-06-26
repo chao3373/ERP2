@@ -183,28 +183,13 @@
                                 return (a > b ? 1 : -1);
                             }
                         }, {
-                            field: 'sumwight',
-                            title: '总重',
-                            width: 100,
-                            align: 'center'
-                        }, {
-                            field: 'oneweight',
-                            title: '单件重量',
-                            width: 100,
-                            align: 'center'
-                        }, {
-                            field: 'sumwight',
-                            title: '总重',
-                            width: 100,
-                            align: 'center'
-                        }, {
-                            field: 'numsquare',
-                            title: '平方米',
-                            width: 100,
-                            align: 'center'
-                        }, {
                             field: 'num',
-                            title: '下发数',
+                            title: '件数',
+                            width: 100,
+                            align: 'center'
+                        }, {
+                            field: 'sumwight',
+                            title: '总重',
                             width: 100,
                             align: 'center'
                         }, {
@@ -219,11 +204,6 @@
                                     return 0;
                                 }
                             }
-                        }, {
-                            field: 'num',
-                            title: '和件数',
-                            width: 100,
-                            align: 'center'
                         }, {
                             field: 'label',
                             title: '标签名',
@@ -1004,99 +984,63 @@
 
         //打印测试
         function printTest() {
-            url = "";
+            url = "id:" + "00000000";
             $.ajax({
-                type: "POST",
-                async: false,
-                url: "/admin/storage/findById?id=" + 1,
-                success: function (result) {
-                    console.log(result);
-                    if (result.data != null) {
-                        var row = result.data;
-                        var json = {};
-                        json.id = row.id + "";//条码
-                        if (json.id.length < 8) {
-                            var j = "";
-                            for (var i = 8 - json.id.length; i > 0; i--) {
-                                j += "0";
-                            }
-                            json.id = j + json.id;
+                type: "POST", async: false, url: "/static/erweima", data: {
+                    url: url
+                }, success: function (result) {
+                    // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
+                    var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                    // url += result.url;
+                    // url += "'/>";
+                    tableString = "";
+                    tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：00000000</div>";
+                    "</td>";
+                    tableString += "<td colspan='2'>产品名称：打印测试名</td></tr>";
+                    tableString += "<tr><td colspan='2'>重量：999 kg x 999 件</td></tr>";
+                    tableString += "<tr><td colspan='2'>颜色：测试</td></tr>";
+                    tableString += "<tr><td colspan='2'>剖刀：测试</td></tr>";
+                    tableString += "<tr><td colspan='2'>客户：测试客户 </td></tr>";
+                    tableString += "<tr><td>幅宽：999m</td><td>厚度：999mm</td></tr>";
+                    tableString += "<tr><td>长度：999m</td><td>机台：测试</td></tr>";
+                    tableString += "<tr><td>班组：测试</td><td>质检：测试 </td></tr>";
+                    Date.prototype.format = function (format) {
+                        var o = {
+                            "M+": this.getMonth() + 1,
+                            "d+": this.getDate(),
+                            "h+": this.getHours(),
+                            "m+": this.getMinutes(),
+                            "s+": this.getSeconds(),
+                            "q+": Math.floor((this.getMonth() + 3) / 3),
+                            "S": this.getMilliseconds()
                         }
-                        url = "id:" + json.id;
-                        $.ajax({
-                            type: "POST", async: false, url: "/static/erweima", data: {
-                                url: url
-                            }, success: function (result) {
-                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
-                                var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
-                                // url += result.url;
-                                // url += "'/>";
-                                tableString = "";
-                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
-                                "</td>";
-                                tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
-                                if ($('#printWeight').is(':checked')) {
-                                    if (row.dabaonum != 1) {
-                                        tableString += "<tr><td colspan='2'>重量：999 kg x 999 件</td></tr>";
-                                    } else {
-                                        tableString += "<tr><td colspan='2'>重量：999 kg</td></tr>";
-                                    }
-                                }
-                                if ($('#printLabel').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
-                                }
-                                if ($('#printLength').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
-                                }
-                                if ($('#printThickness').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>客户：测试客户 </td></tr>";
-                                }
-                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
-                                tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTaiName + "</td></tr>";
-                                tableString += "<tr><td>班组：" + row.group.name + "</td><td>质检：测试 </td></tr>";
-                                Date.prototype.format = function (format) {
-                                    var o = {
-                                        "M+": this.getMonth() + 1,
-                                        "d+": this.getDate(),
-                                        "h+": this.getHours(),
-                                        "m+": this.getMinutes(),
-                                        "s+": this.getSeconds(),
-                                        "q+": Math.floor((this.getMonth() + 3) / 3),
-                                        "S": this.getMilliseconds()
-                                    }
-                                    if (/(y+)/.test(format)) {
-                                        format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                                    }
+                        if (/(y+)/.test(format)) {
+                            format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                        }
 
-                                    for (var k in o) {
-                                        if (new RegExp("(" + k + ")").test(format)) {
-                                            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
-                                        }
-                                    }
-                                    return format;
-                                }
-                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
-                                +"";
-                                tableString += "</div>";
-                                if (window.showModalDialog) {
-                                    window
-                                        .showModalDialog(
-                                            "print.html",
-                                            tableString,
-                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                                    console.log(tableString);
-                                } else {
-                                    window
-                                        .open(
-                                            "print.html",
-                                            tableString,
-                                            "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                                }
+                        for (var k in o) {
+                            if (new RegExp("(" + k + ")").test(format)) {
+                                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
                             }
-                        });
+                        }
+                        return format;
+                    }
+                    tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                    +"";
+                    tableString += "</td></tr></table></div>";
+                    if (window.showModalDialog) {
+                        window
+                            .showModalDialog(
+                                "..\\print.html",
+                                tableString,
+                                "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                        console.log(tableString);
                     } else {
-                        $.messager.alert("系统错误", "<span style='color: red'>没有该编号的信息!</span>");
-                        return;
+                        window
+                            .open(
+                                "..\\print.html",
+                                tableString,
+                                "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                     }
                 }
             });

@@ -921,9 +921,12 @@
                     }
                     $.ajax({
                         url: "/admin/saleListProduct/hebingJian?count=" + Number(r) + "&id=" + id,
-                        success: function(result){
-                            if (result.success){
+                        async: false,
+                        success: function (result) {
+                            if (result.success) {
                                 alert("合并成功！");
+                                $("#dg2").datagrid('loadData',[]);
+                                $("#dg").datagrid('reload');
                             }
                         }
                     });
@@ -939,21 +942,22 @@
             var price = rows[0].price;
             var meter = rows[0].meter;
             var ids = [];
-            for (var i = 0; i<=rows.length; i++) {
-                ids.push(rows[i].id);
-                if (rows[i].peasant != name){
+            for (var i = 0; i < rows.length; i++) {
+                var id = rows[i].id;
+                ids.push(id);
+                if (rows[i].peasant != name) {
                     alert("选择的客户不一致！");
                     return;
                 }
-                if (rows[i].model != model){
+                if (rows[i].model != model) {
                     alert("选择的宽度不一致！");
                     return;
                 }
-                if (rows[i].price != price){
+                if (rows[i].price != price) {
                     alert("选择的厚度不一致！");
                     return;
                 }
-                if (rows[i].meter != meter){
+                if (rows[i].meter != meter) {
                     alert("选择的实际厚度不一致！");
                     return;
                 }
@@ -962,10 +966,12 @@
             ids.join(",")
 
             $.ajax({
-                url:"/saleListProduct/hebingOne?ids=" + ids,
-                success: function(result){
-                    if (result.success){
-                        alert("合并成功")
+                url: "/admin/saleListProduct/hebingOne?ids=" + ids,
+                success: function (result) {
+                    if (result.success) {
+                        alert("合并成功");
+                        $("#dg2").datagrid('loadData',[]);
+                        $("#dg").datagrid('reload');
                     }
                 }
             })

@@ -422,7 +422,7 @@ public class StorageAdminController {
         }
         if (storage.getGroupName() == "夜班") {
             String star = dateInProducedd + " 17:00:00";
-            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 12:00:00";
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 15:00:00";
             try {
                 java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(star);
                 java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
