@@ -261,7 +261,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
         } else {
-            count+=1;
+            count += 1;
             saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
         }
 //        if (num == 1) {
@@ -291,29 +291,36 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         saleListProduct1.setId(null);
         Integer num = saleListProduct.getNum();
         saleListProduct.setNum(num / count);
+        Integer oneweight = saleListProduct.getOneweight();
+        Integer sumOneWeight = 0;
         double lengthh = saleListProduct.getLength();
         int length = (int) lengthh;
         StringBuilder sb = new StringBuilder();
         sb.append(length + "");
         Integer countNum = length;
         for (int i = 0; i < count - 1; i++) {
+            sumOneWeight += oneweight;
             sb.append("+" + length);
             countNum += length;
         }
         saleListProduct.setHebingLength(sb.toString());
         saleListProduct.setLength(Double.parseDouble(countNum.toString()));
+        saleListProduct.setOneweight(sumOneWeight);
         saleListProductRepository.save(saleListProduct);
         if (num % count != 0) {
             StringBuilder leng = new StringBuilder();
             leng.append(length + "");
             Integer countNum2 = length;
+            Integer sumOneWeight1 = 0;
             for (int i = 0; i < num % count - 1; i++) {
+                sumOneWeight1 += oneweight;
                 leng.append("+" + leng);
                 countNum2 += num;
             }
             saleListProduct1.setHebingLength(leng.toString());
             saleListProduct1.setNum(1);
             saleListProduct1.setLength(Double.parseDouble(countNum2.toString()));
+            saleListProduct1.setOneweight(sumOneWeight1);
             saleListProductRepository.save(saleListProduct1);
         }
     }
