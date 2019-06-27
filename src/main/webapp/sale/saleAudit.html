@@ -96,7 +96,6 @@
                 function () {
                     $('#dg2').datagrid({
                         rowStyler: function (index, row) {
-                            console.log(row);
                             if (row.level != 0) {
                                 return 'background-color:orange;color:blue;font-weight:bold;';
                             }
@@ -537,10 +536,7 @@
                                                     .post(
                                                         "/admin/saleListProduct/listAllBySaleList",
                                                         {
-                                                            id: $(
-                                                                "#dg")
-                                                                .datagrid(
-                                                                    "getSelections")[0].id
+                                                            id: $("#dg").datagrid("getSelections")[0].id
                                                         },
                                                         function (
                                                             data) {
@@ -938,6 +934,25 @@
             })
         }
 
+        //删除选中的订单信息
+        function deleteSaleList(){
+            if ($("#dg").datagrid('getSelected') == null){
+                alert("请选择一条要删除的信息");
+                return;
+            }
+            $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除选中的订单信息吗？</span>", function (r) {
+                if (r){
+                    var id = $("#dg").datagrid('getSelected').id;
+                    $.ajax({
+                        url:"/admin/saleList/delete?id=" + id,
+                        success:function(){
+                            $("#dg").datagrid('reload');
+                        }
+                    });
+                }
+            });
+        }
+
         //保存修改
         //封装订单信息传递后台
         function saveGoods() {
@@ -1018,6 +1033,8 @@
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;<a href="javascript:openRoleModifyDialog()"
                            class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+            &nbsp;&nbsp;<a href="javascript:deleteSaleList()"
+                           class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
         </fieldset>
     </div>
 </div>

@@ -306,6 +306,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         saleListProduct.setHebingLength(sb.toString());
         saleListProduct.setLength(Double.parseDouble(countNum.toString()));
         saleListProduct.setOneweight(sumOneWeight);
+        System.out.println(saleListProduct);
         saleListProductRepository.save(saleListProduct);
         if (num % count != 0) {
             StringBuilder leng = new StringBuilder();
@@ -321,6 +322,8 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             saleListProduct1.setNum(1);
             saleListProduct1.setLength(Double.parseDouble(countNum2.toString()));
             saleListProduct1.setOneweight(sumOneWeight1);
+            System.out.println("========================");
+            System.out.println(saleListProduct1);
             saleListProductRepository.save(saleListProduct1);
         }
     }

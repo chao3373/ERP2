@@ -496,4 +496,17 @@ public class StorageServiceImpl implements StorageService {
     public void updateOutNumberById(int parseInt, String ck) {
         storageRepository.updateOutNumberById(ck, parseInt);
     }
+
+    @Override
+    public String genCode() throws Exception{
+        StringBuffer code = new StringBuffer("CK");
+        code.append(DateUtil.getCurrentDateStr());
+        String saleNumber = storageRepository.getTodayMaxOutNumber();
+        if (saleNumber != null) {
+            code.append(StringUtil.formatCode(saleNumber));
+        } else {
+            code.append("00001");
+        }
+        return code.toString();
+    }
 }

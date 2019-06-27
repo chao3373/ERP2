@@ -90,6 +90,7 @@ public class SaleListServiceImpl implements SaleListService {
 
 	@Override
 	public void deleteByid(Integer id) {
+		saleListProductRepository.deleteBySaleListId(id);
 		saleListRepository.delete(id);
 	}
 

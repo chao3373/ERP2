@@ -74,7 +74,7 @@ public class IndexController {
     @ResponseBody
     @RequestMapping("/static/shangchuan")
     public String shangchuan(HttpServletRequest request, HttpServletResponse response, String serialNumber) throws Exception {
-        String ck = EntityUtils.genCode();
+        String ck = storageService.genCode();
         BufferedReader br = request.getReader();
         String str, wholeStr = "";
         while ((str = br.readLine()) != null) {

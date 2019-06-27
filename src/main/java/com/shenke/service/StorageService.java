@@ -149,4 +149,6 @@ public interface StorageService {
     List<Storage> selectByState(String state);
 
     void updateOutNumberById(int parseInt, String ck);
+
+    String genCode() throws Exception;
 }
