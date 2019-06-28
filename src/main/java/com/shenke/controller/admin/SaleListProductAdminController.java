@@ -242,7 +242,6 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<>();
         List<SaleListProduct> list = saleListProductService.findJitaiProduct();
         map.put("rows", list);
-        System.out.println(list);
         return map;
     }
 

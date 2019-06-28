@@ -412,14 +412,16 @@ public class StorageAdminController {
      */
     @RequestMapping("/JitaiProduct")
     public Map<String, Object> JitaiProduct(Storage storage, String dateInProducedd) {
+        System.out.println(storage);
         System.out.println(dateInProducedd);
         Map<String, Object> map = new HashMap<>();
-        if (storage.getGroupName() == "夜班") {
+        System.out.println(storage.getGroupName());
+        if (StringUtil.isNotEmpty(storage.getGroupName()) || storage.getGroupName().equals("夜班")) {
             String star = dateInProducedd + " 17:00:00";
-            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 15:00:00";
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
             try {
-                java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(star);
-                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
+                java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(star);
+                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
                 System.out.println("夜班");
                 System.out.println(stard);
                 System.out.println(endd);
