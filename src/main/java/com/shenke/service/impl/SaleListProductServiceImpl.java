@@ -359,7 +359,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                     predicate.getExpressions().add(cb.equal(root.get("clientname"), saleListProduct.getClientname()));
                 }
                 if (saleListProduct.getMeter() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("meter"), saleListProduct.getMeter()));
+                    predicate.getExpressions().add(cb.equal(root.get("price"), saleListProduct.getMeter()));
                 }
                 if (saleListProduct.getModel() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("model"), saleListProduct.getModel()));

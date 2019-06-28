@@ -63,16 +63,21 @@
                         width: 66,
                         align: 'center'
                     },{
+                        field: 'color',
+                        title: '颜色',
+                        width: 66,
+                        align: 'center'
+                    },  {
                         field: 'clerkName',
                         title: '生产人员',
                         width: 130,
                         align: 'center'
-                    },{
+                    }, {
                         field: 'groupName',
                         title: '班组',
                         width: 130,
                         align: 'center'
-                    },{
+                    }, {
                         field: 'dateInProduced',
                         title: '生产日期',
                         width: 130,
@@ -113,6 +118,19 @@
             });
 
         });
+
+        //时间格式转换
+        function formet(datee) {
+            var date = new Date(datee);
+            console.log(date);
+            Y = date.getFullYear() + '-';
+            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+            D = date.getDate() + ' ';
+            h = date.getHours() + ':';
+            m = date.getMinutes() + ':';
+            s = date.getSeconds();
+            return Y + M + D + h + m + s;
+        }
 
 
         //导出
@@ -169,13 +187,15 @@
         }
 
         //点击打印
-        function printDatagrid(){
+        function printDatagrid() {
             CreateFormPage("datagrid", $("#dg"));
         }
 
         function CreateFormPage(strPrintName, printDatagrid) {
             tableString = "";
-            tableString += '<table cellspacing="0" class="pb">';
+            tableString+="<h1>机台产量</h1>"
+            tableString+="生产机台：" + $("#jitai").combobox('getText') + "&nbsp;&nbsp;&nbsp;" + "日期：" + $("#productDate").datebox('getValue') + "&nbsp;&nbsp;&nbsp;" + "总重量：" + $("#sumweight").val() + "&nbsp;&nbsp;&nbsp;" + "总数量：" + $("#sumnum").val();
+            tableString += '<table cellspacing="0" class="pb" style="margin: 10px auto;">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
             var nameList = '';
@@ -273,6 +293,8 @@
                         var tdStr = rows[i][nl[j].f];
                         if (tdStr == null) {
                             tdStr = "";
+                        } else if ([nl[j].f] == 'dateInProduced') {
+                            tdStr = formet(rows[i][nl[j].f]);
                         }
                         console.log(tdStr);
                         tableString += tdStr;
