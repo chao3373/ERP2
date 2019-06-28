@@ -414,31 +414,26 @@ public class StorageAdminController {
     public Map<String, Object> JitaiProduct(Storage storage, String dateInProducedd) {
         System.out.println(dateInProducedd);
         Map<String, Object> map = new HashMap<>();
-        java.util.Date date = null;
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd hh:MM:dd").parse(dateInProducedd + " 00:00:00");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         if (storage.getGroupName() == "夜班") {
             String star = dateInProducedd + " 17:00:00";
             String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 15:00:00";
             try {
                 java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(star);
                 java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
-                System.out.println(star);
-                System.out.println(end);
+                System.out.println("夜班");
                 System.out.println(stard);
                 System.out.println(endd);
-                map.put("rows", storageService.JitaiProduct(storage, date, stard, endd));
+                map.put("rows", storageService.JitaiProduct(storage, null, stard, endd));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         } else {
-            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2])) + " 23:59:59";
             try {
-                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").parse(end);
-                System.out.println(end);
+                java.util.Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                String end = dateInProducedd + " 23:59:59";
+                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
+                System.out.println("白班");
+                System.out.println(date);
                 System.out.println(endd);
                 map.put("rows", storageService.JitaiProduct(storage, date, date, endd));
             } catch (ParseException e) {

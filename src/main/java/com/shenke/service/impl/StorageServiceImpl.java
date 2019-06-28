@@ -420,9 +420,13 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
                 }
                 if (star != null) {
+                    System.out.println("开始时间");
+                    System.out.println(star);
                     predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
                 }
                 if (end != null) {
+                    System.out.println("结束时间");
+                    System.out.println(end);
                     predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                 }
                 return predicate;
