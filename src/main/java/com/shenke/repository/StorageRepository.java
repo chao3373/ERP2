@@ -50,7 +50,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * public List<SaleListProduct> listProductSucceed();
      */
 
-    @Query(value = "select  * from t_storage where id not in (select id from t_storage where state like'提货' or state like '装车' or state like '准备提货')",nativeQuery = true)
+    @Query(value = "select * from t_storage",nativeQuery = true)
     public List<Storage> outSuccess();
 
     /**

@@ -48,8 +48,6 @@ public class StorageAdminController {
      */
     @RequestMapping("/add")
     public Map<String, Object> add(Storage storage, String clerkName, String groupName) {
-        System.out.println(storage);
-        //storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
         storageService.add(storage, clerkName, groupName);
         Map<String, Object> map = new HashMap<String, Object>();
         Integer id = storageService.selectByMaxId().getId();
@@ -65,8 +63,6 @@ public class StorageAdminController {
      */
     @RequestMapping("/feibiaoAdd")
     public Map<String, Object> feibiaoAdd(Storage storage, String clerkName, String groupName) {
-        System.out.println(storage);
-        //storageService.add(weight, saleListProductId, jitaiProductionAllotId, producionProcessId, jitaiId, clerkName, group);
         storageService.feibiaoAdd(storage, clerkName, groupName);
         Map<String, Object> map = new HashMap<String, Object>();
         Integer id = storageService.selectByMaxId().getId();
@@ -215,23 +211,10 @@ public class StorageAdminController {
         map1.put("pleasant", pleasant);
         map1.put("productDate", productDate);
         map1.put("realityweight", realityweight);
-        //map1.put("location", location);
-        //map1.put("jitai", jitai);
-        //map1.put("productDate", productDate);
-        //map1.put("clerk", clerk);
-        //ap1.put("group", group);
-        //map1.put("peasant", peasant);
-        //map1.put("state", state);
         map1.put("name", name);
         map1.put("client", client);
         map1.put("mode", mode);
         map1.put("price", price);
-        //map1.put("address", address);
-
-        System.out.println("*****************************");
-        System.out.println(map1);
-        System.out.println("*****************************");
-
         map.put("success", true);
         map.put("rows", storageService.searchLiftMoney(map1));
         return map;
@@ -416,7 +399,7 @@ public class StorageAdminController {
         System.out.println(dateInProducedd);
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage.getGroupName());
-        if (StringUtil.isNotEmpty(storage.getGroupName()) || storage.getGroupName().equals("夜班")) {
+        if (StringUtil.isNotEmpty(storage.getGroupName()) && storage.getGroupName().equals("夜班")) {
             String star = dateInProducedd + " 17:00:00";
             String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
             try {
@@ -434,22 +417,17 @@ public class StorageAdminController {
                 java.util.Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
                 String end = dateInProducedd + " 23:59:59";
                 java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
-                System.out.println("白班");
-                System.out.println(date);
-                System.out.println(endd);
                 map.put("rows", storageService.JitaiProduct(storage, date, date, endd));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println(map);
         map.put("success", true);
         return map;
     }
 
     @RequestMapping("/kucunzonglan")
     public Map<String, Object> KuCunZongLan(String clientname, String saleNumber, String saleDate) {
-        System.out.println(saleDate);
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
         map1.put("clientname", clientname);
@@ -457,9 +435,7 @@ public class StorageAdminController {
         map1.put("saleDate", saleDate);
 
         map.put("success", true);
-        System.out.println(map1);
         map.put("rows", storageService.KucunSearch(map1));
-        System.out.println(map);
         return map;
 
     }
@@ -502,7 +478,6 @@ public class StorageAdminController {
      */
     @RequestMapping("/selectByState")
     public Map<String, Object> selectByState(String state) {
-        System.out.println(state);
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));

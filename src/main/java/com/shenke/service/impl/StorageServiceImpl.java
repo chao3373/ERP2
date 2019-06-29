@@ -118,7 +118,6 @@ public class StorageServiceImpl implements StorageService {
     public void outStorage(int id, Date date) {
         // TODO Auto-generated method stub
         storageRepository.outStorage(id, date);
-        saleListProductRepository.updateState("提货:" + storageRepository.findOne(id).getJiTai().getName(), storageRepository.findOne(id).getSaleListProduct().getId());
     }
 
     @Override
@@ -142,14 +141,6 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public List<Object[]> findByClientAndGroupByName(String client) {
         List<Object[]> byClientAndGroupByName = storageRepository.findByClientAndGroupByName(client);
-        System.out.println("==============================");
-        System.out.println(byClientAndGroupByName.size());
-        System.out.println(byClientAndGroupByName);
-        for (Object[] obj : byClientAndGroupByName) {
-            for (int i = 0; i < obj.length; i++) {
-                System.out.println(obj[i]);
-            }
-        }
         return byClientAndGroupByName;
     }
 

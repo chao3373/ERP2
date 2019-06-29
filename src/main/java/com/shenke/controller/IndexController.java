@@ -87,7 +87,6 @@ public class IndexController {
             if (StringUtil.isNotEmpty(split[i])) {
                 storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(System.currentTimeMillis()));
                 storageService.updateOutNumberById(Integer.parseInt(split[i]), ck);
-                saleListProductRepository.updateState("装车：" + storageService.findById(Integer.parseInt(split[i])).getJiTai().getName(), storageService.findById(Integer.parseInt(split[i])).getSaleListProduct().getId());
             }
         }
         return "上传成功";
