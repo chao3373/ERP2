@@ -487,7 +487,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<Storage> selectByState(String state) {
-        return storageRepository.selectByState(state);
+        return storageRepository.selectByState("%" + state + "%");
     }
 
     @Override
