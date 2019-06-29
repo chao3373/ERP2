@@ -432,7 +432,7 @@ public class StorageServiceImpl implements StorageService {
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
-                    predicate.getExpressions().add(cb.equal(root.get("saleNumber"), storage.getSaleNumber()));
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + storage.getSaleNumber() + "%"));
                 }
                 if (storage.getLocation() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("location").get("id"), storage.getLocation().getId()));
@@ -445,7 +445,10 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (StringUtil.isNotEmpty(dateInProducedd)) {
                     try {
-                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyyy-MM-dd").parse(dateInProducedd)));
+                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 00:00:00");
+                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 23:59:59");
+                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
