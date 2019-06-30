@@ -350,20 +350,24 @@ public class SaleListProductAdminController {
      */
     @RequestMapping("/condition")
     public Map<String, Object> condition(SaleListProduct saleListProduct) {
+        System.out.println(saleListProduct);
         Map<String, Object> map = new HashMap<>();
         List<SaleListProduct> condition = saleListProductService.condition(saleListProduct);
         Integer num = 0;
         Integer weight = 0;
 
         for (SaleListProduct saleListProduct1 : condition) {
-            Integer wancheng;
+            System.out.println(saleListProduct1);
+            Integer wancheng = 0;
             if (saleListProduct1.getAccomplishNumber() != null) {
                 wancheng = saleListProduct1.getAccomplishNumber();
-            } else {
-                wancheng = 0;
             }
-            num += saleListProduct1.getNum() - wancheng;
-            weight += num * saleListProduct1.getOneweight();
+            System.out.println("完成数量：" + wancheng);
+            Integer num1 = saleListProduct1.getNum() - wancheng;
+            num += num1;
+            System.out.println("剩余数量：" + num);
+            weight += num1 * saleListProduct1.getOneweight();
+            System.out.println("剩余总重量：" + weight);
         }
 
         if (condition.size() != 0) {

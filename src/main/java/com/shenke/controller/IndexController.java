@@ -59,7 +59,6 @@ public class IndexController {
         Map<String, Object> map = new HashMap<String, Object>();
         if (userService.findNamePsw(name, psw) == null) {
             map.put("errorInfo", "用户名或密码错误");
-
             return map;
         }
         List<Storage> list = storageService.fandAllBySerialNumber(serialNumber);
