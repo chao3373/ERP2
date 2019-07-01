@@ -125,7 +125,7 @@ public class StorageAdminController {
     }
 
     /**
-     * 查询所有未出库的商品
+     * 查询所有的商品
      */
     @RequestMapping("/outSuccess")
     public Map<String, Object> outSuccess() {
@@ -277,7 +277,6 @@ public class StorageAdminController {
             state = "%" + state + "%";
         }
         map.put("rows", storageService.findByState(state));
-        System.out.println(state);
         return map;
     }
 
@@ -303,13 +302,11 @@ public class StorageAdminController {
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-        System.out.println(map1);
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
             storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
         }
-        System.out.println(storageList);
         map.put("rows", storageList);
         return map;
     }
@@ -481,6 +478,35 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));
+        return map;
+    }
+
+    /***
+     * 选中的商品回滚到仓库
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/goBackku")
+    public Map<String, Object> goBackku(String ids) {
+        Map<String, Object> map = new HashMap<>();
+        String[] split = ids.split(",");
+        for (int i = 0; i < split.length; i++) {
+            storageService.updateByIdAndState(Integer.parseInt(split[i]), "生产完成" + storageService.findById(Integer.parseInt(split[i])).getJiTaiName());
+        }
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 查询所有生产完成的
+     * @return
+     */
+    @RequestMapping("/allWanCheng")
+    public Map<String, Object> allWanCheng() {
+        Map<String, Object> map = new HashMap<>();
+        List<Storage> byState = storageService.findByState("%生产完成%");
+        map.put("success", true);
+        map.put("rows", byState);
         return map;
     }
 }
