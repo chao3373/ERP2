@@ -105,8 +105,8 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<Storage> fandAllBySerialNumber(String serialNumber) {
-        return storageRepository.fandAllBySerialNumber(serialNumber);
+    public List<Storage> fandAllBySerialNumber(String serialNumber, String state) {
+        return storageRepository.fandAllBySerialNumber(serialNumber, state);
     }
 
     @Override

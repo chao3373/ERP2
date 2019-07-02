@@ -67,7 +67,8 @@
         //计算a的总件数和总重量
         function loadA() {
             $.ajax({
-                url: "/admin/storage/selectByState?state=准备提货",
+                url: "/admin/storage/selectState",
+                data: {state: "准备提货"},
                 async: false,
                 success: function (result) {
                     if (result.success) {
@@ -124,21 +125,13 @@
                     // 设置对话框窗口顶部工具栏
                     // 对话框窗口底部按钮
                     buttons: [{
-                        href: 'javascript:addRows()',
                         text: '确定',
                         iconCls: 'icon-ok',
                         handler: function () {
                             var b = $("#dg").datagrid("getSelections");
-
                             var ids = [];
-                            var index = [];
                             for (var i = 0; i < b.length; i++) {
-                                // $("#a").datagrid("appendRow", b[i]);
-                                index.push($("#dg").datagrid('getRowIndex', b[i]));
                                 ids.push(b[i].id);
-                            }
-                            for (var i = index.length - 1; i >= 0; i--) {
-                                $("#dg").datagrid("deleteRow", index[i]);
                             }
                             var idArr = ids.join(",");
                             $.ajax({
@@ -319,6 +312,17 @@
                     $("#sumnum").val("0");
                 }
             });
+
+            $.ajax({
+                type:"POST",
+                url:"/admin/storage/selectState",
+                data:{state: "生产完成"},
+                success: function(result){
+                    if (result.success){
+                        $("#dg").datagrid('loadData', result.rows);
+                    }
+                }
+            })
 
         }
 
@@ -541,7 +545,6 @@
             $("#dlg4").dialog("open");
         }
 
-        //确定选择要打印的列  ok
         function saveSelectRows() {
             var fieldArr = [];
             $("#dlg4").find("input").each(function () {
@@ -756,13 +759,6 @@
                                                       id="saleDate" name="saleDate" class="easyui-datebox"
                                                       demandd="true" data-options="editable:false" size="10"/>
                 </td>
-                <!--<td>&nbsp;&nbsp;单号：<input type="text" id="danhao"-->
-                <!--required="true" name="danhao" size="10"/>-->
-                <!--</td>-->
-                <!--<td>&nbsp;&nbsp;生成发货单：<input type="text"-->
-                <!--id="shengchengfahuodan" required="true" name="shengchengfahuodan"-->
-                <!--size="10"/>-->
-                <!--</td>-->
                 <td width="180px">&nbsp;&nbsp;盘点机：<input
                         class="easyui-combobox" id="pandianji" name="pandianji"
                         style="width: 100px"
@@ -823,7 +819,7 @@
 <!-- 弹出的框 -->
 <div class="easyui-dialog" id="dd1" fit="true" closed="true">
     <table id="dg" class="easyui-datagrid" fitColumns="false"
-           rownumbers="true" url="/admin/storage/selectBystate?state=生产完成" toolbar="#tb"
+           rownumbers="true" toolbar="#tb"
            fit="true">
     </table>
     <div id="tb" style="padding: 15px">

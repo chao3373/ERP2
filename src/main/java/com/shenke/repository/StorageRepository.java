@@ -24,8 +24,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param serialNumber
      * @return
      */
-    @Query(value = "select * from t_storage where serial_number = ?1", nativeQuery = true)
-    public List<Storage> fandAllBySerialNumber(String serialNumber);
+    @Query(value = "select * from t_storage where serial_number = ?1 and state = ?2", nativeQuery = true)
+    public List<Storage> fandAllBySerialNumber(String serialNumber, String state);
 
     /**
      * 查询id最大的
@@ -210,6 +210,6 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param state
      * @return
      */
-    @Query(value = "select * from t_storage where state = ?1", nativeQuery = true)
+    @Query(value = "select * from t_storage where state like ?1", nativeQuery = true)
     List<Storage> selectByState(String state);
 }

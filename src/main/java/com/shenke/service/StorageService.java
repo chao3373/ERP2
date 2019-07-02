@@ -35,7 +35,7 @@ public interface StorageService {
      *
      * @return
      */
-    public List<Storage> fandAllBySerialNumber(String serialNumber);
+    public List<Storage> fandAllBySerialNumber(String serialNumber, String state);
 
     /**
      * 根据订单销售商品id查询入库单

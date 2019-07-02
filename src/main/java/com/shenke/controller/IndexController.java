@@ -61,7 +61,7 @@ public class IndexController {
             map.put("errorInfo", "用户名或密码错误");
             return map;
         }
-        List<Storage> list = storageService.fandAllBySerialNumber(serialNumber);
+        List<Storage> list = storageService.fandAllBySerialNumber(serialNumber, "提货");
         if (list == null || list.size() == 0) {
             map.put("errorInfo", "没有关于本机的记录");
         } else {

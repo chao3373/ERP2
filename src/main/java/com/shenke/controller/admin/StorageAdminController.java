@@ -29,7 +29,7 @@ import com.shenke.service.StorageService;
  * @author Administrator
  */
 @RestController
-@RequestMapping("/admin/storage")
+@RequestMapping("/admin/storage/")
 public class StorageAdminController {
 
     @Resource
@@ -475,6 +475,15 @@ public class StorageAdminController {
      */
     @RequestMapping("/selectByState")
     public Map<String, Object> selectByState(String state) {
+        System.out.println(state);
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", storageService.selectByState(state));
+        return map;
+    }
+
+    @RequestMapping("/selectState")
+    public Map<String, Object> selectState(String state){
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));
