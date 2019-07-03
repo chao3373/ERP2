@@ -9,10 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.jws.Oneway;
 
-import com.shenke.entity.Count;
-import com.shenke.entity.JieSuan;
-import com.shenke.entity.Log;
-import com.shenke.entity.Storage;
+import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.DateUtil;
@@ -483,7 +480,7 @@ public class StorageAdminController {
     }
 
     @RequestMapping("/selectState")
-    public Map<String, Object> selectState(String state){
+    public Map<String, Object> selectState(String state) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));
@@ -528,7 +525,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/editKuCun")
-    public Map<String, Object> editKuCun(Integer id, Integer oneWeight, Double shiji, Double length){
+    public Map<String, Object> editKuCun(Integer id, Integer oneWeight, Double shiji, Double length) {
         Map<String, Object> map = new HashMap<>();
         System.out.println(id);
         System.out.println(oneWeight);
@@ -536,6 +533,14 @@ public class StorageAdminController {
         System.out.println(shiji);
         storageService.editKuCun(id, oneWeight, shiji, length);
         map.put("success", true);
+        return map;
+    }
+
+    @RequestMapping("/findeBySaleNumberAndClient")
+    public Map<String, Object> findeBySaleNumberAndClient(String saleNumber, String client) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", storageService.findeBySaleNumberAndClient(saleNumber, client));
         return map;
     }
 }

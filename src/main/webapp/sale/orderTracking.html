@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>订单追踪</title>
+    <title>销售订单追踪</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -18,6 +18,7 @@
         $(document).ready(function () {
 
             $("#dg").datagrid({
+                url:"/admin/storage/findAll",
                 columns: [[
                     {
                         field: 'id',
@@ -25,6 +26,11 @@
                         width: 100,
                         align: 'center',
                         hidden: 'true'
+                    }, {
+                        field: 'saleNumber',
+                        title: '订单号',
+                        width: 150,
+                        align: 'center',
                     }, {
                         field: 'clientname',
                         title: '客户名称',
@@ -185,21 +191,19 @@
 
 
         function screenSale() {
-            var salenumber = $("#saleNumber").val();
-            if (salenumber == "") {
-                $.messager.alert("系统提示", "请输入订单号！");
-                return;
-            }
-            $.post("/admin/storage/findSaleListId", {
-                saleNumber: salenumber
-            }, function (result) {
-                console.log(result);
-                $("#dg").datagrid("loadData", result.rows);
-            }, "json");
+            $.ajax({
+                url:"/admin/storage/findeBySaleNumberAndClient",
+                data:{saleNumber:$("#saleNumber").val(),client:$("#client").combobox('getText')},
+                success:function (result) {
+                    if (result.success){
+                        $("#dg").datagrid('loadData', result.rows);
+                    }
+                }
+            });
         }
 
         function clertCondition() {
-            $("#saleNumber").val("");
+            location.reload();
         }
 
     </script>
@@ -217,6 +221,9 @@
             <tr>
                 <td>
                     &nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" style="width: 130px"/>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input id="client" class="easyui-combobox" data-options="valueField:'id',textField:'name'" panelHeight="auto" url="/admin/client/clientList" style="width: 130px"/>
                 </td>
                 <td>
                     &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"

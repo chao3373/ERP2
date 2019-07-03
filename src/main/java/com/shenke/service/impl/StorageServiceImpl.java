@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
-
 import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
-import org.apache.commons.collections.list.PredicatedList;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -407,7 +403,7 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
                 }
-                if (StringUtil.isNotEmpty(storage.getGroupName())){
+                if (StringUtil.isNotEmpty(storage.getGroupName())) {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
                 }
                 if (star != null) {
@@ -445,8 +441,8 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (StringUtil.isNotEmpty(dateInProducedd)) {
                     try {
-                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 00:00:00");
-                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 23:59:59");
+                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
                         predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                     } catch (ParseException e) {
@@ -496,7 +492,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String genCode() throws Exception{
+    public String genCode() throws Exception {
         StringBuffer code = new StringBuffer("CK");
         code.append(DateUtil.getCurrentDateStr());
         String saleNumber = storageRepository.getTodayMaxOutNumber();
@@ -511,5 +507,22 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length) {
         storageRepository.editKuCun(id, oneWeight, shiji, length);
+    }
+
+    @Override
+    public List<Storage> findeBySaleNumberAndClient(String saleNumber, String client) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty(saleNumber)) {
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + saleNumber + "%"));
+                }
+                if (StringUtil.isNotEmpty(client)){
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), client));
+                }
+                    return predicate;
+            }
+        });
     }
 }
