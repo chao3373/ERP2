@@ -212,4 +212,15 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Query(value = "select * from t_storage where state like ?1", nativeQuery = true)
     List<Storage> selectByState(String state);
+
+    /***
+     * 修改库存信息
+     * @param id
+     * @param oneWeight
+     * @param shiji
+     * @param length
+     */
+    @Modifying
+    @Query(value = "update t_storage set length=?4, oneweight=?2, realityweight=?3 where id=?1", nativeQuery = true)
+    void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
 }

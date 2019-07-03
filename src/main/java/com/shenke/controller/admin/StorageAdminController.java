@@ -518,4 +518,24 @@ public class StorageAdminController {
         map.put("rows", byState);
         return map;
     }
+
+    /****
+     * 修改库存信息
+     * @param id
+     * @param oneWeight
+     * @param shiji
+     * @param length
+     * @return
+     */
+    @RequestMapping("/editKuCun")
+    public Map<String, Object> editKuCun(Integer id, Integer oneWeight, Double shiji, Double length){
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(id);
+        System.out.println(oneWeight);
+        System.out.println(length);
+        System.out.println(shiji);
+        storageService.editKuCun(id, oneWeight, shiji, length);
+        map.put("success", true);
+        return map;
+    }
 }

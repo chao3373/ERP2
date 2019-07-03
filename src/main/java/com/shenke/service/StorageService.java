@@ -151,4 +151,6 @@ public interface StorageService {
     void updateOutNumberById(int parseInt, String ck);
 
     String genCode() throws Exception;
+
+    void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
 }

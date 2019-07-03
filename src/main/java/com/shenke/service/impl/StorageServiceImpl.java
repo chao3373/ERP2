@@ -507,4 +507,9 @@ public class StorageServiceImpl implements StorageService {
         }
         return code.toString();
     }
+
+    @Override
+    public void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length) {
+        storageRepository.editKuCun(id, oneWeight, shiji, length);
+    }
 }
