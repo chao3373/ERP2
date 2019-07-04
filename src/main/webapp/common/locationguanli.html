@@ -69,11 +69,21 @@
                 url: "/admin/storage/select",
                 success: function (resulgt) {
                     if (resulgt != null) {
-                        console.log(resulgt);
                         var ruselt = eval('(' + resulgt + ')');
                         if (ruselt.success) {
-                            console.log(ruselt);
                             $("#dg").datagrid("loadData", ruselt.rows);
+                            var rows = $("#dg").datagrid('getRows');
+                            var count = 0;
+                            var sumweight = 0;
+                            for (var i = 0; i < rows.length; i++) {
+                                count++;
+                                sumweight+=rows[i].realityweight
+                            }
+                            $("#dg").datagrid('appendRow',{
+                                saleNumber:"合计",
+                                clientname:"总数量：" + count + "件",
+                                peasant:"总重量：" + sumweight + "KG"
+                            })
                         }
                     }
                 }
@@ -149,7 +159,7 @@
                     title: '重量',
                     width: 100,
                     align: 'center'
-                },{
+                }, {
                     field: 'color',
                     title: '颜色',
                     width: 100,
@@ -214,9 +224,7 @@
                     width: 100,
                     align: 'center',
                     formatter: function (val, row) {
-                        console.log(row.locationId);
                         if (row.location) {
-                            //val = row.location.name;
                             return row.location.name;
                         }
                         return;
@@ -293,11 +301,8 @@
             tableString = "";
             tableString += "<h3 style='font-size: 25px;text-align: center;'>库存统计</h3>";
             tableString += '<div style="text-aligh:center; width:100%;"><table cellspacing="0" class="pb">';
-            console.log(printDatagrid.datagrid("options"));
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
-            console.log(frozenColumns);
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
-            console.log(columns);
             var nameList = '';
             // 载入title
             if (typeof columns != 'undefined' && columns != '') {
@@ -371,10 +376,7 @@
             }
             // 载入内容
             var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
-            console.log(rows);
-            console.log(nameList);
             var nl = eval('([' + nameList.substring(1) + '])');
-            console.log(nl);
             for (var i = 0; i < rows.length; ++i) {
                 tableString += '\n<tr>';
                 $(nl).each(function (j) {
@@ -389,12 +391,11 @@
 
                     if (e + 2 == nl[j].f.length) {
                         tableString += rows[i][nl[j].f.substring(0, e)];
-                        console.log(tableString);
                     } else {
                         var tdStr;
                         if (rows[i][nl[j].f] == "[object Object]") {
                             tdStr = rows[i][nl[j].f].name;
-                        }else if ([nl[j].f] == 'dateInProduced'){
+                        } else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
                         } else {
                             tdStr = rows[i][nl[j].f];
@@ -403,7 +404,6 @@
                         if (tdStr == null) {
                             tdStr = "";
                         }
-                        console.log(tdStr);
                         tableString += tdStr;
                     }
 
@@ -425,21 +425,19 @@
                         "print.html",
                         tableString,
                         "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
-                console.log(tableString);
             }
         }
 
         //时间格式转换
-        function formet (datee){
+        function formet(datee) {
             var date = new Date(datee);
-            console.log(date);
             Y = date.getFullYear() + '-';
-            M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
             D = date.getDate() + ' ';
             h = date.getHours() + ':';
             m = date.getMinutes() + ':';
             s = date.getSeconds();
-            return Y+M+D+h+m+s;
+            return Y + M + D + h + m + s;
         }
 
         $(document).ready(function () {
@@ -518,7 +516,7 @@
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
                         class="easyui-combobox" id="clientname" name="clientname"
                         style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                        data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/>
                 </td>
 
                 <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"

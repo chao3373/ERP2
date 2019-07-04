@@ -320,7 +320,7 @@ public class StorageAdminController {
      * 根据出库单号查询
      */
     @RequestMapping("/selectOutByOutNumber")
-    public List<Storage> selectOutByOutNumber(String outNumber) {
+    public List<StorageOut> selectOutByOutNumber(String outNumber) {
         System.out.println(outNumber);
         return storageService.selectOutByOutNumber(outNumber);
     }

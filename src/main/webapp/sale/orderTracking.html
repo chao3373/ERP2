@@ -196,7 +196,20 @@
                 data:{saleNumber:$("#saleNumber").val(),client:$("#client").combobox('getText')},
                 success:function (result) {
                     if (result.success){
-                        $("#dg").datagrid('loadData', result.rows);
+                       $("#dg").datagrid('loadData', result.rows);
+                       var rows = $("#dg").datagrid('getRows');
+                       console.log(rows);
+                       var count= 0;
+                       var sumweight = 0;
+                       for(var i = 0; i<rows.length; i++){
+                           count++;
+                           sumweight+=rows[i].realityweight;
+                       }
+                       $("#dg").datagrid('appendRow',{
+                           saleNumber:"合计",
+                           clientname:"总数量：" + count,
+                           name:"总重量：" + sumweight + "KG"
+                       })
                     }
                 }
             });

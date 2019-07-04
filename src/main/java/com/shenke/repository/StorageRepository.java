@@ -3,6 +3,7 @@ package com.shenke.repository;
 import java.sql.Date;
 import java.util.List;
 
+import com.shenke.entity.StorageOut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -157,8 +158,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param outNumber
      * @return
      */
-    @Query(value = "SELECT * FROM t_storage WHERE out_number =?1", nativeQuery = true)
-    public List<Storage> selectOutByOutNumber(String outNumber);
+    @Query(value = "SELECT name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
+    public List<Object[]> selectOutByOutNumber(String outNumber);
 
     /***
      * 根据商品名称和出库单号查询数量

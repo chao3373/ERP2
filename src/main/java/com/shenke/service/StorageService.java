@@ -121,7 +121,7 @@ public interface StorageService {
 
     public List<Storage> selectClientNameByOutDate(Date s);
 
-    public List<Storage> selectOutByOutNumber(String outNumber);
+    public List<StorageOut> selectOutByOutNumber(String outNumber);
 
     public String selectCountByNameAndOutNumber(String name, String outNumber);
 

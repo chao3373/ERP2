@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
+
 import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
@@ -319,8 +320,13 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<Storage> selectOutByOutNumber(String outNumber) {
-        return storageRepository.selectOutByOutNumber(outNumber);
+    public List<StorageOut> selectOutByOutNumber(String outNumber) {
+        List<Object[]> list = storageRepository.selectOutByOutNumber(outNumber);
+        List<StorageOut> list1 = new ArrayList<>();
+        for (Object[] obj : list) {
+            list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), obj[5].toString(), obj[6].toString(), obj[7].toString(), obj[8].toString()));
+        }
+        return list1;
     }
 
     @Override
@@ -518,10 +524,10 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(saleNumber)) {
                     predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + saleNumber + "%"));
                 }
-                if (StringUtil.isNotEmpty(client)){
+                if (StringUtil.isNotEmpty(client)) {
                     predicate.getExpressions().add(cb.equal(root.get("clientname"), client));
                 }
-                    return predicate;
+                return predicate;
             }
         });
     }
