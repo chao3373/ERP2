@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 
 import com.shenke.entity.*;
@@ -32,6 +35,9 @@ public class StorageServiceImpl implements StorageService {
 
     @Resource
     private StorageRepository storageRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Resource
     private SaleListProductRepository saleListProductRepository;
@@ -263,55 +269,117 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<Storage> detail(Map<String, Object> map) {
-        if (map.get("order") != null && map.get("order") != "") {
-            return storageRepository.findAll(new Specification<Storage>() {
-                public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                    Predicate predicate = cb.conjunction();
-                    if (map.get("date") != null) {
-                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
-                    }
-                    if (StringUtil.isNotEmpty((String) map.get("client"))) {
-                        predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
-                    }
-                    if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
-                        predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
-                    }
-                    if (StringUtil.isNotEmpty((String) map.get("product"))) {
-                        predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
-                    }
-
-                    predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
-
-                    query.groupBy(root.get("saleListProduct").get("id"));
-
-                    return predicate;
-                }
-            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
-        }
-        return storageRepository.findAll(new Specification<Storage>() {
-            @Override
-            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                if (map.get("date") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
-                }
-                if (StringUtil.isNotEmpty((String) map.get("client"))) {
-                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
-                }
-                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
-                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
-                }
-                if (StringUtil.isNotEmpty((String) map.get("product"))) {
-                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
-                }
-
-                predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
-
-                query.groupBy(root.get("saleListProduct").get("id"));
-                return predicate;
+    public List<StorageOut> detail(Map<String, Object> map) {
+        String client = (String) map.get("client");
+        String de = (String) map.get("date");
+        System.out.println(de);
+        java.util.Date date = null;
+        if (StringUtil.isNotEmpty(de)){
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(de);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        });
+        }
+        String peasant = (String) map.get("peasant");
+        String product = (String) map.get("product");
+        String order = (String) map.get("order");
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<StorageOut> query = criteriaBuilder.createQuery(StorageOut.class);
+        Root<Storage> from = query.from(Storage.class);
+        Path<String> clientname = from.get("clientname");
+        Path<String> peasant1 = from.get("peasant");
+        Path<String> name = from.get("name");
+        Path<String> color = from.get("color");
+        Path<String> outNumber = from.get("outNumber");
+        Path<Double> model = from.get("model");
+        Path<Double> price = from.get("price");
+        Path<Double> length = from.get("length");
+        Path<Double> realityweight = from.get("realityweight");
+        Path<Integer> saleListProductId = from.get("saleListProduct").get("id");
+        Path<java.util.Date> deliveryTime = from.get("deliveryTime");
+
+
+        List<Predicate> predicateList = new ArrayList<Predicate>();
+        if (StringUtil.isNotEmpty(client)) {
+            predicateList.add(criteriaBuilder.equal(clientname, client));
+        }
+        if (StringUtil.isNotEmpty(peasant)) {
+            predicateList.add(criteriaBuilder.equal(peasant1, peasant));
+        }
+        if (StringUtil.isNotEmpty(product)) {
+            predicateList.add(criteriaBuilder.equal(name, product));
+        }
+        if (date != null) {
+            predicateList.add(criteriaBuilder.equal(deliveryTime, date));
+        }
+
+        Predicate[] predicates = new Predicate[predicateList.size()];
+        predicates = predicateList.toArray(predicates);
+
+        query.where(predicates);
+
+        query.multiselect(clientname, peasant1, name, color, outNumber, model, price, length, realityweight, criteriaBuilder.sum(realityweight).as(Double.class), criteriaBuilder.count(name).as(Integer.class), deliveryTime);
+
+        query.groupBy(saleListProductId, name, model, length, color, realityweight);
+
+        TypedQuery<StorageOut> q = entityManager.createQuery(query);
+        List<StorageOut> resultList = q.getResultList();
+        for(StorageOut storageOut: resultList){
+            System.out.println(storageOut);
+        }
+        return resultList;
+
+
+//        if (map.get("order") != null && map.get("order") != "") {
+//            return storageRepository.findAll(new Specification<Storage>() {
+//                public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+//                    Predicate predicate = cb.conjunction();
+//                    if (map.get("date") != null) {
+//                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+//                    }
+//                    if (StringUtil.isNotEmpty((String) map.get("client"))) {
+//                        predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+//                    }
+//                    if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+//                        predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+//                    }
+//                    if (StringUtil.isNotEmpty((String) map.get("product"))) {
+//                        predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+//                    }
+//
+//                    predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+//
+//                    query.groupBy(root.get("saleListProduct").get("id"));
+//
+//                    return predicate;
+//                }
+//            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
+//        }
+//        return storageRepository.findAll(new Specification<Storage>() {
+//            @Override
+//            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+//                Predicate predicate = cb.conjunction();
+//                if (map.get("date") != null) {
+//                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+//                }
+//                if (StringUtil.isNotEmpty((String) map.get("client"))) {
+//                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+//                }
+//                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+//                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+//                }
+//                if (StringUtil.isNotEmpty((String) map.get("product"))) {
+//                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+//                }
+//
+//                predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+//
+//                query.groupBy(root.get("saleListProduct").get("id"));
+//                return predicate;
+//            }
+//        });
     }
 
     @Override
@@ -324,7 +392,11 @@ public class StorageServiceImpl implements StorageService {
         List<Object[]> list = storageRepository.selectOutByOutNumber(outNumber);
         List<StorageOut> list1 = new ArrayList<>();
         for (Object[] obj : list) {
-            list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), obj[5].toString(), obj[6].toString(), obj[7].toString(), obj[8].toString()));
+            try {
+                list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), Double.parseDouble(obj[5].toString()), Double.parseDouble(obj[6].toString()), Double.parseDouble(obj[7].toString()), Double.parseDouble(obj[8].toString()), Double.parseDouble(obj[9].toString()), Integer.parseInt(obj[10].toString()), new SimpleDateFormat("yyyy-MM-dd").parse(obj[11].toString())));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return list1;
     }

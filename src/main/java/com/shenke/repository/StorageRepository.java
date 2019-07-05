@@ -158,7 +158,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param outNumber
      * @return
      */
-    @Query(value = "SELECT name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
+    @Query(value = "SELECT clientname, peasant, name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum, delivery_time FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
     public List<Object[]> selectOutByOutNumber(String outNumber);
 
     /***

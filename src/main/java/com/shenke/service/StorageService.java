@@ -117,7 +117,7 @@ public interface StorageService {
 
     public List<Storage> findByState(String state);
 
-    public List<Storage> detail(Map<String, Object> map1);
+    public List<StorageOut> detail(Map<String, Object> map1);
 
     public List<Storage> selectClientNameByOutDate(Date s);
 

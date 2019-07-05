@@ -18,9 +18,22 @@
         function loaddg() {
             addSelect();
             $.post("/admin/storage/detail", json, function (result) {
-                console.log(result);
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
+                    var rows = $("#dg").datagrid("getData").rows;
+                    console.log(rows);
+                    var count = 0;
+                    var sumweight = 0;
+                    for (var i = 0; i < rows.length; i++) {
+                        console.log(count);
+                        count += rows[i].sumnum;
+                        sumweight += rows[i].sumweight;
+                    }
+                    $("#dg").datagrid("appendRow", {
+                        name: "合计",
+                        outNumber: "总件数：" + count +"件",
+                        color: "总重量：" + sumweight + "KG"
+                    });
                 }
 
             });
@@ -45,7 +58,7 @@
             $("#dg").datagrid('appendRow', {
                 clientname: '合计',
                 peasant: '总数量：' + num + '件',
-                saleNumber: '总重量：' + sumWeight + 'kg'
+                saleNumber: '总重量：' + sumWeight + 'kg',
             });
         }
 
@@ -149,6 +162,7 @@
             $("#dg").datagrid({
                 columns: [[
                     {field: 'name', title: '产品名称', width: 100, align: 'center'},
+                    {field: 'peasant', title: '农户名称', width: 50, align: 'center'},
                     {field: 'outNumber', title: '出库单号', width: 150, align: 'center'},
                     {field: 'color', title: '颜色', width: 200, align: 'center'},
                     {field: 'model', title: '幅宽m', width: 100, align: 'center'},
@@ -156,7 +170,7 @@
                     {field: 'length', title: '长度mm', width: 100, align: 'center'},
                     {field: 'weight', title: '重量kg', width: 100, align: 'center'},
                     {field: 'sumweight', title: '总重量', width: 100, align: 'center'},
-                    {field: 'sumnum', title: '总数量', width: 100, align: 'center'},
+                    {field: 'sumnum', title: '数量', width: 100, align: 'center'},
                 ]]
             });
         });
@@ -286,7 +300,7 @@
                         var tdStr = rows[i][nl[j].f];
                         if (tdStr == null) {
                             tdStr = "";
-                        }else if ([nl[j].f] == 'dateInProduced') {
+                        } else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
                         }
                         console.log(tdStr);

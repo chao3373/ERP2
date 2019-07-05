@@ -291,7 +291,7 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
         if (StringUtil.isNotEmpty(date)) {
-            map1.put("date", new SimpleDateFormat("yyyy-MM-dd").parse(date));
+            map1.put("date", date);
         } else {
             map1.put("date", null);
         }
@@ -300,11 +300,12 @@ public class StorageAdminController {
         map1.put("product", product);
         map1.put("order", order);
         map.put("success", true);
-        List<Storage> storageList = storageService.detail(map1);
-        for (Storage storage : storageList) {
-            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
-        }
-        map.put("rows", storageList);
+        List<StorageOut> detail = storageService.detail(map1);
+        map.put("rows", detail);
+//        for (Storage storage : storageList) {
+//            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
+//        }
+//        map.put("rows", storageList);
         return map;
     }
 
