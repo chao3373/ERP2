@@ -224,4 +224,30 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set length=?4, oneweight=?2, realityweight=?3 where id=?1", nativeQuery = true)
     void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
+
+    /***
+     * 查询上月结转
+     * @param date1
+     * @return
+     */
+    @Query(value = "select (SELECT SUM(realityweight) FROM t_storage WHERE date_in_produced < ?1)-(SELECT SUM(realityweight)  FROM t_storage WHERE delivery_time < ?1)", nativeQuery = true)
+    Integer lastMonth(java.util.Date date1);
+
+    /***
+     * 查询本月入库
+     * @param udate
+     * @param endate
+     * @return
+     */
+    @Query(value = "SELECT SUM(realityweight) FROM t_storage WHERE date_in_produced >= ?1 AND date_in_produced < ?2", nativeQuery = true)
+    Integer monthIn(java.util.Date udate, java.util.Date endate);
+
+    /***
+     * 查询本月出库
+     * @param udate
+     * @param endate
+     * @return
+     */
+    @Query(value = "SELECT SUM(realityweight) FROM t_storage WHERE delivery_time >= ?1 AND delivery_time < ?2", nativeQuery = true)
+    Integer monthOut(java.util.Date udate, java.util.Date endate);
 }

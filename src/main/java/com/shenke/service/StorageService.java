@@ -153,4 +153,8 @@ public interface StorageService {
     void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
 
     List<Storage> findeBySaleNumberAndClient(String saleNumber, String client);
+
+    Month selectMonth(String month, String year);
+
+    Month selectYear(String year);
 }

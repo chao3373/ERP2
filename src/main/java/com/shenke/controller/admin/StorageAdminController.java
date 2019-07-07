@@ -3,6 +3,7 @@ package com.shenke.controller.admin;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -542,6 +543,37 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.findeBySaleNumberAndClient(saleNumber, client));
+        return map;
+    }
+
+    /***
+     * 按月查询报表
+     * @param month
+     * @param year
+     * @return
+     */
+    @RequestMapping("/selectMonth")
+    public Map<String, Object> selectMonth(String month, String year) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        List<Month> list= new ArrayList<>();
+        list.add(storageService.selectMonth(month, year));
+        map.put("rows", list);
+        return map;
+    }
+
+    /***
+     * 按年查询报表
+     * @param year
+     * @return
+     */
+    @RequestMapping("/selectYear")
+    public Map<String, Object> selectYear(String year){
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        List<Month> list= new ArrayList<>();
+        list.add(storageService.selectYear(year));
+        map.put("rows", list);
         return map;
     }
 }

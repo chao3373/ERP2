@@ -1113,6 +1113,79 @@
             });
         }
 
+        //快速打码
+        function kuaisu() {
+            if (!$("#banzu").val() || !$("#staff").val()) {
+                $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
+                return;
+            }
+            $("#printButton").show();
+            $("#dg2").datagrid("selectRow", 0);
+            if ($("#dg2").datagrid("getRows").length == 0) {
+                $.messager.alert("系统提示",
+                    "<span style='color:red;'>数据为空,请选择数据</span>");
+                return;
+            }
+
+            var weight = $("#dg").datagrid('getSelected').oneweight;
+
+            dabaoCount++;
+            if (dabaoCount == dabaoNum) {
+                $.ajax({
+                    url: "/admin/storage/add",
+                    async: false,
+                    data: {
+                        saleListProduct: $("#dg").datagrid("getSelected").id,
+                        jiTai: $("#selectJitai").combobox("getValue"),
+                        clerkName: $("#staff").val(),
+                        realityweight: Number(weight),
+                        dabaonum: dabaoCount
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            printNum = dabaoCount;
+                            printt(result.id);
+                            // alert("打印" + printNum + "===id:" + result.id);
+                            dabaoCount = 0;
+                        } else {
+                            alert("未知错误");
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
+                    success: function (result) {
+                        if (result.success) {
+                            reloadDg();
+                        }
+                    }
+                });
+            } else if ($("#dg2").datagrid('getRows').length == 1) {
+                $.ajax({
+                    url: "/admin/storage/add",
+                    async: false,
+                    data: {
+                        saleListProduct: $("#dg").datagrid("getSelected").id,
+                        jiTai: $("#selectJitai").combobox("getValue"),
+                        clerkName: $("#staff").val(),
+                        realityweight: Number(weight),
+                        hebingLength: $("#dg").datagrid("getSelected").hebingLength,
+                        dabaonum: dabaoCount
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            printNum = dabaoCount;
+                            dabaoCount = 0;
+                            printt(result.id);
+                            // alert("打印" + printNum + "===id:" + result.id);
+                        } else {
+                            alert("未知错误");
+                        }
+                    }
+                });
+            }
+        }
+
         $(document).ready(function () {
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
@@ -1175,6 +1248,8 @@
 <div id="tb2">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:weigh()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:kuaisu()"
+                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">非标入库</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"

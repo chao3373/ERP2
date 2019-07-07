@@ -274,7 +274,7 @@ public class StorageServiceImpl implements StorageService {
         String de = (String) map.get("date");
         System.out.println(de);
         java.util.Date date = null;
-        if (StringUtil.isNotEmpty(de)){
+        if (StringUtil.isNotEmpty(de)) {
             try {
                 date = new SimpleDateFormat("yyyy-MM-dd").parse(de);
             } catch (ParseException e) {
@@ -326,7 +326,7 @@ public class StorageServiceImpl implements StorageService {
 
         TypedQuery<StorageOut> q = entityManager.createQuery(query);
         List<StorageOut> resultList = q.getResultList();
-        for(StorageOut storageOut: resultList){
+        for (StorageOut storageOut : resultList) {
             System.out.println(storageOut);
         }
         return resultList;
@@ -602,5 +602,54 @@ public class StorageServiceImpl implements StorageService {
                 return predicate;
             }
         });
+    }
+
+    /***
+     *
+     * 按月查询报表
+     * @param month
+     * @param year
+     * @return
+     */
+    @Override
+    public Month selectMonth(String month, String year) {
+        Month month1 = new Month();
+        String m = Integer.parseInt(month) < 10 ? 0 + month : month;
+        Integer month2 = Integer.parseInt(month) + 1;
+        String m1 = month2 < 10 ? 0 + month2 + "" : month2 + "";
+        String date = year + "-" + m + "-01";
+        String date1 = year + "-" + m1 + "-01";
+        try {
+            java.util.Date udate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            java.util.Date endate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
+            System.out.println(date);
+            System.out.println(date1);
+            month1.setLastMonth(storageRepository.lastMonth(udate));
+            month1.setMonthIn(storageRepository.monthIn(udate, endate));
+            month1.setMonthOut(storageRepository.monthOut(udate, endate));
+            return month1;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Month selectYear(String year) {
+        Integer lastYear = Integer.parseInt(year) + 1;
+        Month month = new Month();
+        try {
+            java.util.Date n = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-01-01");
+            java.util.Date n1 = new SimpleDateFormat("yyyy-MM-dd").parse(lastYear + "-01-01");
+            System.out.println(n);
+            System.out.println(n1);
+            month.setLastMonth(storageRepository.lastMonth(n));
+            month.setMonthIn(storageRepository.monthIn(n, n1));
+            month.setMonthOut(storageRepository.monthOut(n, n1));
+            return month;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
