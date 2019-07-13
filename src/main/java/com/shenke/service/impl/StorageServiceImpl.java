@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -137,7 +138,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void updateStateById(String state, Integer id, Date date) {
+    public void updateStateById(String state, Integer id, java.util.Date date) {
         storageRepository.updateStateById(state, id, date);
     }
 
@@ -271,12 +272,21 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public List<StorageOut> detail(Map<String, Object> map) {
         String client = (String) map.get("client");
-        String de = (String) map.get("date");
+        String de = (String) map.get("startDate");
+        String ed = (String) map.get("endDate");
         System.out.println(de);
-        java.util.Date date = null;
+        java.util.Date startDate = null;
+        java.util.Date endDate = null;
         if (StringUtil.isNotEmpty(de)) {
             try {
-                date = new SimpleDateFormat("yyyy-MM-dd").parse(de);
+                startDate = new SimpleDateFormat("yyyy-MM-dd").parse(de);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (StringUtil.isNotEmpty(ed)) {
+            try {
+                endDate = new SimpleDateFormat("yyyy-MM-dd").parse(ed);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -296,6 +306,7 @@ public class StorageServiceImpl implements StorageService {
         Path<Double> model = from.get("model");
         Path<Double> price = from.get("price");
         Path<Double> length = from.get("length");
+        Path<Integer> dabaonum = from.get("dabaonum");
         Path<Double> realityweight = from.get("realityweight");
         Path<Integer> saleListProductId = from.get("saleListProduct").get("id");
         Path<java.util.Date> deliveryTime = from.get("deliveryTime");
@@ -311,19 +322,25 @@ public class StorageServiceImpl implements StorageService {
         if (StringUtil.isNotEmpty(product)) {
             predicateList.add(criteriaBuilder.equal(name, product));
         }
-        if (date != null) {
-            predicateList.add(criteriaBuilder.equal(deliveryTime, date));
+        if (startDate != null && endDate != null) {
+            predicateList.add(criteriaBuilder.greaterThanOrEqualTo(deliveryTime, startDate));
+            predicateList.add(criteriaBuilder.lessThanOrEqualTo(deliveryTime, endDate));
         }
+
+        predicateList.add(criteriaBuilder.equal(from.get("state"), "装车"));
 
         Predicate[] predicates = new Predicate[predicateList.size()];
         predicates = predicateList.toArray(predicates);
 
         query.where(predicates);
 
-        query.multiselect(clientname, peasant1, name, color, outNumber, model, price, length, realityweight, criteriaBuilder.sum(realityweight).as(Double.class), criteriaBuilder.count(name).as(Integer.class), deliveryTime);
-
         query.groupBy(saleListProductId, name, model, length, color, realityweight);
 
+        if (StringUtil.isNotEmpty((String) map.get("order"))) {
+            query.orderBy(criteriaBuilder.asc(from.get((String) map.get("order")).as(String.class)));
+        }
+
+        query.multiselect(clientname, peasant1, name, color, outNumber, model, price, length, realityweight, criteriaBuilder.sum(realityweight).as(Double.class), criteriaBuilder.count(name).as(Integer.class), deliveryTime, dabaonum);
         TypedQuery<StorageOut> q = entityManager.createQuery(query);
         List<StorageOut> resultList = q.getResultList();
         for (StorageOut storageOut : resultList) {
@@ -393,7 +410,7 @@ public class StorageServiceImpl implements StorageService {
         List<StorageOut> list1 = new ArrayList<>();
         for (Object[] obj : list) {
             try {
-                list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), Double.parseDouble(obj[5].toString()), Double.parseDouble(obj[6].toString()), Double.parseDouble(obj[7].toString()), Double.parseDouble(obj[8].toString()), Double.parseDouble(obj[9].toString()), Integer.parseInt(obj[10].toString()), new SimpleDateFormat("yyyy-MM-dd").parse(obj[11].toString())));
+                list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), Double.parseDouble(obj[5].toString()), Double.parseDouble(obj[6].toString()), Double.parseDouble(obj[7].toString()), Double.parseDouble(obj[8].toString()), Double.parseDouble(obj[9].toString()), Integer.parseInt(obj[10].toString()), new SimpleDateFormat("yyyy-MM-dd").parse(obj[11].toString()), Integer.parseInt(obj[12].toString())));
             } catch (ParseException e) {
                 e.printStackTrace();
             }

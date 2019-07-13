@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>产品出库明细表</title>
+    <title>产品出库细表</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -25,7 +25,6 @@
                     var count = 0;
                     var sumweight = 0;
                     for (var i = 0; i < rows.length; i++) {
-                        console.log(count);
                         count += rows[i].sumnum;
                         sumweight += rows[i].sumweight;
                     }
@@ -67,8 +66,11 @@
 
         function addSelect() {
             json = {};
-            if ($("#saleDate").datebox("getValue")) {
-                json.date = $("#saleDate").datebox("getValue");
+            if ($("#startDate").datetimebox("getValue")) {
+                json.startDate = $("#startDate").datetimebox("getValue");
+            }
+            if ($("#endDate").datetimebox("getValue")) {
+                json.endDate = $("#endDate").datetimebox("getValue");
             }
             if ($("#client").combobox("getText")) {
                 json.client = $("#client").combobox("getText");
@@ -84,7 +86,8 @@
         //刷新
         function resett() {
             $("#client").combobox("reset");
-            $("#saleDate").datebox("reset");
+            $("#startDate").datetimebox("reset");
+            $("#endDate").datetimebox("reset");
             $("#peasant").val("");
             $("#product").combobox("reset");
             $("#dg").datagrid("reload");
@@ -103,25 +106,23 @@
                 data: json,
                 success: function (result) {
                     if (result.success) {
-                        console.log(result.rows);
                         $("#dg").datagrid("loadData", result.rows);
                     }
                 }
             });
 
             var rows = $("#dg").datagrid("getRows");
-            console.log(rows.length);
             var rsArr = [];
             var rw = {};
             var od = rows[0][order];
-            console.log(od);
             var sum = 0;
             var count = 0;
             var i;
             for (i = 0; i < rows.length; i++) {
                 if (od == rows[i][order]) {
-                    count += Number(rows[i]["sum"]);
-                    sum += Number(rows[i]["realityweight"]);
+                    console.log(rows[i]);
+                    count += Number(rows[i]["sumnum"]);
+                    sum += Number(rows[i]["sumweight"]);
                 } else {
                     rw.index = i;
                     rw.count = count;
@@ -129,7 +130,7 @@
                     rsArr.push(rw);
                     rw = {};
                     od = rows[i][order];
-                    sum = rows[i]["realityweight"];
+                    sum = rows[i]["sumweight"];
                     count = 1;
                 }
             }
@@ -138,23 +139,26 @@
             rw.sum = sum;
             rsArr.push(rw);
 
+            var zongZhong = 0
+            var zongShu = 0;
             for (var i = rsArr.length - 1; i >= 0; i--) {
+                zongZhong+=rsArr[i]["sum"];
+                zongShu+=rsArr[i]["count"];
                 console.log(rsArr[i]);
                 $("#dg").datagrid("insertRow", {
                     index: rsArr[i]["index"],
                     row: {
-                        clientname: "小计",
-                        peasant: "",
-                        saleNumber: "",
-                        name: "",
-                        model: "",
-                        length: "",
-                        price: "",
-                        realityweight: "总重量：" + rsArr[i]["sum"],
-                        sum: "总数量：" + rsArr[i]["count"]
+                        name: "小计",
+                        sumweight: "总重量：" + rsArr[i]["sum"],
+                        sumnum: "总数量：" + rsArr[i]["count"]
                     }
                 });
             }
+            $("#dg").datagrid("appendRow",{
+                name: "总计：",
+                sumweight: "总重量：" + zongZhong,
+                sumnum: "总数量：" + zongShu
+            })
         }
 
         $(document).ready(function () {
@@ -171,6 +175,7 @@
                     {field: 'weight', title: '重量kg', width: 100, align: 'center'},
                     {field: 'sumweight', title: '总重量', width: 100, align: 'center'},
                     {field: 'sumnum', title: '数量', width: 100, align: 'center'},
+                    {field: 'dabaonum', title: '打包数量', width: 100, align: 'center'},
                 ]]
             });
         });
@@ -201,7 +206,7 @@
             tableString = "";
             tableString += "<div style='text-align: center;'><h1>产品出库明细表</h1>";
             tableString += "<p><span style='color: black; margin-left: -47px;'>购货单位:" + $("#client").combobox("getText") + "</span>";
-            tableString += "<span style='color: black; margin-left: 300px;'>出库时间：" + $("#outDate").datebox("getValue") + "</span></p>";
+            tableString += "<span style='color: black; margin-left: 300px;'>出库时间：" + $("#outDate").datetimebox("getValue") + "</span></p>";
             tableString += '<table cellspacing="0" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
@@ -333,10 +338,10 @@
         function selectOutNumber() {
             $("#outNumber").combobox("disable");
             $("#dlg2").dialog("open");
-            $("#outDate").datebox({
+            $("#outDate").datetimebox({
                 onSelect: function (date) {
                     $("#outNumber").combobox({
-                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datebox("getValue"),
+                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datetimebox("getValue"),
                         valueField: 'outNumber',
                         textField: 'outNumber',
                         panelHeight: 'auto'
@@ -397,9 +402,13 @@
                                                 demandd="true"
                                                 data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
-                    <td>出库时间：<input type="text" id="saleDate" name="saleDate"
-                                    class="easyui-datebox"
-                                    demandd="true" data-options="editable:false" size="10"/>
+                    <td>出库时间：<input type="text" id="startDate" name="startDate"
+                                    class="easyui-datetimebox"
+                                    demandd="true" data-options="editable:false" size="5"/>
+                    </td>
+                    <td>—&nbsp;&nbsp;&nbsp;<input type="text" id="endDate" name="endDate"
+                                    class="easyui-datetimebox"
+                                    demandd="true" data-options="editable:false" size="5"/>
                     </td>
                     <td>农户名称： <input id="peasant"
                                      name="peasant" style="width: 100px"/></td>
@@ -438,8 +447,8 @@
                class="easyui-linkbutton" plain="true">幅宽</a>
             <a href="javascript:orderBy('name')" ;
                class="easyui-linkbutton" plain="true">产品名称</a>
-            <a href="javascript:addSum()" ;
-               class="easyui-linkbutton" plain="true">添加合计</a>
+            <a href="javascript:orderBy('color')" ;
+               class="easyui-linkbutton" plain="true">颜色</a>
             <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
                iconCls="icon-add" plain="true">选择出库单</a>
             <!--<a href="javascript:orderBy('length')" ;
@@ -456,7 +465,7 @@
      closed="true" buttons="#dlg2-tb">
     <table>
         <tr>
-            <td>选择出库日期：<input id="outDate" class="easyui-datebox" size="15"/></td>
+            <td>选择出库日期：<input id="outDate" class="easyui-datetimebox" size="15"/></td>
         </tr>
         <tr>
             <td>选择出库单号：<input id="outNumber" class="easyui-combobox" size="15"/></td>

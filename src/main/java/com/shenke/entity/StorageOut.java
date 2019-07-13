@@ -28,6 +28,8 @@ public class StorageOut {
 
     private Date delivery_time;
 
+    private Integer dabaonum;
+
     public StorageOut() {
 
     }
@@ -47,10 +49,11 @@ public class StorageOut {
                 ", sumweight=" + sumweight +
                 ", sumnum=" + sumnum +
                 ", delivery_time=" + delivery_time +
+                ", dabaonum=" + dabaonum +
                 '}';
     }
 
-    public StorageOut(String clientname, String peasant, String name, String color, String outNumber, Double model, Double price, Double length, Double weight, Double sumweight, Integer sumnum, Date delivery_time) {
+    public StorageOut(String clientname, String peasant, String name, String color, String outNumber, Double model, Double price, Double length, Double weight, Double sumweight, Integer sumnum, Date delivery_time, Integer dabaonum) {
         this.clientname = clientname;
         this.peasant = peasant;
         this.name = name;
@@ -63,6 +66,7 @@ public class StorageOut {
         this.sumweight = sumweight;
         this.sumnum = sumnum;
         this.delivery_time = delivery_time;
+        this.dabaonum = dabaonum;
     }
 
     public String getClientname() {
@@ -87,6 +91,14 @@ public class StorageOut {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getDabaonum() {
+        return dabaonum;
+    }
+
+    public void setDabaonum(Integer dabaonum) {
+        this.dabaonum = dabaonum;
     }
 
     public String getColor() {

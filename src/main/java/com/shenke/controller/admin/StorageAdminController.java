@@ -288,20 +288,27 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/detail")
-    public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
+    public Map<String, Object> detail(String startDate, String endDate, String client, String peasant, String product, String order) throws ParseException {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-        if (StringUtil.isNotEmpty(date)) {
-            map1.put("date", date);
+        System.out.println("开始时间：" + startDate);
+        System.out.println("结束时间：" + endDate);
+        if (StringUtil.isNotEmpty(startDate)) {
+            map1.put("startDate", startDate);
         } else {
-            map1.put("date", null);
+            map1.put("startDate", null);
+        }
+        if (StringUtil.isNotEmpty(endDate)) {
+            map1.put("endDate", endDate);
+        } else {
+            map1.put("endDate", null);
         }
         map1.put("client", client);
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-        map.put("success", true);
         List<StorageOut> detail = storageService.detail(map1);
+        map.put("success", true);
         map.put("rows", detail);
 //        for (Storage storage : storageList) {
 //            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));

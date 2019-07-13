@@ -71,7 +71,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     */
     @Modifying
     @Query(value = "update t_storage set  state = ?1, delivery_time = ?3 where id = ?2", nativeQuery = true)
-    public void updateStateById(String state, Integer id, Date date);
+    public void updateStateById(String state, Integer id, java.util.Date date);
 
     /**
      * 根据客户名称查询并按照商品名排序
@@ -158,7 +158,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param outNumber
      * @return
      */
-    @Query(value = "SELECT clientname, peasant, name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum, delivery_time FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
+    @Query(value = "SELECT clientname, peasant, name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum, delivery_time, dabaonum FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
     public List<Object[]> selectOutByOutNumber(String outNumber);
 
     /***

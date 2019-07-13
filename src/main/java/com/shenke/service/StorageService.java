@@ -68,7 +68,7 @@ public interface StorageService {
     * @Author: Andy
     * @Date:
     */
-    public void updateStateById(String state, Integer id, Date date);
+    public void updateStateById(String state, Integer id, java.util.Date date);
 
     /**
      * 根据客户查询并按照产品名称排序
