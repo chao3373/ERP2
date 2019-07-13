@@ -158,11 +158,10 @@
             <artifactId>hutool-all</artifactId>
             <version>4.5.11</version>
         </dependency>
-
     </dependencies>
 
     <build>
-        <finalName>slbc</finalName>
+        <finalName>aomei</finalName>
         <plugins>
             <!-- 指定编译java版本 -->
             <plugin>
