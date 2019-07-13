@@ -30,7 +30,7 @@
                     }
                     $("#dg").datagrid("appendRow", {
                         name: "合计",
-                        outNumber: "总件数：" + count +"件",
+                        outNumber: "总件数：" + count + "件",
                         color: "总重量：" + sumweight + "KG"
                     });
                 }
@@ -142,8 +142,8 @@
             var zongZhong = 0
             var zongShu = 0;
             for (var i = rsArr.length - 1; i >= 0; i--) {
-                zongZhong+=rsArr[i]["sum"];
-                zongShu+=rsArr[i]["count"];
+                zongZhong += rsArr[i]["sum"];
+                zongShu += rsArr[i]["count"];
                 console.log(rsArr[i]);
                 $("#dg").datagrid("insertRow", {
                     index: rsArr[i]["index"],
@@ -154,7 +154,7 @@
                     }
                 });
             }
-            $("#dg").datagrid("appendRow",{
+            $("#dg").datagrid("appendRow", {
                 name: "总计：",
                 sumweight: "总重量：" + zongZhong,
                 sumnum: "总数量：" + zongShu
@@ -385,6 +385,19 @@
             });
         }
 
+        //隐藏指定列
+        function hiddenColumn(column) {
+            $("#dg").datagrid("hideColumn", column);
+        }
+
+        //显示所有列
+        function showAllColumn() {
+            var options = $("#dg").datagrid("options");
+            var colu = options.columns[0];
+            for (var i = 0; i < colu.length; i++) {
+                $("#dg").datagrid("showColumn", colu[i].field);
+            }
+        }
 
     </script>
 </head>
@@ -407,8 +420,8 @@
                                     demandd="true" data-options="editable:false" size="5"/>
                     </td>
                     <td>—&nbsp;&nbsp;&nbsp;<input type="text" id="endDate" name="endDate"
-                                    class="easyui-datetimebox"
-                                    demandd="true" data-options="editable:false" size="5"/>
+                                                  class="easyui-datetimebox"
+                                                  demandd="true" data-options="editable:false" size="5"/>
                     </td>
                     <td>农户名称： <input id="peasant"
                                      name="peasant" style="width: 100px"/></td>
@@ -449,6 +462,30 @@
                class="easyui-linkbutton" plain="true">产品名称</a>
             <a href="javascript:orderBy('color')" ;
                class="easyui-linkbutton" plain="true">颜色</a>
+            <a href="javascript:hiddenColumn('name')" ;
+               class="easyui-linkbutton" plain="true">隐藏产品名称列</a>
+            <a href="javascript:hiddenColumn('peasant')" ;
+               class="easyui-linkbutton" plain="true">隐藏农户列</a>
+            <a href="javascript:hiddenColumn('outNumber')" ;
+               class="easyui-linkbutton" plain="true">隐藏出库单号列</a>
+            <a href="javascript:hiddenColumn('color')" ;
+               class="easyui-linkbutton" plain="true">隐藏颜色列</a>
+            <a href="javascript:hiddenColumn('model')" ;
+               class="easyui-linkbutton" plain="true">隐藏幅宽列</a>
+            <a href="javascript:hiddenColumn('price')" ;
+               class="easyui-linkbutton" plain="true">隐藏厚度列</a>
+            <a href="javascript:hiddenColumn('length')" ;
+               class="easyui-linkbutton" plain="true">隐藏长度列</a>
+            <a href="javascript:hiddenColumn('weight')" ;
+               class="easyui-linkbutton" plain="true">隐藏重量列</a>
+            <a href="javascript:hiddenColumn('sumweight')" ;
+               class="easyui-linkbutton" plain="true">隐藏总重量列</a>
+            <a href="javascript:hiddenColumn('sumnum')" ;
+               class="easyui-linkbutton" plain="true">隐藏数量列</a>
+            <a href="javascript:hiddenColumn('dabaonum')" ;
+               class="easyui-linkbutton" plain="true">隐藏打包数量列</a>
+            <a href="javascript:showAllColumn()" ;
+               class="easyui-linkbutton" plain="true">显示所有列</a>
             <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
                iconCls="icon-add" plain="true">选择出库单</a>
             <!--<a href="javascript:orderBy('length')" ;
