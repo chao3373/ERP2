@@ -47,7 +47,19 @@
             }
             $("#selectJitai").combobox("disable");
             $("#start").linkbutton("disable");
-            selectByJitai();
+            selectByJitai(1);
+            setPrint();
+        }
+
+        //点击显示全部
+        function showAll() {
+            if (!$("#selectJitai").combobox("getValue")) {
+                $.messager.alert("系统提示", "<span style='color:red'>请选择机台</span>");
+                return;
+            }
+            $("#selectJitai").combobox("disable");
+            $("#start").linkbutton("disable");
+            selectByJitai(2);
             setPrint();
         }
 
@@ -83,7 +95,7 @@
         }
 
         //根据所选机台加载信息
-        function selectByJitai() {
+        function selectByJitai(id) {
             var jitaiId = $("#selectJitai").combobox("getValue");
             $("#jitaiName").val($("#selectJitai").combobox("getText"));
             $
@@ -96,7 +108,9 @@
                             $("#dg").datagrid('loadData', result.rows);
                         }
                     });
-            loadInformNumber();
+            if (id == 1) {
+                loadInformNumber();
+            }
         }
 
         var timer;
@@ -1099,7 +1113,7 @@
                 onSubmit: function () {
                     if (!$("#selectJitai").combobox('getValue')) {
                         $.messager.alert("系统提示", "<span style='color: red;'>请选择机台</span>.")
-                    }
+                    }开始
                 },
                 success: function (result) {
                     var obj = eval('(' + result + ')');
@@ -1111,79 +1125,6 @@
                     }
                 }
             });
-        }
-
-        //快速打码
-        function kuaisu() {
-            if (!$("#banzu").val() || !$("#staff").val()) {
-                $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
-                return;
-            }
-            $("#printButton").show();
-            $("#dg2").datagrid("selectRow", 0);
-            if ($("#dg2").datagrid("getRows").length == 0) {
-                $.messager.alert("系统提示",
-                    "<span style='color:red;'>数据为空,请选择数据</span>");
-                return;
-            }
-
-            var weight = $("#dg").datagrid('getSelected').oneweight;
-
-            dabaoCount++;
-            if (dabaoCount == dabaoNum) {
-                $.ajax({
-                    url: "/admin/storage/add",
-                    async: false,
-                    data: {
-                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                        jiTai: $("#selectJitai").combobox("getValue"),
-                        clerkName: $("#staff").val(),
-                        realityweight: Number(weight),
-                        dabaonum: dabaoCount
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            printNum = dabaoCount;
-                            printt(result.id);
-                            // alert("打印" + printNum + "===id:" + result.id);
-                            dabaoCount = 0;
-                        } else {
-                            alert("未知错误");
-                        }
-                    }
-                });
-                $.ajax({
-                    url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
-                    success: function (result) {
-                        if (result.success) {
-                            reloadDg();
-                        }
-                    }
-                });
-            } else if ($("#dg2").datagrid('getRows').length == 1) {
-                $.ajax({
-                    url: "/admin/storage/add",
-                    async: false,
-                    data: {
-                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                        jiTai: $("#selectJitai").combobox("getValue"),
-                        clerkName: $("#staff").val(),
-                        realityweight: Number(weight),
-                        hebingLength: $("#dg").datagrid("getSelected").hebingLength,
-                        dabaonum: dabaoCount
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            printNum = dabaoCount;
-                            dabaoCount = 0;
-                            printt(result.id);
-                            // alert("打印" + printNum + "===id:" + result.id);
-                        } else {
-                            alert("未知错误");
-                        }
-                    }
-                });
-            }
         }
 
         $(document).ready(function () {
@@ -1226,6 +1167,8 @@
                                                      href="javascript:start()">开始</a></td>
                 <td>&nbsp;&nbsp;<a id="end" class="easyui-linkbutton"
                                    iconCls="icon-no" href="javascript:end()">停止</a></td>
+                <td>&nbsp;&nbsp;<a id="showAll" class="easyui-linkbutton"
+                                   iconCls="icon-no" href="javascript:showAll()">显示全部</a></td>
                 <td>&nbsp;&nbsp;<a id="" class="easyui-linkbutton"
                                    iconCls="icon-help" href="javascript:printSetClick()">设置</a></td>
                 <td>&nbsp;&nbsp;<a id="select" class="easyui-linkbutton"
@@ -1248,8 +1191,6 @@
 <div id="tb2">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:weigh()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:kuaisu()"
-                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">非标入库</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"

@@ -556,7 +556,7 @@ public class StorageAdminController {
     public Map<String, Object> selectMonth(String month, String year) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
-        List<Month> list= new ArrayList<>();
+        List<Month> list = new ArrayList<>();
         list.add(storageService.selectMonth(month, year));
         map.put("rows", list);
         return map;
@@ -568,12 +568,27 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/selectYear")
-    public Map<String, Object> selectYear(String year){
+    public Map<String, Object> selectYear(String year) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
-        List<Month> list= new ArrayList<>();
+        List<Month> list = new ArrayList<>();
         list.add(storageService.selectYear(year));
         map.put("rows", list);
+        return map;
+    }
+
+    /****
+     * 修改生人员信息
+     * @return
+     */
+    @RequestMapping("/updateClerkAndGroup")
+    public Map<String, Object> updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, String idarr) {
+        Map<String, Object> map = new HashMap<>();
+        String[] split = idarr.split(",");
+        for (int i = 0; i < split.length; i++) {
+            storageService.updateClerkAndGroup(clerkid, clerkname, groupid, groupname, Integer.parseInt(split[i]));
+        }
+        map.put("success", true);
         return map;
     }
 }

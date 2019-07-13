@@ -652,4 +652,18 @@ public class StorageServiceImpl implements StorageService {
             return null;
         }
     }
+
+    @Override
+    public void updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, int parseInt) {
+        Storage one = storageRepository.findOne(parseInt);
+        one.setGroupName(groupname);
+        Group group = new Group();
+        group.setId(groupid);
+        Clerk clerk = new Clerk();
+        clerk.setId(clerkid);
+        one.setGroup(group);
+        one.setClerkName(clerkname);
+        one.setClerk(clerk);
+        storageRepository.save(one);
+    }
 }

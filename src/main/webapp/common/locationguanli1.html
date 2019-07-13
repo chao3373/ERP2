@@ -135,32 +135,32 @@
                     title: '名称',
                     width: 200,
                     align: 'center'
-                },{
+                }, {
                     field: 'length',
                     title: '长度',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'model',
                     title: '幅宽',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'price',
                     title: '厚度',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'meter',
                     title: '实际厚度',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'oneweight',
                     title: '单件重量',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'realityweight',
                     title: '实际重量',
                     width: 66,
@@ -170,7 +170,7 @@
                     title: '颜色',
                     width: 66,
                     align: 'center'
-                },{
+                }, {
                     field: 'saleNumber',
                     title: '订单号',
                     width: 150,
@@ -559,9 +559,14 @@
         //点击确定按钮
         function savedd() {
             $.ajax({
-                url:"/admin/storage/editKuCun",
-                data:{id:$("#id").val(), oneWeight:$("#oneWeight").val(), shiji:$("#shiji").val(), length:$("#length1").val()},
-                success:function (result) {
+                url: "/admin/storage/editKuCun",
+                data: {
+                    id: $("#id").val(),
+                    oneWeight: $("#oneWeight").val(),
+                    shiji: $("#shiji").val(),
+                    length: $("#length1").val()
+                },
+                success: function (result) {
                     if (result.success) {
                         alert("修改成功");
                         $("#dd").dialog('close');
@@ -569,6 +574,16 @@
                     }
                 }
             });
+        }
+
+        //修改人员信息
+        function Editren() {
+            var rows = $("#dg").datagrid('getSelections');
+            if (rows.length == 0) {
+                alert('请选择一条要修改的信息');
+                return;
+            }
+            $("#dd2").dialog('open');
         }
 
         $(document).ready(function () {
@@ -596,6 +611,7 @@
                 }
             });
             $("#dd").dialog('close');
+            $("#dd2").dialog('close');
         });
 
     </script>
@@ -668,7 +684,7 @@
     </fieldset>
 </div>
 <table id="dg" class="easyui-datagrid" fitColumns="false"
-       toolbar="#tb" rownumbers="true" url="/admin/storage/outSuccess" style="height: 350%;">
+       toolbar="#tb" rownumbers="true" url="/admin/storage/outSuccess" style="height: 550%;">
 </table>
 
 <div id="tb">
@@ -677,6 +693,7 @@
     <a href="javascript:outku()" class="easyui-linkbutton" iconCls="icon-redo" plain="true">出库</a>
     <a href="javascript:goBackku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">回到仓库</a>
     <a href="javascript:Editku()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改库存</a>
+    <a href="javascript:Editren()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改人员信息</a>
 </div>
 
 <div id="dlg" class="easyui-dialog" title="添加库存"
@@ -810,5 +827,52 @@
     <a href=javascript:closedd() class="easyui-linkbutton">关闭</a>
 </div>
 
+<div id="dd2" class="easyui-dialog" title="修改信息" style="width:400px;height:200px;padding: 20px;"
+     data-options="iconCls:'icon-save',resizable:true,modal:true" buttons="#db2">
+    <table>
+        <tr>
+            <td>生产员工：<input type="text" id="clerkName" name="clerkName" class="easyui-combobox" valueField="id"
+                            textField="name" url="/admin/clerk/clerkProList"></td>
+        </tr>
+        <tr>
+            <td>所属班组：<input type="number" id="groupName" , name="groupName" class="easyui-combobox" valueField="id"
+                            textField="name" url="/admin/group/groupList"></td>
+        </tr>
+    </table>
+</div>
+
+<div id="db2">
+    <a href=javascript:savedd2() class="easyui-linkbutton">确定</a>
+    <a href=javascript:closedd2() class="easyui-linkbutton">关闭</a>
+</div>
+<script>
+    function closedd2() {
+        $("#dd2").dialog('close');
+    }
+
+    function savedd2() {
+        var rows = $("#dg").datagrid('getSelections');
+        var ids = [];
+        for (var i = 0; i < rows.length; i++) {
+            ids.push(rows[i].id);
+        }
+        var idarr = ids.join(",");
+        var clerkid = $("#clerkName").combobox('getValue');
+        var clerkname = $("#clerkName").combobox('getText');
+        var groupid = $("#groupName").combobox('getValue');
+        var groupname = $("#groupName").combobox('getText');
+        $.ajax({
+            url: "/admin/storage/updateClerkAndGroup",
+            data: {clerkid: clerkid, clerkname: clerkname, groupid: groupid, groupname: groupname, idarr: idarr},
+            success: function (result) {
+                if (result.success) {
+                    $("#dd2").dialog('cloce');
+                    $("#dg").datagrid('reload');
+                    alert("修改成功");
+                }
+            }
+        });
+    };
+</script>
 </body>
 </html>

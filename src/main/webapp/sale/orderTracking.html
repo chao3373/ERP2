@@ -82,13 +82,7 @@
                         field: 'state',
                         title: '订单状态',
                         width: 130,
-                        align: 'center',
-                        formatter: function (value, row) {
-                            if (row.saleListProduct) {
-                                return row.saleListProduct.state;
-                            }
-                            return "";
-                        }
+                        align: 'center'
                     }, {
                         field: 'saleDate',
                         title: '销售日期',

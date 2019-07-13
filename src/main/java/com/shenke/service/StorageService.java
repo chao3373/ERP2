@@ -157,4 +157,6 @@ public interface StorageService {
     Month selectMonth(String month, String year);
 
     Month selectYear(String year);
+
+    void updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, int parseInt);
 }

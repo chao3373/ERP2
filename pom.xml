@@ -162,7 +162,7 @@
     </dependencies>
 
     <build>
-        <finalName>test</finalName>
+        <finalName>slbc</finalName>
         <plugins>
             <!-- 指定编译java版本 -->
             <plugin>
