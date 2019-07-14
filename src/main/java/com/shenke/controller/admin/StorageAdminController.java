@@ -3,14 +3,16 @@ package com.shenke.controller.admin;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.jws.Oneway;
 
-import com.shenke.entity.*;
+import com.shenke.entity.Count;
+import com.shenke.entity.JieSuan;
+import com.shenke.entity.Log;
+import com.shenke.entity.Storage;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.DateUtil;
@@ -288,32 +290,24 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/detail")
-    public Map<String, Object> detail(String startDate, String endDate, String client, String peasant, String product, String order) throws ParseException {
+    public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-        System.out.println("开始时间：" + startDate);
-        System.out.println("结束时间：" + endDate);
-        if (StringUtil.isNotEmpty(startDate)) {
-            map1.put("startDate", startDate);
+        if (StringUtil.isNotEmpty(date)) {
+            map1.put("date", new SimpleDateFormat("yyyy-MM-dd").parse(date));
         } else {
-            map1.put("startDate", null);
-        }
-        if (StringUtil.isNotEmpty(endDate)) {
-            map1.put("endDate", endDate);
-        } else {
-            map1.put("endDate", null);
+            map1.put("date", null);
         }
         map1.put("client", client);
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-        List<StorageOut> detail = storageService.detail(map1);
         map.put("success", true);
-        map.put("rows", detail);
-//        for (Storage storage : storageList) {
-//            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
-//        }
-//        map.put("rows", storageList);
+        List<Storage> storageList = storageService.detail(map1);
+        for (Storage storage : storageList) {
+            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
+        }
+        map.put("rows", storageList);
         return map;
     }
 
@@ -329,7 +323,7 @@ public class StorageAdminController {
      * 根据出库单号查询
      */
     @RequestMapping("/selectOutByOutNumber")
-    public List<StorageOut> selectOutByOutNumber(String outNumber) {
+    public List<Storage> selectOutByOutNumber(String outNumber) {
         System.out.println(outNumber);
         return storageService.selectOutByOutNumber(outNumber);
     }
@@ -489,7 +483,7 @@ public class StorageAdminController {
     }
 
     @RequestMapping("/selectState")
-    public Map<String, Object> selectState(String state) {
+    public Map<String, Object> selectState(String state){
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));
@@ -522,80 +516,6 @@ public class StorageAdminController {
         List<Storage> byState = storageService.findByState("%生产完成%");
         map.put("success", true);
         map.put("rows", byState);
-        return map;
-    }
-
-    /****
-     * 修改库存信息
-     * @param id
-     * @param oneWeight
-     * @param shiji
-     * @param length
-     * @return
-     */
-    @RequestMapping("/editKuCun")
-    public Map<String, Object> editKuCun(Integer id, Integer oneWeight, Double shiji, Double length) {
-        Map<String, Object> map = new HashMap<>();
-        System.out.println(id);
-        System.out.println(oneWeight);
-        System.out.println(length);
-        System.out.println(shiji);
-        storageService.editKuCun(id, oneWeight, shiji, length);
-        map.put("success", true);
-        return map;
-    }
-
-    @RequestMapping("/findeBySaleNumberAndClient")
-    public Map<String, Object> findeBySaleNumberAndClient(String saleNumber, String client) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("success", true);
-        map.put("rows", storageService.findeBySaleNumberAndClient(saleNumber, client));
-        return map;
-    }
-
-    /***
-     * 按月查询报表
-     * @param month
-     * @param year
-     * @return
-     */
-    @RequestMapping("/selectMonth")
-    public Map<String, Object> selectMonth(String month, String year) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("success", true);
-        List<Month> list = new ArrayList<>();
-        list.add(storageService.selectMonth(month, year));
-        map.put("rows", list);
-        return map;
-    }
-
-    /***
-     * 按年查询报表
-     * @param year
-     * @return
-     */
-    @RequestMapping("/selectYear")
-    public Map<String, Object> selectYear(String year) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("success", true);
-        List<Month> list = new ArrayList<>();
-        list.add(storageService.selectYear(year));
-        map.put("rows", list);
-        return map;
-    }
-
-    /****
-     * 修改生人员信息
-     * @return
-     */
-    @RequestMapping("/updateClerkAndGroup")
-    public Map<String, Object> updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, String idarr) {
-        Map<String, Object> map = new HashMap<>();
-        String[] split = idarr.split(",");
-        for (int i = 0; i < split.length; i++) {
-            storageService.updateClerkAndGroup(clerkid, clerkname, groupid, groupname, Integer.parseInt(split[i]));
-        }
-        map.put("success", true);
         return map;
     }
 }

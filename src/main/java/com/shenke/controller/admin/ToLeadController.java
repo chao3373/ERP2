@@ -1,9 +1,7 @@
 package com.shenke.controller.admin;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import javax.annotation.Resource;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import com.shenke.entity.Product;
 import com.shenke.service.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -96,17 +93,8 @@ public class ToLeadController {
             map1.put("letter", map1.remove("印字设置"));
             map1.put("peasant", map1.remove("客户姓名"));
             map1.put("clientname", map1.remove("客户名称"));
-            map1.put("dingJia", map1.remove("订价"));
+            map1.put("realityweight", map1.remove("实际重量"));
 
-            System.out.println(map1);
-
-            System.out.println("name: " + map1.get("name"));
-            System.out.println("weightset: " + map1.get("weightset"));
-            System.out.println("dao: " + map1.get("dao"));
-            System.out.println("brand: " + map1.get("brand"));
-            System.out.println("pack: " + map1.get("pack"));
-            System.out.println("letter: " + map1.get("letter"));
-            System.out.println("clientname: " + map1.get("clientname"));
             if (map1.get("name") == null || map1.get("weightset") == null || map1.get("dao") == null || map1.get("brand") == null || map1.get("pack") == null || map1.get("letter") == null || map1.get("clientname") == null) {
                 map.put("success", false);
                 map.put("errorInfo", "第" + j + "行存在空白单元格");
@@ -366,7 +354,7 @@ public class ToLeadController {
                         case 18:
                             // map.put("客户名称", getStringCellValue(cell));
                             String clname = getStringCellValue(cell);
-                            System.out.println("客户名称：" + clname);
+                            System.out.println("客户名称：" +  clname);
                             saleListProduct.setClientname(getStringCellValue(cell));
                             if (clientService.findName(clname) != null) {
 

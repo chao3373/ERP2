@@ -3,8 +3,7 @@ package com.shenke.controller.admin;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.shenke.entity.JiTai;
-import com.shenke.entity.SaleList;
+import com.shenke.entity.Storage;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -187,44 +186,10 @@ public class SaleListProductAdminController {
      * 添加或修改仓库信息
      */
     @RequestMapping("/saveInfo")
-    public Map<String, Object> save(String name, String model, String price, String length, String color, String meter, String num, String oneweight, String sumwight, String demand, String realityweight, String clientname, String peasant, String dao, String brand, String label, String pack, String letter, String patu, String remark, String saleList, String accomplishNumber, String issueState, String informNumber, String state, String id) {
-        SaleListProduct saleListProduct = new SaleListProduct();
-        saleListProduct.setName(name);
-        saleListProduct.setModel(Double.parseDouble(model));
-        saleListProduct.setPrice(Double.parseDouble(price));
-        saleListProduct.setLength(Double.parseDouble(length));
-        saleListProduct.setColor(color);
-        saleListProduct.setMeter(Double.parseDouble(meter));
-        saleListProduct.setNum(Integer.parseInt(num));
-        saleListProduct.setOneweight(Integer.parseInt(oneweight));
-        saleListProduct.setSumwight(Integer.parseInt(sumwight));
-        saleListProduct.setDemand(demand);
-        if (StringUtil.isNotEmpty(realityweight)){
-            saleListProduct.setRealityweight(Double.parseDouble(realityweight));
-        }
-        saleListProduct.setClientname(clientname);
-        saleListProduct.setPeasant(peasant);
-        saleListProduct.setDao(dao);
-        saleListProduct.setBrand(brand);
-        saleListProduct.setLabel(label);
-        saleListProduct.setPack(pack);
-        saleListProduct.setLetter(letter);
-        saleListProduct.setPatu(patu);
-        saleListProduct.setRemark(remark);
-        System.out.println(saleList);
-        int salelist = Integer.parseInt(saleList);
-        SaleList saleList1 = new SaleList();
-        saleList1.setId(salelist);
-        saleListProduct.setSaleList(saleList1);
-        JiTai jiTai1 = new JiTai();
-        SaleListProduct saleListProduct1 = saleListProductService.findById(Integer.parseInt(id));
-        saleListProduct.setJiTai(saleListProduct1.getJiTai());
-        saleListProduct.setAccomplishNumber(Integer.parseInt(accomplishNumber));
-        saleListProduct.setIssueState(issueState);
-        saleListProduct.setInformNumber(Long.parseLong(informNumber));
-        saleListProduct.setState(state);
-        saleListProduct.setId(Integer.parseInt(id));
+    public Map<String, Object> save(SaleListProduct saleListProduct) {
+        System.out.println("****************************************");
         System.out.println(saleListProduct);
+        System.out.println("controller");
         Map<String, Object> map = new HashMap<>();
         saleListProductService.save(saleListProduct);
         map.put("success", true);
@@ -338,7 +303,7 @@ public class SaleListProductAdminController {
         }
         byId.setLength(length);
         byId.setHebingLength(hebingLength.toString());
-        saleListProductService.save(byId);
+        save(byId);
         map.put("success", true);
         System.out.println(map);
         return map;

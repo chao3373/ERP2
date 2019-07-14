@@ -4,13 +4,11 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
 
 import com.shenke.entity.*;
@@ -18,6 +16,7 @@ import com.shenke.repository.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
+import org.apache.commons.collections.list.PredicatedList;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,9 +35,6 @@ public class StorageServiceImpl implements StorageService {
 
     @Resource
     private StorageRepository storageRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Resource
     private SaleListProductRepository saleListProductRepository;
@@ -138,7 +134,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void updateStateById(String state, Integer id, java.util.Date date) {
+    public void updateStateById(String state, Integer id, Date date) {
         storageRepository.updateStateById(state, id, date);
     }
 
@@ -270,133 +266,55 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<StorageOut> detail(Map<String, Object> map) {
-        String client = (String) map.get("client");
-        String de = (String) map.get("startDate");
-        String ed = (String) map.get("endDate");
-        System.out.println(de);
-        java.util.Date startDate = null;
-        java.util.Date endDate = null;
-        if (StringUtil.isNotEmpty(de)) {
-            try {
-                startDate = new SimpleDateFormat("yyyy-MM-dd").parse(de);
-            } catch (ParseException e) {
-                e.printStackTrace();
+    public List<Storage> detail(Map<String, Object> map) {
+        if (map.get("order") != null && map.get("order") != "") {
+            return storageRepository.findAll(new Specification<Storage>() {
+                public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    Predicate predicate = cb.conjunction();
+                    if (map.get("date") != null) {
+                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("client"))) {
+                        predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+                        predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                    }
+                    if (StringUtil.isNotEmpty((String) map.get("product"))) {
+                        predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+                    }
+
+                    predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+
+                    query.groupBy(root.get("saleListProduct").get("id"));
+
+                    return predicate;
+                }
+            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
+        }
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (map.get("date") != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("client"))) {
+                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
+                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
+                }
+                if (StringUtil.isNotEmpty((String) map.get("product"))) {
+                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
+                }
+
+                predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
+
+                query.groupBy(root.get("saleListProduct").get("id"));
+                return predicate;
             }
-        }
-        if (StringUtil.isNotEmpty(ed)) {
-            try {
-                endDate = new SimpleDateFormat("yyyy-MM-dd").parse(ed);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        String peasant = (String) map.get("peasant");
-        String product = (String) map.get("product");
-        String order = (String) map.get("order");
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<StorageOut> query = criteriaBuilder.createQuery(StorageOut.class);
-        Root<Storage> from = query.from(Storage.class);
-        Path<String> clientname = from.get("clientname");
-        Path<String> peasant1 = from.get("peasant");
-        Path<String> name = from.get("name");
-        Path<String> color = from.get("color");
-        Path<String> outNumber = from.get("outNumber");
-        Path<Double> model = from.get("model");
-        Path<Double> price = from.get("price");
-        Path<Double> length = from.get("length");
-        Path<Integer> dabaonum = from.get("dabaonum");
-        Path<Double> realityweight = from.get("realityweight");
-        Path<Integer> saleListProductId = from.get("saleListProduct").get("id");
-        Path<java.util.Date> deliveryTime = from.get("deliveryTime");
-
-
-        List<Predicate> predicateList = new ArrayList<Predicate>();
-        if (StringUtil.isNotEmpty(client)) {
-            predicateList.add(criteriaBuilder.equal(clientname, client));
-        }
-        if (StringUtil.isNotEmpty(peasant)) {
-            predicateList.add(criteriaBuilder.equal(peasant1, peasant));
-        }
-        if (StringUtil.isNotEmpty(product)) {
-            predicateList.add(criteriaBuilder.equal(name, product));
-        }
-        if (startDate != null && endDate != null) {
-            predicateList.add(criteriaBuilder.greaterThanOrEqualTo(deliveryTime, startDate));
-            predicateList.add(criteriaBuilder.lessThanOrEqualTo(deliveryTime, endDate));
-        }
-
-        predicateList.add(criteriaBuilder.equal(from.get("state"), "装车"));
-
-        Predicate[] predicates = new Predicate[predicateList.size()];
-        predicates = predicateList.toArray(predicates);
-
-        query.where(predicates);
-
-        query.groupBy(saleListProductId, name, model, length, color, realityweight);
-
-        if (StringUtil.isNotEmpty((String) map.get("order"))) {
-            query.orderBy(criteriaBuilder.asc(from.get((String) map.get("order")).as(String.class)));
-        }
-
-        query.multiselect(clientname, peasant1, name, color, outNumber, model, price, length, realityweight, criteriaBuilder.sum(realityweight).as(Double.class), criteriaBuilder.count(name).as(Integer.class), deliveryTime, dabaonum);
-        TypedQuery<StorageOut> q = entityManager.createQuery(query);
-        List<StorageOut> resultList = q.getResultList();
-        for (StorageOut storageOut : resultList) {
-            System.out.println(storageOut);
-        }
-        return resultList;
-
-
-//        if (map.get("order") != null && map.get("order") != "") {
-//            return storageRepository.findAll(new Specification<Storage>() {
-//                public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-//                    Predicate predicate = cb.conjunction();
-//                    if (map.get("date") != null) {
-//                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
-//                    }
-//                    if (StringUtil.isNotEmpty((String) map.get("client"))) {
-//                        predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
-//                    }
-//                    if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
-//                        predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
-//                    }
-//                    if (StringUtil.isNotEmpty((String) map.get("product"))) {
-//                        predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
-//                    }
-//
-//                    predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
-//
-//                    query.groupBy(root.get("saleListProduct").get("id"));
-//
-//                    return predicate;
-//                }
-//            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
-//        }
-//        return storageRepository.findAll(new Specification<Storage>() {
-//            @Override
-//            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-//                Predicate predicate = cb.conjunction();
-//                if (map.get("date") != null) {
-//                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
-//                }
-//                if (StringUtil.isNotEmpty((String) map.get("client"))) {
-//                    predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
-//                }
-//                if (StringUtil.isNotEmpty((String) map.get("peasant"))) {
-//                    predicate.getExpressions().add(cb.like(root.get("peasant"), "%" + map.get("peasant") + "%"));
-//                }
-//                if (StringUtil.isNotEmpty((String) map.get("product"))) {
-//                    predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
-//                }
-//
-//                predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
-//
-//                query.groupBy(root.get("saleListProduct").get("id"));
-//                return predicate;
-//            }
-//        });
+        });
     }
 
     @Override
@@ -405,17 +323,8 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<StorageOut> selectOutByOutNumber(String outNumber) {
-        List<Object[]> list = storageRepository.selectOutByOutNumber(outNumber);
-        List<StorageOut> list1 = new ArrayList<>();
-        for (Object[] obj : list) {
-            try {
-                list1.add(new StorageOut(obj[0].toString(), obj[1].toString(), obj[2].toString(), obj[3].toString(), obj[4].toString(), Double.parseDouble(obj[5].toString()), Double.parseDouble(obj[6].toString()), Double.parseDouble(obj[7].toString()), Double.parseDouble(obj[8].toString()), Double.parseDouble(obj[9].toString()), Integer.parseInt(obj[10].toString()), new SimpleDateFormat("yyyy-MM-dd").parse(obj[11].toString()), Integer.parseInt(obj[12].toString())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return list1;
+    public List<Storage> selectOutByOutNumber(String outNumber) {
+        return storageRepository.selectOutByOutNumber(outNumber);
     }
 
     @Override
@@ -498,7 +407,7 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
                 }
-                if (StringUtil.isNotEmpty(storage.getGroupName())) {
+                if (StringUtil.isNotEmpty(storage.getGroupName())){
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
                 }
                 if (star != null) {
@@ -536,8 +445,8 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (StringUtil.isNotEmpty(dateInProducedd)) {
                     try {
-                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 00:00:00");
+                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 23:59:59");
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
                         predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                     } catch (ParseException e) {
@@ -587,7 +496,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String genCode() throws Exception {
+    public String genCode() throws Exception{
         StringBuffer code = new StringBuffer("CK");
         code.append(DateUtil.getCurrentDateStr());
         String saleNumber = storageRepository.getTodayMaxOutNumber();
@@ -597,90 +506,5 @@ public class StorageServiceImpl implements StorageService {
             code.append("00001");
         }
         return code.toString();
-    }
-
-    @Override
-    public void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length) {
-        storageRepository.editKuCun(id, oneWeight, shiji, length);
-    }
-
-    @Override
-    public List<Storage> findeBySaleNumberAndClient(String saleNumber, String client) {
-        return storageRepository.findAll(new Specification<Storage>() {
-            @Override
-            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty(saleNumber)) {
-                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + saleNumber + "%"));
-                }
-                if (StringUtil.isNotEmpty(client)) {
-                    predicate.getExpressions().add(cb.equal(root.get("clientname"), client));
-                }
-                return predicate;
-            }
-        });
-    }
-
-    /***
-     *
-     * 按月查询报表
-     * @param month
-     * @param year
-     * @return
-     */
-    @Override
-    public Month selectMonth(String month, String year) {
-        Month month1 = new Month();
-        String m = Integer.parseInt(month) < 10 ? 0 + month : month;
-        Integer month2 = Integer.parseInt(month) + 1;
-        String m1 = month2 < 10 ? 0 + month2 + "" : month2 + "";
-        String date = year + "-" + m + "-01";
-        String date1 = year + "-" + m1 + "-01";
-        try {
-            java.util.Date udate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-            java.util.Date endate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
-            System.out.println(date);
-            System.out.println(date1);
-            month1.setLastMonth(storageRepository.lastMonth(udate));
-            month1.setMonthIn(storageRepository.monthIn(udate, endate));
-            month1.setMonthOut(storageRepository.monthOut(udate, endate));
-            return month1;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public Month selectYear(String year) {
-        Integer lastYear = Integer.parseInt(year) + 1;
-        Month month = new Month();
-        try {
-            java.util.Date n = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-01-01");
-            java.util.Date n1 = new SimpleDateFormat("yyyy-MM-dd").parse(lastYear + "-01-01");
-            System.out.println(n);
-            System.out.println(n1);
-            month.setLastMonth(storageRepository.lastMonth(n));
-            month.setMonthIn(storageRepository.monthIn(n, n1));
-            month.setMonthOut(storageRepository.monthOut(n, n1));
-            return month;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public void updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, int parseInt) {
-        Storage one = storageRepository.findOne(parseInt);
-        one.setGroupName(groupname);
-        Group group = new Group();
-        group.setId(groupid);
-        Clerk clerk = new Clerk();
-        clerk.setId(clerkid);
-        one.setGroup(group);
-        one.setClerkName(clerkname);
-        one.setClerk(clerk);
-        storageRepository.save(one);
     }
 }

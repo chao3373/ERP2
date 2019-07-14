@@ -4,8 +4,10 @@ import java.awt.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.shenke.entity.*;
+import com.shenke.entity.Clerk;
+import com.shenke.entity.Count;
+import com.shenke.entity.JieSuan;
+import com.shenke.entity.Storage;
 
 /**
  * 入库单Service
@@ -68,7 +70,7 @@ public interface StorageService {
     * @Author: Andy
     * @Date:
     */
-    public void updateStateById(String state, Integer id, java.util.Date date);
+    public void updateStateById(String state, Integer id, Date date);
 
     /**
      * 根据客户查询并按照产品名称排序
@@ -117,11 +119,11 @@ public interface StorageService {
 
     public List<Storage> findByState(String state);
 
-    public List<StorageOut> detail(Map<String, Object> map1);
+    public List<Storage> detail(Map<String, Object> map1);
 
     public List<Storage> selectClientNameByOutDate(Date s);
 
-    public List<StorageOut> selectOutByOutNumber(String outNumber);
+    public List<Storage> selectOutByOutNumber(String outNumber);
 
     public String selectCountByNameAndOutNumber(String name, String outNumber);
 
@@ -149,14 +151,4 @@ public interface StorageService {
     void updateOutNumberById(int parseInt, String ck);
 
     String genCode() throws Exception;
-
-    void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
-
-    List<Storage> findeBySaleNumberAndClient(String saleNumber, String client);
-
-    Month selectMonth(String month, String year);
-
-    Month selectYear(String year);
-
-    void updateClerkAndGroup(Integer clerkid, String clerkname, Integer groupid, String groupname, int parseInt);
 }

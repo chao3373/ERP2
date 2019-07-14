@@ -605,11 +605,11 @@
         }
 
         //禁用打印设置中的input
-        // function disabledInput() {
-        //     $("#dd").find("input").each(function () {
-        //         $(this).prop('disabled', true);
-        //     });
-        // }
+        function disabledInput() {
+            $("#dd").find("input").each(function () {
+                $(this).prop('disabled', true);
+            });
+        }
 
         //重置打印内容
         function printReSet() {
@@ -886,14 +886,14 @@
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
                                     }
                                 }
-                                if ($('#printPrice').is(':checked')){
-                                    tableString += "<tr><td colspan='2'>厚度：" + row.price + "mm</td></tr>";
+                                if ($('#printLabel').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
                                 }
-                                if ($('#printThickness').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
+                                if ($('#printLength').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>压边：" + row.dao + "</td></tr>";
                                 }
-                                tableString += "<tr><td>剖刀：" + row.dao + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
-                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>颜色：" + row.color + "</td></tr>";
+                                tableString += "<tr><td>客户：" + row.clientname + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
+                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
                                 if (row.hebingLength != null) {
                                     tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {
@@ -1114,7 +1114,6 @@
                     if (!$("#selectJitai").combobox('getValue')) {
                         $.messager.alert("系统提示", "<span style='color: red;'>请选择机台</span>.")
                     }
-                    开始
                 },
                 success: function (result) {
                     var obj = eval('(' + result + ')');
@@ -1140,7 +1139,7 @@
             loadColum();
             loadDg2Colum();
             ddClose();
-            // disabledInput();
+            disabledInput();
             set();
             $("#yaoqiu").hide();
             $("#dabao").numberbox("setValue", 1);
@@ -1216,10 +1215,9 @@
         <legend>打印设置</legend>
         <table>
             <tr>
-                <!--<td><input id="printLabel" type="checkbox"/>打印颜色&nbsp;&nbsp;&nbsp;</td>-->
-                <!--<td><input id="printLength" type="checkbox"/>打印剖刀&nbsp;&nbsp;&nbsp;</td>-->
+                <td><input id="printLabel" type="checkbox"/>打印颜色&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printLength" type="checkbox"/>打印剖刀&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printThickness" type="checkbox"/>打印客户&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="printPrice" type="checkbox"/>打印厚度&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printWeight" type="checkbox"/>打印重量&nbsp;&nbsp;&nbsp;</td>
                 <!--<td>标签数：<input id="labelNumber" type="text"
                                style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
@@ -1234,16 +1232,16 @@
         <legend>其他设置</legend>
         <table id="elseSetTb">
             <tr>
-                <td>通知单号：<input id="informNumber" disabled="disabled" type="text"
+                <td>通知单号：<input id="informNumber" type="text"
                                 style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
                 <td>班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组：<input
-                        id="banzu" disabled="disabled" style="width: 88px;"/>&nbsp;&nbsp;&nbsp;
+                        id="banzu" style="width: 88px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
                 <td>机&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;台：<input
-                        id="jitaiName" type="text" disabled="disabled" style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
+                        id="jitaiName" type="text" style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
-                <td>部门职员：<input id="staff" disabled="disabled" style="width: 88px;"/>&nbsp;&nbsp;&nbsp;
+                <td>部门职员：<input id="staff" style="width: 88px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
             </tr>
         </table>

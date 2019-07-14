@@ -65,6 +65,7 @@ public class UserController {
 			System.out.println(userName);
 			User currentUser = userService.findByUserName(userName);
 			System.out.println(currentUser.getId());
+			System.out.println("ShiroSession的过期时间：" + SecurityUtils.getSubject().getSession().getTimeout());
 			session.setAttribute("currentUser", currentUser);
 			List<Role> roles = roleService.findByUserId(currentUser.getId());
 			map.put("roles", roles);

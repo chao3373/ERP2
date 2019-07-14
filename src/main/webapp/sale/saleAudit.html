@@ -815,7 +815,6 @@
                 deliveryDateq: $("#deliveryDate").datebox("getValue"),
                 remark: $("#remark").val()
             }, function (result) {
-                console.log(result);
                 if (result.success) {
                     $.messager.alert("系统提示", "保存成功！");
                     resetValue();
@@ -871,6 +870,7 @@
                 return;
             }
             var rows = row[0];
+            // console.log(rows);
             a = rows.accomplishNumber == null ? 0 : rows.accomplishNumber;
             if (rows.state == "提货" || rows.state == "装车") {
                 $.messager.alert("系统提示", "<span style='color: red;'>产品已生产完成！不可修改！！</span>");
@@ -969,10 +969,10 @@
                     return true;
                 },
                 success: function (result) {
-                    console.log(result);
+                    // console.log(result);
                     // console.log(typeof(result));
-                    var results = eval('(' + result + ')');
-                    if (results.success) {
+                    // var results = eval('(' + result + ')');
+                    if (result.success) {
                         alert("保存成功！");
                         window.location.reload();
                     } else {
@@ -1187,6 +1187,7 @@
                                                                                      style="width: 119px"
                                                                                      data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/product/productList'"/>
                 </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>幅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宽（m）&nbsp;：</td>
                 <td><input type="text" id="model" name="model"
                            class="easyui-numberbox" precision="2" style="width: 120px"/></td>
@@ -1195,6 +1196,7 @@
                 <td>厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（mm）：</td>
                 <td><input type="text" id="price" name="price"
                            class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（m） ：</td>
                 <td><input type="text" id="length" name="length"
                            class="easyui-numberbox" precision="2" style="width: 120px"/></td>
@@ -1205,89 +1207,154 @@
                 </td>
                 <td><input type="text" id="color" name="color"
                            class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>实际幅宽（m） ：</td>
+                <td><input type="text" id="realitymodel" name="realitymodel"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
             </tr>
             <tr>
                 <td>实际厚度（mm） ：</td>
-                <td><input type="text" id="meter" name="meter"
+                <td><input type="text" id="realityprice" name="realityprice"
                            class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>订&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;：</td>
-                <td><input type="text" id="num" name="num" class="easyui-numberbox" style="width: 120px"/></td>
+                <td><input type="text" id="num" name="num"
+                           class="easyui-numberbox" style="width: 120px"/></td>
             </tr>
             <tr>
+                <td>理论重量（k&nbsp;&nbsp;&nbsp;g）：</td>
+                <td><input type="text" id="theoryweight" name="theoryweight"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>单件重量（kg）：</td>
-                <td><input type="text" id="oneweight" name="oneweight" style="width: 120px"/></td>
-                <td>总&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
-                <td><input type="text" id="sumwight" name="sumwight" precision="2" style="width: 120px"/></td>
+                <td><input type="text" id="oneweight" name="oneweight"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>单&nbsp;&nbsp;&nbsp;
+                    件&nbsp;&nbsp;&nbsp;&nbsp;平&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;：
+                </td>
+                <td><input type="text" id="square" name="square"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;平&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;米：</td>
+                <td><input type="text" id="numsquare" name="numsquare"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
             </tr>
             <tr>
                 <td>要&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;求
                     ：
                 </td>
-                <td><input type="text" id="demand" name="demand" style="width: 120px" id="demand" name="demand" style="width: 100px" />
+                <td><input type="text" id="demand" name="demand"
+                           class="easyui-combobox" style="width: 120px" id="demandId"
+                           name="demand.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/require/requireList'"/>
                 </td>
-                <td>实&nbsp;&nbsp;&nbsp;际&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;：</td>
-                <td><input type="text" id="realityweight" name="realityweight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
-                <td><input type="text" id="clientname" name="clientname" style="width: 120px"/></td>
-                <td>农&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称&nbsp;&nbsp;：</td>
-                <td><input type="text" id="peasant" name="peasant" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>剖&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刀&nbsp;：</td>
-                <td><input type="text" id="dao" name="dao"
-                           class="easyui-combobox" style="width: 120px" id="dao"
-                           name="dao" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/dao/daoList'"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>称&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;方&nbsp;&nbsp;&nbsp;式
+                    &nbsp;：
                 </td>
-                <td>商&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标&nbsp;：</td>
-                <td><input type="text" id="brand" name="brand"
-                           class="easyui-combobox" style="width: 120px" id="brandId"
-                           name="brand" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/brand/brandList'"/>
-                </td>
+                <td><input type="text" id="weightway" name="weightway"
+                           class="easyui-validatebox" style="width: 120px"/></td>
             </tr>
             <tr>
                 <td>标&nbsp;&nbsp;&nbsp;&nbsp;签&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;&nbsp;称&nbsp;&nbsp;：</td>
-                <td><input type="text" id="label" name="label" style="width: 120px"/></td>
+                <td><input type="text" id="label" name="label"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>农&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称&nbsp;&nbsp;：</td>
+                <td><input type="text" id="peasant" name="peasant"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
+                <td><input type="text" id="weight" name="weight"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>剖&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刀&nbsp;：</td>
+                <td><input type="text" id="dao" name="dao"
+                           class="easyui-combobox" style="width: 120px" id="daoId"
+                           name="dao.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/dao/daoList'"/>
+                </td>
+            </tr>
+            <tr>
+                <td>商&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标&nbsp;：</td>
+                <td><input type="text" id="brand" name="brand"
+                           class="easyui-combobox" style="width: 120px" id="brandId"
+                           name="brand.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/brand/brandList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>包&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装&nbsp;：</td>
                 <td><input type="text" id="pack" name="pack"
-                           class="easyui-combobox" style="width: 120px" id="pack"
-                           name="pack" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/pack/packList'"/>
+                           class="easyui-combobox" style="width: 120px" id="packId"
+                           name="pack.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/pack/packList'"/>
                 </td>
             </tr>
             <tr>
                 <td>印&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字&nbsp;：</td>
                 <td><input type="text" id="letter" name="letter"
                            class="easyui-combobox" style="width: 120px" id="letterId"
-                           name="letter" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/letter/letterList'"/>
+                           name="letter.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/letter/letterList'"/>
                 </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>纸&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;管&nbsp;：</td>
                 <td><input type="text" id="patu" name="patu"
-                           class="easyui-combobox" style="width: 120px" id="patu"
-                           name="patu" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/patu/patuList'"/>
+                           class="easyui-combobox" style="width: 120px" id="patuId"
+                           name="patu.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/patu/patuList'"/>
                 </td>
             </tr>
             <tr>
-
+                <td>重&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：</td>
+                <td><input type="text" id="wightset" name="wightset"
+                           class="easyui-combobox" style="width: 120px" id="wightId"
+                           name="wight.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/wight/wightList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>总&nbsp;&nbsp;重&nbsp;&nbsp;量（kg）：</td>
+                <td><input type="text" id="sumwight" name="sumwight"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
             </tr>
             <tr>
+                <td>生&nbsp;&nbsp;&nbsp;
+                    产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
+                </td>
+                <td><input type="text" id="meter" name="meter"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
+                <td><input type="text" id="clientname" name="clientname"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>实&nbsp;&nbsp;&nbsp;际&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;：</td>
+                <td><input type="text" id="realityweight" name="realityweight"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;：</td>
-                <td><input type="text" id="remarks" name="remark" style="width: 120px"/></td>
+                <td><input type="text" id="remarks" name="remark"
+                           class="easyui-validatebox" style="width: 120px"/></td>
                 <td>
-                    <input type="text" id="saleList" name="saleList" style="width: 120px"/>
+                    <input type="text" id="saleList" name="saleList" class="easyui-validatebox"
+                           style="width: 120px"/>
                 </td>
-                <td><input type="text" id="jiTai" name="jiTai" style="width: 120px"/></td>
-                <td><input type="text" id="accomplishNumber" name="accomplishNumber" style="width: 120px"/></td>
-                <td><input type="text" id="issueState" name="issueState" style="width: 120px"/></td>
-                <td><input type="text" id="informNumber" name="informNumber" style="width: 120px"/></td>
-                <td><input type="text" id="state" name="state" style="width: 120px"/></td>
-                <td>id<input type="text" id="id" name="id" style="width: 120px"/></td>
+                <td><input type="text" id="jiTai" name="jiTai"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td><input type="text" id="accomplishNumber" name="accomplishNumber"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td><input type="text" id="issueState" name="issueState"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td><input type="text" id="informNumber" name="informNumber"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td><input type="text" id="state" name="state"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>id<input type="text" id="id" name="id"
+                             class="easyui-validatebox" style="width: 120px"/></td>
 
             </tr>
         </table>

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>产品出库细表</title>
+    <title>产品出库明细表</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -18,21 +18,9 @@
         function loaddg() {
             addSelect();
             $.post("/admin/storage/detail", json, function (result) {
+                console.log(result);
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
-                    var rows = $("#dg").datagrid("getData").rows;
-                    console.log(rows);
-                    var count = 0;
-                    var sumweight = 0;
-                    for (var i = 0; i < rows.length; i++) {
-                        count += rows[i].sumnum;
-                        sumweight += rows[i].sumweight;
-                    }
-                    $("#dg").datagrid("appendRow", {
-                        name: "合计",
-                        outNumber: "总件数：" + count + "件",
-                        color: "总重量：" + sumweight + "KG"
-                    });
                 }
 
             });
@@ -57,7 +45,7 @@
             $("#dg").datagrid('appendRow', {
                 clientname: '合计',
                 peasant: '总数量：' + num + '件',
-                saleNumber: '总重量：' + sumWeight + 'kg',
+                saleNumber: '总重量：' + sumWeight + 'kg'
             });
         }
 
@@ -66,11 +54,8 @@
 
         function addSelect() {
             json = {};
-            if ($("#startDate").datetimebox("getValue")) {
-                json.startDate = $("#startDate").datetimebox("getValue");
-            }
-            if ($("#endDate").datetimebox("getValue")) {
-                json.endDate = $("#endDate").datetimebox("getValue");
+            if ($("#saleDate").datebox("getValue")) {
+                json.date = $("#saleDate").datebox("getValue");
             }
             if ($("#client").combobox("getText")) {
                 json.client = $("#client").combobox("getText");
@@ -86,8 +71,7 @@
         //刷新
         function resett() {
             $("#client").combobox("reset");
-            $("#startDate").datetimebox("reset");
-            $("#endDate").datetimebox("reset");
+            $("#saleDate").datebox("reset");
             $("#peasant").val("");
             $("#product").combobox("reset");
             $("#dg").datagrid("reload");
@@ -106,23 +90,25 @@
                 data: json,
                 success: function (result) {
                     if (result.success) {
+                        console.log(result.rows);
                         $("#dg").datagrid("loadData", result.rows);
                     }
                 }
             });
 
             var rows = $("#dg").datagrid("getRows");
+            console.log(rows.length);
             var rsArr = [];
             var rw = {};
             var od = rows[0][order];
+            console.log(od);
             var sum = 0;
             var count = 0;
             var i;
             for (i = 0; i < rows.length; i++) {
                 if (od == rows[i][order]) {
-                    console.log(rows[i]);
-                    count += Number(rows[i]["sumnum"]);
-                    sum += Number(rows[i]["sumweight"]);
+                    count += Number(rows[i]["sum"]);
+                    sum += Number(rows[i]["realityweight"]);
                 } else {
                     rw.index = i;
                     rw.count = count;
@@ -130,7 +116,7 @@
                     rsArr.push(rw);
                     rw = {};
                     od = rows[i][order];
-                    sum = rows[i]["sumweight"];
+                    sum = rows[i]["realityweight"];
                     count = 1;
                 }
             }
@@ -139,43 +125,66 @@
             rw.sum = sum;
             rsArr.push(rw);
 
-            var zongZhong = 0
-            var zongShu = 0;
             for (var i = rsArr.length - 1; i >= 0; i--) {
-                zongZhong += rsArr[i]["sum"];
-                zongShu += rsArr[i]["count"];
                 console.log(rsArr[i]);
                 $("#dg").datagrid("insertRow", {
                     index: rsArr[i]["index"],
                     row: {
-                        name: "小计",
-                        sumweight: "总重量：" + rsArr[i]["sum"],
-                        sumnum: "总数量：" + rsArr[i]["count"]
+                        clientname: "小计",
+                        peasant: "",
+                        saleNumber: "",
+                        name: "",
+                        model: "",
+                        length: "",
+                        price: "",
+                        realityweight: "总重量：" + rsArr[i]["sum"],
+                        sum: "总数量：" + rsArr[i]["count"]
                     }
                 });
             }
-            $("#dg").datagrid("appendRow", {
-                name: "总计：",
-                sumweight: "总重量：" + zongZhong,
-                sumnum: "总数量：" + zongShu
-            })
         }
 
         $(document).ready(function () {
             //加载dg的列
             $("#dg").datagrid({
                 columns: [[
-                    {field: 'name', title: '产品名称', width: 100, align: 'center'},
-                    {field: 'peasant', title: '农户名称', width: 50, align: 'center'},
-                    {field: 'outNumber', title: '出库单号', width: 150, align: 'center'},
-                    {field: 'color', title: '颜色', width: 200, align: 'center'},
+                    {field: 'clientname', title: '购货单位', width: 100, align: 'center'},
+                    {field: 'peasant', title: '农户名称', width: 100, align: 'center'},
+                    {field: 'saleNumber', title: '订单号', width: 150, align: 'center'},
+                    {field: 'name', title: '产品名称', width: 200, align: 'center'},
                     {field: 'model', title: '幅宽m', width: 100, align: 'center'},
-                    {field: 'price', title: '厚度m', width: 100, align: 'center'},
-                    {field: 'length', title: '长度mm', width: 100, align: 'center'},
-                    {field: 'weight', title: '重量kg', width: 100, align: 'center'},
-                    {field: 'sumweight', title: '总重量', width: 100, align: 'center'},
-                    {field: 'sumnum', title: '数量', width: 100, align: 'center'},
-                    {field: 'dabaonum', title: '打包数量', width: 100, align: 'center'},
+                    {field: 'length', title: '长度m', width: 100, align: 'center'},
+                    {field: 'price', title: '厚度mm', width: 100, align: 'center'},
+                    {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
+                    {field: 'color', title: '颜色', width: 100, align: 'center'},
+                    {
+                        field: 'deliveryTime',
+                        title: '出库时间',
+                        width: 100,
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                var date = new Date(value);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
                 ]]
             });
         });
@@ -206,7 +215,7 @@
             tableString = "";
             tableString += "<div style='text-align: center;'><h1>产品出库明细表</h1>";
             tableString += "<p><span style='color: black; margin-left: -47px;'>购货单位:" + $("#client").combobox("getText") + "</span>";
-            tableString += "<span style='color: black; margin-left: 300px;'>出库时间：" + $("#outDate").datetimebox("getValue") + "</span></p>";
+            tableString += "<span style='color: black; margin-left: 300px;'>出库时间：" + $("#saleDate").datebox("getValue") + "</span></p>";
             tableString += '<table cellspacing="0" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
@@ -305,7 +314,7 @@
                         var tdStr = rows[i][nl[j].f];
                         if (tdStr == null) {
                             tdStr = "";
-                        } else if ([nl[j].f] == 'dateInProduced') {
+                        }else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
                         }
                         console.log(tdStr);
@@ -338,10 +347,10 @@
         function selectOutNumber() {
             $("#outNumber").combobox("disable");
             $("#dlg2").dialog("open");
-            $("#outDate").datetimebox({
+            $("#outDate").datebox({
                 onSelect: function (date) {
                     $("#outNumber").combobox({
-                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datetimebox("getValue"),
+                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datebox("getValue"),
                         valueField: 'outNumber',
                         textField: 'outNumber',
                         panelHeight: 'auto'
@@ -385,19 +394,6 @@
             });
         }
 
-        //隐藏指定列
-        function hiddenColumn(column) {
-            $("#dg").datagrid("hideColumn", column);
-        }
-
-        //显示所有列
-        function showAllColumn() {
-            var options = $("#dg").datagrid("options");
-            var colu = options.columns[0];
-            for (var i = 0; i < colu.length; i++) {
-                $("#dg").datagrid("showColumn", colu[i].field);
-            }
-        }
 
     </script>
 </head>
@@ -415,13 +411,9 @@
                                                 demandd="true"
                                                 data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
-                    <td>出库时间：<input type="text" id="startDate" name="startDate"
-                                    class="easyui-datetimebox"
-                                    demandd="true" data-options="editable:false" size="5"/>
-                    </td>
-                    <td>—&nbsp;&nbsp;&nbsp;<input type="text" id="endDate" name="endDate"
-                                                  class="easyui-datetimebox"
-                                                  demandd="true" data-options="editable:false" size="5"/>
+                    <td>出库时间：<input type="text" id="saleDate" name="saleDate"
+                                    class="easyui-datebox"
+                                    demandd="true" data-options="editable:false" size="10"/>
                     </td>
                     <td>农户名称： <input id="peasant"
                                      name="peasant" style="width: 100px"/></td>
@@ -446,7 +438,7 @@
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-           singleSelect="true" fit="true" toolbar="#tb">
+           singleSelect="true" fit="true" toolbar="#tb" url="/admin/storage/findbySalelistId">
     </table>
 
     <div id="tb">
@@ -460,32 +452,8 @@
                class="easyui-linkbutton" plain="true">幅宽</a>
             <a href="javascript:orderBy('name')" ;
                class="easyui-linkbutton" plain="true">产品名称</a>
-            <a href="javascript:orderBy('color')" ;
-               class="easyui-linkbutton" plain="true">颜色</a>
-            <a href="javascript:hiddenColumn('name')" ;
-               class="easyui-linkbutton" plain="true">隐藏产品名称列</a>
-            <a href="javascript:hiddenColumn('peasant')" ;
-               class="easyui-linkbutton" plain="true">隐藏农户列</a>
-            <a href="javascript:hiddenColumn('outNumber')" ;
-               class="easyui-linkbutton" plain="true">隐藏出库单号列</a>
-            <a href="javascript:hiddenColumn('color')" ;
-               class="easyui-linkbutton" plain="true">隐藏颜色列</a>
-            <a href="javascript:hiddenColumn('model')" ;
-               class="easyui-linkbutton" plain="true">隐藏幅宽列</a>
-            <a href="javascript:hiddenColumn('price')" ;
-               class="easyui-linkbutton" plain="true">隐藏厚度列</a>
-            <a href="javascript:hiddenColumn('length')" ;
-               class="easyui-linkbutton" plain="true">隐藏长度列</a>
-            <a href="javascript:hiddenColumn('weight')" ;
-               class="easyui-linkbutton" plain="true">隐藏重量列</a>
-            <a href="javascript:hiddenColumn('sumweight')" ;
-               class="easyui-linkbutton" plain="true">隐藏总重量列</a>
-            <a href="javascript:hiddenColumn('sumnum')" ;
-               class="easyui-linkbutton" plain="true">隐藏数量列</a>
-            <a href="javascript:hiddenColumn('dabaonum')" ;
-               class="easyui-linkbutton" plain="true">隐藏打包数量列</a>
-            <a href="javascript:showAllColumn()" ;
-               class="easyui-linkbutton" plain="true">显示所有列</a>
+            <a href="javascript:addSum()" ;
+               class="easyui-linkbutton" plain="true">添加合计</a>
             <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
                iconCls="icon-add" plain="true">选择出库单</a>
             <!--<a href="javascript:orderBy('length')" ;
@@ -502,7 +470,7 @@
      closed="true" buttons="#dlg2-tb">
     <table>
         <tr>
-            <td>选择出库日期：<input id="outDate" class="easyui-datetimebox" size="15"/></td>
+            <td>选择出库日期：<input id="outDate" class="easyui-datebox" size="15"/></td>
         </tr>
         <tr>
             <td>选择出库单号：<input id="outNumber" class="easyui-combobox" size="15"/></td>

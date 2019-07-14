@@ -28,7 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 	 * @param string
 	 * @return
 	 */
-	@Query(value="select * from t_product where type_id=2 and name = ?1", nativeQuery=true)
+	@Query(value="select * from t_product where type_id=2 and name like ?1", nativeQuery=true)
 	public List<Product> findByName(String string);
 
 	/**

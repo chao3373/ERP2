@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,7 +51,19 @@ public class ShiroConfig {
 		
 		return shiroFilterFactoryBean;
 	}
-	
+
+	/***
+	 * 设置ShiroSession的过期时间
+	 * @return
+	 */
+//	@Bean("sessionManager")
+//	public DefaultWebSessionManager sessionManager() {
+//		DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+//		// 设置session过期时间3600s
+//		sessionManager.setGlobalSessionTimeout(36000L);
+//		return sessionManager;
+//	}
+
 	//创建DefaultWebSecurityManager
 	@Bean
 	public SecurityManager securityManager() {
@@ -88,5 +101,6 @@ public class ShiroConfig {
 		
 		return advisorAutoProxyCreator;
 	}
-	
+
+
 }

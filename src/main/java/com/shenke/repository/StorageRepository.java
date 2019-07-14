@@ -3,7 +3,6 @@ package com.shenke.repository;
 import java.sql.Date;
 import java.util.List;
 
-import com.shenke.entity.StorageOut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -71,7 +70,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     */
     @Modifying
     @Query(value = "update t_storage set  state = ?1, delivery_time = ?3 where id = ?2", nativeQuery = true)
-    public void updateStateById(String state, Integer id, java.util.Date date);
+    public void updateStateById(String state, Integer id, Date date);
 
     /**
      * 根据客户名称查询并按照商品名排序
@@ -158,8 +157,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param outNumber
      * @return
      */
-    @Query(value = "SELECT clientname, peasant, name, color, out_number, model, price, length, realityweight as weight, sum(realityweight) as sumweight, count(*) as sumnum, delivery_time, dabaonum FROM t_storage WHERE out_number=? GROUP BY sale_list_product_id, name, model, length, color, realityweight", nativeQuery = true)
-    public List<Object[]> selectOutByOutNumber(String outNumber);
+    @Query(value = "SELECT * FROM t_storage WHERE out_number =?1", nativeQuery = true)
+    public List<Storage> selectOutByOutNumber(String outNumber);
 
     /***
      * 根据商品名称和出库单号查询数量
@@ -213,41 +212,4 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Query(value = "select * from t_storage where state like ?1", nativeQuery = true)
     List<Storage> selectByState(String state);
-
-    /***
-     * 修改库存信息
-     * @param id
-     * @param oneWeight
-     * @param shiji
-     * @param length
-     */
-    @Modifying
-    @Query(value = "update t_storage set length=?4, oneweight=?2, realityweight=?3 where id=?1", nativeQuery = true)
-    void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
-
-    /***
-     * 查询上月结转
-     * @param date1
-     * @return
-     */
-    @Query(value = "select (SELECT SUM(realityweight) FROM t_storage WHERE date_in_produced < ?1)-(SELECT SUM(realityweight)  FROM t_storage WHERE delivery_time < ?1)", nativeQuery = true)
-    Integer lastMonth(java.util.Date date1);
-
-    /***
-     * 查询本月入库
-     * @param udate
-     * @param endate
-     * @return
-     */
-    @Query(value = "SELECT SUM(realityweight) FROM t_storage WHERE date_in_produced >= ?1 AND date_in_produced < ?2", nativeQuery = true)
-    Integer monthIn(java.util.Date udate, java.util.Date endate);
-
-    /***
-     * 查询本月出库
-     * @param udate
-     * @param endate
-     * @return
-     */
-    @Query(value = "SELECT SUM(realityweight) FROM t_storage WHERE delivery_time >= ?1 AND delivery_time < ?2", nativeQuery = true)
-    Integer monthOut(java.util.Date udate, java.util.Date endate);
 }

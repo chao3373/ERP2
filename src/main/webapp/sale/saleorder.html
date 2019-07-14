@@ -513,6 +513,8 @@
                                 num: '总数量：' + countnum,
                                 sumwight: '总重量：' + sumweight
                             });
+                        } else if (typeof result['success'] == 'undefined') {
+                            $.messager.alert("系统提示", "<span style='color:red'>格式错误</span>");
                         } else {
                             $.messager.alert("系统提示", "<span style='color:red'>"
                                 + obj.errorInfo + "</span>");
@@ -763,15 +765,31 @@
         <th id="oneweightRow" field="oneweight" width="100" align="center">单件重量（kg）</th>
         <th id="numRow" field="num" width="100" align="center">订货数量</th>
         <th id="sumwightRow" field="sumwight" width="100" align="center">总重量</th>
+        <th id="realitymodRow" field="realitymodel" width="100"
+            align="center">实际幅宽（m）
+        </th>
         <th id="demandRow" field="demand" width="200" align="center">要求</th>
+        <th id="wightsetRow" field="wightset" width="100" align="center">重量设置</th>
         <th id="daoRow" field="dao" width="100" align="center">剖刀</th>
         <th id="brandRow" field="brand" width="100" align="center">商标</th>
         <th id="packRow" field="pack" width="100" align="center">包装</th>
         <th id="letterRow" field="letter" width="100" align="center">印字</th>
         <th id="peasantRow" field="peasant" width="100" align="center">农户名称</th>
         <th id="clientnameRow" field="clientname" width="100" align="center">客户名称</th>
-        <th id="realitypriRow" field="realityprice" width="100" align="center">实际厚度（mm）</th>
+        <th id="realityweiRow" field="realityweight" width="100"
+            align="center">实际重量（kg）
+        </th>
+        <th id="realitypriRow" field="realityprice" width="100"
+            align="center">实际厚度（mm）
+        </th>
+        <th id="theoryweigRow" field="theoryweight" width="100"
+            align="center">理论重量（kg）
+        </th>
+        <th id="squareRow" field="square" width="100" align="center">单件平米</th>
+        <th id="numsquareRow" field="numsquare" width="100" align="center">总平米</th>
+        <th id="weightwayRow" field="weightway" width="100" align="center">称重方式</th>
         <th id="labelRow" field="label" width="100" align="center">标签名称</th>
+        <th id="weightRow" field="weight" width="100" align="center">重量（kg）</th>
         <th id="patuRow" field="patu" width="100" align="center">纸管</th>
         <th id="remarkRow" field="remark" width="100" align="center">备注</th>
         </thead>
