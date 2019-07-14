@@ -1,6 +1,9 @@
 package com.shenke.controller.admin;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import com.shenke.entity.Product;
 import com.shenke.service.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -60,6 +66,104 @@ public class ToLeadController {
 
     @Resource
     private ClientService clientService;
+
+    @RequestMapping("/import")
+    public Map<String, Object> importt(@RequestParam("fileName") MultipartFile file) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        String errorInfo = "";
+        InputStream inputStream = file.getInputStream();
+        ExcelReader reader = ExcelUtil.getReader(inputStream);
+        List<Map<String, Object>> mapList = reader.readAll();
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (int i = 0; i < mapList.size(); i++) {
+            int j = i + 1;
+            Map<String, Object> map1 = mapList.get(i);
+            map1.put("name", map1.remove("产品名称"));
+            map1.put("model", map1.remove("宽度m"));
+            map1.put("price", map1.remove("厚度mm"));
+            map1.put("length", map1.remove("长度m"));
+            map1.put("meter", map1.remove("实际厚度mm"));
+            map1.put("color", map1.remove("颜色"));
+            map1.put("oneweight", map1.remove("重量"));
+            map1.put("num", map1.remove("件数"));
+            map1.put("sumwight", map1.remove("总重量"));
+            map1.put("realitymodel", map1.remove("实际幅宽m"));
+            map1.put("demand", map1.remove("要求"));
+            map1.put("weightset", map1.remove("重量设置"));
+            map1.put("dao", map1.remove("剖刀设置"));
+            map1.put("brand", map1.remove("商标设置"));
+            map1.put("pack", map1.remove("包装设置"));
+            map1.put("letter", map1.remove("印字设置"));
+            map1.put("peasant", map1.remove("客户姓名"));
+            map1.put("clientname", map1.remove("客户名称"));
+            map1.put("dingJia", map1.remove("订价"));
+
+            System.out.println(map1);
+
+            System.out.println("name: " + map1.get("name"));
+            System.out.println("weightset: " + map1.get("weightset"));
+            System.out.println("dao: " + map1.get("dao"));
+            System.out.println("brand: " + map1.get("brand"));
+            System.out.println("pack: " + map1.get("pack"));
+            System.out.println("letter: " + map1.get("letter"));
+            System.out.println("clientname: " + map1.get("clientname"));
+            if (map1.get("name") == null || map1.get("weightset") == null || map1.get("dao") == null || map1.get("brand") == null || map1.get("pack") == null || map1.get("letter") == null || map1.get("clientname") == null) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行存在空白单元格");
+                return map;
+            }
+
+            System.out.println(productService.findByName(map1.get("name").toString()));
+            System.out.println(productService.findByName(map1.get("name").toString()).size());
+            if (map1.get("name") == null || productService.findByName(map1.get("name").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行产品名称有误");
+                return map;
+            }
+
+            if (map1.get("weightset") == null || wightService.findByName(map1.get("weightset").toString()) == null) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行重量设置有误");
+                return map;
+            }
+
+            if (map1.get("dao") == null || daoService.findByName(map1.get("dao").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行剖刀设置有误");
+                return map;
+            }
+            if (map1.get("brand") == null || brandService.findByName(map1.get("brand").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行商标设置有误");
+                return map;
+            }
+
+            if (map1.get("pack") == null || packService.findByName(map1.get("pack").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行包装设置有误");
+                return map;
+            }
+
+            if (map1.get("letter") == null || letterService.findByName(map1.get("letter").toString()).size() == 0) {
+                map.put("success", false);
+                System.out.println(letterService.findByName(map1.get("letter").toString()));
+                map.put("errorInfo", "第" + j + "行印字设置有误");
+                return map;
+            }
+
+            if (map1.get("clientname") == null || clientService.findByName(map1.get("clientname").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行客户姓名有误");
+                return map;
+            }
+
+            data.add(map1);
+        }
+        System.out.println(data);
+        map.put("success", true);
+        map.put("rows", data);
+        return map;
+    }
 
     @RequestMapping("/importFile")
     public Map<String, Object> getExcel(@RequestParam("fileName") MultipartFile file) {// MultipartFile
@@ -262,7 +366,7 @@ public class ToLeadController {
                         case 18:
                             // map.put("客户名称", getStringCellValue(cell));
                             String clname = getStringCellValue(cell);
-                            System.out.println("客户名称：" +  clname);
+                            System.out.println("客户名称：" + clname);
                             saleListProduct.setClientname(getStringCellValue(cell));
                             if (clientService.findName(clname) != null) {
 

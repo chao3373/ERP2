@@ -105,35 +105,8 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double meter;// 实际厚度
 
-	private Integer level;//等级
-
-	@Column(length = 50)
-	private String peasant;// 农户名称
-
-	@Column(length = 50)
-	private String clientname;// 客户名称
-
-	private Integer accomplishNumber;// 完成数量
-
-	/*@Column(length = 50)
-	private String accomplishState;// 完成状态*/
-
-	@Column(length = 50)
-	private String issueState;// 下发状态
-
-	@Column(length = 50)
-	private Long informNumber;// 通知单号
-
-	private String remark;// 备注
-
-	@Transient
-	private String queryName;// 查询用到。根据商品名称查询
-
-	@Transient
-	private int saleTotal;// 销售总数
-
-	//合并长度
-	private String hebingLength;//合并长度
+	@Column(nullable = true)
+	private Double dingJia;// 订价
 
 	@Override
 	public String toString() {
@@ -167,6 +140,7 @@ public class SaleListProduct {
 				", state='" + state + '\'' +
 				", sumwight=" + sumwight +
 				", meter=" + meter +
+				", dingJia=" + dingJia +
 				", level=" + level +
 				", peasant='" + peasant + '\'' +
 				", clientname='" + clientname + '\'' +
@@ -179,6 +153,44 @@ public class SaleListProduct {
 				", hebingLength='" + hebingLength + '\'' +
 				'}';
 	}
+
+	public Double getDingJia() {
+		return dingJia;
+	}
+
+	public void setDingJia(Double dingJia) {
+		this.dingJia = dingJia;
+	}
+
+	private Integer level;//等级
+
+	@Column(length = 50)
+	private String peasant;// 农户名称
+
+	@Column(length = 50)
+	private String clientname;// 客户名称
+
+	private Integer accomplishNumber;// 完成数量
+
+	/*@Column(length = 50)
+	private String accomplishState;// 完成状态*/
+
+	@Column(length = 50)
+	private String issueState;// 下发状态
+
+	@Column(length = 50)
+	private Long informNumber;// 通知单号
+
+	private String remark;// 备注
+
+	@Transient
+	private String queryName;// 查询用到。根据商品名称查询
+
+	@Transient
+	private int saleTotal;// 销售总数
+
+	//合并长度
+	private String hebingLength;//合并长度
 
 	public Integer getLevel() {
 		return level;
