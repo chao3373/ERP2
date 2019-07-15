@@ -702,9 +702,67 @@
                     });
         }
 
+        //快速打码
+        function kuaiSu() {
+            dabaoCount++;
+            $.ajax({
+                url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
+                success: function (result) {
+                    if (result.success) {
+                        reloadDg();
+                    }
+                }
+            });
+            if (dabaoCount == dabaoNum) {
+                $.ajax({
+                    url: "/admin/storage/add",
+                    async: false,
+                    data: {
+                        saleListProduct: $("#dg").datagrid("getSelected").id,
+                        jiTai: $("#selectJitai").combobox("getValue"),
+                        clerkName: $("#staff").val(),
+                        realityweight: $("#dg").datagrid("getSelected").oneweight,
+                        dabaonum: dabaoCount
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            printNum = dabaoCount;
+                            printt(result.id);
+                            // alert("打印" + printNum + "===id:" + result.id);
+                            dabaoCount = 0;
+                        } else {
+                            alert("未知错误");
+                        }
+                    }
+                });
+            } else if ($("#dg2").datagrid('getRows').length == 1) {
+                $.ajax({
+                    url: "/admin/storage/add",
+                    async: false,
+                    data: {
+                        saleListProduct: $("#dg").datagrid("getSelected").id,
+                        jiTai: $("#selectJitai").combobox("getValue"),
+                        clerkName: $("#staff").val(),
+                        realityweight: Number(weight),
+                        hebingLength: $("#dg").datagrid("getSelected").hebingLength,
+                        dabaonum: dabaoCount
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            printNum = dabaoCount;
+                            dabaoCount = 0;
+                            printt(result.id);
+                            // alert("打印" + printNum + "===id:" + result.id);
+                        } else {
+                            alert("未知错误");
+                        }
+                    }
+                });
+            }
+        }
+
         //重新加载dg2跟dg的数据
         function reloadDg() {
-
             var jitai = $("#selectJitai").combobox("getValue");
             var selectIndex = $("#dg").datagrid("getRowIndex",
                 $("#dg").datagrid("getSelected"));
@@ -1191,6 +1249,8 @@
 <div id="tb2">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:weigh()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:kuaiSu()"
+                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">非标入库</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
