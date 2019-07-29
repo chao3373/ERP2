@@ -291,8 +291,8 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         saleListProduct1.setId(null);
         Integer num = saleListProduct.getNum();
         saleListProduct.setNum(num / count);
-        Integer oneweight = saleListProduct.getOneweight();
-        Integer sumOneWeight = oneweight;
+        Double oneweight = saleListProduct.getOneweight();
+        Double sumOneWeight = oneweight;
         double lengthh = saleListProduct.getLength();
         int length = (int) lengthh;
         StringBuilder sb = new StringBuilder();
@@ -311,7 +311,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             StringBuilder leng = new StringBuilder();
             leng.append(length + "");
             Integer countNum2 = length;
-            Integer sumOneWeight1 = 0;
+            Double sumOneWeight1 = 0.0;
             for (int i = 0; i < num % count - 1; i++) {
                 sumOneWeight1 += oneweight;
                 leng.append("+" + leng);

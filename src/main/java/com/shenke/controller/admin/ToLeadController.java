@@ -191,7 +191,7 @@ public class ToLeadController {
         Map<String, Object> map = new HashMap<String, Object>();
 
         // 设置实际厚度小数点后面的位数
-        DecimalFormat dd = new DecimalFormat("0.0000"); //格式化保留两位小数
+        DecimalFormat dd = new DecimalFormat("#.00"); //格式化保留两位小数
 
         // 用来存放订单商品的集合
         List<SaleListProduct> list = new ArrayList<SaleListProduct>();
@@ -254,7 +254,7 @@ public class ToLeadController {
                         case 7:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("单件重量kg", getStringCellValue(cell));
-                                saleListProduct.setOneweight((int) Math.round(Double.parseDouble(getStringCellValue(cell))));
+                                saleListProduct.setOneweight(Double.parseDouble(dd.format(Double.parseDouble(getStringCellValue(cell)))));
                             }
                             break;
                         case 8:

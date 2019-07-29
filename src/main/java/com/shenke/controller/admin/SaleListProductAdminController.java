@@ -354,7 +354,7 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<>();
         List<SaleListProduct> condition = saleListProductService.condition(saleListProduct);
         Integer num = 0;
-        Integer weight = 0;
+        Double weight = 0.0;
 
         for (SaleListProduct saleListProduct1 : condition) {
             System.out.println(saleListProduct1);

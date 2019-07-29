@@ -410,59 +410,7 @@
 
         //点击保存
         function saveGoods() {
-            var json = {};
-            if ($("#name").combobox("getText")) {
-                json.name = $("#name").combobox("getText");
-            }
-            if ($("#model").numberbox("getValue")) {
-                json.model = $("#model").numberbox("getValue");
-            }
-            if ($("#price").numberbox("getValue")) {
-                json.price = $("#price").numberbox("getValue");
-            }
-            if ($("#length").numberbox("getValue")) {
-                json.length = $("#length").numberbox("getValue");
-            }
-            if ($("#num").numberbox("getValue")) {
-                json.num = $("#num").numberbox("getValue");
-            }
-            if ($("#color").val()) {
-                json.color = $("#color").val();
-            }
-            if ($("#weight").numberbox("getValue")) {
-                json.weight = $("#weight").numberbox("getValue");
-            }
-            if ($("#dao").combobox("getText")) {
-                json.dao = $("#dao").combobox("getText");
-            }
-            if ($("#brand").combobox("getText")) {
-                json.brand = $("#brand").combobox("getText");
-            }
-            if ($("#pack").combobox("getText")) {
-                json.pack = $("#pack").combobox("getText");
-            }
-            if ($("#letter").combobox("getText")) {
-                json.letter = $("#letter").combobox("getText");
-            }
-            if ($("#patu").combobox("getText")) {
-                json.patu = $("#patu").combobox("getText");
-            }
-            if ($("#meter").numberbox("getValue")) {
-                json.meter = $("#meter").numberbox("getValue");
-            }
-            if ($("#clientname").combobox("getText")) {
-                json.clientname = $("#clientname").combobox("getText");
-            }
-            if ($("#cang").combobox("getValue")) {
-                json.location = $("#cang").combobox("getValue");
-            }
-            json.state = "生产完成";
-            $.post("/admin/storage/saveAdd", json, function(result) {
-                if(result.success) {
-                    $("#dg").datagrid("reload");
-                    $("#dlg").dialog("close");
-                }
-            });
+            $("#dlg").dialog("close");
         }
 
         //手动出库
@@ -552,13 +500,13 @@
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
                                     }
                                 }
-                                if (jitai.color) {
+                                if ($('#color').is(':checked')) {
                                     tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
                                 }
-                                if (jitai.dao) {
+                                if ($('#dao').is(':checked')) {
                                     tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
                                 }
-                                if (jitai.clientname) {
+                                if ($('#clientname').is(':checked')) {
                                     tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
                                 }
                                 tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
@@ -612,6 +560,11 @@
             });
             ddClose();
         }
+
+        function printSheZhi(){
+            $("#dlg").dialog("open");
+        }
+
         $(document).ready(function () {
             $("#state").combobox({
                 panelHeight: 'auto',
@@ -712,109 +665,24 @@
 
 <div id="tb">
     <a href="javascript:print()" class="easyui-linkbutton" iconCls="icon-print" plain="true">重新打印</a>
+    <a href="javascript:printSheZhi()" class="easyui-linkbutton" iconCls="icon-print" plain="true">打印设置</a>
 </div>
 
-<div id="dlg" class="easyui-dialog" title="添加库存"
-     style="width: 600px; height: 350px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
-    <form id="fm2" method="post">
-        <table>
-            <tr>
-                <td>产&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;品&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;&nbsp;称
-                    ：
-                </td>
-                <td><input type="hidden" id="action"/>
-                    <input type="hidden" id="rowIndex"/>
-                    <input type="text" id="name" name="name" class="easyui-combobox" style="width: 119px"
-                           data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/product/productList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>幅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宽（m）&nbsp;：</td>
-                <td><input type="text" id="model" name="model"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（mm）：</td>
-                <td><input type="text" id="price" name="price"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度（m） ：</td>
-                <td><input type="text" id="length" name="length"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-            </tr>
-            <tr>
-                <td>颜&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色
-                    ：
-                </td>
-                <td><input type="text" id="color" name="color" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量
-                    ：
-                </td>
-                <td><input type="text" id="num" name="num"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <tr>
-                <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
-                <td><input type="text" id="weight" name="weight"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>剖&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刀&nbsp;：</td>
-                <td><input type="text" id="dao" name="dao"
-                           class="easyui-combobox" style="width: 120px" id="daoId"
-                           name="dao.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/dao/daoList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>商&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标&nbsp;：</td>
-                <td><input type="text" id="brand" name="brand"
-                           class="easyui-combobox" style="width: 120px" id="brandId"
-                           name="brand.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/brand/brandList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>包&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装&nbsp;：</td>
-                <td><input type="text" id="pack" name="pack"
-                           class="easyui-combobox" style="width: 120px" id="packId"
-                           name="pack.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/pack/packList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>印&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字&nbsp;：</td>
-                <td><input type="text" id="letter" name="letter"
-                           class="easyui-combobox" style="width: 120px" id="letterId"
-                           name="letter.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/letter/letterList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>纸&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;管&nbsp;：</td>
-                <td><input type="text" id="patu" name="patu"
-                           class="easyui-combobox" style="width: 120px" id="patuId"
-                           name="patu.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/patu/patuList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>生&nbsp;&nbsp;&nbsp;
-                    产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
-                </td>
-                <td><input type="text" id="meter" name="meter"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
-                <td><input type="text" id="clientname" name="clientname"
-                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"  data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
-            </tr>
-            <tr>
-                <td>仓&nbsp;&nbsp;&nbsp;位&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：
-                </td>
-                <td><input type="text" id="cang" name="cang"
-                           class="easyui-combobox" style="width: 120px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/></td>
-            </tr>
-        </table>
-    </form>
+<div id="dlg" class="easyui-dialog" title="打印设置"
+     style="width: 300px; height: 150px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+    <table>
+        <tr>
+            <td><input type="checkbox" id="printWeight">打印重量</td>
+            <td></td>
+            <td><input type="checkbox" id="color">打印颜色</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" id="dao">打印剖刀</td>
+            <td></td>
+            <td><input type="checkbox" id="clientname">打印客户名称</td>
+        </tr>
+    </table>
+
 </div>
 
 <div id="dlg-buttons">

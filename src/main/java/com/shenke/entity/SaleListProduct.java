@@ -60,7 +60,8 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double theoryweight;// 理论重量
 
-	private Integer oneweight;// 单件重量
+	@Column(nullable = true)
+	private Double oneweight;// 单件重量
 
 	@Column(nullable = true)
 	private Double square;// 单件平米
@@ -180,62 +181,6 @@ public class SaleListProduct {
 				'}';
 	}
 
-	public Integer getLevel() {
-		return level;
-	}
-
-	public void setLevel(Integer level) {
-		this.level = level;
-	}
-
-	public String getHebingLength() {
-		return hebingLength;
-	}
-
-	public void setHebingLength(String hebingLength) {
-		this.hebingLength = hebingLength;
-	}
-
-	public String getIssueState() {
-		return issueState;
-	}
-
-	public void setIssueState(String issueState) {
-		this.issueState = issueState;
-	}
-
-	public Long getInformNumber() {
-		return informNumber;
-	}
-
-	public void setInformNumber(Long informNumber) {
-		this.informNumber = informNumber;
-	}
-
-	public JiTai getJiTai() {
-		return jiTai;
-	}
-
-	public void setJiTai(JiTai jiTai) {
-		this.jiTai = jiTai;
-	}
-
-	public Integer getAccomplishNumber() {
-		return accomplishNumber;
-	}
-
-	public void setAccomplishNumber(Integer accomplishNumber) {
-		this.accomplishNumber = accomplishNumber;
-	}
-
-	/*public String getAccomplishState() {
-		return accomplishState;
-	}
-
-	public void setAccomplishState(String accomplishState) {
-		this.accomplishState = accomplishState;
-	}*/
-
 	public Integer getId() {
 		return id;
 	}
@@ -250,6 +195,14 @@ public class SaleListProduct {
 
 	public void setSaleList(SaleList saleList) {
 		this.saleList = saleList;
+	}
+
+	public JiTai getJiTai() {
+		return jiTai;
+	}
+
+	public void setJiTai(JiTai jiTai) {
+		this.jiTai = jiTai;
 	}
 
 	public String getName() {
@@ -332,11 +285,11 @@ public class SaleListProduct {
 		this.theoryweight = theoryweight;
 	}
 
-	public Integer getOneweight() {
+	public Double getOneweight() {
 		return oneweight;
 	}
 
-	public void setOneweight(Integer oneweight) {
+	public void setOneweight(Double oneweight) {
 		this.oneweight = oneweight;
 	}
 
@@ -460,6 +413,14 @@ public class SaleListProduct {
 		this.meter = meter;
 	}
 
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
 	public String getPeasant() {
 		return peasant;
 	}
@@ -474,6 +435,30 @@ public class SaleListProduct {
 
 	public void setClientname(String clientname) {
 		this.clientname = clientname;
+	}
+
+	public Integer getAccomplishNumber() {
+		return accomplishNumber;
+	}
+
+	public void setAccomplishNumber(Integer accomplishNumber) {
+		this.accomplishNumber = accomplishNumber;
+	}
+
+	public String getIssueState() {
+		return issueState;
+	}
+
+	public void setIssueState(String issueState) {
+		this.issueState = issueState;
+	}
+
+	public Long getInformNumber() {
+		return informNumber;
+	}
+
+	public void setInformNumber(Long informNumber) {
+		this.informNumber = informNumber;
 	}
 
 	public String getRemark() {
@@ -500,4 +485,11 @@ public class SaleListProduct {
 		this.saleTotal = saleTotal;
 	}
 
+	public String getHebingLength() {
+		return hebingLength;
+	}
+
+	public void setHebingLength(String hebingLength) {
+		this.hebingLength = hebingLength;
+	}
 }
