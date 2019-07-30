@@ -48,6 +48,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/add")
     public Map<String, Object> add(Storage storage, String clerkName, String groupName) {
+        System.out.println("员工名称：" + clerkName);
         storageService.add(storage, clerkName, groupName);
         Map<String, Object> map = new HashMap<String, Object>();
         Integer id = storageService.selectByMaxId().getId();

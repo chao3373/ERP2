@@ -13,6 +13,7 @@ import javax.persistence.criteria.*;
 
 import com.shenke.entity.*;
 import com.shenke.repository.*;
+import com.shenke.service.ClientService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
@@ -49,6 +50,9 @@ public class StorageServiceImpl implements StorageService {
     private ClerkRepository clerkRepository;
 
     @Resource
+    private ClientService clientService;
+
+    @Resource
     private GroupRepository groupRepository;
 
     @Override
@@ -61,6 +65,7 @@ public class StorageServiceImpl implements StorageService {
 
         BeanUtils.copyProperties(saleListProduct, storage);
         storage.setId(null);
+        System.out.println(clerk);
         storage.setClerk(clerk);
         storage.setGroup(group);
         storage.setRealityweight(realityweight);
@@ -460,7 +465,7 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), storage.getClerk().getId()));
                 }
                 if (StringUtil.isNotEmpty(storage.getClientname())) {
-                    predicate.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), clientService.findById(Integer.parseInt(storage.getClientname())).getName()));
                 }
                 if (storage.getLength() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
