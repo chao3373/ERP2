@@ -21,6 +21,7 @@ public interface StorageService {
      *
      */
     public void add(Storage storage, String clerkName, String groupName);
+    public void add(Storage storage, String clerkName, String groupName, Double changdu);
 
     /**
      * 非标入库单

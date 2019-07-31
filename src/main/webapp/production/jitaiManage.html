@@ -956,7 +956,11 @@
                                 if (row.hebingLength != null) {
                                     tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {
-                                    tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                    if ($("#changdu").val()){
+                                        tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                    } else {
+                                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                    }
                                 }
                                 tableString += "<tr><td>班组：" + row.jiTai.group.name + "</td><td>质检：" + row.jiTai.clerk.name + "</td></tr>";
                                 Date.prototype.format = function (format) {
@@ -1120,29 +1124,32 @@
             ddClose();
         }
 
+        //关闭非标
+        function feibiaoclose(){
+            $("#dd3").dialog("close");
+        }
         //非标入库
         function feibiao() {
-            $.messager.prompt("请输入重量", "非标准件的重量：", function (r) {
-                if (r) {
-                    if (isNaN(r)) {
-                        alert("请输入数字！")
-                    } else {
-                        var row = $("#dg").datagrid("getSelected");
-                        $.ajax({
-                            url: "/admin/storage/add",
-                            data: {
-                                saleListProduct: $("#dg").datagrid("getSelected").id,
-                                jiTai: $("#selectJitai").combobox("getValue"),
-                                clerkName: $("#staff").val(),
-                                realityweight: Number(r),
-                                dabaonum: 1
-                            },
-                            success: function (result) {
-                                if (result.success) {
-                                    printt(result.id);
-                                }
-                            }
-                        });
+            $("#dd3").dialog("open");
+        }
+
+        function feibiaosave(){
+            $.ajax({
+                url: "/admin/storage/add",
+                data: {
+                    saleListProduct: $("#dg").datagrid("getSelected").id,
+                    jiTai: $("#selectJitai").combobox("getValue"),
+                    clerkName: $("#staff").val(),
+                    realityweight: $("#zhongliang").val(),
+                    changdu: $("#changdu").val(),
+                    dabaonum: 1
+                },
+                success: function (result) {
+                    if (result.success) {
+                        feibiaoclose();
+                        printt(result.id);
+                        $("#zhongliang").val("");
+                        $("#changdu").val("");
                     }
                 }
             });
@@ -1187,6 +1194,7 @@
         }
 
         $(document).ready(function () {
+            $("#dd3").dialog("close");
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
                     if (row.level || row.level != 0) {
@@ -1333,6 +1341,19 @@
 <div id="bb2">
     <a href="javascript:condition()" class="easyui-linkbutton">确定</a>
     <a href="javascript:closedd2()" class="easyui-linkbutton">关闭</a>
+</div>
+
+<div id="dd3" class="easyui-dialog" title="非标入库" style="width:300px;height:160px;padding: 10px;"
+     data-options="buttons:'#bb3',iconCls:'icon-add',resizable:true,modal:true">
+    <form id="fm2">
+        <div>重量：<input type="text" id="zhongliang"></div>
+        <div style="height: 10px;"></div>
+        <div>长度：<input type="text" id="changdu"></div>
+    </form>
+</div>
+<div id="bb3">
+    <a href="javascript:feibiaosave()" class="easyui-linkbutton">确定</a>
+    <a href="javascript:feibiaoclose()" class="easyui-linkbutton">关闭</a>
 </div>
 </body>
 </html>

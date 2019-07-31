@@ -48,10 +48,15 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/add")
-    public Map<String, Object> add(Storage storage, String clerkName, String groupName) {
+    public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu) {
         System.out.println(storage);
+        System.out.println(changdu);
         System.out.println("员工名称：" + clerkName);
-        storageService.add(storage, clerkName, groupName);
+        if (changdu != null) {
+            storageService.add(storage, clerkName, groupName, changdu);
+        }else {
+            storageService.add(storage, clerkName, groupName);
+        }
         Map<String, Object> map = new HashMap<String, Object>();
         Integer id = storageService.selectByMaxId().getId();
         map.put("success", true);
@@ -486,7 +491,7 @@ public class StorageAdminController {
     }
 
     @RequestMapping("/selectState")
-    public Map<String, Object> selectState(String state){
+    public Map<String, Object> selectState(String state) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         map.put("rows", storageService.selectByState(state));
@@ -529,13 +534,14 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updateClerk")
-    public Map<String, Object> updateClerk(Integer[] ids, String clerkName){
+    public Map<String, Object> updateClerk(Integer[] ids, String clerkName) {
         System.out.println(ids);
         System.out.println(clerkName);
-        Integer clerkId= clerkService.finName(clerkName).getId();
+        Integer clerkId = clerkService.finName(clerkName).getId();
         Map<String, Object> map = new HashMap<>();
         for (int i = 0; i < ids.length; i++) {
-            System.out.println(clerkName);;
+            System.out.println(clerkName);
+            ;
             storageService.updateClerk(ids[i], clerkName, clerkId);
         }
 

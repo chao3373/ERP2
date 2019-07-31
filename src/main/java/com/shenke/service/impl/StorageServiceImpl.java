@@ -82,6 +82,31 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public void add(Storage storage, String clerkName, String groupName, Double changdu) {
+        Group group = groupRepository.findByGrouptName(groupName);
+        SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
+        Clerk clerk = storage.getJiTai().getClerk();
+        Double realityweight = storage.getRealityweight();
+
+        BeanUtils.copyProperties(saleListProduct, storage);
+        storage.setId(null);
+        System.out.println(clerk);
+        storage.setClerk(clerk);
+        storage.setGroup(group);
+        storage.setRealityweight(realityweight);
+        storage.setDateInProduced(new Date(System.currentTimeMillis()));
+        storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
+        storage.setState("生产完成:" + storage.getJiTai().getName());
+        storage.setLength(changdu);
+        storage.setJiTaiName(storage.getJiTai().getName());
+        storage.setClerkName(clerk.getName());
+        storage.setGroup(storage.getJiTai().getGroup());
+        storage.setGroupName(storage.getJiTai().getGroup().getName());
+        System.out.println(storage);
+        storageRepository.save(storage);
+    }
+
+    @Override
     public void feibiaoAdd(Storage storage, String clerkName, String groupName) {
 
         Group group = groupRepository.findByGrouptName(groupName);
