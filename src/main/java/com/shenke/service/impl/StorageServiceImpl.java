@@ -60,7 +60,7 @@ public class StorageServiceImpl implements StorageService {
 
         Group group = groupRepository.findByGrouptName(groupName);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
-        Clerk clerk = clerkRepository.findByNam(clerkName);
+        Clerk clerk = storage.getJiTai().getClerk();
         Double realityweight = storage.getRealityweight();
 
         BeanUtils.copyProperties(saleListProduct, storage);
@@ -73,9 +73,10 @@ public class StorageServiceImpl implements StorageService {
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storage.setState("生产完成:" + storage.getJiTai().getName());
         storage.setJiTaiName(storage.getJiTai().getName());
-        storage.setClerkName(clerkName);
+        storage.setClerkName(clerk.getName());
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
+        System.out.println(storage);
         storageRepository.save(storage);
 
     }

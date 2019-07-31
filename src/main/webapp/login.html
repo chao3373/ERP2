@@ -56,7 +56,7 @@ canvas {
 		//  ....此处是页面DOM加载完成的入口
 		$("#loginBtn").click(function() {
 			$.get(
-					"user/login", 
+					"user/login",
 					{
 						userName:$("#userName").val(),
 						password:$("#password").val()
@@ -74,7 +74,7 @@ canvas {
 											if(data.success) {
 												window.location.href="/main.html";
 											}
-										}	
+										}
 								)
 							} else {
 								$("#roleList").empty();
@@ -95,14 +95,14 @@ canvas {
 					});
 			});
 	});
-	
+
 	function saveRole() {
 		var roleId = $("input[name='role']:checked").val();
 		$.post(
 		   "/user/saveRole",
 		   {
-		     roleId:roleId 
-		   },	
+		     roleId:roleId
+		   },
 		   function(data){
 		      if(data.success){
 		         window.location.href="/main.html"

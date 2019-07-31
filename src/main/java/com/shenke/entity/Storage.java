@@ -138,10 +138,10 @@ public class Storage{
     @Column(length = 100)
     private String hebingLength;//合并长度
 
-//    @Temporal(TemporalType.TIMESTAMfP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date deliveryTime;//出库时间
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfDelivery;//提货日期
 
     private String outNumber;//出库单号

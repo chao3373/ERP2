@@ -461,6 +461,10 @@
         //添加合计
         function heJi() {
             var rows = $("#dg").datagrid("getRows");
+            if (rows[rows.length - 1].saleNumber == "合计") {
+                alert("已经添加合计！");
+                return;
+            }
             var sumw = 0;
             for (var i = 0; i < rows.length; i++) {
                 sumw += rows[i].realityweight;
