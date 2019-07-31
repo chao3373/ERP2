@@ -151,4 +151,6 @@ public interface StorageService {
     void updateOutNumberById(int parseInt, String ck);
 
     String genCode() throws Exception;
+
+    void updateClerk(Integer id, String clerkName, Integer clerkId);
 }

@@ -512,4 +512,9 @@ public class StorageServiceImpl implements StorageService {
         }
         return code.toString();
     }
+
+    @Override
+    public void updateClerk(Integer id, String clerkName, Integer clerkId) {
+        storageRepository.updateClerk(id, clerkName, clerkId);
+    }
 }

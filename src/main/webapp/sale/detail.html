@@ -40,7 +40,8 @@
             var sumWeight = 0;
             for (var i = 0; i < rows.length; i++) {
                 num+=rows[i].sum;
-                sumWeight += rows[i].realityweight;
+                var w = rows[i].sum * rows[i].realityweight;
+                sumWeight += w;
             }
             $("#dg").datagrid('appendRow', {
                 clientname: '合计',

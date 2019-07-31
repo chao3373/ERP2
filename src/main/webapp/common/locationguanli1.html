@@ -64,13 +64,13 @@
 
         //按照条件筛选订单信息
         function screenSale() {
-            $("#fm").form('submit',{
+            $("#fm").form('submit', {
                 url: "/admin/storage/select",
                 success: function (resulgt) {
-                    if (resulgt!=null) {
+                    if (resulgt != null) {
                         console.log(resulgt);
                         var ruselt = eval('(' + resulgt + ')');
-                        if (ruselt.success){
+                        if (ruselt.success) {
                             console.log(ruselt);
                             $("#dg").datagrid("loadData", ruselt.rows);
                         }
@@ -145,23 +145,23 @@
                     title: '生产日期',
                     width: 100,
                     align: 'center',
-                    formatter: function(value, row, index){
-                        if (value){
+                    formatter: function (value, row, index) {
+                        if (value) {
                             var date = new Date(value);
                             var o = {
-                                "M+" : date.getMonth()+1,                 //月份
-                                "d+" : date.getDate(),                    //日
-                                "h+" : date.getHours(),                   //小时
-                                "m+" : date.getMinutes(),                 //分
-                                "s+" : date.getSeconds(),                 //秒
-                                "q+" : Math.floor((date.getMonth()+3)/3), //季度
-                                "S"  : date.getMilliseconds()             //毫秒
+                                "M+": date.getMonth() + 1,                 //月份
+                                "d+": date.getDate(),                    //日
+                                "h+": date.getHours(),                   //小时
+                                "m+": date.getMinutes(),                 //分
+                                "s+": date.getSeconds(),                 //秒
+                                "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                "S": date.getMilliseconds()             //毫秒
                             };
-                            if(/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
-                                var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
-                            for(var k in o)
-                                if(new RegExp("("+ k +")").test(fmt))
-                                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+                            if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                            for (var k in o)
+                                if (new RegExp("(" + k + ")").test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
                             return fmt;
                         } else {
                             return "";
@@ -442,18 +442,18 @@
                 json.location = $("#cang").combobox("getValue");
             }
             json.state = "生产完成";
-            $.post("/admin/storage/saveAdd", json, function(result) {
-               if(result.success) {
+            $.post("/admin/storage/saveAdd", json, function (result) {
+                if (result.success) {
                     $("#dg").datagrid("reload");
                     $("#dlg").dialog("close");
-               }
+                }
             });
         }
 
         //回到仓库
         function goBackku() {
             if ($("#dg").datagrid("getSelections").length > 0) {
-                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品回到仓库吗？</span>", function(r){
+                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品回到仓库吗？</span>", function (r) {
                     if (r) {
                         var rows = $("#dg").datagrid("getSelections");
                         var ids = [];
@@ -462,7 +462,7 @@
                         }
                         var idsStr = ids.join(",");
                         console.log(idsStr);
-                        $.post("/admin/storage/goBackku", {ids:idsStr}, function(result){
+                        $.post("/admin/storage/goBackku", {ids: idsStr}, function (result) {
                             if (result.success) {
                                 alert("修改成功");
                                 $("#dg").datagrid("reload");
@@ -477,9 +477,9 @@
         }
 
         //手动出库
-        function outku(){
+        function outku() {
             if ($("#dg").datagrid("getSelections").length > 0) {
-                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品出库吗？</span>", function(r){
+                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品出库吗？</span>", function (r) {
                     if (r) {
                         var rows = $("#dg").datagrid("getSelections");
                         var ids = [];
@@ -488,10 +488,10 @@
                         }
                         var idsStr = ids.join(",");
                         console.log(idsStr);
-                        $.post("/admin/storage/outKu", {ids:idsStr}, function(result){
-                           if (result.success) {
-                               $("#dg").datagrid("reload");
-                           }
+                        $.post("/admin/storage/outKu", {ids: idsStr}, function (result) {
+                            if (result.success) {
+                                $("#dg").datagrid("reload");
+                            }
                         });
                     }
                 });
@@ -500,6 +500,7 @@
             $.messager.alert("系统提示", "<span style='color: red;'>请选择要出库的商品！</span>");
             return;
         }
+
         $(document).ready(function () {
             $("#state").combobox({
                 panelHeight: 'auto',
@@ -526,6 +527,36 @@
             });
         });
 
+        //修改生产员工
+        function updateClerk() {
+            var rows = $("#dg").datagrid("getSelections");
+            console.log(rows);
+            if (!$("#updateClerk")) {
+                alert("请选择员工！");
+                return;
+            }
+            if (rows.length < 1) {
+                alert("请选择要修改的信息！");
+                return;
+            }
+            var ids = [];
+            for (var i = 0; i < rows.length; i++) {
+                ids.push(rows[i].id);
+            }
+            var idArr = ids.join(",");
+            $.ajax({
+                type: "POST",
+                url: "/admin/storage/updateClerk?clerkName=" + $("#updateClerk").combobox("getText"),
+                data: {ids: idArr},
+                success: function (result) {
+                    if (result.success) {
+                        $("#dg").datagrid("reload");
+                    }
+                }
+            });
+
+        }
+
     </script>
 </head>
 <body style="margin: 1px">
@@ -535,7 +566,8 @@
         <form id="fm">
             <table style="font-size: 12px;">
                 <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;订&nbsp;&nbsp;单&nbsp;&nbsp;号： <input id="saleNumber" name="saleNumber" style="width: 130px"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;订&nbsp;&nbsp;单&nbsp;&nbsp;号： <input id="saleNumber" name="saleNumber"
+                                                                                    style="width: 130px"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input
                             class="easyui-combobox" id="location" name="location"
@@ -603,6 +635,11 @@
     <a href="javascript:addInventory()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加库存</a>
     <a href="javascript:outku()" class="easyui-linkbutton" iconCls="icon-redo" plain="true">出库</a>
     <a href="javascript:goBackku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">回到仓库</a>
+    修改生产人员:<input
+        class="easyui-combobox" id="updateClerk" name="clerk"
+        style="width: 100px"
+        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
+    <a href="javascript:updateClerk()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">确定</a>
 </div>
 
 <div id="dlg" class="easyui-dialog" title="添加库存"
@@ -696,13 +733,16 @@
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
                 <td><input type="text" id="clientname" name="clientname"
-                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"  data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
+                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
             </tr>
             <tr>
                 <td>仓&nbsp;&nbsp;&nbsp;位&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：
                 </td>
                 <td><input type="text" id="cang" name="cang"
-                           class="easyui-combobox" style="width: 120px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/></td>
+                           class="easyui-combobox" style="width: 120px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
+                </td>
             </tr>
         </table>
     </form>

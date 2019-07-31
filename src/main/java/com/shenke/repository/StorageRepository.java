@@ -212,4 +212,13 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Query(value = "select * from t_storage where state like ?1", nativeQuery = true)
     List<Storage> selectByState(String state);
+
+    /***
+     * 修改成产人员
+     * @param id
+     * @param clerkName
+     */
+    @Modifying
+    @Query(value = "update t_storage set clerk_name = ?2, clerk_id = ?3 where id = ?1", nativeQuery = true)
+    void updateClerk(Integer id, String clerkName, Integer clerkId);
 }

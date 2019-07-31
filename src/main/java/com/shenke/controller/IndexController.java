@@ -84,7 +84,7 @@ public class IndexController {
         storageService.findByState("");
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
-                storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(System.currentTimeMillis()));
+                storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(new java.util.Date().getTime()));
                 storageService.updateOutNumberById(Integer.parseInt(split[i]), ck);
             }
         }

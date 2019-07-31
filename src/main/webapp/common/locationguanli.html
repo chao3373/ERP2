@@ -149,7 +149,7 @@
                     title: '重量',
                     width: 100,
                     align: 'center'
-                },{
+                }, {
                     field: 'color',
                     title: '颜色',
                     width: 100,
@@ -394,7 +394,7 @@
                         var tdStr;
                         if (rows[i][nl[j].f] == "[object Object]") {
                             tdStr = rows[i][nl[j].f].name;
-                        }else if ([nl[j].f] == 'dateInProduced'){
+                        } else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
                         } else {
                             tdStr = rows[i][nl[j].f];
@@ -430,16 +430,16 @@
         }
 
         //时间格式转换
-        function formet (datee){
+        function formet(datee) {
             var date = new Date(datee);
             console.log(date);
             Y = date.getFullYear() + '-';
-            M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
             D = date.getDate() + ' ';
             h = date.getHours() + ':';
             m = date.getMinutes() + ':';
             s = date.getSeconds();
-            return Y+M+D+h+m+s;
+            return Y + M + D + h + m + s;
         }
 
         $(document).ready(function () {
@@ -457,6 +457,20 @@
 
 
         });
+
+        //添加合计
+        function heJi() {
+            var rows = $("#dg").datagrid("getRows");
+            var sumw = 0;
+            for (var i = 0; i < rows.length; i++) {
+                sumw += rows[i].realityweight;
+            }
+            $("#dg").datagrid("appendRow", {
+                saleNumber: "合计",
+                clientname: "总数量：" + rows.length + "件",
+                peasant: "总重量：" + sumw + "KG"
+            });
+        }
 
     </script>
 </head>
@@ -543,7 +557,9 @@
                         style="width: 100px"/>
                 </td>
 
-                <td></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:heJi()"
+                                                class="easyui-linkbutton" iconCls="icon-add">合计</a>
+                </td>
             </tr>
         </table>
     </form>

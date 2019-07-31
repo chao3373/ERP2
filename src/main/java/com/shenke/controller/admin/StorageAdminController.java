@@ -9,11 +9,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.jws.Oneway;
 
-import com.shenke.entity.Count;
-import com.shenke.entity.JieSuan;
-import com.shenke.entity.Log;
-import com.shenke.entity.Storage;
+import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
+import com.shenke.service.ClerkService;
 import com.shenke.service.LogService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
@@ -34,6 +32,9 @@ public class StorageAdminController {
 
     @Resource
     private StorageService storageService;
+
+    @Resource
+    private ClerkService clerkService;
 
     @Resource
     private LogService logService;
@@ -517,6 +518,27 @@ public class StorageAdminController {
         List<Storage> byState = storageService.findByState("%生产完成%");
         map.put("success", true);
         map.put("rows", byState);
+        return map;
+    }
+
+    /***
+     * 修改生产员工
+     * @param ids
+     * @param clerkName
+     * @return
+     */
+    @RequestMapping("/updateClerk")
+    public Map<String, Object> updateClerk(Integer[] ids, String clerkName){
+        System.out.println(ids);
+        System.out.println(clerkName);
+        Integer clerkId= clerkService.finName(clerkName).getId();
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < ids.length; i++) {
+            System.out.println(clerkName);;
+            storageService.updateClerk(ids[i], clerkName, clerkId);
+        }
+
+        map.put("success", true);
         return map;
     }
 }
