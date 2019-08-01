@@ -401,4 +401,14 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
+
+    /***
+     * 修改订单数量
+     * @param num
+     * @return
+     */
+    @RequestMapping("/updateNum")
+    public String updateNum(Integer num, Integer id){
+        return saleListProductService.updateNum(num, id);
+    }
 }

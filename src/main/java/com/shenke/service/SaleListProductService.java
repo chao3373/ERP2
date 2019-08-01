@@ -193,4 +193,6 @@ public interface SaleListProductService {
     List<SaleListProduct> condition(SaleListProduct saleListProduct);
 
 	List<SaleListProduct> findByJitaiId(SaleListProduct saleListProduct);
+
+    String updateNum(Integer num, Integer id);
 }

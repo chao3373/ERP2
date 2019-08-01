@@ -233,4 +233,11 @@ public interface SaleListProductRepository
 	@Query(value = "update t_sale_list_product set level =?2 where id =?1", nativeQuery = true)
 	public void chanpinjiaji(Integer id,String jiajidengji);
 
+	/***
+	 * 修改数量
+	 * @param num
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set num = ?1 where id = ?2", nativeQuery = true)
+    void updateNum(Integer num, Integer id);
 }

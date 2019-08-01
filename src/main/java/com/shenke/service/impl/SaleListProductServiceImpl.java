@@ -386,4 +386,31 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             }
         });
     }
+
+    /***
+     * 修改数量
+     * @param num
+     * @return
+     */
+    @Override
+    public String updateNum(Integer num, Integer id) {
+        SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
+        Integer wc = saleListProduct.getAccomplishNumber();
+        System.out.println(wc);
+        System.out.println(num);
+        System.out.println(id);
+        if (wc == null){
+            wc = 0;
+        }
+        if (wc == num) {
+            saleListProductRepository.updateNum(num, id);
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), id);
+            return "修改成功，数量等于完成数，修改订单状态为完成";
+        } else if (wc > num) {
+            return "已经完成比该数量多的件数，无法修改";
+        } else {
+            saleListProductRepository.updateNum(num, id);
+            return "修改成功";
+        }
+    }
 }

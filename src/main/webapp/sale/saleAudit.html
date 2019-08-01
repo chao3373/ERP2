@@ -982,6 +982,33 @@
             });
         }
 
+        //修改数量
+        function updateshuliang(){
+            var rows = $("#dg2").datagrid("getSelections");
+            if (!$("#shuliang").val()){
+                alert("请输入数量！");
+                return;
+            }
+            if (rows.length != 1){
+                alert("请选择一条要修改的数据");
+                return;
+            }
+            var row = rows[0];
+            console.log($("#shuliang").val());
+            $.ajax({
+                url:"/admin/saleListProduct/updateNum?num=" +$("#shuliang").val() + "&id=" + row.id,
+                success:function (result) {
+                    if (result){
+                        alert(result);
+                        $("#dg2").datagrid("reload");
+                        return;
+                    };
+                    alert("未知错误！");
+                    return;
+                }
+            });
+        }
+
 
     </script>
 </head>
@@ -1086,6 +1113,9 @@
 		    }"/>
         <a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
            plain="true">修改</a>
+        &nbsp;&nbsp;数量：<input type="text" id="shuliang">
+        <a href="javascript:updateshuliang()"
+                       class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改数量</a>
         <a href="javascript:deleteSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
            plain="true">删除</a>
     </div>
