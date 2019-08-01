@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>销售订单</title>
+
+<style type="text/css">
+body {
+	background: white;
+	margin: 0px;
+	padding: 30px;
+	font-size: 13px;
+	text-align: left;
+}
+
+.pb {
+	font-size: 30px;
+	border-collapse: collapse;
+	width: 100%;
+	text-align: center;
+}
+
+.pb th {
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid #333333;
+	padding: 2px;
+}
+
+.pb td {
+	border: 1px solid #333333;
+	padding: 2px;
+}
+</style>
+</head>
+<body>
+	<script type="text/javascript">
+		if (window.dialogArguments) {
+			document.write(window.dialogArguments.tableString);
+			console.log(window.dialogArguments.tableString);
+		} else {
+			document.write(window.opener.tableString);
+			console.log(window.opener.tableString);
+		}
+		window.print();
+	</script>
+</body>
+</html>

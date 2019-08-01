@@ -42,6 +42,10 @@
                     <a href="javascript:screenYear()"
                        class="easyui-linkbutton" plain="true" iconCls="icon-search">查询</a>
                 </td>
+                <td>
+                    <a href="javascript:dayin()"
+                       class="easyui-linkbutton" plain="true" iconCls="icon-print">打印</a>
+                </td>
             </tr>
         </table>
     </div>
@@ -49,27 +53,35 @@
 <script>
     //按年查询
     function screenYear() {
-        if (!$("#yearr").val()){
+        if (!$("#yearr").val()) {
             alert("请输入要查询的年份");
             return;
         }
         var year = $("#yearr").val();
         $.ajax({
-            url:"/admin/storage/selectYear",
-            data:{year: year},
+            url: "/admin/storage/selectYear",
+            data: {year: year},
             success: function (result) {
-                if (result.success){
+                if (result.success) {
                     console.log(result.rows);
                     //加载列
                     $("#dg").datagrid({
                         columns: [[
-                            {field: 'ab', title: '品名', width: 100, align: 'center',
-                                format:function (value, row, index){
-                                    return"";
-                                }},
+                            {
+                                field: 'ab', title: '品名', width: 100, align: 'center',
+                                format: function (value, row, index) {
+                                    return "";
+                                }
+                            },
                             {field: 'lastMonth', title: '去年结转(KG)', width: 100, align: 'center'},
                             {field: 'monthIn', title: '本年入库(KG)', width: 100, align: 'center'},
-                            {field: 'monthOut', title: '本年出库(KG)', width: 100, align: 'center'}
+                            {field: 'monthOut', title: '本年出库(KG)', width: 100, align: 'center'},
+                            {
+                                field: 'kuCun', title: '本年库存(KG)', width: 100, align: 'center',
+                                format: function (value, row, index) {
+                                    return row.lastMatch + row.monthIn - monthOut;
+                                }
+                            }
                         ]]
                     });
                     console.log(result.rows);
@@ -78,29 +90,33 @@
             }
         });
     }
+
     //按月查询
-    function screenMonth(){
-        if (!$("#month").val() || !$("#year").val()){
+    function screenMonth() {
+        if (!$("#month").val() || !$("#year").val()) {
             alert("请输入年和月的信息");
             return;
         }
         var month = $("#month").val();
         var year = $("#year").val();
         $.ajax({
-            url:"/admin/storage/selectMonth",
-            data:{month: month, year: year},
+            url: "/admin/storage/selectMonth",
+            data: {month: month, year: year},
             success: function (result) {
-                if (result.success){
+                if (result.success) {
                     //加载列
                     $("#dg").datagrid({
                         columns: [[
-                            {field: 'ab', title: '品名', width: 100, align: 'center',
-                                format:function (value, row, index){
-                                    return"";
-                                }},
+                            {
+                                field: 'ab', title: '品名', width: 100, align: 'center',
+                                format: function (value, row, index) {
+                                    return "";
+                                }
+                            },
                             {field: 'lastMonth', title: '上月结转(KG)', width: 100, align: 'center'},
                             {field: 'monthIn', title: '本月入库(KG)', width: 100, align: 'center'},
-                            {field: 'monthOut', title: '本月出库(KG)', width: 100, align: 'center'}
+                            {field: 'monthOut', title: '本月出库(KG)', width: 100, align: 'center'},
+                            {field: 'kuCun', title: '本月库存(KG)', width: 100, align: 'center'}
                         ]]
                     });
                     console.log(result.rows);
@@ -109,6 +125,34 @@
             }
         });
     }
+
+    function dayin() {
+        CreateFormPage("datagrid", $("#dg"));
+    }
+
+    function CreateFormPage(strPrintName, printDatagrid) {
+        var row = $("#dg").datagrid("getRows")[0];
+        var option = $("#dg").datagrid("options");
+        var colu = option.columns[0];
+        tableString = "";
+        tableString += "<h1 style='font-size: 32px;text-align: center;'>报表</h1>";
+        tableString += "<table class='pb'><tr><td>" + colu[0].title + "</td><td>" + colu[1].title + "</td><td>" + colu[2].title + "</td><td>" + colu[3].title + "</td><td>" + colu[4].title + "</td><tr><tr><td></td><td>" + row.lastMonth + "</td><td>" + row.monthIn + "</td><td>" + row.monthOut + "</td><td>" + row.kuCun + "</td><tr></table>"
+        if (window.showModalDialog) {
+            window
+                .showModalDialog(
+                    "print.html",
+                    tableString,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+        } else {
+            window
+                .open(
+                    "print.html",
+                    tableString,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            console.log(tableString);
+        }
+    }
+
     $(function () {
     });
 </script>

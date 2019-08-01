@@ -574,9 +574,14 @@ public class StorageServiceImpl implements StorageService {
             java.util.Date endate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
             System.out.println(date);
             System.out.println(date1);
-            month1.setLastMonth(storageRepository.lastMonth(udate));
-            month1.setMonthIn(storageRepository.monthIn(udate, endate));
-            month1.setMonthOut(storageRepository.monthOut(udate, endate));
+            Integer lastMonth = storageRepository.lastMonth(udate);
+            Integer monthIn = storageRepository.monthIn(udate, endate);
+            Integer monthOut = storageRepository.monthOut(udate, endate);
+            Integer kuCun = lastMonth + monthIn - monthOut;
+            month1.setLastMonth(lastMonth);
+            month1.setMonthIn(monthIn);
+            month1.setMonthOut(monthOut);
+            month1.setKuCun(kuCun);
             return month1;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -593,9 +598,14 @@ public class StorageServiceImpl implements StorageService {
             java.util.Date n1 = new SimpleDateFormat("yyyy-MM-dd").parse(lastYear + "-01-01");
             System.out.println(n);
             System.out.println(n1);
-            month.setLastMonth(storageRepository.lastMonth(n));
-            month.setMonthIn(storageRepository.monthIn(n, n1));
-            month.setMonthOut(storageRepository.monthOut(n, n1));
+            Integer lastMonth = storageRepository.lastMonth(n);
+            Integer monthIn = storageRepository.monthIn(n, n1);
+            Integer monthOut = storageRepository.monthOut(n, n1);
+            Integer kuCun = lastMonth + monthIn - monthOut;
+            month.setLastMonth(lastMonth);
+            month.setMonthIn(monthIn);
+            month.setMonthOut(monthOut);
+            month.setKuCun(kuCun);
             return month;
         } catch (ParseException e) {
             e.printStackTrace();

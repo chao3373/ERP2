@@ -8,14 +8,17 @@ public class Month {
 
     private Integer monthOut;
 
+    private Integer kuCun;
+
     public Month() {
 
     }
 
-    public Month(Integer lastMonth, Integer monthIn, Integer monthOut) {
+    public Month(Integer lastMonth, Integer monthIn, Integer monthOut, Integer kuCun) {
         this.lastMonth = lastMonth;
         this.monthIn = monthIn;
         this.monthOut = monthOut;
+        this.kuCun = kuCun;
     }
 
     @Override
@@ -24,6 +27,7 @@ public class Month {
                 "lastMonth=" + lastMonth +
                 ", monthIn=" + monthIn +
                 ", monthOut=" + monthOut +
+                ", kuCun=" + kuCun +
                 '}';
     }
 
@@ -49,5 +53,13 @@ public class Month {
 
     public void setMonthOut(Integer monthOut) {
         this.monthOut = monthOut;
+    }
+
+    public Integer getKuCun() {
+        return kuCun;
+    }
+
+    public void setKuCun(Integer kuCun) {
+        this.kuCun = kuCun;
     }
 }
