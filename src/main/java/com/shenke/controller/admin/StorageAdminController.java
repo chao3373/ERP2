@@ -3,6 +3,7 @@ package com.shenke.controller.admin;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import javax.jws.Oneway;
 import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.ClerkService;
+import com.shenke.service.GroupService;
 import com.shenke.service.LogService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
@@ -37,6 +39,9 @@ public class StorageAdminController {
     private ClerkService clerkService;
 
     @Resource
+    private GroupService groupService;
+
+    @Resource
     private LogService logService;
 
     @Resource
@@ -49,8 +54,6 @@ public class StorageAdminController {
      */
     @RequestMapping("/add")
     public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu) {
-        System.out.println(storage);
-        System.out.println(changdu);
         System.out.println("员工名称：" + clerkName);
         if (changdu != null) {
             storageService.add(storage, clerkName, groupName, changdu);
@@ -535,16 +538,54 @@ public class StorageAdminController {
      */
     @RequestMapping("/updateClerk")
     public Map<String, Object> updateClerk(Integer[] ids, String clerkName) {
-        System.out.println(ids);
-        System.out.println(clerkName);
         Integer clerkId = clerkService.finName(clerkName).getId();
         Map<String, Object> map = new HashMap<>();
         for (int i = 0; i < ids.length; i++) {
-            System.out.println(clerkName);
-            ;
             storageService.updateClerk(ids[i], clerkName, clerkId);
         }
 
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 按月查询报表
+     * @param month
+     * @param year
+     * @return
+     */
+    @RequestMapping("/selectMonth")
+    public Map<String, Object> selectMonth(String month, String year) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        List<Month> list= new ArrayList<>();
+        list.add(storageService.selectMonth(month, year));
+        map.put("rows", list);
+        return map;
+    }
+
+    /***
+     * 按年查询报表
+     * @param year
+     * @return
+     */
+    @RequestMapping("/selectYear")
+    public Map<String, Object> selectYear(String year){
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        List<Month> list= new ArrayList<>();
+        list.add(storageService.selectYear(year));
+        map.put("rows", list);
+        return map;
+    }
+
+    @RequestMapping("/updatebanzu")
+    public Map<String, Object> updatebanzu(Integer[] ids, String banzu){
+        Map<String, Object> map = new HashMap<>();
+        Group group = groupService.findByGroupName(banzu);
+        for (int i = 0; i < ids.length; i++) {
+            storageService.updatebanzu(ids[i], banzu, group.getId());
+        }
         map.put("success", true);
         return map;
     }

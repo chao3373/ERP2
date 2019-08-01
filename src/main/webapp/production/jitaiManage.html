@@ -956,9 +956,13 @@
                                 if (row.hebingLength != null) {
                                     tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {
+                                    alert("1");
+                                    alert($("#changdu").val());
                                     if ($("#changdu").val()){
+                                        alert("2");
                                         tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                     } else {
+                                        alert("3");
                                         tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                     }
                                 }
@@ -1141,15 +1145,15 @@
                     jiTai: $("#selectJitai").combobox("getValue"),
                     clerkName: $("#staff").val(),
                     realityweight: $("#zhongliang").val(),
-                    changdu: $("#changdu").val(),
+                    length: $("#changdu").val(),
                     dabaonum: 1
                 },
                 success: function (result) {
                     if (result.success) {
                         feibiaoclose();
-                        printt(result.id);
                         $("#zhongliang").val("");
                         $("#changdu").val("");
+                        printt(result.id);
                     }
                 }
             });

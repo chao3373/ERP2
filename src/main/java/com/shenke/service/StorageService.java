@@ -4,10 +4,8 @@ import java.awt.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
-import com.shenke.entity.Clerk;
-import com.shenke.entity.Count;
-import com.shenke.entity.JieSuan;
-import com.shenke.entity.Storage;
+
+import com.shenke.entity.*;
 
 /**
  * 入库单Service
@@ -154,4 +152,14 @@ public interface StorageService {
     String genCode() throws Exception;
 
     void updateClerk(Integer id, String clerkName, Integer clerkId);
+
+    void editKuCun(Integer id, Integer oneWeight, Double shiji, Double length);
+
+    List<Storage> findeBySaleNumberAndClient(String saleNumber, String client);
+
+    Month selectMonth(String month, String year);
+
+    Month selectYear(String year);
+
+    void updatebanzu(Integer id, String banzu, Integer banzuid);
 }
