@@ -39,6 +39,13 @@
         document.write("<div style='height: 300px'></div>");
         document.write(window.opener.tableString);
     }
+    // window.print();
+    // var timeId = setInterval(function () {
+    //     if (document.getElementsByTagName("img")) {
+    //         window.close();
+    //         clearInterval(timeId);
+    //     }
+    // }, 1000);
     window.onload = function () {
         var LODOP = getLodop(document.getElementById('LODOP_OB'), document.getElementById('LODOP_EM'));
         prn3_preview();
@@ -47,7 +54,7 @@
                 window.close();
                 clearInterval(timeId);
             }
-        }, 1000)
+        }, 1000);
 
         //直接打印
         function prn3_preview() {
