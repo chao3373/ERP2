@@ -505,7 +505,7 @@ public class StorageServiceImpl implements StorageService {
                 if (storage.getModel() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
                 }
-                if (storage.getPrice() != null) {
+                if (StringUtil.isNotEmpty(storage.getPrice())) {
                     predicate.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
                 }
                 if (storage.getRealityweight() != null) {
