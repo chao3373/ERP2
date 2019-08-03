@@ -57,7 +57,9 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void add(Storage storage, String clerkName, String groupName) {
-
+        System.out.println(storage);
+        System.out.println();
+        System.out.println(storage.getPrice());
         Group group = storage.getJiTai().getGroup();
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Clerk clerk = storage.getJiTai().getClerk();
@@ -65,7 +67,6 @@ public class StorageServiceImpl implements StorageService {
 
         BeanUtils.copyProperties(saleListProduct, storage);
         storage.setId(null);
-        System.out.println(clerk);
         storage.setClerk(clerk);
         storage.setGroup(group);
         storage.setRealityweight(realityweight);
@@ -74,15 +75,19 @@ public class StorageServiceImpl implements StorageService {
         storage.setState("生产完成:" + storage.getJiTai().getName());
         storage.setJiTaiName(storage.getJiTai().getName());
         storage.setClerkName(clerk.getName());
+        storage.setPrice(storage.getSaleListProduct().getPrice());
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
         System.out.println(storage);
+        System.out.println(storage.getPrice());
         storageRepository.save(storage);
 
     }
 
     @Override
     public void add(Storage storage, String clerkName, String groupName, Double changdu) {
+
+        System.out.println(storage);
         Group group = groupRepository.findByGrouptName(groupName);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Clerk clerk = storage.getJiTai().getClerk();
@@ -102,6 +107,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setClerkName(clerk.getName());
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
+        storage.setPrice(storage.getPrice());
         System.out.println(storage);
         storageRepository.save(storage);
     }

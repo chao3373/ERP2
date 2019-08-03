@@ -46,8 +46,8 @@ public class Storage{
     @Column(nullable = true)
     private Double model;// 幅宽
 
-    @Column(nullable = true)
-    private Double price;// 厚度
+    @Column(length = 50)
+    private String price;// 厚度
 
     @Column(nullable = true)
     private Double length;// 长度
@@ -191,7 +191,7 @@ public class Storage{
                 ", group=" + group +
                 ", name='" + name + '\'' +
                 ", model=" + model +
-                ", price=" + price +
+                ", price='" + price + '\'' +
                 ", length=" + length +
                 ", color='" + color + '\'' +
                 ", realitymodel=" + realitymodel +
@@ -238,69 +238,6 @@ public class Storage{
                 '}';
     }
 
-    public String getHebingLength() {
-        return hebingLength;
-    }
-
-    public void setHebingLength(String hebingLength) {
-        this.hebingLength = hebingLength;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getJiTaiName() {
-        return jiTaiName;
-    }
-
-    public void setJiTaiName(String jiTaiName) {
-        this.jiTaiName = jiTaiName;
-    }
-
-    public String getClerkName() {
-        return clerkName;
-    }
-
-    public void setClerkName(String clerkName) {
-        this.clerkName = clerkName;
-    }
-
-    public Integer getSum() {
-        return sum;
-    }
-
-    public void setSum(Integer sum) {
-        this.sum = sum;
-    }
-    public String getPrintstate() {
-        return printstate;
-    }
-
-    public void setPrintstate(String printstate) {
-        this.printstate = printstate;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -341,6 +278,22 @@ public class Storage{
         this.clerk = clerk;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public String getName() {
         return name;
     }
@@ -357,11 +310,11 @@ public class Storage{
         this.model = model;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -421,6 +374,14 @@ public class Storage{
         this.theoryweight = theoryweight;
     }
 
+    public Integer getOneweight() {
+        return oneweight;
+    }
+
+    public void setOneweight(Integer oneweight) {
+        this.oneweight = oneweight;
+    }
+
     public Double getSquare() {
         return square;
     }
@@ -459,6 +420,14 @@ public class Storage{
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
     public String getDao() {
@@ -515,22 +484,6 @@ public class Storage{
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public Integer getOneweight() {
-        return oneweight;
-    }
-
-    public void setOneweight(Integer oneweight) {
-        this.oneweight = oneweight;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
     }
 
     public Integer getSumwight() {
@@ -605,6 +558,14 @@ public class Storage{
         this.serialNumber = serialNumber;
     }
 
+    public String getHebingLength() {
+        return hebingLength;
+    }
+
+    public void setHebingLength(String hebingLength) {
+        this.hebingLength = hebingLength;
+    }
+
     public Date getDeliveryTime() {
         return deliveryTime;
     }
@@ -615,6 +576,10 @@ public class Storage{
 
     public Date getDateOfDelivery() {
         return dateOfDelivery;
+    }
+
+    public void setDateOfDelivery(Date dateOfDelivery) {
+        this.dateOfDelivery = dateOfDelivery;
     }
 
     public String getOutNumber() {
@@ -641,8 +606,12 @@ public class Storage{
         this.endDate = endDate;
     }
 
-    public void setDateOfDelivery(Date dateOfDelivery) {
-        this.dateOfDelivery = dateOfDelivery;
+    public Integer getSum() {
+        return sum;
+    }
+
+    public void setSum(Integer sum) {
+        this.sum = sum;
     }
 
     public String getRemark() {
@@ -653,4 +622,35 @@ public class Storage{
         this.remark = remark;
     }
 
+    public String getPrintstate() {
+        return printstate;
+    }
+
+    public void setPrintstate(String printstate) {
+        this.printstate = printstate;
+    }
+
+    public String getJiTaiName() {
+        return jiTaiName;
+    }
+
+    public void setJiTaiName(String jiTaiName) {
+        this.jiTaiName = jiTaiName;
+    }
+
+    public String getClerkName() {
+        return clerkName;
+    }
+
+    public void setClerkName(String clerkName) {
+        this.clerkName = clerkName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

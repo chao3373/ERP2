@@ -231,7 +231,7 @@ public class ToLeadController {
                         case 3:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("厚度mm", getStringCellValue(cell));
-                                saleListProduct.setPrice(Double.parseDouble(dd.format(Double.parseDouble(getStringCellValue(cell)))));
+                                saleListProduct.setPrice(getStringCellValue(cell));
                             }
                             break;
                         case 4:

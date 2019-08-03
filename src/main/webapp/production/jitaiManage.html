@@ -808,6 +808,7 @@
                 success: function (result) {
                     if (result.data != null) {
                         var row = result.data;
+                        console.log(row);
                         var json = {};
                         json.id = row.id + "";//条码
                         if (json.id.length < 8) {
@@ -844,7 +845,11 @@
                                     tableString += "<tr><td colspan='2'>压边：" + row.dao + "</td></tr>";
                                 }
                                 tableString += "<tr><td>客户：" + row.clientname + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
-                                tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
+                                if (isNaN(row.price)){
+                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "</td></tr>";
+                                } else {
+                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
+                                }
                                 if (row.hebingLength != null) {
                                     tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {

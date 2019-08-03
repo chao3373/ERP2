@@ -37,8 +37,8 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double model;// 幅宽
 
-	@Column(nullable = true)
-	private Double price;// 厚度
+	@Column(length = 50)
+	private String price;// 厚度
 
 	@Column(nullable = true)
 	private Double length;// 长度
@@ -144,7 +144,7 @@ public class SaleListProduct {
 				", jiTai=" + jiTai +
 				", name='" + name + '\'' +
 				", model=" + model +
-				", price=" + price +
+				", price='" + price + '\'' +
 				", length=" + length +
 				", color='" + color + '\'' +
 				", realitymodel=" + realitymodel +
@@ -221,11 +221,11 @@ public class SaleListProduct {
 		this.model = model;
 	}
 
-	public Double getPrice() {
+	public String getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(String price) {
 		this.price = price;
 	}
 

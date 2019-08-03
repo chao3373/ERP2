@@ -39,31 +39,31 @@
         document.write("<div style='height: 300px'></div>");
         document.write(window.opener.tableString);
     }
-    // window.print();
-    // var timeId = setInterval(function () {
-    //     if (document.getElementsByTagName("img")) {
-    //         window.close();
-    //         clearInterval(timeId);
-    //     }
-    // }, 1000);
-    window.onload = function () {
-        var LODOP = getLodop(document.getElementById('LODOP_OB'), document.getElementById('LODOP_EM'));
-        prn3_preview();
-        var timeId = setInterval(function () {
-            if (document.getElementsByTagName("img")) {
-                window.close();
-                clearInterval(timeId);
-            }
-        }, 1000);
-
-        //直接打印
-        function prn3_preview() {
-            LODOP = getLodop();
-            LODOP.PRINT_INIT("打印控件功能演示_Lodop功能_全页");
-            LODOP.ADD_PRINT_HTM(0, 0, "100%", "100%", document.documentElement.innerHTML);
-            LODOP.PRINT();
-        };
-    }
+    window.print();
+    var timeId = setInterval(function () {
+        if (document.getElementsByTagName("img")) {
+            window.close();
+            clearInterval(timeId);
+        }
+    }, 1000);
+    // window.onload = function () {
+    //     var LODOP = getLodop(document.getElementById('LODOP_OB'), document.getElementById('LODOP_EM'));
+    //     prn3_preview();
+    //     var timeId = setInterval(function () {
+    //         if (document.getElementsByTagName("img")) {
+    //             window.close();
+    //             clearInterval(timeId);
+    //         }
+    //     }, 1000);
+    //
+    //     //直接打印
+    //     function prn3_preview() {
+    //         LODOP = getLodop();
+    //         LODOP.PRINT_INIT("打印控件功能演示_Lodop功能_全页");
+    //         LODOP.ADD_PRINT_HTM(0, 0, "100%", "100%", document.documentElement.innerHTML);
+    //         LODOP.PRINT();
+    //     };
+    // }
 </script>
 </body>
 </html>
