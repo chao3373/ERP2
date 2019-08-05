@@ -162,4 +162,12 @@ public interface StorageService {
     Month selectYear(String year);
 
     void updatebanzu(Integer id, String banzu, Integer banzuid);
+
+    void updatezhongliang(Integer id, Double zhongliang);
+
+    void deletekucun(Integer id);
+
+    void updatechangdu(Integer changdu, Integer id);
+
+    void updatehoudu(String houdu, Integer id);
 }

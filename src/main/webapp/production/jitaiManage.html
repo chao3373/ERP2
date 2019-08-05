@@ -1038,7 +1038,7 @@
                     jiTai: $("#selectJitai").combobox("getValue"),
                     clerkName: $("#staff").val(),
                     realityweight: $("#zhongliang").val(),
-                    length: $("#changdu").val(),
+                    changdu: $("#changdu").val(),
                     dabaonum: 1
                 },
                 success: function (result) {
@@ -1051,6 +1051,37 @@
                 }
             });
         }
+
+        function feibiaosaveadd(){
+            $.ajax({
+                url: "/admin/storage/add",
+                data: {
+                    saleListProduct: $("#dg").datagrid("getSelected").id,
+                    jiTai: $("#selectJitai").combobox("getValue"),
+                    clerkName: $("#staff").val(),
+                    realityweight: $("#zhongliang").val(),
+                    changdu: $("#changdu").val(),
+                    dabaonum: 1
+                },
+                success: function (resul) {
+                    if (resul.success) {
+                        $.ajax({
+                            url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
+                            success: function (result) {
+                                if (result.success) {
+                                    feibiaoclose();
+                                    reloadDg();
+                                    $("#zhongliang").val("");
+                                    $("#changdu").val("");
+                                    printt(resul.id);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
 
         //点击要求
         function yaoqiuAlert() {
@@ -1158,7 +1189,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:kuaiSu()"
                                      class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
-                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">非标入库</a>
+                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">吨包/非标入库</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
                                      class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:printTest()" class="easyui-linkbutton" iconCls="icon-reload"
@@ -1240,7 +1271,7 @@
     <a href="javascript:closedd2()" class="easyui-linkbutton">关闭</a>
 </div>
 
-<div id="dd3" class="easyui-dialog" title="非标入库" style="width:300px;height:160px;padding: 10px;"
+<div id="dd3" class="easyui-dialog" title="吨包/非标入库" style="width:400px;height:160px;padding: 10px;"
      data-options="buttons:'#bb3',iconCls:'icon-add',resizable:true,modal:true">
     <form id="fm2">
         <div>重量：<input type="text" id="zhongliang"></div>
@@ -1249,7 +1280,8 @@
     </form>
 </div>
 <div id="bb3">
-    <a href="javascript:feibiaosave()" class="easyui-linkbutton">确定</a>
+    <a href="javascript:feibiaosaveadd()" class="easyui-linkbutton">保存并添加完成数</a>
+    <a href="javascript:feibiaosave()" class="easyui-linkbutton">保存不添加完成数</a>
     <a href="javascript:feibiaoclose()" class="easyui-linkbutton">关闭</a>
 </div>
 </body>

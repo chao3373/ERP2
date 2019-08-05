@@ -396,9 +396,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     public String updateNum(Integer num, Integer id) {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
         Integer wc = saleListProduct.getAccomplishNumber();
-        System.out.println(wc);
-        System.out.println(num);
-        System.out.println(id);
         if (wc == null){
             wc = 0;
         }
@@ -410,7 +407,8 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             return "已经完成比该数量多的件数，无法修改";
         } else {
             saleListProductRepository.updateNum(num, id);
-            return "修改成功";
+            saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
+            return "修改成功，数量大于完成数，修改订单状态为下发机台";
         }
     }
 }

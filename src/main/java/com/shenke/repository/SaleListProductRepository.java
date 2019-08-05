@@ -240,4 +240,12 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set num = ?1 where id = ?2", nativeQuery = true)
     void updateNum(Integer num, Integer id);
+
+	/***
+	 * 根据id更新完成数量
+	 * @param id
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set accomplish_number = (select count(*) from t_storage where sale_list_product_id = ?1) where id = ?1", nativeQuery = true)
+	void updateAccomplishNumber(Integer id);
 }

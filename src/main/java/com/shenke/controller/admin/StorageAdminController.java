@@ -54,6 +54,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/add")
     public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu) {
+        System.out.println(storage);
         System.out.println("员工名称：" + clerkName);
         if (changdu != null) {
             storageService.add(storage, clerkName, groupName, changdu);
@@ -588,5 +589,52 @@ public class StorageAdminController {
         }
         map.put("success", true);
         return map;
+    }
+
+    /***
+     * 根据id修改重量
+     * @param id
+     * @param zhongliang
+     * @return
+     */
+    @RequestMapping("/updatezhongliang")
+    public String updatezhongliang(Integer id, Double zhongliang){
+        storageService.updatezhongliang(id, zhongliang);
+        return "修改成功";
+    }
+
+    /***
+     * 删除库存
+     * @param id
+     * @return
+     */
+    @RequestMapping("/deletekucun")
+    public String deletekucun(Integer id){
+        storageService.deletekucun(id);
+        return "删除成功";
+    }
+
+    /***
+     * 根据id，修改长度
+     * @param changdu
+     * @return
+     */
+    @RequestMapping("/updatechangdu")
+    public String updatechangdu(Integer changdu, Integer id){
+        storageService.updatechangdu(changdu, id);
+        return "修改成功";
+    }
+
+    /***
+     * 根据id，修改厚度
+     * @param houdu
+     * @return
+     */
+    @RequestMapping("/updatehoudu")
+    public String updatehoudu(String houdu, Integer[] idArr){
+        for (int i = 0; i < idArr.length; i++) {
+            storageService.updatehoudu(houdu, idArr[i]);
+        }
+        return "修改成功";
     }
 }

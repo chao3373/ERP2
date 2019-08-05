@@ -444,7 +444,7 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
                 }
-                if (StringUtil.isNotEmpty(storage.getGroupName())){
+                if (StringUtil.isNotEmpty(storage.getGroupName())) {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
                 }
                 if (star != null) {
@@ -482,8 +482,8 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (StringUtil.isNotEmpty(dateInProducedd)) {
                     try {
-                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 00:00:00");
-                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd+" 23:59:59");
+                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
                         predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
                     } catch (ParseException e) {
@@ -533,7 +533,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String genCode() throws Exception{
+    public String genCode() throws Exception {
         StringBuffer code = new StringBuffer("CK");
         code.append(DateUtil.getCurrentDateStr());
         String saleNumber = storageRepository.getTodayMaxOutNumber();
@@ -622,6 +622,52 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void updatebanzu(Integer id, String banzu, Integer banzuid) {
         storageRepository.updatebanzu(id, banzu, banzuid);
+    }
+
+    /***
+     * 根据id修改重量
+     * @param id
+     * @param zhongliang
+     */
+    @Override
+    public void updatezhongliang(Integer id, Double zhongliang) {
+        storageRepository.updatezhongliang(id, zhongliang);
+    }
+
+    /***
+     * 根据id删除库存
+     * @param id
+     */
+    @Override
+    public void deletekucun(Integer id) {
+        Storage storage = storageRepository.findOne(id);
+        Integer saleListProductId = storage.getSaleListProduct().getId();
+        System.out.println(id);
+        storageRepository.deletekucun(id);
+        //更新完成数量
+        saleListProductRepository.updateAccomplishNumber(saleListProductId);
+        //根据id查询完成数跟总数量，完成数小于总数量则修改状态为下发机台
+        System.out.println(storage);
+        SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
+        if (saleListProduct.getAccomplishNumber() < saleListProduct.getNum()) {
+            saleListProduct.setState("下发机台：" + saleListProduct.getJiTai().getName());
+        }
+        saleListProductRepository.save(saleListProduct);
+    }
+
+    @Override
+    public void updatechangdu(Integer changdu, Integer id) {
+        storageRepository.updatechangdu(changdu, id);
+    }
+
+    /***
+     * 根据id修改厚度
+     * @param houdu
+     * @param id
+     */
+    @Override
+    public void updatehoudu(String houdu, Integer id) {
+        storageRepository.updatehoudu(houdu, id);
     }
 
 }

@@ -264,4 +264,39 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set group_name = ?2, group_id = ?3 where id = ?1", nativeQuery = true)
     void updatebanzu(Integer id, String banzu, Integer banzuid);
+
+    /**
+     * 根据id修改重量
+     * @param id
+     * @param zhongliang
+     */
+    @Modifying
+    @Query(value = "update t_storage set realityweight = ?2 where id=?1", nativeQuery = true)
+    void updatezhongliang(Integer id, Double zhongliang);
+
+    /***
+     * 根据id删除库存
+     * @param id
+     */
+    @Modifying
+    @Query(value = "delete from t_storage where id = ?1", nativeQuery = true)
+    void deletekucun(Integer id);
+
+    /***
+     * 根据id修改长度
+     * @param changdu
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update t_storage set length = ?1 where id = ?2", nativeQuery = true)
+    void updatechangdu(Integer changdu, Integer id);
+
+    /***
+     * 根据id修改厚度
+     * @param houdu
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update t_storage set price = ?1 where id = ?2", nativeQuery = true)
+    void updatehoudu(String houdu, Integer id);
 }
