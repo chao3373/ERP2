@@ -104,6 +104,11 @@
                                 return "";
                             }
                         }
+                    },{
+                        field: 'state',
+                        title: '订单状态',
+                        width: 80,
+                        align: 'center'
                     }]]
 
             });
@@ -153,10 +158,10 @@
 
             var jsonarr = [];
             var rows = $(dg).datagrid("getRows");
-            for (let i = 0; i < rows.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
                 var json = {};
                 console.log(rows[i]);
-                for (let j = 0; j < datagridTitle.length; j++) {
+                for (var j = 0; j < datagridTitle.length; j++) {
                     var st = datagridTitle[j].title;
                     if (datagridTitle[j].formatter) {
                         json[datagridTitle[j].title] = datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);
@@ -193,9 +198,9 @@
 
         function CreateFormPage(strPrintName, printDatagrid) {
             tableString = "";
-            tableString+="<h1>机台产量</h1>"
+            tableString+="<div id='ti'>机台产量</div>"
             tableString+="生产机台：" + $("#jitai").combobox('getText') + "&nbsp;&nbsp;&nbsp;" + "日期：" + $("#productDate").datebox('getValue') + "&nbsp;&nbsp;&nbsp;" + "总重量：" + $("#sumweight").val() + "&nbsp;&nbsp;&nbsp;" + "总数量：" + $("#sumnum").val();
-            tableString += '<table cellspacing="0" class="pb" style="margin: 10px auto;">';
+            tableString += '<table id="idData" class="pb">';
             var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
             var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
             var nameList = '';
@@ -307,13 +312,13 @@
             if (window.showModalDialog) {
                 window
                     .showModalDialog(
-                        "print.html",
+                        "printt.html",
                         tableString,
                         "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
             } else {
                 window
                     .open(
-                        "print.html",
+                        "printt.html",
                         tableString,
                         "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
                 console.log(tableString);

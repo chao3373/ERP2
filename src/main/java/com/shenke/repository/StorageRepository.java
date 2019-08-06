@@ -1,6 +1,6 @@
 package com.shenke.repository;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -69,8 +69,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     * @Date:  
     */
     @Modifying
-    @Query(value = "update t_storage set  state = ?1, delivery_time = ?3 where id = ?2", nativeQuery = true)
-    public void updateStateById(String state, Integer id, Date date);
+    @Query(value = "update t_storage set  state = ?1, delivery_time = ?3, out_number = ?4 where id = ?2", nativeQuery = true)
+    public void updateStateById(String state, Integer id, Date date, String ck);
 
     /**
      * 根据客户名称查询并按照商品名排序

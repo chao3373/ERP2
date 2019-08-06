@@ -1,7 +1,6 @@
 package com.shenke.service;
 
-import java.awt.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +68,7 @@ public interface StorageService {
     * @Author: Andy
     * @Date:
     */
-    public void updateStateById(String state, Integer id, Date date);
+    public void updateStateById(String state, Integer id, Date date, String ck);
 
     /**
      * 根据客户查询并按照产品名称排序

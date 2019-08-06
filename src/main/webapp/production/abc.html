@@ -1,0 +1,100 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web打印</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <OBJECT id="WebBrowser" height="0" width="0" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" VIEWASTEXT>
+    </OBJECT>
+    <!--media=print 这个属性可以在打印时有效-->
+    <style media=print>
+        .Noprint {
+            display: none;
+        }
+
+        .PageNext {
+            page-break-after: always;
+        }
+
+    </style>
+
+    <style>
+        .NOPRINT {
+            font-family: "宋体";
+            font-size: 9pt;
+        }
+
+        @media print {
+            .a {
+                display: block
+            }
+
+            .b {
+                display: none
+            }
+        }
+
+
+        .edittext {
+            overflow-y: visible;
+            width: 100%;
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+            border-left: none;
+        }
+    </style>
+
+</head>
+
+<body>
+<table width="90%" border="0" align="center" cellpadding="2" cellspacing="0" class="tabp">
+    <tr>
+        <td colspan="3" class="tdp">第1页</td>
+    </tr>
+    <tr>
+        <td width="50%" class="tdp"><p>这样的报表</p>
+            <p>对一般的要求就够了。</p></td>
+        <td></td>
+    </tr>
+</table>
+<!--分页-->
+<div class="PageNext"></div>
+<table width="90%" border="0" align="center" cellpadding="2" cellspacing="0" class="tabp">
+    <tr>
+        <td class="tdp">第2页</td>
+    </tr>
+    <tr>
+        <td class="tdp">看到分页了吧</td>
+    </tr>
+    <tr>
+        <td width="50%" class="tdp"><p>这样的报表</p>
+            <p>对一般的要求就够了。</p></td>
+    </tr>
+</table>
+<!--分页-->
+<div class="PageNext"></div>
+<table width="90%" border="0" align="center" cellpadding="2" cellspacing="0" class="tabp">
+    <tr>
+        <td colspan="3" class="tdp">第1页</td>
+    </tr>
+    <tr>
+        <td width="50%" class="tdp"><p>这样的报表</p>
+            <p>对一般的要求就够了。</p></td>
+    </tr>
+</table>
+<!--分页-->
+<div class="PageNext"></div>
+<table width="90%" border="0" align="center" cellpadding="2" cellspacing="0" class="tabp">
+    <tr>
+        <td class="tdp">第2页</td>
+    </tr>
+    <tr>
+        <td class="tdp">看到分页了吧</td>
+    </tr>
+    <tr>
+        <td width="50%" class="tdp"><p>这样的报表</p>
+            <p>对一般的要求就够了。</p></td>
+    </tr>
+</table>
+</body>
+</html>

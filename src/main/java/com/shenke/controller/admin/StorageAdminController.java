@@ -1,6 +1,6 @@
 package com.shenke.controller.admin;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,16 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.jws.Oneway;
 
 import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.ClerkService;
 import com.shenke.service.GroupService;
 import com.shenke.service.LogService;
-import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.shenke.service.StorageService;
@@ -110,7 +107,7 @@ public class StorageAdminController {
         for (int i = 0; i < idArr.length; i++) {
             int id = Integer.parseInt(idArr[i]);
             logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
-            storageService.outStorage(id, new Date(System.currentTimeMillis()));
+            storageService.outStorage(id, new Date());
         }
         map.put("success", true);
         return map;
@@ -126,11 +123,12 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/outKu")
-    public Map<String, Object> out(String ids) {
+    public Map<String, Object> out(String ids) throws Exception {
+        String ck = storageService.genCode();
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
         for (int i = 0; i < idArr.length; i++) {
-            storageService.updateStateById("装车", Integer.parseInt(idArr[i]), new Date(System.currentTimeMillis()));
+            storageService.updateStateById("装车", Integer.parseInt(idArr[i]), new Date(), ck);
         }
         map.put("success", true);
         return map;
@@ -455,6 +453,9 @@ public class StorageAdminController {
      */
     @RequestMapping("/select")
     public Map<String, Object> select(Storage storage, String dateInProducedd) {
+        if (storage.getGroup()!=null){
+            storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
+        }
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage);
         List<Storage> list = storageService.select(storage, dateInProducedd);

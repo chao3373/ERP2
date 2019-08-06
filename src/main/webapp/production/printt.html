@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>销售订单</title>
-
     <style type="text/css">
+        #ti {
+            text-align: center;
+            font-size: 50px;
+        }
+
         body {
             background: white;
             margin: 0px;
-            padding: 10px 10px;
+            padding: 0 10px;
             text-align: center;
+        }
+
+        table {
+            cellspacing: 0;
+            margin: 10px auto;
         }
 
         table td {
@@ -25,6 +34,13 @@
             text-align: center;
         }
     </style>
+
+    <style media=print>
+        .PageNext {
+            page-break-after: always;
+        }
+    </style>
+
 </head>
 <body>
 <OBJECT ID='WebBrowser' NAME="WebBrowser" WIDTH=0 HEIGHT=0
@@ -42,7 +58,7 @@
     //     window.print();
     // }
 
-    window.print();
+    // window.print();
     // window.print();
 
     // var timeId = setInterval(function () {
@@ -54,17 +70,18 @@
     //         // window.print();
     //     }
     // }, 1000)
-    // $(function () {
-    //     var trs = $("tr");
-    //     for (var i = 1; i < trs.length; i++) {
-    //         if (i % 10 == 0) {
-    //             console.log(i);
-    //             console.log(trs[i]);
-    //             $(trs[i]).css({"background": "red"});
-    //             $(trs[i]).after("<div style='page-break-after:always;'></div>");
-    //         }
-    //     }
-    // })
+    $(function () {
+        var trs = $("tr");
+        for (var i = 1; i < trs.length; i++) {
+            if (i % 35 == 0) {
+                console.log(i);
+                console.log(trs[i]);
+                $(trs[i]).css({"background": "red"});
+                $(trs[i]).after("</table><div class='PageNext'></div><table  id='idData' class='pb'>");
+            }
+        }
+        window.print();
+    })
 </script>
 </body>
 </html>

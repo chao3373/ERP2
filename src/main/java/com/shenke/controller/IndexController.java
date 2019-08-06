@@ -3,7 +3,6 @@ package com.shenke.controller;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Date;
 import java.util.*;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -84,8 +83,7 @@ public class IndexController {
         storageService.findByState("");
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
-                storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(new java.util.Date().getTime()));
-                storageService.updateOutNumberById(Integer.parseInt(split[i]), ck);
+                storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(), ck);
             }
         }
         return "上传成功";
