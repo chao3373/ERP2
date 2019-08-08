@@ -30,4 +30,8 @@ public interface PandianjiRepository extends JpaRepository<Pandianji, Integer>, 
 	
 	@Query (value="select * from t_pandianji where pid like ?1",nativeQuery =true)
 	public List<Pandianji> findByPid(String string);
+
+	//根据序列号查询盘点机名称
+	@Query(value = "select name from t_pandianji where pid = ?1", nativeQuery = true)
+    String findbyPid(String pid);
 }

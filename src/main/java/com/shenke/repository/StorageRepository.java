@@ -299,4 +299,13 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set price = ?1 where id = ?2", nativeQuery = true)
     void updatehoudu(String houdu, Integer id);
+
+    //根据条件查询提货商品
+    @Query(value = "select * from t_storage where serial_number = ?1 and state like '%提货%'", nativeQuery = true)
+    List<Storage> selectTihuo(String pandianji);
+
+    //根据条件查询提货商品
+    @Query(value = "select * from t_storage where state like '%提货%'", nativeQuery = true)
+    List<Storage> selectTihuo();
+
 }

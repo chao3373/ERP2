@@ -136,4 +136,9 @@ public class PandianjiServiceImpl implements PandianjiService  {
 		return pandianjiRepository.findByPid(string);
 	}
 
+    @Override
+    public String findbyPid(String pid) {
+        return pandianjiRepository.findbyPid(pid);
+    }
+
 }

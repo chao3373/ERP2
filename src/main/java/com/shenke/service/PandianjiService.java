@@ -59,7 +59,7 @@ public interface PandianjiService {
 	public List<Pandianji> findByPid(String string);
 
 
-	
+    String findbyPid(String pid);
 }
 
 

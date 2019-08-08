@@ -300,8 +300,16 @@ public class StorageServiceImpl implements StorageService {
             return storageRepository.findAll(new Specification<Storage>() {
                 public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     Predicate predicate = cb.conjunction();
-                    if (map.get("date") != null) {
-                        predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                    if (StringUtil.isNotEmpty((String)map.get("date"))) {
+                        String date = (String) map.get("date");
+                        try {
+                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date + " 00:00:00");
+                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date + " 23:59:59");
+                            predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
+                            predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                     if (StringUtil.isNotEmpty((String) map.get("client"))) {
                         predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
@@ -315,7 +323,7 @@ public class StorageServiceImpl implements StorageService {
 
                     predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
-                    query.groupBy(root.get("saleListProduct").get("id"));
+                    query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
 
                     return predicate;
                 }
@@ -340,7 +348,8 @@ public class StorageServiceImpl implements StorageService {
 
                 predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
-                query.groupBy(root.get("saleListProduct").get("id"));
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+
                 return predicate;
             }
         });
@@ -374,15 +383,25 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Integer countBySaleListProductId(Integer id) {
+    public Integer countBySaleListProductId(Integer id, Storage storage) {
         Long count = storageRepository.count(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<>();
+                Predicate predicates = cb.conjunction();
                 if (id != null && id != 0) {
-                    predicates.add(cb.equal(root.get("saleListProduct").get("id"), id));
+                    predicates.getExpressions().add(cb.equal(root.get("saleListProduct").get("id"), id));
+                    predicates.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
+                    predicates.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
+                    predicates.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
+                    predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
+                    predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
+                    predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
+                    predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                    predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
+                    predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                 }
-                return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                return predicates;
             }
         });
         return count.intValue();
@@ -533,7 +552,18 @@ public class StorageServiceImpl implements StorageService {
                 if (storage.getRealityweight() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
                 }
-                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+                if (StringUtil.isNotEmpty(storage.getState())) {
+                    String state = storage.getState();
+                    System.out.println(storage.getState());
+                    if (storage.getState().startsWith("'")) {
+                        state = storage.getState().substring(1, storage.getState().length() - 1);
+                        System.out.println(state);
+                    }
+                    predicate.getExpressions().add(cb.like(root.get("state"), "%" + state + "%"));
+                }
+                if (StringUtil.isNotEmpty(storage.getColor())){
+                    predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
+                }
                 return predicate;
             }
         });
@@ -690,6 +720,15 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void updatehoudu(String houdu, Integer id) {
         storageRepository.updatehoudu(houdu, id);
+    }
+
+    //根据条件查询提货商品
+    @Override
+    public List<Storage> selectTihuo(String pandianji) {
+        if (StringUtil.isEmpty(pandianji)){
+            return storageRepository.selectTihuo();
+        }
+        return storageRepository.selectTihuo(pandianji);
     }
 
 }

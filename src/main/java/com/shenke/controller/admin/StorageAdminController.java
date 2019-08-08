@@ -301,10 +301,11 @@ public class StorageAdminController {
      */
     @RequestMapping("/detail")
     public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
+        System.out.println(date);
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
         if (StringUtil.isNotEmpty(date)) {
-            map1.put("date", new SimpleDateFormat("yyyy-MM-dd").parse(date));
+            map1.put("date", date);
         } else {
             map1.put("date", null);
         }
@@ -315,7 +316,7 @@ public class StorageAdminController {
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId()));
+            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage));
         }
         map.put("rows", storageList);
         return map;
@@ -637,5 +638,12 @@ public class StorageAdminController {
             storageService.updatehoudu(houdu, idArr[i]);
         }
         return "修改成功";
+    }
+
+    //根据条件查询提货商品
+    @RequestMapping("/selectTihuo")
+    public List<Storage> selectTihuo(String pandianji){
+        System.out.println(pandianji);
+        return storageService.selectTihuo(pandianji);
     }
 }

@@ -106,6 +106,12 @@ public class PandianjiAdminController {
 		return pandianjiService.findByPid("%" + q +"%");//.findByPid("%" + q +"%");
 	}
 
+	//根据序列号查询盘点机名称
+	@RequestMapping("/findbyPid")
+	public String findbyPid(String pid){
+		return pandianjiService.findbyPid(pid);
+	}
+
 	
 }
 
