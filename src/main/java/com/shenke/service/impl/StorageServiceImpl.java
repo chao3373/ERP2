@@ -303,8 +303,14 @@ public class StorageServiceImpl implements StorageService {
                     if (StringUtil.isNotEmpty((String)map.get("date"))) {
                         String date = (String) map.get("date");
                         try {
-                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date + " 00:00:00");
-                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date + " 23:59:59");
+                            String st = date + " 00:00:00";
+                            String ed = date + " 23:59:59";
+                            System.out.println(st);
+                            System.out.println(ed);
+                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(st);
+                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
+                            System.out.println(star);
+                            System.out.println(end);
                             predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
                             predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
                         } catch (ParseException e) {
@@ -333,8 +339,22 @@ public class StorageServiceImpl implements StorageService {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
-                if (map.get("date") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("deliveryTime"), map.get("date")));
+                if (StringUtil.isNotEmpty((String)map.get("date"))) {
+                    String date = (String) map.get("date");
+                    try {
+                        String st = date + " 00:00:00";
+                        String ed = date + " 23:59:59";
+                        System.out.println(st);
+                        System.out.println(ed);
+                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(st);
+                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
+                        System.out.println(star);
+                        System.out.println(end);
+                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
+                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
                 if (StringUtil.isNotEmpty((String) map.get("client"))) {
                     predicate.getExpressions().add(cb.like(root.get("clientname"), "%" + map.get("client") + "%"));
