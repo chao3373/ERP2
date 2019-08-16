@@ -3,7 +3,7 @@ package com.shenke.controller.admin;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.shenke.entity.Storage;
+import com.shenke.service.StorageService;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +25,9 @@ public class SaleListProductAdminController {
 
     @Resource
     private SaleListProductService saleListProductService;
+
+    @Resource
+    private StorageService storageService;
 
     /**
      * 订单审核通过
@@ -141,7 +144,7 @@ public class SaleListProductAdminController {
         if (saleListProductService.selectByJitaiIdAndIssueStateAndInformNumber(jitaiId, state, infLong) != null) {
             map.put("success", true);
             map.put("rows", saleListProductService.selectByJitaiIdAndIssueStateAndInformNumber(jitaiId, state, infLong));
-        }else {
+        } else {
             map.put("success", false);
         }
 
@@ -298,7 +301,7 @@ public class SaleListProductAdminController {
         hebingLength.append(length);
         for (int i = 1; i < idArr.length; i++) {
             length += saleListProductService.findById(Integer.parseInt(idArr[0])).getLength();
-            hebingLength.append("+" + (int)Math.floor(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength()));
+            hebingLength.append("+" + (int) Math.floor(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength()));
             saleListProductService.deleteById(Integer.parseInt(idArr[i]));
         }
         byId.setLength(length);
@@ -392,7 +395,7 @@ public class SaleListProductAdminController {
     }
 
     @RequestMapping("/deleteByIdArr")
-    public Map<String, Object> deleteByIdArr(String idArr){
+    public Map<String, Object> deleteByIdArr(String idArr) {
         Map<String, Object> map = new HashMap<>();
         String[] ids = idArr.split(",");
         for (int i = 0; i < ids.length; i++) {
@@ -408,7 +411,40 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/updateNum")
-    public String updateNum(Integer num, Integer id){
+    public String updateNum(Integer num, Integer id) {
         return saleListProductService.updateNum(num, id);
+    }
+
+    /***
+     * 根据id修改完成数量
+     * @param id
+     * @param wancheng
+     * @return
+     */
+    @RequestMapping("/updateWanCehng")
+    public String updateWanCehng(Integer id, Integer wancheng) {
+        SaleListProduct saleListProduct = saleListProductService.findById(id);
+        Integer num = saleListProduct.getNum();
+        Integer count = storageService.findCountBySaleListProductId(saleListProduct.getId());
+        System.out.println(count);
+        System.out.println(wancheng);
+        if (count > wancheng) {
+            return "库存中已完成比该数量多的件数，请删除库存！库存中的数量：" + count;
+        } else if (count < wancheng){
+            return "库存中改订单的货物完成数量不足，请进行生产！当前库存中的数量：" + count;
+        }
+        if (wancheng > num) {
+            return "完成数量大于总数量无法修改！";
+        } else if (wancheng < num) {
+            saleListProduct.setAccomplishNumber(wancheng);
+            saleListProduct.setState("下发机台：" + saleListProduct.getJiTai().getName());
+            saleListProductService.save(saleListProduct);
+            return "完成数量小于总数量修改状态为下发机台！";
+        } else {
+            saleListProduct.setAccomplishNumber(wancheng);
+            saleListProduct.setState("生产完成：" + saleListProduct.getJiTai().getName());
+            saleListProductService.save(saleListProduct);
+            return "完成数量等于总数量修改状态为生产完成！";
+        }
     }
 }

@@ -28,16 +28,23 @@
             $("#id").val(row.id);
             $("#dd").dialog('open');
         }
+
         //点击关闭按钮
         function closedd() {
             $("#dd").dialog('close');
         }
+
         //点击确定按钮
         function savedd() {
             $.ajax({
-                url:"/admin/storage/editKuCun",
-                data:{id:$("#id").val(), oneWeight:$("#oneWeight").val(), shiji:$("#shiji").val(), length:$("#length1").val()},
-                success:function (result) {
+                url: "/admin/storage/editKuCun",
+                data: {
+                    id: $("#id").val(),
+                    oneWeight: $("#oneWeight").val(),
+                    shiji: $("#shiji").val(),
+                    length: $("#length1").val()
+                },
+                success: function (result) {
                     if (result.success) {
                         alert("修改成功");
                         $("#dd").dialog('close');
@@ -168,22 +175,22 @@
                     title: '名称',
                     width: 200,
                     align: 'center'
-                },{
+                }, {
                     field: 'length',
                     title: '长度',
                     width: 50,
                     align: 'center'
-                },{
+                }, {
                     field: 'model',
                     title: '幅宽',
                     width: 50,
                     align: 'center'
-                },{
+                }, {
                     field: 'price',
                     title: '厚度',
                     width: 50,
                     align: 'center'
-                },{
+                }, {
                     field: 'realityweight',
                     title: '重量',
                     width: 50,
@@ -644,7 +651,7 @@
         }
 
         //修改重量
-        function updatezhongliang(){
+        function updatezhongliang() {
             var rows = $("#dg").datagrid("getSelections");
             if (!$("#updatezhongliang")) {
                 alert("请输入重量！");
@@ -668,8 +675,8 @@
         }
 
         //删除库存
-        function deletekucun(){
-            $.messager.confirm("系统提示","确定删除该条库存吗？", function (r) {
+        function deletekucun() {
+            $.messager.confirm("系统提示", "确定删除该条库存吗？", function (r) {
                 if (r) {
                     var rows = $("#dg").datagrid("getSelections");
                     if (!$("#updatezhongliang")) {
@@ -688,7 +695,10 @@
                             if (result) {
                                 $("#dg").datagrid("reload");
                                 alert(result);
+                                return;
                             }
+                            alert("未知错误！");
+                            return;
                         }
                     });
                 }
@@ -696,12 +706,12 @@
         }
 
         //修改长度
-        function updatelength(){
+        function updatelength() {
             $("#dlg2").dialog("open");
         }
-        
+
         //保存修改长度
-        function savelength(){
+        function savelength() {
             var rows = $("#dg").datagrid("getSelections");
             if (!$("#updatezhongliang")) {
                 alert("请输入重量！");
@@ -725,14 +735,14 @@
                 }
             });
         }
-        
+
         //关闭修改长度
         function closelength() {
             $("#dlg2").dialog("close");
         }
 
         //修改厚度
-        function updatehoudu(){
+        function updatehoudu() {
             var rows = $("#dg").datagrid("getSelections");
             if (!$("#updatezhongliang")) {
                 alert("请输入重量！");
@@ -829,7 +839,8 @@
         </form>
     </fieldset>
 </div>
-<table id="dg" class="easyui-datagrid" fit="false" toolbar="#tb" url="/admin/storage/outSuccess" fitColumns="false" rownumbers="true" >
+<table id="dg" class="easyui-datagrid" fit="false" toolbar="#tb" url="/admin/storage/outSuccess" fitColumns="false"
+       rownumbers="true">
 </table>
 
 <div id="tb">
@@ -837,16 +848,18 @@
     <a href="javascript:addInventory()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加库存</a>
     <a href="javascript:outku()" class="easyui-linkbutton" iconCls="icon-redo" plain="true">出库</a>
     <a href="javascript:goBackku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">回到仓库</a>
-    修改生产人员:<input class="easyui-combobox" id="updateClerk" name="clerk" style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
+    修改生产人员:<input class="easyui-combobox" id="updateClerk" name="clerk" style="width: 100px"
+                  data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
     <a href="javascript:updateClerk()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
     <a href="javascript:goBackku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">回到仓库</a>
-    修改班组:<input class="easyui-combobox" id="updatebanzu" name="banzu" style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
+    修改班组:<input class="easyui-combobox" id="updatebanzu" name="banzu" style="width: 100px"
+                data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
     <a href="javascript:updatebanzu()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
-    修改重量:<input id="updatezhongliang" name="zhongliang" style="width: 50px" />
+    修改重量:<input id="updatezhongliang" name="zhongliang" style="width: 50px"/>
     <a href="javascript:updatezhongliang()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
     <a href="javascript:deletekucun()" class="easyui-linkbutton" iconCls="icon-cancel" plain="true">删除库存</a>
     <a href="javascript:updatelength()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改长度</a>
-    修改厚度:<input id="updatehoudu" name="zhongliang" style="width: 50px" />
+    修改厚度:<input id="updatehoudu" name="zhongliang" style="width: 50px"/>
     <a href="javascript:updatehoudu()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
 </div>
 
@@ -961,7 +974,8 @@
     <a href="javascript:closeGoodsDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
-<div id="dlg2" class="easyui-dialog" title="修改长度" style="width: 250px; height: 150px; padding: 10px 20px" closed="true" buttons="#dlg-buttons2">
+<div id="dlg2" class="easyui-dialog" title="修改长度" style="width: 250px; height: 150px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons2">
     长度：<input type="text" id="changdu">
 </div>
 

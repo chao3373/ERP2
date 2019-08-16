@@ -164,11 +164,13 @@ public interface StorageService {
 
     void updatezhongliang(Integer id, Double zhongliang);
 
-    void deletekucun(Integer id);
+    String deletekucun(Integer id);
 
     void updatechangdu(Integer changdu, Integer id);
 
     void updatehoudu(String houdu, Integer id);
 
     List<Storage> selectTihuo(String pandianji);
+
+    Integer findCountBySaleListProductId(Integer id);
 }

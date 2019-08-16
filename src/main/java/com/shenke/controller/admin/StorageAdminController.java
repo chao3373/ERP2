@@ -11,13 +11,10 @@ import javax.annotation.Resource;
 
 import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
-import com.shenke.service.ClerkService;
-import com.shenke.service.GroupService;
-import com.shenke.service.LogService;
+import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.shenke.service.StorageService;
 
 
 /**
@@ -31,6 +28,9 @@ public class StorageAdminController {
 
     @Resource
     private StorageService storageService;
+
+    @Resource
+    private SaleListProductService saleListProductService;
 
     @Resource
     private ClerkService clerkService;
@@ -612,8 +612,8 @@ public class StorageAdminController {
      */
     @RequestMapping("/deletekucun")
     public String deletekucun(Integer id){
-        storageService.deletekucun(id);
-        return "删除成功";
+        Storage storage = storageService.findById(id);
+        return storageService.deletekucun(id);
     }
 
     /***

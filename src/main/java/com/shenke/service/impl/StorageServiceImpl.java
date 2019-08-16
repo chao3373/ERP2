@@ -711,20 +711,23 @@ public class StorageServiceImpl implements StorageService {
      * @param id
      */
     @Override
-    public void deletekucun(Integer id) {
+    public String deletekucun(Integer id) {
         Storage storage = storageRepository.findOne(id);
         Integer saleListProductId = storage.getSaleListProduct().getId();
-        System.out.println(id);
+        SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
         storageRepository.deletekucun(id);
         //更新完成数量
-        saleListProductRepository.updateAccomplishNumber(saleListProductId);
+        saleListProduct.setAccomplishNumber(saleListProduct.getAccomplishNumber() - 1);
+//        saleListProductRepository.updateAccomplishNumber(saleListProductId);
         //根据id查询完成数跟总数量，完成数小于总数量则修改状态为下发机台
-        System.out.println(storage);
-        SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
-        if (saleListProduct.getAccomplishNumber() < saleListProduct.getNum()) {
+        if (saleListProduct.getNum() > saleListProduct.getAccomplishNumber()){
             saleListProduct.setState("下发机台：" + saleListProduct.getJiTai().getName());
+            saleListProductRepository.save(saleListProduct);
+            return "修改成功，并修改状态为下发！";
+        } else {
+            saleListProductRepository.save(saleListProduct);
+            return "修改成功完成数量不小于总数量不修改状态！";
         }
-        saleListProductRepository.save(saleListProduct);
     }
 
     @Override
@@ -749,6 +752,16 @@ public class StorageServiceImpl implements StorageService {
             return storageRepository.selectTihuo();
         }
         return storageRepository.selectTihuo(pandianji);
+    }
+
+    /***
+     * 根据salelistproductid查询完成数量
+     * @param id
+     * @return
+     */
+    @Override
+    public Integer findCountBySaleListProductId(Integer id) {
+        return storageRepository.findCountBySaleListProductId(id);
     }
 
 }
