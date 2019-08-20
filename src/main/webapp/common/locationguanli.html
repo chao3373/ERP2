@@ -103,6 +103,8 @@
             $("#productDate").datebox("reset");
             $("#clientname").combobox("reset");
             $("#peasant").val("");
+            $("#color").val("");
+            $("#name").combobox("reset");
         }
 
 
@@ -565,6 +567,10 @@
             </tr>
             <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;色：&nbsp;&nbsp;<input type="text" id="color" name="color" size="15"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;产品名称：<input
+                        class="easyui-combobox" id="name" name="name"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/product/productList'"/></td>
             </tr>
         </table>
     </form>

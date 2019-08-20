@@ -60,6 +60,57 @@
         function shuaxin() {
             $("#dg").datagrid("reload");
         }
+
+        //回到仓库
+        function goBackku() {
+            if ($("#dg").datagrid("getSelections").length > 0) {
+                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品回到仓库吗？</span>", function (r) {
+                    if (r) {
+                        var rows = $("#dg").datagrid("getSelections");
+                        var ids = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            ids.push(rows[i].id);
+                        }
+                        var idsStr = ids.join(",");
+                        console.log(idsStr);
+                        $.post("/admin/storage/goBackku", {ids: idsStr}, function (result) {
+                            if (result.success) {
+                                alert("修改成功");
+                                $("#dg").datagrid("reload");
+                            }
+                        });
+                    }
+                });
+                return;
+            }
+            $.messager.alert("系统提示", "<span style='color: red;'>请选择要出库的商品！</span>");
+            return;
+        }
+
+        //手动出库
+        function outku() {
+            if ($("#dg").datagrid("getSelections").length > 0) {
+                $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品出库吗？</span>", function (r) {
+                    if (r) {
+                        var rows = $("#dg").datagrid("getSelections");
+                        var ids = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            ids.push(rows[i].id);
+                        }
+                        var idsStr = ids.join(",");
+                        console.log(idsStr);
+                        $.post("/admin/storage/outKu", {ids: idsStr}, function (result) {
+                            if (result.success) {
+                                $("#dg").datagrid("reload");
+                            }
+                        });
+                    }
+                });
+                return;
+            }
+            $.messager.alert("系统提示", "<span style='color: red;'>请选择要出库的商品！</span>");
+            return;
+        }
     </script>
 </head>
 <body style="margin: 1px">
@@ -69,15 +120,13 @@
         <form id="fm">
             <table style="font-size: 12px;">
                 <tr>
-                    <td>选择盘点机： <input
-                            class="easyui-combobox" id="pandianji" name="pandianji"
-                            style="width: 100px"
-                            data-options="panelHeight:'auto',valueField:'pid',textField:'name',url:'/admin/pandianji/pandianjiList'"/>
+                    <td>选择盘点机： <input class="easyui-combobox" id="pandianji" name="pandianji" style="width: 100px" data-options="panelHeight:'auto',valueField:'pid',textField:'name',url:'/admin/pandianji/pandianjiList'"/>
                     </td>
+                    <!--<td>选择客户： <input class="easyui-combobox" id="client" name="client" style="width: 120px" url="/admin/client/clientList" data-options="panelHeight:'auto',valueField:'id',textField:'name'"/>-->
+                    <!--</td>-->
                     <td><a href="javascript:screenSale()" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>
                     </td>
-                    <td><a href="javascript:shuaxin()" class="easyui-linkbutton" iconCls="icon-reload"
-                           plain="true">刷新</a>
+                    <td><a href="javascript:shuaxin()" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
                 </tr>
             </table>
         </form>
@@ -89,6 +138,7 @@
 
 <div id="tb">
     <a href="javascript:goBackku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">回到仓库</a>
+    <a href="javascript:outku()" class="easyui-linkbutton" iconCls="icon-undo" plain="true">出库</a>
 </div>
 
 <div id="dlg" class="easyui-dialog" title="添加库存"

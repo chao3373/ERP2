@@ -419,6 +419,7 @@ public class StorageServiceImpl implements StorageService {
                     predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
                     predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                     predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                    predicates.getExpressions().add(cb.equal(root.get("state"), "装车"));
                 }
                 query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicates;
@@ -502,6 +503,9 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
                     predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + storage.getSaleNumber() + "%"));
                 }
+                if (StringUtil.isNotEmpty(storage.getName())){
+                    predicate.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
+                }
                 if (storage.getLocation() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("location").get("id"), storage.getLocation().getId()));
                 }
@@ -584,6 +588,7 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getColor())){
                     predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 }
+                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
                 return predicate;
             }
         });

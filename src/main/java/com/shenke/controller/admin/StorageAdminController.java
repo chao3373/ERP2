@@ -316,7 +316,9 @@ public class StorageAdminController {
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            storage.setSum(storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage));
+            Integer integer = storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage);
+            System.out.println(integer);
+            storage.setSum(integer);
         }
         map.put("rows", storageList);
         return map;
@@ -459,6 +461,7 @@ public class StorageAdminController {
         }
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage);
+        System.out.println(storage.getName());
         List<Storage> list = storageService.select(storage, dateInProducedd);
         map.put("success", true);
         map.put("rows", list);
@@ -514,7 +517,8 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         String[] split = ids.split(",");
         for (int i = 0; i < split.length; i++) {
-            storageService.updateByIdAndState(Integer.parseInt(split[i]), "生产完成" + storageService.findById(Integer.parseInt(split[i])).getJiTaiName());
+            Storage storage = storageService.findById(Integer.parseInt(split[i]));
+            storageService.updateByIdAndState(Integer.parseInt(split[i]), "生产完成：" + storage.getJiTaiName());
         }
         map.put("success", true);
         return map;
