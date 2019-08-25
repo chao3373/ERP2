@@ -127,7 +127,7 @@ public interface StorageService {
 
     public List<Count> FindBySaleListId();
 
-    Integer countBySaleListProductId(Integer id, Storage storage);
+    Integer countBySaleListProductId(Integer id, Storage storage, String state);
 
     public List<Storage> findSaleListNumber();
 
@@ -173,4 +173,5 @@ public interface StorageService {
     List<Storage> selectTihuo(String pandianji);
 
     Integer findCountBySaleListProductId(Integer id);
+
 }

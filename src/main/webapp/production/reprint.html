@@ -509,6 +509,9 @@
                                 if ($('#clientname').is(':checked')) {
                                     tableString += "<tr><td colspan='2'>客户：" + row.clientname + "</td></tr>";
                                 }
+                                if ($('#nonghuming').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>农户：" + row.peasant + "</td></tr>";
+                                }
                                 tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
                                 tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 tableString += "<tr><td>班组：" + row.group.name + "</td><td>质检：" + row.clerk.name + "</td></tr>";
@@ -680,6 +683,10 @@
             <td><input type="checkbox" id="dao">打印剖刀</td>
             <td></td>
             <td><input type="checkbox" id="clientname">打印客户名称</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" id="nonghuming">打印农户名称</td>
+            <td></td>
         </tr>
     </table>
 

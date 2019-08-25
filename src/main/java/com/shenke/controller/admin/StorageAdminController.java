@@ -316,7 +316,7 @@ public class StorageAdminController {
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            Integer integer = storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage);
+            Integer integer = storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage, "%装车%");
             System.out.println(integer);
             storage.setSum(integer);
         }
@@ -451,7 +451,7 @@ public class StorageAdminController {
     }
 
     /***
-     * 当前库存查询
+     * 设置仓位页面查询
      * @return
      */
     @RequestMapping("/select")
@@ -460,9 +460,28 @@ public class StorageAdminController {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        System.out.println(storage);
-        System.out.println(storage.getName());
         List<Storage> list = storageService.select(storage, dateInProducedd);
+        map.put("success", true);
+        map.put("rows", list);
+        return map;
+    }
+
+    /***
+     * 当前库存查询页面查询
+     * @return
+     */
+    @RequestMapping("/findKuCun")
+    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd) {
+        if (storage.getGroup()!=null){
+            storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
+        }
+        Map<String, Object> map = new HashMap<>();
+        List<Storage> list = storageService.select(storage, dateInProducedd);
+        for(Storage st : list){
+            Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%");
+            st.setSum(integer);
+            st.setTheoryweight(st.getSum()*st.getRealityweight());
+        }
         map.put("success", true);
         map.put("rows", list);
         return map;

@@ -403,7 +403,11 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Integer countBySaleListProductId(Integer id, Storage storage) {
+    public Integer countBySaleListProductId(Integer id, Storage storage, String state) {
+        System.out.println("开始查询数量");
+        System.out.println(id);
+        System.out.println(storage);
+        System.out.println(state);
         Long count = storageRepository.count(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -419,7 +423,7 @@ public class StorageServiceImpl implements StorageService {
                     predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
                     predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                     predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
-                    predicates.getExpressions().add(cb.equal(root.get("state"), "装车"));
+                    predicates.getExpressions().add(cb.like(root.get("state"), state));
                 }
                 query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicates;
@@ -589,6 +593,8 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 }
                 predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicate;
             }
         });
