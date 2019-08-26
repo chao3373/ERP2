@@ -88,8 +88,8 @@
             if ($("#group").combobox("getValue")) {
                 json.group = $("#group").combobox("getValue");
             }
-            if ($("#agent").combobox("getText")) {
-                json.client = $("#agent").combobox("getText");
+            if ($("#clientname").combobox("getText")) {
+                json.clientname = $("#clientname").combobox("getText");
             }
             if ($("#name").combobox("getText")) {
                 json.name = $("#name").combobox("getText");
@@ -105,7 +105,7 @@
         //按照条件筛选订单信息
         function screenSale() {
             $("#fm").form('submit', {
-                url: "/admin/storage/select",
+                url: "/admin/storage/selectEdit",
                 success: function (resulgt) {
                     if (resulgt != null) {
                         console.log(resulgt);
@@ -839,7 +839,7 @@
         </form>
     </fieldset>
 </div>
-<table id="dg" class="easyui-datagrid" fit="false" toolbar="#tb" url="/admin/storage/outSuccess" fitColumns="false"
+<table id="dg" class="easyui-datagrid" fit="false" toolbar="#tb" fitColumns="false"
        rownumbers="true">
 </table>
 

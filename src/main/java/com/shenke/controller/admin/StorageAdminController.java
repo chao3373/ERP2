@@ -467,6 +467,24 @@ public class StorageAdminController {
     }
 
     /***
+     * 修改库存页面查询
+     * @param storage
+     * @param dateInProducedd
+     * @return
+     */
+    @RequestMapping("/selectEdit")
+    public Map<String, Object> selectEdit(Storage storage, String dateInProducedd) {
+        if (storage.getGroup()!=null){
+            storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
+        }
+        Map<String, Object> map = new HashMap<>();
+        List<Storage> list = storageService.selectEdit(storage, dateInProducedd);
+        map.put("success", true);
+        map.put("rows", list);
+        return map;
+    }
+
+    /***
      * 当前库存查询页面查询
      * @return
      */
@@ -476,7 +494,7 @@ public class StorageAdminController {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        List<Storage> list = storageService.select(storage, dateInProducedd);
+        List<Storage> list = storageService.selectt(storage, dateInProducedd);
         for(Storage st : list){
             Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%");
             st.setSum(integer);

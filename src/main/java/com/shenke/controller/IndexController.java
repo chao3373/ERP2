@@ -83,7 +83,20 @@ public class IndexController {
         storageService.findByState("");
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
-                storageService.updateStateById("装车", Integer.parseInt(split[i]), new Date(), ck);
+                int id = Integer.parseInt(split[i]);
+                storageService.updateStateById("装车", id, new Date(), ck);
+//                List<Storage> storageList = storageService.findBySaleListProductId(storageService.findById(id).getSaleListProduct().getId());
+//                int count = 0;
+//                for (Storage storage : storageList) {
+//                    if (!storage.getState().equals("装车")) {
+//                        break;
+//                    } else {
+//                        count++;
+//                    }
+//                }
+//                if (count == storageList.size()) {
+//
+//                }
             }
         }
         return "上传成功";

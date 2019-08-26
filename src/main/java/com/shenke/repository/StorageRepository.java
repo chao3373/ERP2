@@ -311,4 +311,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     //根据salelistproductid查询库存数量
     @Query(value = "select count(*) from t_storage where sale_list_product_id = ?1", nativeQuery = true)
     Integer findCountBySaleListProductId(Integer id);
+
+    //根据salelistproductid查询
+    @Query(value = "select * from t_storage where sale_list_product_id = ?1", nativeQuery = true)
+    List<Storage> findBySaleListProductId(int id);
 }

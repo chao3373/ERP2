@@ -142,6 +142,8 @@ public interface StorageService {
 
     List<Storage> select(Storage storage, String dateInProducedd);
 
+    List<Storage> selectt(Storage storage, String dateInProducedd);
+
     void updateByIdAndState(int parseInt, String state);
 
     List<Storage> selectByState(String state);
@@ -174,4 +176,12 @@ public interface StorageService {
 
     Integer findCountBySaleListProductId(Integer id);
 
+    List<Storage> selectEdit(Storage storage, String dateInProducedd);
+
+    /***
+     * 根据订单商品id查询商品
+     * @param id
+     * @return
+     */
+    List<Storage> findBySaleListProductId(int id);
 }
