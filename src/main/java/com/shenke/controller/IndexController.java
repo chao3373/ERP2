@@ -84,19 +84,9 @@ public class IndexController {
         for (int i = 0; i < split.length; i++) {
             if (StringUtil.isNotEmpty(split[i])) {
                 int id = Integer.parseInt(split[i]);
-                storageService.updateStateById("装车", id, new Date(), ck);
-//                List<Storage> storageList = storageService.findBySaleListProductId(storageService.findById(id).getSaleListProduct().getId());
-//                int count = 0;
-//                for (Storage storage : storageList) {
-//                    if (!storage.getState().equals("装车")) {
-//                        break;
-//                    } else {
-//                        count++;
-//                    }
-//                }
-//                if (count == storageList.size()) {
-//
-//                }
+                if (!storageService.findById(id).getState().equals("装车")){
+                    storageService.updateStateById("装车", id, new Date(), ck);
+                }
             }
         }
         return "上传成功";
@@ -174,6 +164,28 @@ public class IndexController {
         DaochuUtil.daochuExcel(a, title);
         map.put("success", true);
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/static/daochu")
+    public String daochuExcel(Integer[] ids) throws Exception {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (int i = 0; i < ids.length; i++) {
+            Map<String, Object> map = new HashMap<>();
+            Integer id = ids[i];
+            Storage storage = storageService.findById(id);
+            map.put("客户名称", storage.getClientname());
+            map.put("农户名称", storage.getPeasant());
+            map.put("产品名称", storage.getName());
+            map.put("幅宽", storage.getModel());
+            map.put("厚度", storage.getPrice());
+            map.put("长度", storage.getClientname());
+            map.put("颜色", storage.getClientname());
+            map.put("数量", storage.getClientname());
+            map.put("重量", storage.getClientname());
+            map.put("客户名称", storage.getClientname());
+        }
+        return "导出成功";
     }
 
     @ResponseBody

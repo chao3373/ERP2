@@ -315,4 +315,9 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     //根据salelistproductid查询
     @Query(value = "select * from t_storage where sale_list_product_id = ?1", nativeQuery = true)
     List<Storage> findBySaleListProductId(int id);
+
+    //根据id修改时间
+    @Modifying
+    @Query(value = "update t_storage set date_in_produced = ?2 where id = ?1", nativeQuery = true)
+    void updateshijian(Integer id, Date parse);
 }

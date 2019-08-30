@@ -506,6 +506,25 @@ public class StorageAdminController {
     }
 
     /***
+     * 修改时间
+     * @param ids
+     * @param date
+     * @return
+     */
+    @RequestMapping("/updateshijian")
+    public String updateshijian(Integer[] ids, String date){
+        try {
+            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+            for (int i = 0; i < ids.length; i++) {
+                storageService.updateshijian(ids[i], parse);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "修改成功";
+    }
+
+    /***
      *
      * 根据ids和状态设置状态
      * @param idArr

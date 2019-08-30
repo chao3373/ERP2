@@ -65,6 +65,10 @@
 
         //按照条件筛选订单信息
         function screenSale() {
+            $.messager.progress({
+                title: '提示',
+                text: '数据正在处理中，请稍后....'
+            });
             $("#fm").form('submit', {
                 url: "/admin/storage/select",
                 success: function (resulgt) {
@@ -74,6 +78,7 @@
                         if (ruselt.success) {
                             console.log(ruselt);
                             $("#dg").datagrid("loadData", ruselt.rows);
+                            $.messager.progress("close");
                         }
                     }
                 }

@@ -65,6 +65,10 @@
 
         //按照条件筛选订单信息
         function screenSale() {
+            $.messager.progress({
+                title: '提示',
+                text: '数据正在处理中，请稍后....'
+            });
             $("#fm").form('submit', {
                 url: "/admin/storage/findKuCun",
                 success: function (resulgt) {
@@ -74,12 +78,11 @@
                         if (ruselt.success) {
                             console.log(ruselt);
                             $("#dg").datagrid("loadData", ruselt.rows);
+                            $.messager.progress("close");
                         }
                     }
                 }
             });
-            // addScreen();
-            // refreshData();
         }
 
         //添加条件筛选时刷新数据
@@ -480,9 +483,38 @@
                         style="width: 100px"
                         data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/product/productList'"/>
                 </td>
+                <td></td>
+                <td></td>
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:daochu()"-->
+                                                <!--class="easyui-linkbutton" iconCls="icon-search">导出</a>-->
+                <!--</td>-->
             </tr>
         </table>
     </form>
 </div>
 </body>
+<script>
+
+    function daochu() {
+        var ids = [];
+        var rows = $("#dg").datagrid("getRows");
+        if (rows.length < 1) {
+            alert("没有加载数据！");
+            return;
+        }
+        for (var i = 0; i < rows.length; i++) {
+            ids.push(rows[i].id);
+        }
+        var idarr = ids.join(",");
+        $.ajax({
+            type: "GET",
+            url: "/static/daochu",
+            async: false,
+            data: {ids: idarr},
+            success: function (result) {
+                alert(result);
+            }
+        })
+    }
+</script>
 </html>

@@ -76,7 +76,20 @@
                         field: 'groupName',
                         title: '班组',
                         width: 130,
-                        align: 'center'
+                        align: 'center',
+                    },{
+                        field: 'location',
+                        title: '仓位',
+                        width: 130,
+                        align: 'center',
+                        formatter:function(val, row, index){
+                            if (row.location){
+                                console.log(val);
+                                console.log(row);
+                                return val.name;
+                            }
+                            return "";
+                        }
                     }, {
                         field: 'dateInProduced',
                         title: '生产日期',
@@ -333,6 +346,10 @@
 
         //按照条件筛选订单信息
         function screenSale() {
+            $.messager.progress({
+                title: '提示',
+                text: '数据正在处理中，请稍后....'
+            });
             var obj = {};
             if ($("#productDate").datebox("getText")) {
                 obj.dateInProducedd = $("#productDate").datebox("getText");
@@ -354,6 +371,7 @@
                     console.log(result.rows);
                     if (result.success) {
                         $("#dg").datagrid('loadData', result.rows);
+                        $.messager.progress('close');
                     }
                 }
             });

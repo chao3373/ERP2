@@ -184,4 +184,6 @@ public interface StorageService {
      * @return
      */
     List<Storage> findBySaleListProductId(int id);
+
+    void updateshijian(Integer id, Date parse);
 }
