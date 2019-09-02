@@ -276,7 +276,7 @@
                 location: $("#cang").combobox("getValue")
             }, function (result) {
                 if (result.success) {
-                    $("#dg").datagrid("reload");
+                    screenSale();
                 }
             });
         }

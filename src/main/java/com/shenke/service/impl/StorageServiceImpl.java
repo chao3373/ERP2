@@ -427,8 +427,8 @@ public class StorageServiceImpl implements StorageService {
                     predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                     predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                     predicates.getExpressions().add(cb.like(root.get("state"), state));
-                    predicates.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
-                    predicates.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
+//                    predicates.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
+//                    predicates.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
                 }
                 query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicates;
@@ -701,7 +701,7 @@ public class StorageServiceImpl implements StorageService {
                 query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicate;
             }
-        });
+        }, new Sort(Sort.Direction.ASC, "peasant", "name", "model", "price", "length", "color", "realityweight"));
     }
 
     @Override

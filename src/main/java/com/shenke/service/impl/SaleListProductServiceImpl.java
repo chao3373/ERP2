@@ -407,6 +407,10 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             return "已经完成比该数量多的件数，无法修改";
         } else {
             saleListProductRepository.updateNum(num, id);
+            String state = saleListProductRepository.findOne(id).getState();
+            if (state.startsWith("审核成功") || state.startsWith("未审核")){
+                return "修改成功！";
+            }
             saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
             return "修改成功，数量大于完成数，修改订单状态为下发机台";
         }

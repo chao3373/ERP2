@@ -815,7 +815,6 @@
                 return;
             }
             var row = rows[0];
-            console.log($("#shuliang").val());
             $.ajax({
                 url:"/admin/saleListProduct/updateNum?num=" +$("#shuliang").val() + "&id=" + row.id,
                 success:function (result) {

@@ -375,17 +375,68 @@
                 alert("已经添加合计！");
                 return;
             }
-            var sumw = 0;
+            var nong_hu = rows[0].peasant;
+            var zcount = 0;
+            var zsumw = 0;
             var count = 0;
+            var sumw = 0;
             for (var i = 0; i < rows.length; i++) {
+                console.log("长度：" + rows.length);
+                console.log(nong_hu);
+                console.log(rows[i].peasant);
+                if (rows[i].peasant != nong_hu) {
+                    $('#dg').datagrid('insertRow', {
+                        index: i,	// index start with 0
+                        row: {
+                            clientname: "小计：",
+                            peasant: "总数量：" + count + "件",
+                            name: "总重量：" + sumw + "KG"
+                        }
+                    });
+                    count = 0;
+                    sumw = 0;
+                    nong_hu = rows[i + 1].peasant;
+                    i++;
+                }
+                if (i == rows.length - 1){
+                    sumw += rows[i].theoryweight;
+                    count += rows[i].sum;
+                    zsumw += rows[i].theoryweight;
+                    zcount += rows[i].sum;
+                    $('#dg').datagrid('insertRow', {
+                        index: i+1,	// index start with 0
+                        row: {
+                            clientname: "小计：",
+                            peasant: "总数量：" + count + "件",
+                            name: "总重量：" + sumw + "KG"
+                        }
+                    });
+                    $('#dg').datagrid('insertRow', {
+                        index: i+2,	// index start with 0
+                        row: {
+                            clientname: "总计：",
+                            peasant: "总数量：" + zcount + "件",
+                            name: "总重量：" + zsumw + "KG"
+                        }
+                    });
+                    return;
+                }
                 sumw += rows[i].theoryweight;
                 count += rows[i].sum;
+                zsumw += rows[i].theoryweight;
+                zcount += rows[i].sum;
             }
-            $("#dg").datagrid("appendRow", {
-                clientname: "合计",
-                peasant: "总数量：" + count + "件",
-                name: "总重量：" + sumw + "KG"
-            });
+            // var sumw = 0;
+            // var count = 0;
+            // for (var i = 0; i < rows.length; i++) {
+            //     sumw += rows[i].theoryweight;
+            //     count += rows[i].sum;
+            // }
+            // $("#dg").datagrid("appendRow", {
+            //     clientname: "合计",
+            //     peasant: "总数量：" + count + "件",
+            //     name: "总重量：" + sumw + "KG"
+            // });
         }
 
     </script>
@@ -418,15 +469,18 @@
 
                 </td>
                 <td></td>
-                <td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input
-                        class="easyui-combobox" id="cang" name="location"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
-                </td>
-                <td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"
-                                                             iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; <a
-                        href="javascript:printdg()" class="easyui-linkbutton"
-                        iconCls="icon-print" plain="true">打印</a>
+                <!--<td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input-->
+                <!--class="easyui-combobox" id="cang" name="location"-->
+                <!--style="width: 100px"-->
+                <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>-->
+                <!--</td>-->
+                <!--<td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"-->
+                <!--iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; -->
+                <!--</td>-->
+                <td>
+                    <a
+                            href="javascript:printdg()" class="easyui-linkbutton"
+                            iconCls="icon-print" plain="true">打印</a>
                 </td>
             </tr>
             <tr>
@@ -486,7 +540,7 @@
                 <td></td>
                 <td></td>
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:daochu()"-->
-                                                <!--class="easyui-linkbutton" iconCls="icon-search">导出</a>-->
+                <!--class="easyui-linkbutton" iconCls="icon-search">导出</a>-->
                 <!--</td>-->
             </tr>
         </table>
