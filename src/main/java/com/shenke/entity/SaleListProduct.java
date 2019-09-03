@@ -116,6 +116,8 @@ public class SaleListProduct {
 
 	private Integer accomplishNumber;// 完成数量
 
+	private Integer daBaoShu;// 打包数量
+
 	/*@Column(length = 50)
 	private String accomplishState;// 完成状态*/
 
@@ -172,6 +174,7 @@ public class SaleListProduct {
 				", peasant='" + peasant + '\'' +
 				", clientname='" + clientname + '\'' +
 				", accomplishNumber=" + accomplishNumber +
+				", daBaoShu=" + daBaoShu +
 				", issueState='" + issueState + '\'' +
 				", informNumber=" + informNumber +
 				", remark='" + remark + '\'' +
@@ -179,6 +182,14 @@ public class SaleListProduct {
 				", saleTotal=" + saleTotal +
 				", hebingLength='" + hebingLength + '\'' +
 				'}';
+	}
+
+	public Integer getDaBaoShu() {
+		return daBaoShu;
+	}
+
+	public void setDaBaoShu(Integer daBaoShu) {
+		this.daBaoShu = daBaoShu;
 	}
 
 	public Integer getId() {

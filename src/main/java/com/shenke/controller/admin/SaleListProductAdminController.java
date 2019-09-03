@@ -275,11 +275,10 @@ public class SaleListProductAdminController {
      * @param id
      */
     @RequestMapping("/updateAccomplishNumber")
-    public Map<String, Object> update(Integer id) {
+    public String update(Integer id) {
         Map<String, Object> map = new HashMap<>();
-        saleListProductService.updateAccomplishNumber(id);
-        map.put("success", true);
-        return map;
+        String result = saleListProductService.updateAccomplishNumber(id);
+        return result;
     }
 
     @RequestMapping("/hebingJian")
@@ -446,5 +445,19 @@ public class SaleListProductAdminController {
             saleListProductService.save(saleListProduct);
             return "完成数量等于总数量修改状态为生产完成！";
         }
+    }
+
+    /***
+     * 修改打包数量
+     * @return
+     */
+    @RequestMapping("/updateDaBaoShu")
+    public boolean updateDaBaoShu(Integer id, Integer dabaoshu){
+        System.out.println(id);
+        System.out.println(dabaoshu);
+        SaleListProduct byId = saleListProductService.findById(id);
+        byId.setDaBaoShu(dabaoshu);
+        saleListProductService.save(byId);
+        return true;
     }
 }

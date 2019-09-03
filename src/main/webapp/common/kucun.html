@@ -398,13 +398,13 @@
                     nong_hu = rows[i + 1].peasant;
                     i++;
                 }
-                if (i == rows.length - 1){
+                if (i == rows.length - 1) {
                     sumw += rows[i].theoryweight;
                     count += rows[i].sum;
                     zsumw += rows[i].theoryweight;
                     zcount += rows[i].sum;
                     $('#dg').datagrid('insertRow', {
-                        index: i+1,	// index start with 0
+                        index: i + 1,	// index start with 0
                         row: {
                             clientname: "小计：",
                             peasant: "总数量：" + count + "件",
@@ -412,7 +412,7 @@
                         }
                     });
                     $('#dg').datagrid('insertRow', {
-                        index: i+2,	// index start with 0
+                        index: i + 2,	// index start with 0
                         row: {
                             clientname: "总计：",
                             peasant: "总数量：" + zcount + "件",

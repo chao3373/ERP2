@@ -145,7 +145,7 @@
                             sorter: function (a, b) {
                                 return (a > b ? 1 : -1);
                             }
-                        },{
+                        }, {
                             field: 'peasant',
                             title: '农户名',
                             width: 100,
@@ -239,16 +239,14 @@
                             align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
-                            // $.ajax({
-                            //     url: "/static/setAccomplishNumber?sunNum=" + rowData.num + "&accomplishNumber=" + rowData.accomplishNumber
-                            // });
-                            // informNumber = rowData.informNumber;
+                            console.log(rowData);
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
+                            $("#dabao").val(rowData.daBaoShu);
+                            dabaoNum = rowData.daBaoShu;
                             clearInterval(timer);
                             timer = setInterval(goLeft, 20);
-                            var jitai = $("#selectJitai").combobox(
-                                "getValue");
+                            var jitai = $("#selectJitai").combobox("getValue");
                             $('#dg2').datagrid('loadData', {total: 0, rows: []});
                             var count = rowData.num - rowData.accomplishNumber;
                             for (var i = 0; i < count; i++) {
@@ -447,7 +445,14 @@
                     $(this).datagrid('unselectRow', rowIndex);
                 },
                 rowStyler: function (index, row) {
-                    if (index < dabaoNum - dabaoCount) {
+                    var rowdg = $("#dg").datagrid("getSelected");
+                    var dabao = rowdg.daBaoShu;
+                    var wancheng = rowdg.accomplishNumber;
+                    var count = dabao - (wancheng % dabao);
+                    if (count == 0) {
+                        count = dabao;
+                    }
+                    if (index < count) {
                         return 'background-color:green;color:white';
                     }
                 }
@@ -630,8 +635,87 @@
         }
 
         //点击称重时弹出对话框
-        var aweight = 0;
+        // function weigh() {
+        //     if (!$("#banzu").val() || !$("#staff").val()) {
+        //         $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
+        //         return;
+        //     }
+        //     $("#printButton").show();
+        //     $("#dg2").datagrid("selectRow", 0);
+        //     if ($("#dg2").datagrid("getRows").length == 0) {
+        //         $.messager.alert("系统提示",
+        //             "<span style='color:red;'>数据为空,请选择数据</span>");
+        //         return;
+        //     }
+        //     $.messager
+        //         .prompt(
+        //             '重量',
+        //             '请输入重量：',
+        //             function (weight) {
+        //                 if (weight) {
+        //                     dabaoCount++;
+        //                     $.ajax({
+        //                         url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
+        //                         success: function (result) {
+        //                             if (result.success) {
+        //                                 reloadDg();
+        //                             }
+        //                         }
+        //                     });
+        //                     if (dabaoCount == dabaoNum) {
+        //                         console.log("生产员工" + $("#staff").val())
+        //                         $.ajax({
+        //                             url: "/admin/storage/add",
+        //                             async: false,
+        //                             data: {
+        //                                 saleListProduct: $("#dg").datagrid("getSelected").id,
+        //                                 jiTai: $("#selectJitai").combobox("getValue"),
+        //                                 clerkName: $("#staff").val(),
+        //                                 realityweight: Number(weight),
+        //                                 dabaonum: dabaoCount
+        //                             },
+        //                             success: function (result) {
+        //                                 if (result.success) {
+        //                                     printNum = dabaoCount;
+        //                                     printt(result.id);
+        //                                     // alert("打印" + printNum + "===id:" + result.id);
+        //                                     dabaoCount = 0;
+        //                                 } else {
+        //                                     alert("未知错误");
+        //                                 }
+        //                             }
+        //                         });
+        //                     } else if ($("#dg2").datagrid('getRows').length == 1) {
+        //                         $.ajax({
+        //                             url: "/admin/storage/add",
+        //                             async: false,
+        //                             data: {
+        //                                 saleListProduct: $("#dg").datagrid("getSelected").id,
+        //                                 jiTai: $("#selectJitai").combobox("getValue"),
+        //                                 clerkName: $("#staff").val(),
+        //                                 realityweight: Number(weight),
+        //                                 hebingLength: $("#dg").datagrid("getSelected").hebingLength,
+        //                                 dabaonum: dabaoCount
+        //                             },
+        //                             success: function (result) {
+        //                                 if (result.success) {
+        //                                     printNum = dabaoCount;
+        //                                     dabaoCount = 0;
+        //                                     printt(result.id);
+        //                                     // alert("打印" + printNum + "===id:" + result.id);
+        //                                 } else {
+        //                                     alert("未知错误");
+        //                                 }
+        //                             }
+        //                         });
+        //                     }
+        //                 } else {
+        //                     $.messager.alert("系统提示", "请输入重量!");
+        //                 }
+        //             });
+        // }
 
+        //称重
         function weigh() {
             if (!$("#banzu").val() || !$("#staff").val()) {
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
@@ -650,62 +734,56 @@
                     '请输入重量：',
                     function (weight) {
                         if (weight) {
-                            dabaoCount++;
                             $.ajax({
                                 url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
                                 success: function (result) {
-                                    if (result.success) {
+                                    // alert(result);
+                                    console.log(result);
+                                    if (result.substring(0, 4) == "打包完成") {
+                                        // alert(result);
+                                        console.log(result);
+                                        var num = result.split(":")[1];
+                                        $.ajax({
+                                            url: "/admin/storage/add",
+                                            async: false,
+                                            data: {
+                                                saleListProduct: $("#dg").datagrid("getSelected").id,
+                                                jiTai: $("#selectJitai").combobox("getValue"),
+                                                clerkName: $("#staff").val(),
+                                                realityweight: weight,
+                                                dabaonum: num
+                                            },
+                                            success: function (result) {
+                                                printt(result.id);
+                                                reloadDg();
+                                            }
+                                        });
+                                    } else if (result.substring(0, 4) == "生产完成") {
+                                        // alert(result);
+                                        console.log(result);
+                                        var num = result.split(":")[1];
+                                        $.ajax({
+                                            url: "/admin/storage/add",
+                                            async: false,
+                                            data: {
+                                                saleListProduct: $("#dg").datagrid("getSelected").id,
+                                                jiTai: $("#selectJitai").combobox("getValue"),
+                                                clerkName: $("#staff").val(),
+                                                realityweight: weight,
+                                                dabaonum: num
+                                            },
+                                            success: function (result) {
+                                                printt(result.id);
+                                                reloadDg();
+                                            }
+                                        });
+                                    } else if (result.substring(0, 5) == "只增加数量") {
+                                        // alert(result);
+                                        console.log(result);
                                         reloadDg();
                                     }
                                 }
                             });
-                            if (dabaoCount == dabaoNum) {
-                                console.log("生产员工" + $("#staff").val())
-                                $.ajax({
-                                    url: "/admin/storage/add",
-                                    async: false,
-                                    data: {
-                                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                                        jiTai: $("#selectJitai").combobox("getValue"),
-                                        clerkName: $("#staff").val(),
-                                        realityweight: Number(weight),
-                                        dabaonum: dabaoCount
-                                    },
-                                    success: function (result) {
-                                        if (result.success) {
-                                            printNum = dabaoCount;
-                                            printt(result.id);
-                                            // alert("打印" + printNum + "===id:" + result.id);
-                                            dabaoCount = 0;
-                                        } else {
-                                            alert("未知错误");
-                                        }
-                                    }
-                                });
-                            } else if ($("#dg2").datagrid('getRows').length == 1) {
-                                $.ajax({
-                                    url: "/admin/storage/add",
-                                    async: false,
-                                    data: {
-                                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                                        jiTai: $("#selectJitai").combobox("getValue"),
-                                        clerkName: $("#staff").val(),
-                                        realityweight: Number(weight),
-                                        hebingLength: $("#dg").datagrid("getSelected").hebingLength,
-                                        dabaonum: dabaoCount
-                                    },
-                                    success: function (result) {
-                                        if (result.success) {
-                                            printNum = dabaoCount;
-                                            dabaoCount = 0;
-                                            printt(result.id);
-                                            // alert("打印" + printNum + "===id:" + result.id);
-                                        } else {
-                                            alert("未知错误");
-                                        }
-                                    }
-                                });
-                            }
                         } else {
                             $.messager.alert("系统提示", "请输入重量!");
                         }
@@ -718,61 +796,102 @@
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
                 return;
             }
-            dabaoCount++;
+            // dabaoCount++;
             $.ajax({
                 url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
                 success: function (result) {
-                    if (result.success) {
+                    // alert(result);
+                    console.log(result);
+                    if (result.substring(0, 4) == "打包完成") {
+                        // alert(result);
+                        var num = result.split(":")[1];
+                        $.ajax({
+                            url: "/admin/storage/add",
+                            async: false,
+                            data: {
+                                saleListProduct: $("#dg").datagrid("getSelected").id,
+                                jiTai: $("#selectJitai").combobox("getValue"),
+                                clerkName: $("#staff").val(),
+                                realityweight: $("#dg").datagrid("getSelected").oneweight,
+                                dabaonum: num
+                            },
+                            success: function (result) {
+                                printt(result.id);
+                                reloadDg();
+                            }
+                        });
+                    } else if (result.substring(0, 4) == "生产完成") {
+                        // alert(result);
+                        console.log(result);
+                        var num = result.split(":")[1];
+                        $.ajax({
+                            url: "/admin/storage/add",
+                            async: false,
+                            data: {
+                                saleListProduct: $("#dg").datagrid("getSelected").id,
+                                jiTai: $("#selectJitai").combobox("getValue"),
+                                clerkName: $("#staff").val(),
+                                realityweight: $("#dg").datagrid("getSelected").oneweight,
+                                dabaonum: num
+                            },
+                            success: function (result) {
+                                printt(result.id);
+                                reloadDg();
+                            }
+                        });
+                    } else if (result.substring(0, 5) == "只增加数量") {
+                        // alert(result);
+                        console.log(result);
                         reloadDg();
                     }
                 }
             });
-            if (dabaoCount == dabaoNum) {
-                $.ajax({
-                    url: "/admin/storage/add",
-                    async: false,
-                    data: {
-                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                        jiTai: $("#selectJitai").combobox("getValue"),
-                        clerkName: $("#staff").val(),
-                        realityweight: $("#dg").datagrid("getSelected").oneweight,
-                        dabaonum: dabaoCount
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            printNum = dabaoCount;
-                            printt(result.id);
-                            // alert("打印" + printNum + "===id:" + result.id);
-                            dabaoCount = 0;
-                        } else {
-                            alert("未知错误");
-                        }
-                    }
-                });
-            } else if ($("#dg2").datagrid('getRows').length == 1) {
-                $.ajax({
-                    url: "/admin/storage/add",
-                    async: false,
-                    data: {
-                        saleListProduct: $("#dg").datagrid("getSelected").id,
-                        jiTai: $("#selectJitai").combobox("getValue"),
-                        clerkName: $("#staff").val(),
-                        realityweight: Number(weight),
-                        hebingLength: $("#dg").datagrid("getSelected").hebingLength,
-                        dabaonum: dabaoCount
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            printNum = dabaoCount;
-                            dabaoCount = 0;
-                            printt(result.id);
-                            // alert("打印" + printNum + "===id:" + result.id);
-                        } else {
-                            alert("未知错误");
-                        }
-                    }
-                });
-            }
+            // if (dabaoCount == dabaoNum) {
+            //     $.ajax({
+            //         url: "/admin/storage/add",
+            //         async: false,
+            //         data: {
+            //             saleListProduct: $("#dg").datagrid("getSelected").id,
+            //             jiTai: $("#selectJitai").combobox("getValue"),
+            //             clerkName: $("#staff").val(),
+            //             realityweight: $("#dg").datagrid("getSelected").oneweight,
+            //             dabaonum: dabaoCount
+            //         },
+            //         success: function (result) {
+            //             if (result.success) {
+            //                 printNum = dabaoCount;
+            //                 printt(result.id);
+            //                 // alert("打印" + printNum + "===id:" + result.id);
+            //                 dabaoCount = 0;
+            //             } else {
+            //                 alert("未知错误");
+            //             }
+            //         }
+            //     });
+            // } else if ($("#dg2").datagrid('getRows').length == 1) {
+            //     $.ajax({
+            //         url: "/admin/storage/add",
+            //         async: false,
+            //         data: {
+            //             saleListProduct: $("#dg").datagrid("getSelected").id,
+            //             jiTai: $("#selectJitai").combobox("getValue"),
+            //             clerkName: $("#staff").val(),
+            //             realityweight: Number(weight),
+            //             hebingLength: $("#dg").datagrid("getSelected").hebingLength,
+            //             dabaonum: dabaoCount
+            //         },
+            //         success: function (result) {
+            //             if (result.success) {
+            //                 printNum = dabaoCount;
+            //                 dabaoCount = 0;
+            //                 printt(result.id);
+            //                 // alert("打印" + printNum + "===id:" + result.id);
+            //             } else {
+            //                 alert("未知错误");
+            //             }
+            //         }
+            //     });
+            // }
         }
 
         //重新加载dg2跟dg的数据
@@ -855,10 +974,10 @@
                                     tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
                                 }
                                 if ($('#printLength').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>压边：" + row.dao + "</td></tr>";
+                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
                                 }
                                 tableString += "<tr><td>客户：" + row.clientname + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
-                                if (isNaN(row.price)){
+                                if (isNaN(row.price)) {
                                     tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "</td></tr>";
                                 } else {
                                     tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
@@ -866,7 +985,7 @@
                                 if (row.hebingLength != null) {
                                     tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {
-                                    if ($("#changdu").val()){
+                                    if ($("#changdu").val()) {
                                         tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                     } else {
                                         tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
@@ -943,14 +1062,27 @@
 
         //设置打包数量
         function setDabao() {
-            if (dabaoCount != 0) {
-                $.messager.alert("系统提示", "<span style='color: red;'>请先完成当前打包任务</span>");
-                return;
-            }
-            $("#dabao").numberbox("disable");
-            dabaoNum = $("#dabao").numberbox("getValue");
-            dabaoCount = 0;
-            reSelect();
+            // if (dabaoCount != 0) {
+            //     $.messager.alert("系统提示", "<span style='color: red;'>请先完成当前打包任务</span>");
+            //     return;
+            // }
+            var row = $("#dg").datagrid("getSelected");
+            var Index = $("#dg").datagrid("getRowIndex", row);
+            $.ajax({
+                type: "POST",
+                url: "/admin/saleListProduct/updateDaBaoShu?dabaoshu=" + $("#dabao").val() + "&id=" + $("#dg").datagrid("getSelected").id,
+                success: function (result) {
+                    if (result) {
+                        alert("修改成功！");
+                        $("#dabao").numberbox("disable");
+                        // reSelect();
+                        start();
+                        $('#dg2').datagrid('loadData', []);
+                    }
+                }
+            });
+            // dabaoNum = $("#dabao").val();
+            // dabaoCount = 0;
         }
 
         //重新选择当前选中的行
@@ -1035,15 +1167,16 @@
         }
 
         //关闭非标
-        function feibiaoclose(){
+        function feibiaoclose() {
             $("#dd3").dialog("close");
         }
+
         //非标入库
         function feibiao() {
             $("#dd3").dialog("open");
         }
 
-        function feibiaosave(){
+        function feibiaosave() {
             $.ajax({
                 url: "/admin/storage/add",
                 data: {
@@ -1065,7 +1198,7 @@
             });
         }
 
-        function feibiaosaveadd(){
+        function feibiaosaveadd() {
             $.ajax({
                 url: "/admin/storage/add",
                 data: {
@@ -1081,7 +1214,7 @@
                         $.ajax({
                             url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
                             success: function (result) {
-                                if (result.success) {
+                                if (result) {
                                     feibiaoclose();
                                     reloadDg();
                                     $("#zhongliang").val("");
@@ -1150,10 +1283,10 @@
             disabledInput();
             set();
             $("#yaoqiu").hide();
-            $("#dabao").numberbox("setValue", 1);
-            dabaoNum = $("#dabao").numberbox("getValue");
-            dabaoCount = 0;
-            setDabao();
+            $("#dabao").numberbox("disable");
+            // dabaoNum = $("#dabao").numberbox("getValue");
+            // dabaoCount = 0;
+            // setDabao();
         });
     </script>
 </head>
@@ -1275,7 +1408,7 @@
         <div>宽度：<input type="number" id="model" name="model"></div>
         <div>颜色：<input type="text" id="color" name="color"></div>
         <input type="hidden" id="jiTai" name="jiTai">
-        <div>压边：<input type="text" id="dao" name="dao" class="easyui-combobox"
+        <div>剖刀：<input type="text" id="dao" name="dao" class="easyui-combobox"
                        data-options="valueField:'name',textField:'name',url:'/admin/dao/daoList'"></div>
     </form>
 </div>

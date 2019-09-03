@@ -134,6 +134,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     @Override
     public void saveList(List<SaleListProduct> plgList) {
         for (SaleListProduct saleListProduct : plgList) {
+            saleListProduct.setDaBaoShu(1);
             saleListProductRepository.save(saleListProduct);
         }
     }
@@ -248,38 +249,39 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
-    public void updateAccomplishNumber(Integer id) {
+    public String updateAccomplishNumber(Integer id) {
         SaleListProduct saleListProduct = this.findById(id);
+        //完成数+1
         Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
+        System.out.println("count: " + count);
         Integer num = saleListProduct.getNum();
-        System.out.println(count);
-        System.out.println(num);
-        if (count + 1 == num) {
-            count = num;
-            System.out.println(count);
-            System.out.println(num);
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+        Integer daBaoShu = saleListProduct.getDaBaoShu();
+        Integer countt = count + 1;
+        System.out.println("countt:" + countt);
+        saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
+        if (countt == num) {
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+            if (countt % daBaoShu == 0) {
+                return "生产完成:" + daBaoShu;
+            } else {
+                return "生产完成:" + countt % daBaoShu;
+            }
+        } else if (countt % daBaoShu == 0) {
+            return "打包完成:" + daBaoShu;
         } else {
-            count += 1;
-            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+            return "只增加数量";
         }
-//        if (num == 1) {
-//            count = 1;
-//            saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+//        System.out.println(count);
+//        System.out.println(num);
+//        if (count + 1 == num) {
+//            count = num;
+//            System.out.println(count);
+//            System.out.println(num);
+//            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
+//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
 //        } else {
-//            if (count == null || count == 0) {
-//                count = 1;
-//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-//            } else if (count == saleListProduct.getNum() - 1) {
-//                count += 1;
-//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-//                saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-//                saleListProductRepository.updateIussueState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-//            } else {
-//                count += 1;
-//                saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-//            }
+//            count += 1;
+//            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
 //        }
     }
 
@@ -396,7 +398,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     public String updateNum(Integer num, Integer id) {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
         Integer wc = saleListProduct.getAccomplishNumber();
-        if (wc == null){
+        if (wc == null) {
             wc = 0;
         }
         if (wc == num) {
@@ -408,7 +410,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         } else {
             saleListProductRepository.updateNum(num, id);
             String state = saleListProductRepository.findOne(id).getState();
-            if (state.startsWith("审核成功") || state.startsWith("未审核")){
+            if (state.startsWith("审核成功") || state.startsWith("未审核")) {
                 return "修改成功！";
             }
             saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);

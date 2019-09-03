@@ -169,7 +169,7 @@ public interface SaleListProductService {
 	List<SaleListProduct> searchJitai(Map<String, Object> map);
 
 
-    void updateAccomplishNumber(Integer id);
+	String updateAccomplishNumber(Integer id);
 
     void hebingJian(Integer count, Integer id);
 

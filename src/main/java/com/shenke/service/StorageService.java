@@ -129,6 +129,7 @@ public interface StorageService {
 
     Integer countBySaleListProductId(Integer id, Storage storage, String state);
 
+
     public List<Storage> findSaleListNumber();
 
     public List<Storage> findStorage(String saleNumber);
