@@ -3,15 +3,13 @@ package com.shenke.controller.admin;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.shenke.service.StorageService;
+import com.shenke.entity.JiTai;
+import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.shenke.entity.Log;
 import com.shenke.entity.SaleListProduct;
-import com.shenke.service.ClientService;
-import com.shenke.service.LogService;
-import com.shenke.service.SaleListProductService;
 
 @RestController
 @RequestMapping("/admin/saleListProduct")
@@ -28,6 +26,9 @@ public class SaleListProductAdminController {
 
     @Resource
     private StorageService storageService;
+
+    @Resource
+    private JiTaiService jiTaiService;
 
     /**
      * 订单审核通过
@@ -289,6 +290,40 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    /***
+     * 修改机台
+     * @return
+     */
+    @RequestMapping("/UpdateJiTai")
+    public String UpdateJiTai(Integer[] idarr, Integer jitai) {
+        for (int i = 0; i < idarr.length; i++) {
+            SaleListProduct saleListProduct = saleListProductService.findById(idarr[i]);
+            if (saleListProduct.getJiTai() != null) {
+                System.out.println(saleListProduct);
+                JiTai jiTai = saleListProduct.getJiTai();
+                JiTai byId = jiTaiService.findById(jitai);
+                String state = saleListProduct.getState();
+                String issueState = saleListProduct.getIssueState();
+                String state1 = state.replace(jiTai.getName(), byId.getName());
+                String issuestate1 = issueState.replace(jiTai.getName(), byId.getName());
+                System.out.println(jiTai);
+                System.out.println(byId);
+                System.out.println(state);
+                System.out.println(state1);
+                System.out.println(issueState);
+                System.out.println(issuestate1);
+                saleListProduct.setState(state1);
+                saleListProduct.setIssueState(issuestate1);
+                saleListProduct.setJiTai(byId);
+                System.out.println(saleListProduct);
+                saleListProductService.save(saleListProduct);
+            } else {
+                return "存在未下发机台信息，无法修改！";
+            }
+        }
+        return "修改成功！！";
+    }
+
     @RequestMapping("/hebingOne")
     public Map<String, Object> hebingOne(String ids) {
         System.out.println(ids);
@@ -429,7 +464,7 @@ public class SaleListProductAdminController {
         System.out.println(wancheng);
         if (count > wancheng) {
             return "库存中已完成比该数量多的件数，请删除库存！库存中的数量：" + count;
-        } else if (count < wancheng){
+        } else if (count < wancheng) {
             return "库存中改订单的货物完成数量不足，请进行生产！当前库存中的数量：" + count;
         }
         if (wancheng > num) {
@@ -452,7 +487,7 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/updateDaBaoShu")
-    public boolean updateDaBaoShu(Integer id, Integer dabaoshu){
+    public boolean updateDaBaoShu(Integer id, Integer dabaoshu) {
         System.out.println(id);
         System.out.println(dabaoshu);
         SaleListProduct byId = saleListProductService.findById(id);

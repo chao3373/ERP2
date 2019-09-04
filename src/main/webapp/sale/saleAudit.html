@@ -596,22 +596,22 @@
                                     title: "实际重量（kg）",
                                     width: "50",
                                     align: "center"
-                                },{
+                                }, {
                                     field: "accomplishNumber",
                                     title: "完成数",
                                     width: "50",
                                     align: "center"
-                                },  {
+                                }, {
                                     field: "clientname",
                                     title: "客户名称",
                                     width: "100",
                                     align: "center"
-                                },{
+                                }, {
                                     field: "peasant",
                                     title: "农户名称",
                                     width: "50",
                                     align: "center"
-                                },{
+                                }, {
                                     field: "saleListId",
                                     title: "ID",
                                     width: "100",
@@ -756,17 +756,17 @@
         }
 
         //删除选中的订单信息
-        function deleteSaleList(){
-            if ($("#dg").datagrid('getSelected') == null){
+        function deleteSaleList() {
+            if ($("#dg").datagrid('getSelected') == null) {
                 alert("请选择一条要删除的信息");
                 return;
             }
             $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除选中的订单信息吗？</span>", function (r) {
-                if (r){
+                if (r) {
                     var id = $("#dg").datagrid('getSelected').id;
                     $.ajax({
-                        url:"/admin/saleList/delete?id=" + id,
-                        success:function(){
+                        url: "/admin/saleList/delete?id=" + id,
+                        success: function () {
                             $("#dg").datagrid('reload');
                         }
                     });
@@ -804,25 +804,26 @@
         }
 
         //修改数量
-        function updateshuliang(){
+        function updateshuliang() {
             var rows = $("#dg2").datagrid("getSelections");
-            if (!$("#shuliang").val()){
+            if (!$("#shuliang").val()) {
                 alert("请输入数量！");
                 return;
             }
-            if (rows.length != 1){
+            if (rows.length != 1) {
                 alert("请选择一条要修改的数据");
                 return;
             }
             var row = rows[0];
             $.ajax({
-                url:"/admin/saleListProduct/updateNum?num=" +$("#shuliang").val() + "&id=" + row.id,
-                success:function (result) {
-                    if (result){
+                url: "/admin/saleListProduct/updateNum?num=" + $("#shuliang").val() + "&id=" + row.id,
+                success: function (result) {
+                    if (result) {
                         alert(result);
                         $("#dg2").datagrid("reload");
                         return;
-                    };
+                    }
+                    ;
                     alert("未知错误！");
                     return;
                 }
@@ -830,28 +831,55 @@
         }
 
         //修改完成数
-        function updateWanCheng(){
+        function updateWanCheng() {
             var rows = $("#dg2").datagrid("getSelections");
-            if (!$("#wancheng").val()){
+            if (!$("#wancheng").val()) {
                 alert("请输入数量！");
                 return;
             }
-            if (rows.length != 1){
+            if (rows.length != 1) {
                 alert("请选择一条要修改的数据");
                 return;
             }
             var row = rows[0];
             console.log($("#shuliang").val());
             $.ajax({
-                url:"/admin/saleListProduct/updateWanCehng?wancheng=" +$("#wancheng").val() + "&id=" + row.id,
-                success:function (result) {
-                    if (result){
+                url: "/admin/saleListProduct/updateWanCehng?wancheng=" + $("#wancheng").val() + "&id=" + row.id,
+                success: function (result) {
+                    if (result) {
                         alert(result);
                         $("#dg2").datagrid("reload");
                         return;
-                    };
+                    }
+                    ;
                     alert("未知错误！");
                     return;
+                }
+            });
+        }
+
+        function updatajitai() {
+            var ids = [];
+            var rows = $("#dg2").datagrid("getSelections");
+            if (rows.length < 1) {
+                alert("请选择要修改的数据！！");
+                return;
+            }
+            if (!$("#updatejitai").combobox("getValue")) {
+                alert("请选择机台！！");
+                return;
+            }
+            for (var i = 0; i < rows.length; i++) {
+                ids.push(rows[i].id);
+            }
+            var idarr = ids.join(",");
+            $.ajax({
+                type: "POST",
+                url: "/admin/saleListProduct/UpdateJiTai",
+                data: {idarr: idarr, jitai: $("#updatejitai").combobox("getValue")},
+                success: function (result) {
+                    alert(result);
+                    $("#dg2").datagrid("reload");
                 }
             });
         }
@@ -962,12 +990,16 @@
            plain="true">修改</a>
         &nbsp;&nbsp;数量：<input type="text" id="shuliang">
         <a href="javascript:updateshuliang()"
-                       class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改数量</a>
+           class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改数量</a>
         &nbsp;&nbsp;完成数：<input type="text" id="wancheng">
         <a href="javascript:updateWanCheng()"
            class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改完成数</a>
-        <a href="javascript:deleteSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"
-           plain="true">删除</a>
+        <a href="javascript:deleteSaleListProduct()" class="easyui-linkbutton" iconCls="icon-remove"
+           plain="true">删除本条数据</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改机台：<input class="easyui-combobox" id="updatejitai" name="jiTai"
+                                                  style="width: 100px"
+                                                  data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+        <a href="javascript:updatajitai()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
     </div>
 </div>
 
