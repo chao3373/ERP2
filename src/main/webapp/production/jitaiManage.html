@@ -249,6 +249,9 @@
                             var jitai = $("#selectJitai").combobox("getValue");
                             $('#dg2').datagrid('loadData', {total: 0, rows: []});
                             var count = rowData.num - rowData.accomplishNumber;
+                            if (count > 10) {
+                                count = 10;
+                            }
                             for (var i = 0; i < count; i++) {
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
                             }
