@@ -488,6 +488,9 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getGroupName())) {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
                 }
+                if (StringUtil.isNotEmpty(storage.getClerkName())){
+                    predicate.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
+                }
                 if (star != null) {
                     System.out.println("开始时间");
                     System.out.println(star);

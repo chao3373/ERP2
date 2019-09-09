@@ -449,26 +449,33 @@
     <form id="fm">
         <table>
             <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" name="saleNumber" style="width: 130px"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input
-                        class="easyui-combobox" id="location" name="location"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input
-                        class="easyui-combobox" id="jitai" name="jiTai"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
-                </td>
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" name="saleNumber" style="width: 130px"/>-->
+                <!--</td>-->
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input-->
+                        <!--class="easyui-combobox" id="location" name="location"-->
+                        <!--style="width: 100px"-->
+                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>-->
+                <!--</td>-->
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input-->
+                        <!--class="easyui-combobox" id="jitai" name="jiTai"-->
+                        <!--style="width: 100px"-->
+                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>-->
+                <!--</td>-->
 
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
+                        class="easyui-combobox" id="clientname" name="clientname"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                </td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称： <input id="peasant" name="peasant" style="width: 100px"/>
-
-                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
-                                                 iconCls="icon-reload">刷新</a>
-
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;产品名称：<input
+                        class="easyui-combobox" id="name" name="name"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/product/productList'"/>
                 </td>
-                <td></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
+                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                </td>
                 <!--<td rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;设置仓位： <input-->
                 <!--class="easyui-combobox" id="cang" name="location"-->
                 <!--style="width: 100px"-->
@@ -477,40 +484,8 @@
                 <!--<td rowspan="2"> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:setLocation()" class="easyui-linkbutton"-->
                 <!--iconCls="icon-ok">确定</a>&nbsp;&nbsp;&nbsp;&nbsp; -->
                 <!--</td>-->
-                <td>
-                    <a
-                            href="javascript:printdg()" class="easyui-linkbutton"
-                            iconCls="icon-print" plain="true">打印</a>
-                </td>
             </tr>
             <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input
-                        type="text" id="dateInProduced" name="dateInProducedd" class="easyui-datebox"
-                        demandd="true" size="15"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input
-                        class="easyui-combobox" id="group" name="group"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input
-                        class="easyui-combobox" id="clerk" name="clerk"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
-                        class="easyui-combobox" id="clientname" name="clientname"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
-                </td>
-
-                <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:screenSale()"
-                                                class="easyui-linkbutton" iconCls="icon-search">查询</a>
-                </td>
-            </tr>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;长&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp;<input
-                        type="text" id="length" name="length"
-                        demandd="true" size="15"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;宽&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度&nbsp;： <input
                         id="model" name="model"
                         style="width: 100px"
@@ -528,17 +503,43 @@
                 <td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:heJi()"
                                                 class="easyui-linkbutton" iconCls="icon-add">合计</a>
                 </td>
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input-->
+                        <!--type="text" id="dateInProduced" name="dateInProducedd" class="easyui-datebox"-->
+                        <!--demandd="true" size="15"/></td>-->
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input-->
+                        <!--class="easyui-combobox" id="group" name="group"-->
+                        <!--style="width: 100px"-->
+                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>-->
+                <!--</td>-->
+                <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input-->
+                        <!--class="easyui-combobox" id="clerk" name="clerk"-->
+                        <!--style="width: 100px"-->
+                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>-->
+                <!--</td>-->
+
             </tr>
             <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;色：&nbsp;&nbsp;<input type="text" id="color" name="color"
-                                                                                    size="15"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;产品名称：<input
-                        class="easyui-combobox" id="name" name="name"
-                        style="width: 100px"
-                        data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/product/productList'"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度&nbsp;：&nbsp;<input
+                        type="text" id="length" name="length"
+                        demandd="true" size="10"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色&nbsp;： <input type="text" id="color" name="color"
+                                                                                    size="10"/></td>
+
+                <td></td>
+
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
+                                                 iconCls="icon-reload">刷新</a>
+
                 </td>
-                <td></td>
-                <td></td>
+                <td>
+                    <a
+                            href="javascript:printdg()" class="easyui-linkbutton"
+                            iconCls="icon-print" plain="true">打印</a>
+                </td>
+
+            </tr>
+            <tr>
+
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:daochu()"-->
                 <!--class="easyui-linkbutton" iconCls="icon-search">导出</a>-->
                 <!--</td>-->
