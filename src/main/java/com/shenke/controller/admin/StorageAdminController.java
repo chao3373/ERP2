@@ -316,7 +316,7 @@ public class StorageAdminController {
         map.put("success", true);
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            Integer integer = storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage, "%装车%");
+            Integer integer = storageService.countBySaleListProductIdDetail(storage.getSaleListProduct().getId(), storage, "%装车%", (String)map1.get("date"));
             System.out.println(integer);
             storage.setSum(integer);
         }

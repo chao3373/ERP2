@@ -187,4 +187,6 @@ public interface StorageService {
     List<Storage> findBySaleListProductId(int id);
 
     void updateshijian(Integer id, Date parse);
+
+    Integer countBySaleListProductIdDetail(Integer id, Storage storage, String s, String date);
 }

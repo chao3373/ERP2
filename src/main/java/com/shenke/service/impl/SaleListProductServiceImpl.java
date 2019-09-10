@@ -271,18 +271,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         } else {
             return "只增加数量";
         }
-//        System.out.println(count);
-//        System.out.println(num);
-//        if (count + 1 == num) {
-//            count = num;
-//            System.out.println(count);
-//            System.out.println(num);
-//            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-//        } else {
-//            count += 1;
-//            saleListProductRepository.updateAccomplishNumberById(count, saleListProduct.getId());
-//        }
     }
 
     @Override
