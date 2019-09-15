@@ -18,7 +18,7 @@ public interface StorageService {
      *
      */
     public void add(Storage storage, String clerkName, String groupName);
-    public void add(Storage storage, String clerkName, String groupName, Double changdu);
+    public void add(Storage storage, String clerkName, String groupName, Double changdu, String type);
 
     /**
      * 非标入库单
@@ -45,7 +45,7 @@ public interface StorageService {
     /**
      * 改为已出库
      */
-    public void outStorage(int id, Date date);
+    public void outStorage(String[] id, Date date);
 
     /**
      * 查询未出库的信息
@@ -68,7 +68,7 @@ public interface StorageService {
     * @Author: Andy
     * @Date:
     */
-    public void updateStateById(String state, Integer id, Date date, String ck);
+    public void updateStateById(String state, String[] id, Date date, String ck);
 
     /**
      * 根据客户查询并按照产品名称排序
@@ -127,7 +127,7 @@ public interface StorageService {
 
     public List<Count> FindBySaleListId();
 
-    Integer countBySaleListProductId(Integer id, Storage storage, String state);
+    Integer countBySaleListProductId(Integer id, Storage storage, String state, String dateInProducedd, String dateInProduceddd);
 
 
     public List<Storage> findSaleListNumber();
@@ -143,9 +143,9 @@ public interface StorageService {
 
     List<Storage> select(Storage storage, String dateInProducedd);
 
-    List<Storage> selectt(Storage storage, String dateInProducedd);
+    List<Storage> selectt(Storage storage, String dateInProducedd, String dateInProduceddd);
 
-    void updateByIdAndState(int parseInt, String state);
+    void updateByIdAndState(String[] parseInt, String state);
 
     List<Storage> selectByState(String state);
 

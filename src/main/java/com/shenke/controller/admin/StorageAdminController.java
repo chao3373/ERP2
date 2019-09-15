@@ -14,6 +14,7 @@ import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -50,12 +51,12 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/add")
-    public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu) {
+    public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu, String type) {
         System.out.println(storage);
         System.out.println("员工名称：" + clerkName);
         if (changdu != null) {
-            storageService.add(storage, clerkName, groupName, changdu);
-        }else {
+            storageService.add(storage, clerkName, groupName, changdu, type);
+        } else {
             storageService.add(storage, clerkName, groupName);
         }
         Map<String, Object> map = new HashMap<String, Object>();
@@ -104,11 +105,12 @@ public class StorageAdminController {
     public Map<String, Object> outStorage(String ids) {
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
-        for (int i = 0; i < idArr.length; i++) {
-            int id = Integer.parseInt(idArr[i]);
-            logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
-            storageService.outStorage(id, new Date());
-        }
+        storageService.outStorage(idArr, new Date());
+//        for (int i = 0; i < idArr.length; i++) {
+//            int id = Integer.parseInt(idArr[i]);
+//            logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
+//            storageService.outStorage(id, new Date());
+//        }
         map.put("success", true);
         return map;
     }
@@ -127,9 +129,10 @@ public class StorageAdminController {
         String ck = storageService.genCode();
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
-        for (int i = 0; i < idArr.length; i++) {
-            storageService.updateStateById("装车", Integer.parseInt(idArr[i]), new Date(), ck);
-        }
+        storageService.updateStateById("装车", idArr, new Date(), ck);
+//        for (int i = 0; i < idArr.length; i++) {
+//            storageService.updateStateById("装车", Integer.parseInt(idArr[i]), new Date(), ck);
+//        }
         map.put("success", true);
         return map;
     }
@@ -213,13 +216,15 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String pleasant) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String productDatee, String pleasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-
+        System.out.println(productDate);
+        System.out.println(productDatee);
         map1.put("saleNumber", saleNumber);
         map1.put("pleasant", pleasant);
         map1.put("productDate", productDate);
+        map1.put("productDatee", productDatee);
         map1.put("realityweight", realityweight);
         map1.put("name", name);
         map1.put("client", client);
@@ -300,7 +305,8 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/detail")
-    public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
+    public Map<String, Object> detail(String date, String client, String peasant, String product, String chukudanhao, String order) throws ParseException {
+        System.out.println("出库单号：" + chukudanhao);
         System.out.println(date);
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
@@ -313,13 +319,17 @@ public class StorageAdminController {
         map1.put("peasant", peasant);
         map1.put("product", product);
         map1.put("order", order);
-        map.put("success", true);
+        map1.put("chukudanhao", chukudanhao);
+        System.out.println(map1.get("chukudanhao"));
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            Integer integer = storageService.countBySaleListProductIdDetail(storage.getSaleListProduct().getId(), storage, "%装车%", (String)map1.get("date"));
+            Integer integer = storageService.countBySaleListProductIdDetail(storage.getSaleListProduct().getId(), storage, "%装车%", (String) map1.get("date"));
             System.out.println(integer);
             storage.setSum(integer);
+            storage.setTheoryweight(storage.getSum() * storage.getRealityweight());
+            storage.setRealityweight(storage.getRealityweight() * storage.getDabaonum());
         }
+        map.put("success", true);
         map.put("rows", storageList);
         return map;
     }
@@ -456,7 +466,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/select")
     public Map<String, Object> select(Storage storage, String dateInProducedd) {
-        if (storage.getGroup()!=null){
+        if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
@@ -474,7 +484,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/selectEdit")
     public Map<String, Object> selectEdit(Storage storage, String dateInProducedd) {
-        if (storage.getGroup()!=null){
+        if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
@@ -489,16 +499,18 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/findKuCun")
-    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd) {
-        if (storage.getGroup()!=null){
+    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd) {
+        System.out.println(dateInProducedd);
+        System.out.println(dateInProduceddd);
+        if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        List<Storage> list = storageService.selectt(storage, dateInProducedd);
-        for(Storage st : list){
-            Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%");
+        List<Storage> list = storageService.selectt(storage, dateInProducedd, dateInProduceddd);
+        for (Storage st : list) {
+            Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%", dateInProducedd, dateInProduceddd);
             st.setSum(integer);
-            st.setTheoryweight(st.getSum()*st.getRealityweight());
+            st.setTheoryweight(st.getSum() * st.getRealityweight());
         }
         map.put("success", true);
         map.put("rows", list);
@@ -512,7 +524,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updateshijian")
-    public String updateshijian(Integer[] ids, String date){
+    public String updateshijian(Integer[] ids, String date) {
         try {
             Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
             for (int i = 0; i < ids.length; i++) {
@@ -534,9 +546,10 @@ public class StorageAdminController {
     @RequestMapping("/updateByIdsAndState")
     public Map<String, Object> updateByIdAndState(String idArr, String state) {
         Map<String, Object> map = new HashMap<>();
-        for (int i = 0; i < idArr.split(",").length; i++) {
-            storageService.updateByIdAndState(Integer.parseInt(idArr.split(",")[i]), state);
-        }
+        String[] split = idArr.split(",");
+        storageService.updateByIdAndState(split, state);
+//        for (int i = 0; i < idArr.split(",").length; i++) {
+//        }
         map.put("success", true);
         return map;
     }
@@ -572,10 +585,11 @@ public class StorageAdminController {
     public Map<String, Object> goBackku(String ids) {
         Map<String, Object> map = new HashMap<>();
         String[] split = ids.split(",");
-        for (int i = 0; i < split.length; i++) {
-            Storage storage = storageService.findById(Integer.parseInt(split[i]));
-            storageService.updateByIdAndState(Integer.parseInt(split[i]), "生产完成：" + storage.getJiTaiName());
-        }
+        storageService.updateByIdAndState(split, "生产完成");
+//        for (int i = 0; i < split.length; i++) {
+//            Storage storage = storageService.findById(Integer.parseInt(split[i]));
+//
+//        }
         map.put("success", true);
         return map;
     }
@@ -621,7 +635,7 @@ public class StorageAdminController {
     public Map<String, Object> selectMonth(String month, String year) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
-        List<Month> list= new ArrayList<>();
+        List<Month> list = new ArrayList<>();
         list.add(storageService.selectMonth(month, year));
         map.put("rows", list);
         return map;
@@ -633,17 +647,17 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/selectYear")
-    public Map<String, Object> selectYear(String year){
+    public Map<String, Object> selectYear(String year) {
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
-        List<Month> list= new ArrayList<>();
+        List<Month> list = new ArrayList<>();
         list.add(storageService.selectYear(year));
         map.put("rows", list);
         return map;
     }
 
     @RequestMapping("/updatebanzu")
-    public Map<String, Object> updatebanzu(Integer[] ids, String banzu){
+    public Map<String, Object> updatebanzu(Integer[] ids, String banzu) {
         Map<String, Object> map = new HashMap<>();
         Group group = groupService.findByGroupName(banzu);
         for (int i = 0; i < ids.length; i++) {
@@ -660,7 +674,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updatezhongliang")
-    public String updatezhongliang(Integer id, Double zhongliang){
+    public String updatezhongliang(Integer id, Double zhongliang) {
         storageService.updatezhongliang(id, zhongliang);
         return "修改成功";
     }
@@ -671,7 +685,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/deletekucun")
-    public String deletekucun(Integer id){
+    public String deletekucun(Integer id) {
         Storage storage = storageService.findById(id);
         return storageService.deletekucun(id);
     }
@@ -682,7 +696,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updatechangdu")
-    public String updatechangdu(Integer changdu, Integer id){
+    public String updatechangdu(Integer changdu, Integer id) {
         storageService.updatechangdu(changdu, id);
         return "修改成功";
     }
@@ -693,7 +707,7 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updatehoudu")
-    public String updatehoudu(String houdu, Integer[] idArr){
+    public String updatehoudu(String houdu, Integer[] idArr) {
         for (int i = 0; i < idArr.length; i++) {
             storageService.updatehoudu(houdu, idArr[i]);
         }
@@ -702,7 +716,7 @@ public class StorageAdminController {
 
     //根据条件查询提货商品
     @RequestMapping("/selectTihuo")
-    public List<Storage> selectTihuo(String pandianji){
+    public List<Storage> selectTihuo(String pandianji) {
         System.out.println(pandianji);
         return storageService.selectTihuo(pandianji);
     }

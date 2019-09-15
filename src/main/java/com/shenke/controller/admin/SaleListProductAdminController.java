@@ -4,7 +4,9 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.shenke.entity.JiTai;
+import com.shenke.entity.Storage;
 import com.shenke.service.*;
+import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -276,11 +278,59 @@ public class SaleListProductAdminController {
      * @param id
      */
     @RequestMapping("/updateAccomplishNumber")
-    public String update(Integer id) {
+    public synchronized Map<String, Object> update(Integer id, Integer jiTai, String clerkName, Double realityweight, String type, Double changdu, String groupName) {
+        SaleListProduct saleListProduct = saleListProductService.findById(id);
+        Integer daBaoShu = saleListProduct.getDaBaoShu();
+        System.out.println(jiTai);
+        JiTai jiTaiServiceById = jiTaiService.findById(jiTai);
+        saleListProductService.findById(id);
+        Storage storage = new Storage();
+        storage.setJiTai(jiTaiServiceById);
+        storage.setSaleListProduct(saleListProduct);
+        if (type.equals("快速")) {
+            storage.setRealityweight(saleListProduct.getOneweight());
+            LogUtil.printLog("快速打码===重量：" + saleListProduct.getOneweight() + "===员工：" + clerkName);
+        } else {
+            LogUtil.printLog("称重===重量：" + realityweight + "===员工：" + clerkName);
+            storage.setRealityweight(realityweight);
+        }
         Map<String, Object> map = new HashMap<>();
         String result = saleListProductService.updateAccomplishNumber(id);
-        return result;
+        if (result.split(":").length > 1) {
+            int num = Integer.parseInt(result.split(":")[1]);
+            LogUtil.printLog("===打包数量:" + num);
+            storage.setDabaonum(num);
+        }
+        if (result.startsWith("生产完成")) {
+            if (changdu != null) {
+                storageService.add(storage, clerkName, groupName, changdu, null);
+            } else {
+                storageService.add(storage, clerkName, groupName);
+            }
+            map.put("success", true);
+            map.put("id", storageService.selectByMaxId().getId());
+        } else if (result.startsWith("打包完成")) {
+            if (changdu != null) {
+                storageService.add(storage, clerkName, groupName, changdu, null);
+            } else {
+                storageService.add(storage, clerkName, groupName);
+            }
+            map.put("success", true);
+            map.put("id", storageService.selectByMaxId().getId());
+        } else if (result.startsWith("生产已完成")) {
+            map.put("success", true);
+            map.put("msg", result);
+        } else {
+            map.put("success", false);
+        }
+        return map;
     }
+//    @RequestMapping("/updateAccomplishNumber")
+//    public String update(Integer id) {
+//        Map<String, Object> map = new HashMap<>();
+//        String result = saleListProductService.updateAccomplishNumber(id);
+//        return result;
+//    }
 
     @RequestMapping("/hebingJian")
     public Map<String, Object> hebingJian(Integer count, Integer id) {

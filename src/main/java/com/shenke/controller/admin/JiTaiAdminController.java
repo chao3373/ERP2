@@ -42,6 +42,8 @@ public class JiTaiAdminController {
 	@RequiresPermissions(value = "机台设置")
 	public Map<String, Object> list(JiTai jitai, @RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "rows", required = false) Integer rows) throws Exception {
+		System.out.println(page);
+		System.out.println(rows);
 		Map<String, Object> resultMap = new HashMap<>();
 		List<JiTai> entrepotList = jiTaiService.list(jitai, page, rows, Direction.ASC, "id");
 		Long total = jiTaiService.getCount(jitai);

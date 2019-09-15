@@ -13,6 +13,7 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="/static/datagrid-export/datagrid-export.js"></script>
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -210,7 +211,11 @@
 
         //点击打印
         function printDatagrid() {
+            // $('#dg').datagrid('print','DataGrid');
+            $("#dg").datagrid("hideColumn", "cb");
             CreateFormPage("datagrid", $("#dg"));
+            $("#dg").datagrid("showColumn", "cb");
+            // $('#dg').datagrid('toExcel','dg.xls');
         }
 
         function CreateFormPage(strPrintName, printDatagrid) {
@@ -317,6 +322,10 @@
                             tdStr = "";
                         } else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
+                        } else if ([nl[j].f] == 'location'){
+                            tdStr = rows[i][nl[j].f].name;
+                        } else if ([nl[j].f] == 'cb'){
+
                         }
                         console.log(tdStr);
                         tableString += tdStr;
@@ -366,6 +375,9 @@
             }
             if ($("#clerkname").combobox("getValue")) {
                 obj.clerkName = $("#clerkname").combobox("getText");
+            }
+            if ($("#clientname").combobox("getValue")) {
+                obj.clientname = $("#clientname").combobox("getText");
             }
             console.log(obj);
 
@@ -439,7 +451,7 @@
                         type="text" id="productDate" name="productDate" class="easyui-datebox"
                         demandd="true" data-options="editable:false" size="15"/>
                 </td>
-                <td>&nbsp;&nbsp;机台：<input
+                <td>&nbsp;&nbsp;机&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;台：<input
                         class="easyui-combobox" id="jitai" name="jitai"
                         style="width: 100px"
                         data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
@@ -454,14 +466,21 @@
                         style="width: 100px"
                         data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>
                 </td>
+                <td>&nbsp;&nbsp;客户： <input
+                        class="easyui-combobox" id="clientname" name="clientname"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                </td>
                 <td> &nbsp;&nbsp;<a href="javascript:screenSale()"
                                     class="easyui-linkbutton" iconCls="icon-search">查询</a>
                 </td>
                 <td>&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
                                     iconCls="icon-reload">刷新</a>
                 </td>
+            </tr>
+            <tr>
                 <td>
-                    &nbsp;&nbsp;合计重量:&nbsp;<input id="sumweight" name="sumweight" style="width: 100px"
+                    合计重量:&nbsp;&nbsp;<input id="sumweight" name="sumweight" style="width: 140px"
                                                   readonly/>
                 </td>
                 <td>
@@ -473,9 +492,9 @@
                 </td>
             </tr>
             <tr>
-                <td>设置仓位： <input
+                <td>设置仓位：<input
                         class="easyui-combobox" id="cang" name="location"
-                        style="width: 100px"
+                        style="width: 140px"
                         data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
                 </td>
                 <td>

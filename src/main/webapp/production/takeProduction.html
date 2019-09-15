@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>销售单据查询</title>
+    <title>提货单</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -313,16 +313,16 @@
                 }
             });
 
-            $.ajax({
-                type:"POST",
-                url:"/admin/storage/selectState",
-                data:{state: "生产完成"},
-                success: function(result){
-                    if (result.success){
-                        $("#dg").datagrid('loadData', result.rows);
-                    }
-                }
-            })
+            // $.ajax({
+            //     type:"POST",
+            //     url:"/admin/storage/selectState",
+            //     data:{state: "生产完成"},
+            //     success: function(result){
+            //         if (result.success){
+            //             $("#dg").datagrid('loadData', result.rows);
+            //         }
+            //     }
+            // })
 
         }
 
@@ -387,6 +387,9 @@
             }
             if ($("#productDate").datebox("getText")) {
                 json.productDate = $("#productDate").datebox("getText");
+            }
+            if ($("#productDatee").datebox("getText")) {
+                json.productDatee = $("#productDatee").datebox("getText");
             }
             console.log(json);
         }
@@ -824,45 +827,53 @@
     </table>
     <div id="tb" style="padding: 15px">
 
-        <div id="tb1" style="margin: 5px">
-            &nbsp;&nbsp;&nbsp;&nbsp;客户名称：&nbsp;&nbsp;<input
-                class="easyui-combobox" id="clientId" name="clientId"
-                style="width: 100px"
-                data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;产品名称：&nbsp;&nbsp;
-            <input id="name" name="name" style="width: 100px"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;农户名称：&nbsp;&nbsp;
-            <input id="pleasant" name="pleasant" style="width: 100px"/>
+        <table>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称：&nbsp;&nbsp;<input
+                        class="easyui-combobox" id="clientId" name="clientId"
+                        style="width: 100px"
+                        data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;产品名称：
+                    <input id="name" name="name" style="width: 100px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;农户名称：&nbsp;&nbsp;
+                    <input id="pleasant" name="pleasant" style="width: 100px"/></td>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;幅宽：&nbsp;&nbsp;<input id="mode" name="mode"
-                                                          style="width: 100px"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:searchRole()" class="easyui-linkbutton"
-                                       iconCls="icon-search" plain="true">查询</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;合计重量:&nbsp;&nbsp;<input id="sumweight" name="sumweight" style="width: 100px"
-                                                            readonly onselect="sumweight()"/>
-        </div>
-        <div id="tb2" style="margin: 5px">
-            &nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp; <input
-                id="price" name="price" style="width: 100px"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;幅&nbsp;&nbsp;&nbsp;&nbsp;宽：&nbsp;&nbsp;<input id="mode" name="mode"
+                                                                  style="width: 100px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:searchRole()" class="easyui-linkbutton"
+                                               iconCls="icon-search" plain="true">查询</a></td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：&nbsp;&nbsp; <input
+                        id="price" name="price" style="width: 100px"/></td>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;订单编号：&nbsp;&nbsp;<input id="saleNumber"
-                                                            name="saleNumber" style="width: 100px"/>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;订单编号：<input id="saleNumber" name="saleNumber" style="width: 100px"/></td>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;重量：&nbsp;&nbsp;<input id="realityweight" name="realityweight"
-                                                          style="width: 100px"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;期：&nbsp;&nbsp;<input type="text"
-                                                                                  id="productDate" name="productDate"
-                                                                                  class="easyui-datebox"
-                                                                                  demandd="true"
-                                                                                  data-options="editable:false"
-                                                                                  size="10"/>
-            &nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;&nbsp;色：&nbsp;&nbsp;<input type="text"
-                                                                                  id="color" name="color"
-                                                                                  size="10"/>
-            <a href="javascript:clertCondition()" class="easyui-linkbutton"
-               iconCls="icon-reload">刷新</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;合计数量:&nbsp;&nbsp;<input id="sumnum" name="sumnum" style="width: 100px" readonly/>
-        </div>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：&nbsp;&nbsp;<input id="realityweight" name="realityweight" style="width: 100px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;&nbsp;色：&nbsp;&nbsp;<input type="text"
+                                                                                          id="color" name="color"
+                                                                                          size="10"/></td>
+                <td><a href="javascript:clertCondition()" class="easyui-linkbutton"
+                       iconCls="icon-reload">刷新</a></td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;选择日期：&nbsp;&nbsp;<input type="text"
+                                                                                          id="productDate" name="productDate"
+                                                                                          class="easyui-datebox"
+                                                                                          demandd="true"
+                                                                                          data-options="editable:false"
+                                                                                          size="10"/></td>
+                <td>—<input type="text"
+                                                                    id="productDatee" name="productDate"
+                                                                    class="easyui-datebox"
+                                                                    demandd="true"
+                                                                    data-options="editable:false"
+                                                                    size="10"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;合计重量：<input id="sumweight" name="sumweight" style="width: 100px"
+                                                                    readonly onselect="sumweight()"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;合计数量:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="sumnum" name="sumnum" style="width: 100px" readonly/></td>
+            </tr>
+        </table>
     </div>
 </div>
 

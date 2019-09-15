@@ -120,6 +120,7 @@ public class SaleListAdminController {
         for (SaleListProduct saleListProduct : plgList) {
             saleListProduct.setSaleList(saleList);
             saleListProduct.setState("下单");
+            saleListProduct.setDaBaoShu(1);
             saleListProduct.setLevel(0);
         }
 

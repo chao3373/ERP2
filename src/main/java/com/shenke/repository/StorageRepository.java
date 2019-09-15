@@ -39,8 +39,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * 修改为出库
      */
     @Modifying
-    @Query(value = "update t_storage set state = '提货', date_of_delivery = ?2 where id =?1", nativeQuery = true)
-    public void outStorage(int id, Date date);
+    @Query(value = "update t_storage set state = '提货', date_of_delivery = ?2 where id in ?1", nativeQuery = true)
+    public void outStorage(String[] id, Date date);
 
 
     /**
@@ -69,8 +69,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     * @Date:  
     */
     @Modifying
-    @Query(value = "update t_storage set  state = ?1, delivery_time = ?3, out_number = ?4 where id = ?2", nativeQuery = true)
-    public void updateStateById(String state, Integer id, Date date, String ck);
+    @Query(value = "update t_storage set  state = ?1, delivery_time = ?3, out_number = ?4 where id in ?2", nativeQuery = true)
+    public void updateStateById(String state, String[] id, Date date, String ck);
 
     /**
      * 根据客户名称查询并按照商品名排序
@@ -202,8 +202,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param state
      */
     @Modifying
-    @Query(value = "UPDATE t_storage SET state=?2 WHERE id = ?1", nativeQuery = true)
-    public void updateByIdAndState(int parseInt, String state);
+    @Query(value = "UPDATE t_storage SET state=?2 WHERE id in ?1", nativeQuery = true)
+    public void updateByIdAndState(String[] parseInt, String state);
 
     /***
      * 根据状态查询

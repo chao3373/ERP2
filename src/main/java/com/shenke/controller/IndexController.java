@@ -81,14 +81,15 @@ public class IndexController {
         System.out.println(wholeStr);
         String[] split = wholeStr.split(",");
         storageService.findByState("");
-        for (int i = 0; i < split.length; i++) {
-            if (StringUtil.isNotEmpty(split[i])) {
-                int id = Integer.parseInt(split[i]);
-                if (!storageService.findById(id).getState().equals("装车")){
-                    storageService.updateStateById("装车", id, new Date(), ck);
-                }
-            }
-        }
+        storageService.updateStateById("装车", split, new Date(), ck);
+//        for (int i = 0; i < split.length; i++) {
+//            if (StringUtil.isNotEmpty(split[i])) {
+//                int id = Integer.parseInt(split[i]);
+//                if (!storageService.findById(id).getState().equals("装车")){
+//                    storageService.updateStateById("装车", id, new Date(), ck);
+//                }
+//            }
+//        }
         return "上传成功";
     }
 

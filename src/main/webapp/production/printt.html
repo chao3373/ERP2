@@ -71,15 +71,15 @@
     //     }
     // }, 1000)
     $(function () {
-        var trs = $("tr");
-        for (var i = 1; i < trs.length; i++) {
-            if (i % 35 == 0) {
-                console.log(i);
-                console.log(trs[i]);
-                $(trs[i]).css({"background": "red"});
-                $(trs[i]).after("</table><div class='PageNext'></div><table  id='idData' class='pb'>");
-            }
-        }
+        // var trs = $("tr");
+        // for (var i = 1; i < trs.length; i++) {
+        //     if (i % 35 == 0) {
+        //         console.log(i);
+        //         console.log(trs[i]);
+        //         $(trs[i]).css({"background": "red"});
+        //         $(trs[i]).after("</table><div class='PageNext'></div><table  id='idData' class='pb'>");
+        //     }
+        // }
         window.print();
     })
 </script>

@@ -19,6 +19,9 @@ import com.shenke.util.EntityUtils;
 import com.shenke.util.StringUtil;
 import org.apache.commons.collections.list.PredicatedList;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -85,7 +88,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void add(Storage storage, String clerkName, String groupName, Double changdu) {
+    public void add(Storage storage, String clerkName, String groupName, Double changdu, String type) {
 
         System.out.println(storage);
         Group group = groupRepository.findByGrouptName(groupName);
@@ -94,6 +97,9 @@ public class StorageServiceImpl implements StorageService {
         Double realityweight = storage.getRealityweight();
 
         BeanUtils.copyProperties(saleListProduct, storage);
+        if (StringUtil.isNotEmpty(type) && type.equals("保存不添加完成数")){
+            storage.setSaleListProduct(null);
+        }
         storage.setId(null);
         System.out.println(clerk);
         storage.setClerk(clerk);
@@ -152,7 +158,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void outStorage(int id, Date date) {
+    public void outStorage(String[] id, Date date) {
         // TODO Auto-generated method stub
         storageRepository.outStorage(id, date);
     }
@@ -171,10 +177,10 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void updateStateById(String state, Integer id, Date date, String ck) {
+    public void updateStateById(String state, String[] id, Date date, String ck) {
         storageRepository.updateStateById(state, id, date, ck);
-        Storage one = storageRepository.findOne(id);
-        Integer id1 = one.getSaleListProduct().getId();
+//        Storage one = storageRepository.findOne(id);
+//        Integer id1 = one.getSaleListProduct().getId();
 
     }
 
@@ -204,6 +210,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<Storage> searchLiftMoney(Map<String, Object> map) {
+        System.out.println(map.get("productDatee"));
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -217,9 +224,18 @@ public class StorageServiceImpl implements StorageService {
                 if (map.get("jitai") != null) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
                 }*/
-                if (StringUtil.isNotEmpty((String) map.get("productDate"))) {
+                if (StringUtil.isNotEmpty((String) map.get("productDate")) && !((String) map.get("productDatee")).equals("null")) {
                     try {
-                        predicate.getExpressions().add(cb.equal(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd").parse((String) map.get("productDate"))));
+                        System.out.println(map.get("productDate"));
+                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd HH:mm:ss").parse((String) map.get("productDate") + " 00:00:00")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (StringUtil.isNotEmpty((String) map.get("productDatee")) && !((String) map.get("productDatee")).equals("null")) {
+                    try {
+                        System.out.println(map.get("productDatee"));
+                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), new SimpleDateFormat("yyy-MM-dd HH:mm:ss").parse((String) map.get("productDatee") + " 23:59:59")));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -329,14 +345,16 @@ public class StorageServiceImpl implements StorageService {
                     if (StringUtil.isNotEmpty((String) map.get("product"))) {
                         predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
                     }
-
+                    if (StringUtil.isNotEmpty((String) map.get("chukudanhao"))){
+                        predicate.getExpressions().add(cb.equal(root.get("outNumber"), map.get("chukudanhao")));
+                    }
                     predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
-                    query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                    query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
 
                     return predicate;
                 }
-            }, new Sort(Sort.Direction.ASC, (String) map.get("order")));
+            }, new Sort(Sort.Direction.ASC, "peasant", "outNumber", "name", "model", "length", "price"));
         }
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
@@ -369,13 +387,16 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.like(root.get("name"), "%" + map.get("product") + "%"));
                 }
 
+                if (StringUtil.isNotEmpty((String) map.get("chukudanhao"))){
+                    predicate.getExpressions().add(cb.equal(root.get("outNumber"), map.get("chukudanhao")));
+                }
                 predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
 
                 return predicate;
             }
-        });
+        }, new Sort(Sort.Direction.ASC, "peasant", "outNumber", "name", "model", "length", "price"));
     }
 
     @Override
@@ -406,7 +427,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Integer countBySaleListProductId(Integer id, Storage storage, String state) {
+    public Integer countBySaleListProductId(Integer id, Storage storage, String state, String dateInProducedd, String dateInProduceddd) {
         Long count = storageRepository.count(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -426,6 +447,19 @@ public class StorageServiceImpl implements StorageService {
 
 //                    predicates.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
 //                    predicates.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
+                }
+                if (StringUtil.isNotEmpty(dateInProducedd) && StringUtil.isNotEmpty(dateInProduceddd)){
+                    try {
+                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd);
+                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProduceddd);
+                        System.out.println("开始时间：" + star);
+                        System.out.println("结束时间：" + end);
+                        predicates.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+                        predicates.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
+                        query.groupBy(root.get("dateInProduced"));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
                 query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicates;
@@ -487,6 +521,9 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (StringUtil.isNotEmpty(storage.getClerkName())){
                     predicate.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
+                }
+                if (StringUtil.isNotEmpty(storage.getClientname())){
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                 }
                 if (star != null) {
                     System.out.println("开始时间");
@@ -604,7 +641,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<Storage> selectt(Storage storage, String dateInProducedd) {
+    public List<Storage> selectt(Storage storage, String dateInProducedd, String dateInProduceddd) {
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -624,49 +661,53 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getPeasant())) {
                     predicate.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 }
-                if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() != null) {
-                    if (StringUtil.isNotEmpty(dateInProducedd) && !storage.getGroupName().equals("夜班")) {
-                        System.out.println("白班");
-                        try {
-                            java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                            java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
-                            System.out.println("开始时间：" + star);
-                            System.out.println("结束时间：" + end);
-                            predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
-                            predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        System.out.println("夜班");
-                        String starr = dateInProducedd + " 17:00:00";
-                        String endd = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
-                        try {
-                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(starr);
-                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endd);
-                            System.out.println("开始时间：" + star);
-                            System.out.println("结束时间：" + end);
-                            predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
-                            predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    predicate.getExpressions().add(cb.equal(root.get("group"), storage.getGroup()));
-                }
-
-                if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() == null) {
+                if (StringUtil.isNotEmpty(dateInProducedd) && StringUtil.isNotEmpty(dateInProduceddd)){
                     try {
-                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd);
+                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProduceddd);
                         System.out.println("开始时间：" + star);
-                        System.out.println("结束时间：" + end);
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+                        System.out.println("结束时间：" + end);
                         predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
+                        query.groupBy(root.get("dateInProduced"));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
+//                if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() != null) {
+//                    if (StringUtil.isNotEmpty(dateInProducedd) && !storage.getGroupName().equals("夜班")) {
+//                        System.out.println("白班");
+//
+//                    } else {
+//                        System.out.println("夜班");
+//                        String starr = dateInProducedd + " 17:00:00";
+//                        String endd = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
+//                        try {
+//                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(starr);
+//                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endd);
+//                            System.out.println("开始时间：" + star);
+//                            System.out.println("结束时间：" + end);
+//                            predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+//                            predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    predicate.getExpressions().add(cb.equal(root.get("group"), storage.getGroup()));
+//                }
+//
+//                if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() == null) {
+//                    try {
+//                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+//                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+//                        System.out.println("开始时间：" + star);
+//                        System.out.println("结束时间：" + end);
+//                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
+//                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
                 if (storage.getClerk() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), storage.getClerk().getId()));
                 }
@@ -705,7 +746,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void updateByIdAndState(int parseInt, String state) {
+    public void updateByIdAndState(String[] parseInt, String state) {
         storageRepository.updateByIdAndState(parseInt, state);
     }
 
@@ -910,8 +951,8 @@ public class StorageServiceImpl implements StorageService {
                     if (StringUtil.isNotEmpty(dateInProducedd) && !storage.getGroupName().equals("夜班")) {
                         System.out.println("白班");
                         try {
-                            java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                            java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                            Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                            Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
                             System.out.println("开始时间：" + star);
                             System.out.println("结束时间：" + end);
                             predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
@@ -939,8 +980,8 @@ public class StorageServiceImpl implements StorageService {
 
                 if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() == null) {
                     try {
-                        java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                        java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
                         System.out.println("开始时间：" + star);
                         System.out.println("结束时间：" + end);
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
@@ -1012,6 +1053,7 @@ public class StorageServiceImpl implements StorageService {
                     predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                     predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                     predicates.getExpressions().add(cb.like(root.get("state"), state));
+                    predicates.getExpressions().add(cb.equal(root.get("outNumber"), storage.getOutNumber()));
                     if (StringUtil.isNotEmpty(date)){
                         try {
                             String st = date + " 00:00:00";
@@ -1029,7 +1071,7 @@ public class StorageServiceImpl implements StorageService {
                         }
                     }
                 }
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
                 return predicates;
             }
         });

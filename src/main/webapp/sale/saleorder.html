@@ -177,7 +177,12 @@
         function saveSaleGoods() {
             $("#saleNumber").val($("#dh").text());
             var rows = $("#dg").datagrid("getData").rows;
-            rows.pop();
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].name == '合计'){
+                    console.log(rows[i]);
+                    rows.splice(i, 1);
+                }
+            }
             $("#goodsJson").val(JSON.stringify(rows));
             $("#fm").form("submit", {
                 url: "/admin/saleList/save",

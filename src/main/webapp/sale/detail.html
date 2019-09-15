@@ -67,6 +67,9 @@
             if ($("#product").combobox("getText")) {
                 json.product = $("#product").combobox("getText");
             }
+            if ($("#chukudanhao").val()) {
+                json.chukudanhao = $("#chukudanhao").val()
+            }
         }
 
         //刷新
@@ -159,6 +162,7 @@
                     {field: 'price', title: '厚度mm', width: 100, align: 'center'},
                     {field: 'sum', title: '数量', width: 100, align: 'center'},
                     {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
+                    {field: 'theoryweight', title: '总重量kg', width: 100, align: 'center'},
                     {field: 'color', title: '颜色', width: 100, align: 'center'},
                 ]]
             });
@@ -397,6 +401,8 @@
                                      url="/admin/product/productList"
                                      data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name'">
                     </td>
+                    <td>出库单号： <input id="chukudanhao"
+                                     name="peasant" style="width: 100px"/></td>
                     <td>
                         <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:loaddg()">查询</a>
                     </td>

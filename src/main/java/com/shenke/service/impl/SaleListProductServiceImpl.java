@@ -12,6 +12,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import com.shenke.entity.Log;
+import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
@@ -133,10 +135,11 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Override
     public void saveList(List<SaleListProduct> plgList) {
-        for (SaleListProduct saleListProduct : plgList) {
-            saleListProduct.setDaBaoShu(1);
-            saleListProductRepository.save(saleListProduct);
-        }
+        saleListProductRepository.save(plgList);
+//        for (SaleListProduct saleListProduct : plgList) {
+//            saleListProduct.setDaBaoShu(1);
+//            saleListProductRepository.save(saleListProduct);
+//        }
     }
 
     @Override
@@ -248,28 +251,61 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         });
     }
 
+//    @Override
+//    public String updateAccomplishNumber(Integer id) {
+//        SaleListProduct saleListProduct = this.findById(id);
+//        //完成数+1
+//        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
+//        System.out.println("count: " + count);
+//        Integer num = saleListProduct.getNum();
+//        Integer daBaoShu = saleListProduct.getDaBaoShu();
+//        Integer countt = count + 1;
+//        System.out.println("countt:" + countt);
+//        saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
+//        if (countt == num) {
+//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+//            if (countt % daBaoShu == 0) {
+//                return "生产完成:" + daBaoShu;
+//            } else {
+//                return "生产完成:" + countt % daBaoShu;
+//            }
+//        } else if (countt % daBaoShu == 0) {
+//            return "打包完成:" + daBaoShu;
+//        } else {
+//            return "只增加数量";
+//        }
+//    }
+
     @Override
     public String updateAccomplishNumber(Integer id) {
         SaleListProduct saleListProduct = this.findById(id);
         //完成数+1
         Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
-        System.out.println("count: " + count);
         Integer num = saleListProduct.getNum();
         Integer daBaoShu = saleListProduct.getDaBaoShu();
-        Integer countt = count + 1;
-        System.out.println("countt:" + countt);
-        saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
-        if (countt == num) {
+        Integer shengyu = num - count;
+        Integer countt = count + daBaoShu;
+        LogUtil.printLog("当前完成数量：" + count);
+        LogUtil.printLog("剩余数量：" + shengyu);
+        LogUtil.printLog("当前设置打包数量：" + daBaoShu);
+        LogUtil.printLog("当前完成数加打包数量：" + countt);
+        if (countt > num) {
+            LogUtil.printLog("当前完成数加打包数量大于总数量--生产完成");
+            saleListProductRepository.updateAccomplishNumberById(num, saleListProduct.getId());
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            if (countt % daBaoShu == 0) {
-                return "生产完成:" + daBaoShu;
-            } else {
-                return "生产完成:" + countt % daBaoShu;
-            }
-        } else if (countt % daBaoShu == 0) {
+            LogUtil.printLog("生产完成---" + "打包数量：" + (num - count) + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
+            return "生产完成:" + (num - count);
+        } else if (countt < num) {
+            LogUtil.printLog("当前完成数加打包数量小于总数量--打包完成");
+            saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
+            LogUtil.printLog("打包完成---" + "打包数量：" + daBaoShu + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
             return "打包完成:" + daBaoShu;
         } else {
-            return "只增加数量";
+            LogUtil.printLog("当前完成数加打包数量等于总数量--生产完成");
+            saleListProductRepository.updateAccomplishNumberById(num, saleListProduct.getId());
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
+            LogUtil.printLog("生产完成---" + "打包数量：" + daBaoShu + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
+            return "生产完成:" + daBaoShu;
         }
     }
 
