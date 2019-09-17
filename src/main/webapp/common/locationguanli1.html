@@ -104,23 +104,57 @@
 
         //按照条件筛选订单信息
         function screenSale() {
-            $.messager.progress({
-                title: '提示',
-                text: '数据正在处理中，请稍后....'
-            });
-            $("#fm").form('submit', {
-                url: "/admin/storage/selectEdit",
-                success: function (resulgt) {
-                    if (resulgt != null) {
-                        console.log(resulgt);
-                        var ruselt = eval('(' + resulgt + ')');
-                        if (ruselt.success) {
-                            $("#dg").datagrid("loadData", ruselt.rows);
-                            $.messager.progress('close');
-                        }
-                    }
-                }
-            });
+            var obj = {};
+            if ($("#saleNumber").val()) {
+                obj.saleNumber = $("#saleNumber").val();
+            }
+            if ($("#location").combobox("getValue")) {
+                obj.location = $("#location").combobox("getValue");
+            }
+            if ($("#jitai").combobox("getValue")) {
+                obj.jiTai = $("#jitai").combobox("getValue");
+            }
+            if ($("#clientnamee").combobox("getValue")) {
+                obj.clientname = $("#clientnamee").combobox("getValue");
+            }
+            if ($("#namee").combobox("getValue")) {
+                obj.name = $("#namee").combobox("getValue");
+            }
+            if ($("#dateInProducedd").datebox("getValue")) {
+                obj.dateInProducedd = $("#dateInProducedd").datebox("getValue");
+            }
+            if ($("#clerk").combobox("getValue")) {
+                obj.clerk = $("#clerk").combobox("getValue");
+            }
+            if ($("#group").combobox("getValue")) {
+                obj.group = $("#group").combobox("getValue");
+            }
+            if ($("#peasant").val()) {
+                obj.peasant = $("#peasant").val();
+            }
+            if ($("#state").combobox("getValue")) {
+                obj.state = $("#state").combobox("getValue");
+            }
+            console.log(obj);
+            $("#dg").datagrid("load", obj);
+            // var obj = {};
+            // $.messager.progress({
+            //     title: '提示',
+            //     text: '数据正在处理中，请稍后....'
+            // });
+            // $("#fm").form('submit', {
+            //     url: "/admin/storage/selectEdit",
+            //     success: function (resulgt) {
+            //         if (resulgt != null) {
+            //             console.log(resulgt);
+            //             var ruselt = eval('(' + resulgt + ')');
+            //             if (ruselt.success) {
+            //                 $("#dg").datagrid("loadData", ruselt.rows);
+            //                 $.messager.progress('close');
+            //             }
+            //         }
+            //     }
+            // });
         }
 
         //添加条件筛选时刷新数据
@@ -812,10 +846,13 @@
                             style="width: 100px"
                             data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
                     </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;代&nbsp;&nbsp;理&nbsp;&nbsp;商： <input class="easyui-combobox" name="clientname" style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;代&nbsp;&nbsp;理&nbsp;&nbsp;商： <input
+                            class="easyui-combobox" id="clientnamee" name="clientname"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;产品名称： <input
-                            class="easyui-combobox" name="name"
+                            class="easyui-combobox" id="namee" name="name"
                             style="width: 100px"
                             data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/product/productList'"/>
                     </td>
@@ -856,7 +893,7 @@
         </form>
     </fieldset>
 </div>
-<table id="dg" class="easyui-datagrid" title="修改库存" fit="false" toolbar="#tb" fitColumns="false" rownumbers="true">
+<table id="dg" class="easyui-datagrid"url="/admin/storage/selectEdit" pagination="true"  title="修改库存" fit="false" toolbar="#tb" fitColumns="false" rownumbers="true">
 </table>
 
 <div id="tb">

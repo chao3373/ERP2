@@ -177,7 +177,7 @@ public interface StorageService {
 
     Integer findCountBySaleListProductId(Integer id);
 
-    List<Storage> selectEdit(Storage storage, String dateInProducedd);
+    List<Storage> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows);
 
     /***
      * 根据订单商品id查询商品
@@ -189,4 +189,6 @@ public interface StorageService {
     void updateshijian(Integer id, Date parse);
 
     Integer countBySaleListProductIdDetail(Integer id, Storage storage, String s, String date);
+
+    Long getCount(Storage storage, String dateInProducedd);
 }

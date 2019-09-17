@@ -483,14 +483,16 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/selectEdit")
-    public Map<String, Object> selectEdit(Storage storage, String dateInProducedd) {
+    public Map<String, Object> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows) {
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        List<Storage> list = storageService.selectEdit(storage, dateInProducedd);
+        List<Storage> list = storageService.selectEdit(storage, dateInProducedd, page, rows);
+        Long total = storageService.getCount(storage, dateInProducedd);
         map.put("success", true);
         map.put("rows", list);
+        map.put("total",total);
         return map;
     }
 

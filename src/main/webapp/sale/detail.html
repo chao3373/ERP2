@@ -38,11 +38,28 @@
             }
             var num = 0;
             var sumWeight = 0;
+            var name = rows[0].name
             for (var i = 0; i < rows.length; i++) {
-                num+=rows[i].sum;
+                num += rows[i].sum;
+                if (i != 0 && rows[i].name == name) {
+                    var row = rows[i];
+                    row.name = "";
+                    $("#dg").datagrid("deleteRow",i);
+                    $("#dg").datagrid("insertRow", {
+                        index: i,
+                        row: row
+                    });
+                    // rows[i].name = "";
+                } else {
+                    name = rows[i].name;
+                }
                 var w = rows[i].sum * rows[i].realityweight;
                 sumWeight += w;
             }
+            console.log(rows);
+            $("#dg").data("loadData", []);
+            // $("#dg").data("loadData", rows);
+
             $("#dg").datagrid('appendRow', {
                 clientname: '合计',
                 peasant: '总数量：' + num + '件',
@@ -293,7 +310,7 @@
                         var tdStr = rows[i][nl[j].f];
                         if (tdStr == null) {
                             tdStr = "";
-                        }else if ([nl[j].f] == 'dateInProduced') {
+                        } else if ([nl[j].f] == 'dateInProduced') {
                             tdStr = formet(rows[i][nl[j].f]);
                         }
                         console.log(tdStr);
@@ -428,11 +445,11 @@
                class="easyui-linkbutton"
                iconCls="icon-print" plain="true">打印</a>
             <!--<a href="javascript:orderBy('peasant')" ;-->
-               <!--class="easyui-linkbutton" plain="true">农户</a>-->
+            <!--class="easyui-linkbutton" plain="true">农户</a>-->
             <!--<a href="javascript:orderBy('model')" ;-->
-               <!--class="easyui-linkbutton" plain="true">幅宽</a>-->
+            <!--class="easyui-linkbutton" plain="true">幅宽</a>-->
             <!--<a href="javascript:orderBy('name')" ;-->
-               <!--class="easyui-linkbutton" plain="true">产品名称</a>-->
+            <!--class="easyui-linkbutton" plain="true">产品名称</a>-->
             <a href="javascript:addSum()" ;
                class="easyui-linkbutton" plain="true">添加合计</a>
             <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
