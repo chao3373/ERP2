@@ -193,4 +193,6 @@ public interface StorageService {
     Long getCount(Storage storage, String dateInProducedd);
 
     Integer kucunCount(Storage st, String dateInProducedd, String dateInProduceddd);
+
+    Integer countByDetail(Storage storage, String dateInProducedd);
 }

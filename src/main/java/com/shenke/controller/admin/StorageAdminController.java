@@ -323,7 +323,7 @@ public class StorageAdminController {
         System.out.println(map1.get("chukudanhao"));
         List<Storage> storageList = storageService.detail(map1);
         for (Storage storage : storageList) {
-            Integer integer = storageService.countBySaleListProductIdDetail(storage.getSaleListProduct().getId(), storage, "%装车%", (String) map1.get("date"));
+            Integer integer = storageService.countByDetail(storage, (String) map1.get("date"));
             System.out.println(integer);
             storage.setSum(integer);
             storage.setTheoryweight(storage.getSum() * storage.getRealityweight());
