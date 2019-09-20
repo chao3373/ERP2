@@ -13,6 +13,7 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="/static/datagrid-export/datagrid-export.js"></script>
     <script type="text/javascript">
         //点击确定按钮
         function loaddg() {
@@ -43,7 +44,7 @@
                 num += rows[i].sum;
                 if (i != 0 && rows[i].name == name) {
                     var row = rows[i];
-                    row.name = "";
+                    row.name = "…";
                     $("#dg").datagrid("deleteRow",i);
                     $("#dg").datagrid("insertRow", {
                         index: i,
@@ -370,24 +371,8 @@
         }
 
         //导出
-        function daochu(dg) {
-            var rows = $(dg).datagrid("getRows");
-            //console.log(rows);
-            //转换成json格式
-            var json = JSON.stringify(rows);
-            //console.log(json);
-            //把key转换成中文格式
-            var a = json.replace(/clientname/g, "客户名称").replace(/peasant/g, "农户名称").replace(/saleNumber/g, "订单号").replace(/name/g, "产品名称").replace(/model/g, "幅宽").replace(/length/g, "长度").replace(/price/g, "厚度").replace(/realityweight/g, "重量").replace(/deliveryTime/g, "出库时间").replace(/sum/g, "数量");
-            console.log(a);
-
-            $.ajax({
-                type: "POST",
-                url: "/admin/daochu?title=产品出库明细表",
-                data: {a: a},
-                success: function (result) {
-
-                }
-            });
+        function daochu() {
+            $('#dg').datagrid('toExcel','产品出库明细表.xls');	// export to excel
         }
 
 

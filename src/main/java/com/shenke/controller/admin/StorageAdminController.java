@@ -510,7 +510,7 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         List<Storage> list = storageService.selectt(storage, dateInProducedd, dateInProduceddd);
         for (Storage st : list) {
-            Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%", dateInProducedd, dateInProduceddd);
+            Integer integer = storageService.kucunCount(st,dateInProducedd, dateInProduceddd);
             st.setSum(integer);
             st.setTheoryweight(st.getSum() * st.getRealityweight());
         }

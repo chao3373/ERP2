@@ -191,4 +191,6 @@ public interface StorageService {
     Integer countBySaleListProductIdDetail(Integer id, Storage storage, String s, String date);
 
     Long getCount(Storage storage, String dateInProducedd);
+
+    Integer kucunCount(Storage st, String dateInProducedd, String dateInProduceddd);
 }
