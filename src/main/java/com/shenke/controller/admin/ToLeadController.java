@@ -75,25 +75,25 @@ public class ToLeadController {
         for (int i = 0; i < mapList.size(); i++) {
             int j = i + 1;
             Map<String, Object> map1 = mapList.get(i);
-            map1.put("name", map1.remove("产品名称"));
-            map1.put("model", map1.remove("宽度m"));
-            map1.put("price", map1.remove("厚度mm"));
-            map1.put("length", map1.remove("长度m"));
-            map1.put("meter", map1.remove("实际厚度mm"));
-            map1.put("color", map1.remove("颜色"));
-            map1.put("oneweight", map1.remove("重量"));
-            map1.put("num", map1.remove("件数"));
-            map1.put("sumwight", map1.remove("总重量"));
-            map1.put("realitymodel", map1.remove("实际幅宽m"));
-            map1.put("demand", map1.remove("要求"));
-            map1.put("weightset", map1.remove("重量设置"));
-            map1.put("dao", map1.remove("剖刀设置"));
-            map1.put("brand", map1.remove("商标设置"));
-            map1.put("pack", map1.remove("包装设置"));
-            map1.put("letter", map1.remove("印字设置"));
-            map1.put("peasant", map1.remove("客户姓名"));
-            map1.put("clientname", map1.remove("客户名称"));
-            map1.put("realityweight", map1.remove("实际重量"));
+            map1.put("name", map1.remove("产品名称").toString().trim());
+            map1.put("model", map1.remove("宽度m").toString().trim());
+            map1.put("price", map1.remove("厚度mm").toString().trim());
+            map1.put("length", map1.remove("长度m").toString().trim());
+            map1.put("meter", map1.remove("实际厚度mm").toString().trim());
+            map1.put("color", map1.remove("颜色").toString().trim());
+            map1.put("oneweight", map1.remove("重量").toString().trim());
+            map1.put("num", map1.remove("件数").toString().trim());
+            map1.put("sumwight", map1.remove("总重量").toString().trim());
+            map1.put("realitymodel", map1.remove("实际幅宽m").toString().trim());
+            map1.put("demand", map1.remove("要求").toString().trim());
+            map1.put("weightset", map1.remove("重量设置").toString().trim());
+            map1.put("dao", map1.remove("剖刀设置").toString().trim());
+            map1.put("brand", map1.remove("商标设置").toString().trim());
+            map1.put("pack", map1.remove("包装设置").toString().trim());
+            map1.put("letter", map1.remove("印字设置").toString().trim());
+            map1.put("peasant", map1.remove("客户姓名").toString().trim());
+            map1.put("clientname", map1.remove("客户名称").toString().trim());
+            map1.put("realityweight", map1.remove("实际重量").toString().trim());
 
             if (map1.get("name") == null || map1.get("weightset") == null || map1.get("dao") == null || map1.get("brand") == null || map1.get("pack") == null || map1.get("letter") == null || map1.get("clientname") == null) {
                 map.put("success", false);

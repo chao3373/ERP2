@@ -1,5 +1,6 @@
 package com.shenke.controller.admin;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -326,8 +327,14 @@ public class StorageAdminController {
             Integer integer = storageService.countByDetail(storage, (String) map1.get("date"));
             System.out.println(integer);
             storage.setSum(integer);
-            storage.setTheoryweight(storage.getSum() * storage.getRealityweight());
-            storage.setRealityweight(storage.getRealityweight() * storage.getDabaonum());
+            Double danjian = storage.getDabaonum() * storage.getRealityweight();
+            storage.setDanjianzhong(danjian);
+            Double zongzhong = storage.getSum() * danjian;
+            System.out.println("总数量：" + integer);
+            System.out.println("打包数：" + storage.getDabaonum());
+            System.out.println("单件重量：" + danjian);
+            System.out.println("总重量：" + zongzhong);
+            storage.setZongzhong((new BigDecimal(zongzhong).setScale(2, BigDecimal.ROUND_UP).doubleValue()));
         }
         map.put("success", true);
         map.put("rows", storageList);
@@ -512,7 +519,9 @@ public class StorageAdminController {
         for (Storage st : list) {
             Integer integer = storageService.kucunCount(st,dateInProducedd, dateInProduceddd);
             st.setSum(integer);
-            st.setTheoryweight(st.getSum() * st.getRealityweight());
+            Double danjianzhong = st.getSum() * st.getRealityweight();
+            st.setDanjianzhong(danjianzhong);
+            st.setZongzhong(st.getSum() * danjianzhong);
         }
         map.put("success", true);
         map.put("rows", list);

@@ -167,12 +167,12 @@
                     width: 100,
                     align: 'center'
                 }, {
-                    field: 'realityweight',
+                    field: 'danjianzhong',
                     title: '重量',
                     width: 100,
                     align: 'center'
                 }, {
-                    field: 'theoryweight',
+                    field: 'zongzhong',
                     title: '总重量',
                     width: 100,
                     align: 'center'
@@ -377,7 +377,7 @@
         //添加合计
         function heJi() {
             var rows = $("#dg").datagrid("getRows");
-            if (rows[rows.length - 1].clientname == "合计") {
+            if (rows[rows.length - 1].clientname == "总计：") {
                 alert("已经添加合计！");
                 return;
             }
@@ -387,16 +387,18 @@
             var count = 0;
             var sumw = 0;
             for (var i = 0; i < rows.length; i++) {
-                console.log("长度：" + rows.length);
-                console.log(nong_hu);
-                console.log(rows[i].peasant);
+                // console.log("长度：" + rows.length);
+                // console.log(nong_hu);
+                // console.log(rows[i].peasant);
+                // console.log(sumw);
+                // console.log(zsumw);
                 if (rows[i].peasant != nong_hu) {
                     $('#dg').datagrid('insertRow', {
                         index: i,	// index start with 0
                         row: {
                             clientname: "小计：",
                             peasant: "总数量：" + count + "件",
-                            name: "总重量：" + sumw + "KG"
+                            name: "总重量：" + sumw.toFixed(2) + "KG"
                         }
                     });
                     count = 0;
@@ -405,16 +407,16 @@
                     i++;
                 }
                 if (i == rows.length - 1) {
-                    sumw += rows[i].theoryweight;
+                    sumw += rows[i].zongzhong;
                     count += rows[i].sum;
-                    zsumw += rows[i].theoryweight;
+                    zsumw += rows[i].zongzhong;
                     zcount += rows[i].sum;
                     $('#dg').datagrid('insertRow', {
                         index: i + 1,	// index start with 0
                         row: {
                             clientname: "小计：",
                             peasant: "总数量：" + count + "件",
-                            name: "总重量：" + sumw + "KG"
+                            name: "总重量：" + sumw.toFixed(2) + "KG"
                         }
                     });
                     $('#dg').datagrid('insertRow', {
@@ -422,27 +424,16 @@
                         row: {
                             clientname: "总计：",
                             peasant: "总数量：" + zcount + "件",
-                            name: "总重量：" + zsumw + "KG"
+                            name: "总重量：" + zsumw.toFixed(2) + "KG"
                         }
                     });
                     return;
                 }
-                sumw += rows[i].theoryweight;
+                sumw += rows[i].zongzhong;
                 count += rows[i].sum;
-                zsumw += rows[i].theoryweight;
+                zsumw += rows[i].zongzhong;
                 zcount += rows[i].sum;
             }
-            // var sumw = 0;
-            // var count = 0;
-            // for (var i = 0; i < rows.length; i++) {
-            //     sumw += rows[i].theoryweight;
-            //     count += rows[i].sum;
-            // }
-            // $("#dg").datagrid("appendRow", {
-            //     clientname: "合计",
-            //     peasant: "总数量：" + count + "件",
-            //     name: "总重量：" + sumw + "KG"
-            // });
         }
 
         //点击导出按钮

@@ -12,7 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import com.shenke.entity.Log;
+import com.shenke.service.StorageService;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +31,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Resource
     private SaleListProductRepository saleListProductRepository;
+
+    @Resource
+    private StorageService storageService;
 
     @Override
     public List<SaleListProduct> listBySaleListId(Integer saleListId) {
@@ -280,11 +283,18 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     public String updateAccomplishNumber(Integer id) {
         SaleListProduct saleListProduct = this.findById(id);
         //完成数+1
-        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
+//        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
+        Integer count = storageService.findCountBySaleListProductId(id);
+        if (count == null){
+            count = 0;
+        }
         Integer num = saleListProduct.getNum();
         Integer daBaoShu = saleListProduct.getDaBaoShu();
         Integer shengyu = num - count;
         Integer countt = count + daBaoShu;
+        if (count > num || count == num) {
+            return "生产已完成";
+        }
         LogUtil.printLog("当前完成数量：" + count);
         LogUtil.printLog("剩余数量：" + shengyu);
         LogUtil.printLog("当前设置打包数量：" + daBaoShu);

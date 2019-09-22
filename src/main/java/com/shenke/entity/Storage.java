@@ -170,14 +170,11 @@ public class Storage{
 
     private Integer dabaonum;//打包数量
 
-    public Integer getDabaonum() {
-        return dabaonum;
-    }
+    @Transient
+    private Double danjianzhong;
 
-    public void setDabaonum(Integer dabaonum) {
-        this.dabaonum = dabaonum;
-    }
-
+    @Transient
+    private Double zongzhong;
 
     @Override
     public String toString() {
@@ -235,8 +232,35 @@ public class Storage{
                 ", clerkName='" + clerkName + '\'' +
                 ", groupName='" + groupName + '\'' +
                 ", dabaonum=" + dabaonum +
+                ", danjianzhong=" + danjianzhong +
+                ", zongzhong=" + zongzhong +
                 '}';
     }
+
+    public Double getDanjianzhong() {
+        return danjianzhong;
+    }
+
+    public void setDanjianzhong(Double danjianzhong) {
+        this.danjianzhong = danjianzhong;
+    }
+
+    public Double getZongzhong() {
+        return zongzhong;
+    }
+
+    public void setZongzhong(Double zongzhong) {
+        this.zongzhong = zongzhong;
+    }
+
+    public Integer getDabaonum() {
+        return dabaonum;
+    }
+
+    public void setDabaonum(Integer dabaonum) {
+        this.dabaonum = dabaonum;
+    }
+
 
     public Integer getId() {
         return id;

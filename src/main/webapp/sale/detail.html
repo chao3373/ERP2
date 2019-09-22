@@ -45,7 +45,7 @@
                 if (i != 0 && rows[i].name == name) {
                     var row = rows[i];
                     row.name = "…";
-                    $("#dg").datagrid("deleteRow",i);
+                    $("#dg").datagrid("deleteRow", i);
                     $("#dg").datagrid("insertRow", {
                         index: i,
                         row: row
@@ -54,8 +54,8 @@
                 } else {
                     name = rows[i].name;
                 }
-                var w = rows[i].sum * rows[i].realityweight;
-                sumWeight += w;
+                // var w = rows[i].sum * rows[i].realityweight;
+                sumWeight += rows[i].zongzhong;
             }
             console.log(rows);
             $("#dg").data("loadData", []);
@@ -179,8 +179,8 @@
                     {field: 'length', title: '长度m', width: 100, align: 'center'},
                     {field: 'price', title: '厚度mm', width: 100, align: 'center'},
                     {field: 'sum', title: '数量', width: 100, align: 'center'},
-                    {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
-                    {field: 'theoryweight', title: '总重量kg', width: 100, align: 'center'},
+                    {field: 'danjianzhong', title: '重量kg', width: 100, align: 'center'},
+                    {field: 'zongzhong', title: '总重量kg', width: 100, align: 'center'},
                     {field: 'color', title: '颜色', width: 100, align: 'center'},
                 ]]
             });
@@ -372,7 +372,82 @@
 
         //导出
         function daochu() {
-            $('#dg').datagrid('toExcel','产品出库明细表.xls');	// export to excel
+            $('#dg').datagrid('toExcel', '产品出库明细表.xls');	// export to excel
+        }
+
+        //产品名称小计
+        function orderByname() {
+            var rows = $("#dg").datagrid("getRows");
+            if (rows[rows.length - 1].clientname == "总计：") {
+                alert("已经添加合计！");
+                return;
+            }
+            var name = rows[0].name;
+            var zcount = 0;
+            var zsumw = 0;
+            var count = 0;
+            var sumw = 0;
+            for (var i = 0; i < rows.length; i++) {
+                // console.log("长度：" + rows.length);
+                // console.log(name);
+                // console.log(rows[i].name);
+                if (rows[i].name != name) {
+                    $('#dg').datagrid('insertRow', {
+                        index: i,	// index start with 0
+                        row: {
+                            clientname: "小计：",
+                            peasant: "总数量：" + count + "件",
+                            name: "总重量：" + sumw.toFixed(2) + "KG"
+                        }
+                    });
+                    count = 0;
+                    sumw = 0;
+                    name = rows[i + 1].name;
+                    i++;
+                } else {
+                    if (i != 0) {
+                        $('#dg').datagrid('updateRow', {
+                            index: i,
+                            row: {
+                                name: '...',
+                            }
+                        });
+                    }
+                }
+                if (i == rows.length - 1) {
+                    sumw += rows[i].zongzhong;
+                    count += rows[i].sum;
+                    zsumw += rows[i].zongzhong;
+                    zcount += rows[i].sum;
+                    $('#dg').datagrid('insertRow', {
+                        index: i + 1,	// index start with 0
+                        row: {
+                            clientname: "小计：",
+                            peasant: "总数量：" + count + "件",
+                            name: "总重量：" + sumw.toFixed(2) + "KG"
+                        }
+                    });
+                    $('#dg').datagrid('insertRow', {
+                        index: i + 2,	// index start with 0
+                        row: {
+                            clientname: "总计：",
+                            peasant: "总数量：" + zcount + "件",
+                            name: "总重量：" + zsumw.toFixed(2) + "KG"
+                        }
+                    });
+                    return;
+                }
+                sumw += rows[i].zongzhong;
+                count += rows[i].sum;
+                zsumw += rows[i].zongzhong;
+                zcount += rows[i].sum;
+            }
+        }
+
+        function geshihua(num){
+            var ret = parseFloat(num);
+            console.log(ret);
+            return ret;
         }
 
 
@@ -435,6 +510,8 @@
             <!--class="easyui-linkbutton" plain="true">幅宽</a>-->
             <!--<a href="javascript:orderBy('name')" ;-->
             <!--class="easyui-linkbutton" plain="true">产品名称</a>-->
+            <a href="javascript:orderByname()" ;
+               class="easyui-linkbutton" plain="true">产品名称小计</a>
             <a href="javascript:addSum()" ;
                class="easyui-linkbutton" plain="true">添加合计</a>
             <a href="javascript:selectOutNumber()" class="easyui-linkbutton"

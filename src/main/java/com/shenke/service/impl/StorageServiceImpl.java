@@ -705,7 +705,7 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 }
                 predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("dabaonum"));
                 return predicate;
             }
         }, new Sort(Sort.Direction.ASC, "peasant", "name", "model", "price", "length", "color", "realityweight"));
@@ -1151,68 +1151,23 @@ public class StorageServiceImpl implements StorageService {
         Long count = storageRepository.count(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
-                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + storage.getSaleNumber() + "%"));
+                Predicate predicates = cb.conjunction();
+                if (storage.getSaleListProduct() != null && storage.getSaleListProduct().getId() != null) {
+                    predicates.getExpressions().add(cb.equal(root.get("saleListProduct").get("id"), storage.getSaleListProduct().getId()));
                 }
-                if (StringUtil.isNotEmpty(storage.getName())) {
-                    predicate.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
-                }
-                if (storage.getLocation() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), storage.getLocation().getId()));
-                }
-                if (storage.getJiTai() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), storage.getJiTai().getId()));
-                }
-                if (StringUtil.isNotEmpty(storage.getPeasant())) {
-                    predicate.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
-                }
-                if (StringUtil.isNotEmpty(dateInProducedd) && StringUtil.isNotEmpty(dateInProduceddd)) {
-                    try {
-                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd);
-                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProduceddd);
-                        System.out.println("开始时间：" + star);
-                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduced"), star));
-                        System.out.println("结束时间：" + end);
-                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduced"), end));
-                        query.groupBy(root.get("dateInProduced"));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (storage.getClerk() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("clerk").get("id"), storage.getClerk().getId()));
-                }
-                if (StringUtil.isNotEmpty(storage.getClientname())) {
-                    predicate.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
-                }
-                if (storage.getLength() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
-                }
-                if (storage.getModel() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
-                }
-                if (StringUtil.isNotEmpty(storage.getPrice())) {
-                    predicate.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
-                }
-                if (storage.getRealityweight() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
-                }
-                if (StringUtil.isNotEmpty(storage.getState())) {
-                    String state = storage.getState();
-                    System.out.println(storage.getState());
-                    if (storage.getState().startsWith("'")) {
-                        state = storage.getState().substring(1, storage.getState().length() - 1);
-                        System.out.println(state);
-                    }
-                    predicate.getExpressions().add(cb.like(root.get("state"), "%" + state + "%"));
-                }
-                if (StringUtil.isNotEmpty(storage.getColor())) {
-                    predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
-                }
-                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
-                return predicate;
+                predicates.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
+                predicates.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
+                predicates.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
+                predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
+                predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
+                predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
+                predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
+                predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
+                predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                predicates.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+//                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
+                return predicates;
             }
         });
         return count.intValue();
@@ -1224,7 +1179,7 @@ public class StorageServiceImpl implements StorageService {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicates = cb.conjunction();
-                if (storage.getSaleListProduct()!=null){
+                if (storage.getSaleListProduct() != null) {
                     predicates.getExpressions().add(cb.equal(root.get("saleListProduct").get("id"), storage.getSaleListProduct().getId()));
                 }
                 predicates.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
@@ -1236,25 +1191,26 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
                 predicates.getExpressions().add(cb.like(root.get("state"), "%装车%"));
                 predicates.getExpressions().add(cb.equal(root.get("outNumber"), storage.getOutNumber()));
-                if (StringUtil.isNotEmpty(date)) {
-                    try {
-                        String st = date + " 00:00:00";
-                        String ed = date + " 23:59:59";
-                        System.out.println(st);
-                        System.out.println(ed);
-                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(st);
-                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
-                        System.out.println(star);
-                        System.out.println(end);
-                        predicates.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
-                        predicates.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
+//                if (StringUtil.isNotEmpty(date)) {
+//                    try {
+//                        String st = date + " 00:00:00";
+//                        String ed = date + " 23:59:59";
+//                        System.out.println(st);
+//                        System.out.println(ed);
+//                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(st);
+//                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
+//                        System.out.println(star);
+//                        System.out.println(end);
+//                        predicates.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
+//                        predicates.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
                 return predicates;
             }
         });

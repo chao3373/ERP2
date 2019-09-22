@@ -1062,6 +1062,13 @@
             //     $.messager.alert("系统提示", "<span style='color: red;'>请先完成当前打包任务</span>");
             //     return;
             // }
+            if (!$("#dabao").val()){
+                alert("请输入数量！");
+                return;
+            } else if($("#dabao").val() == 0){
+                alert("打包数不能为0！");
+                return;
+            }
             var row = $("#dg").datagrid("getSelected");
             var Index = $("#dg").datagrid("getRowIndex", row);
             $.ajax({
