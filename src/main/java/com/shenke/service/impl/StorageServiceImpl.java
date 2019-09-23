@@ -315,6 +315,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<Storage> detail(Map<String, Object> map) {
+        System.out.println("进入");
         if (map.get("order") != null && map.get("order") != "") {
             return storageRepository.findAll(new Specification<Storage>() {
                 public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -351,10 +352,11 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
                     query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
-
+                    System.out.println("执行");
                     return predicate;
                 }
-            }, new Sort(Sort.Direction.ASC, "peasant", "outNumber", "name", "model", "length", "price"));
+            }, new Sort(Sort.Direction.ASC, "name", "peasant"));
+//            new Sort(Sort.Direction.ASC, "peasant", "outNumber", "name", "model", "length", "price")
         }
         return storageRepository.findAll(new Specification<Storage>() {
             @Override
@@ -396,7 +398,7 @@ public class StorageServiceImpl implements StorageService {
 
                 return predicate;
             }
-        }, new Sort(Sort.Direction.ASC, "peasant", "outNumber", "name", "model", "length", "price"));
+        }, new Sort(Sort.Direction.ASC, "name", "peasant"));
     }
 
     @Override

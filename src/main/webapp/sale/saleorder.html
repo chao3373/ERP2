@@ -511,8 +511,8 @@
                             var rows = $("#dg").datagrid('getRows');
                             for (var i = 0; i < rows.length; i++) {
                                 console.log(rows[i].num);
-                                countnum += rows[i].num;
-                                sumweight += rows[i].sumwight;
+                                countnum += parseFloat(rows[i].num);
+                                sumweight += parseFloat(rows[i].sumwight);
                             }
                             $("#dg").datagrid('appendRow', {
                                 name: '合计',

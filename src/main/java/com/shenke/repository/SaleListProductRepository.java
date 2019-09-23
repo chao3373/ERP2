@@ -166,7 +166,7 @@ public interface SaleListProductRepository
 	* @Author: Andy
 	* @Date:
 	*/
-	@Query(value = "SELECT * FROM t_sale_list_product WHERE id IN (SELECT id FROM t_sale_list_product WHERE state LIKE '%下发机台%') AND jitai_id = ?1", nativeQuery = true)
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE id IN (SELECT id FROM t_sale_list_product WHERE state LIKE '%下发机台%') AND jitai_id = ?1 GROUP BY inform_number order by inform_number", nativeQuery = true)
 	public List<SaleListProduct> selectNoAccomplish(Integer jitaiId);
 
 	/**

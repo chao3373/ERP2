@@ -93,7 +93,9 @@ public class ToLeadController {
             map1.put("letter", map1.remove("印字设置").toString().trim());
             map1.put("peasant", map1.remove("客户姓名").toString().trim());
             map1.put("clientname", map1.remove("客户名称").toString().trim());
-            map1.put("realityweight", map1.remove("实际重量").toString().trim());
+            if (map1.get("实际重量") != null) {
+                map1.put("realityweight", map1.remove("实际重量").toString().trim());
+            }
 
             if (map1.get("name") == null || map1.get("weightset") == null || map1.get("dao") == null || map1.get("brand") == null || map1.get("pack") == null || map1.get("letter") == null || map1.get("clientname") == null) {
                 map.put("success", false);
@@ -354,7 +356,7 @@ public class ToLeadController {
                         case 18:
                             // map.put("客户名称", getStringCellValue(cell));
                             String clname = getStringCellValue(cell);
-                            System.out.println("客户名称：" +  clname);
+                            System.out.println("客户名称：" + clname);
                             saleListProduct.setClientname(getStringCellValue(cell));
                             if (clientService.findName(clname) != null) {
 
