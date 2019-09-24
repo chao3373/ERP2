@@ -519,7 +519,7 @@ public class StorageAdminController {
         for (Storage st : list) {
             Integer integer = storageService.kucunCount(st,dateInProducedd, dateInProduceddd);
             st.setSum(integer);
-            Double danjianzhong = st.getSum() * st.getRealityweight();
+            Double danjianzhong = st.getDabaonum() * st.getRealityweight();
             st.setDanjianzhong(danjianzhong);
             st.setZongzhong(st.getSum() * danjianzhong);
         }
