@@ -1322,6 +1322,53 @@
             // dabaoCount = 0;
             // setDabao();
         });
+
+        //打印合格证按钮
+        function heGeZheng() {
+            if (!$("#shuliang").val()) {
+                alert("请输入打印数量！");
+                return;
+            }
+            ;
+
+            if ($("#shuliang").val() > 100) {
+                alert("数量不可以超过100");
+                return;
+            }
+            ;
+
+            printHeGeZheng();
+        }
+
+        function printHeGeZheng() {
+            var date = new Date();
+            var row = $("#dg").datagrid("getSelected");
+            console.log(row);
+            tstr = "";
+            tstr += "<div id='tab' style='text-align: center;width: 100%;font-size: 70px;'><table style='width: 88%;text-align: left;'><tr><td rowspan='7' style='text-align: center;width: 30%;'><div style='width:88px;margin:0 auto;font-size: 88px;font-weight: 900'>合格证</div></td>";
+            tstr += "<td>产品名称：" + row.name + "</td></tr>";
+            tstr += "<td>重量：" + row.oneweight + "kg</td></tr>";
+            tstr += "<td>颜色：" + row.color + "</td></tr>";
+            tstr += "<td>长度：" + row.length + "m</td></tr>";
+            tstr += "<td>幅宽：" + row.model + "m</td></tr>";
+            tstr += "<td>厚度：" + row.price + "mm</td></tr>";
+            tstr += "<td>时间：" + date.getFullYear() + '年' + (parseInt(date.getMonth()) + 1) + '月' + date.getDate() + '日' + "</td></tr>";
+            tstr += "</table></div>";
+            tstr += $("#shuliang").val();
+            if (window.showModalDialog) {
+                console.log(tstr);
+                window.showModalDialog(
+                    "..\\printt.html",
+                    tstr,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                console.log(tstr);
+                window.open(
+                    "..\\printt.html",
+                    tstr,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            }
+        }
     </script>
 </head>
 <body class="easyui-layout" style="margin: 1px;">
@@ -1379,6 +1426,9 @@
         class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a><a href="javascript:editDabao()"
                                                                           class="easyui-linkbutton" iconCls="icon-edit"
                                                                           plain="true">修改</a>
+    &nbsp;打印合格证：<input class="easyui-numberbox" id="shuliang" size="3"/>
+    <a href="javascript:heGeZheng()"
+       class="easyui-linkbutton" iconCls="icon-ok" plain="true">打印</a>
 </div>
 
 <div region="south" style="height: 88px;" title="通知单号">

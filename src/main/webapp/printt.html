@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        body {
+            background: white;
+            margin: 0px;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        table td {
+            border: 1px solid #000;
+            padding: 10px;
+        }
+
+        table th {
+            border: 2px solid #000;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: left;
+        }
+        #tab {
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    if (window.dialogArguments) {
+        var index = window.dialogArguments.tstr.lastIndexOf(">");
+        var num = window.dialogArguments.tstr.substring(index+1)
+        var ht = window.dialogArguments.tstr.substring(0, index+1);
+        console.log(num);
+        for (var i = 0; i < num; i++) {
+            document.write(ht);
+            document.write("<div style='page-break-after: always;'></div>");
+        }
+    } else {
+        var index = window.opener.tstr.lastIndexOf(">");
+        var num = window.opener.tstr.substring(index+1);
+        var ht = window.opener.tstr.substring(0, index+1);
+        for (var i = 0; i < num; i++) {
+            document.write(ht);
+            document.write("<div style='page-break-after: always;'></div>");
+        }
+    }
+    window.print();
+    var timeId = setInterval(function () {
+        if (document.getElementById("tab")) {
+            window.close();
+            clearInterval(timeId);
+        }
+    }, 1000);
+</script>
+</body>
+</html>
