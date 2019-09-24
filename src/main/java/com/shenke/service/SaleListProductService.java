@@ -195,4 +195,6 @@ public interface SaleListProductService {
 	List<SaleListProduct> findByJitaiId(SaleListProduct saleListProduct);
 
     String updateNum(Integer num, Integer id);
+
+    List<SaleListProduct> find(SaleListProduct saleListProduct);
 }

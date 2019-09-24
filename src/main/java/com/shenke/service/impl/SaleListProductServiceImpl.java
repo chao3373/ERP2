@@ -451,4 +451,23 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             return "修改成功，数量大于完成数，修改订单状态为下发机台";
         }
     }
+
+    @Override
+    public List<SaleListProduct> find(SaleListProduct saleListProduct) {
+        return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+            @Override
+            public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (saleListProduct.getJiTai() != null) {
+                    if (saleListProduct.getJiTai().getId() != null) {
+                        predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), saleListProduct.getJiTai().getId()));
+                    }
+                }
+                if (saleListProduct.getInformNumber() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("informNumber"), saleListProduct.getInformNumber()));
+                }
+                return predicate;
+            }
+        });
+    }
 }

@@ -3,15 +3,14 @@ package com.shenke.controller.admin;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.shenke.entity.JiTai;
-import com.shenke.entity.Storage;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.shenke.entity.*;
 import com.shenke.service.*;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.shenke.entity.Log;
-import com.shenke.entity.SaleListProduct;
 
 @RestController
 @RequestMapping("/admin/saleListProduct")
@@ -28,6 +27,9 @@ public class SaleListProductAdminController {
 
     @Resource
     private StorageService storageService;
+
+    @Resource
+    private PeiFangShouService peiFangShouService;
 
     @Resource
     private JiTaiService jiTaiService;
@@ -544,5 +546,42 @@ public class SaleListProductAdminController {
         byId.setDaBaoShu(dabaoshu);
         saleListProductService.save(byId);
         return true;
+    }
+
+    @RequestMapping("/find")
+    public Map<String, Object> find(SaleListProduct saleListProduct) {
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(saleListProduct);
+        List<SaleListProduct> saleListProducts = saleListProductService.find(saleListProduct);
+        Long informNumber = saleListProduct.getInformNumber();
+        List<PeiFangShou> peiFangShous = peiFangShouService.findByInfornNumber(informNumber);
+        if (peiFangShous != null && peiFangShous.size() != 0) {
+            map.put("peifang", peiFangShous);
+        }
+        map.put("success", true);
+        map.put("rows", saleListProducts);
+        return map;
+    }
+
+    @RequestMapping("/addpeifang")
+    public Map<String, Object> addpeifang(SaleListProduct saleListProduct, String peifangjson) {
+        System.out.println(peifangjson);
+        Long informNumber = saleListProduct.getInformNumber();
+        Gson gson = new Gson();
+        List<PeiFangShou> peiFangShous = peiFangShouService.findByInfornNumber(informNumber);
+        if (peiFangShous != null && peiFangShous.size() > 0) {
+            peiFangShouService.deleteList(peiFangShous);
+        }
+        List<PeiFangShou> plgList = gson.fromJson(peifangjson, new TypeToken<List<PeiFangShou>>() {
+        }.getType());
+        System.out.println(plgList);
+        System.out.println(saleListProduct);
+        for (PeiFangShou peiFangShou : plgList) {
+            peiFangShou.setInformNumber(informNumber);
+        }
+        Map<String, Object> map = new HashMap<>();
+        peiFangShouService.saveList(plgList);
+        map.put("success", true);
+        return map;
     }
 }

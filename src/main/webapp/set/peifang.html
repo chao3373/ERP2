@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>部门职员</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        var url;
+
+        $(document).ready(function () {
+            $("#dg").datagrid({
+                columns:[[
+                    {field:'id',title:'id',hidden:true,align:'center'},
+                    {field:'ceng',title:'层',align:'center'},
+                    {field:'muliaoinfo',title:'母料',align:'center'},
+                    {field:'xianxinginfo',title:'线型',align:'center'},
+                    {field:'gaoyainfo',title:'高压',align:'center'},
+                    {field:'maojinshuinfo',title:'茂金属',align:'center'},
+                    {field:'semuinfo',title:'色母',align:'center'},
+                    {field:'qitainfo',title:'其他',align:'center'},
+                ]]
+            });
+            $("#tree").tree({
+                lines: true,
+                url: '/admin/peifang/tree',
+                onClick: function (node) {
+                    $("#del").linkbutton("enable");
+                    // $("#dg").datagrid('load', {
+                    //
+                    // });
+                    $.ajax({
+                        type:"POST",
+                        url:"/admin/peifanginfo/findByPeiFangId?id=" + node.id,
+                        success: function (result) {
+                            if (result.success){
+                                $("#dg").datagrid("loadData", result.rows);
+                            }
+                        }
+                    })
+                }
+            });
+
+            //双击
+            $("#dg").datagrid({
+                onDblClickRow: function (index, row) {
+                    console.log(row)
+                    $("#dlg2").dialog("open").dialog("setTitle", "修改商品信息");
+                    $("#fm2").form("load", row);
+                    $("#typeId").val(row.dep.id);
+                    $("#typeName").val(row.dep.name);
+                    url = "/admin/peifanginfo/save?id=" + row.id;
+                    $("#saveAddAddNextButton").hide();
+                }
+            });
+
+        });
+
+
+        //删除部门信息
+        function deleteGoodsType() {
+            var node = $("#tree").tree("getSelected"); // 获取选中节点
+            var id = node.id[0];
+            $.post("/admin/peifang/delete", {id: id}, function (result) {
+                if (result.success) {
+                    $("#tree").tree("reload");
+                    $("#del").linkbutton("disable");
+                } else {
+                    $.messager.alert("系统提示", result.errorInfo);
+                }
+            }, "json");
+        }
+
+        //添加部门信息
+        function openGoodsTypeAddDialog() {
+            $("#dlg").dialog("open").dialog("setTitle", "添加部门信息");
+        }
+
+        function saveGoodsType() {
+            if (!$("#fm").form("validate")) {
+                return;
+            }
+            var goodsTypeName = $('#goodsTypeName').val();
+            var node = $("#tree").tree("getSelected"); // 获取选中节点
+            var parentId;
+            if (node == null) {
+                parentId = 1;
+            } else {
+                parentId = node.id;
+            }
+            $.post("/admin/peifang/add", {name: goodsTypeName}, function (result) {
+                if (result.success) {
+                    $("#tree").tree("reload");
+                    closeGoodsTypeDialog();
+                    alert("添加成功");
+                } else {
+                    alert(result.msg);
+                }
+            }, "json");
+        }
+
+        //关闭添加部门窗口
+        function closeGoodsTypeDialog() {
+            $("#dlg").dialog("close");
+            $('#goodsTypeName').val('');
+        }
+
+        //添加员工信息
+        function openGoodsAddDialog(title) {
+            $("#dlg2").dialog("open").dialog("setTitle", title);
+            $("#ceng").val(title);
+            url = "/admin/peifanginfo/save";
+            var node = $("#tree").tree("getSelected");
+            if (node != null) {
+                $("#typeId").val(node.id);
+                $("#typeName").val(node.text);
+            } else {
+                $("#typeId").val("");
+                $("#typeName").val("");
+            }
+        }
+
+        //查询所有部门信息
+        function openChooseGoodsTypeDialog() {
+            $("#dlg3").dialog("open").dialog("setTitle", "选择所属部门");
+            $("#typeTree").tree({
+                url: '/admin/dep/loadTreeInfo',
+                onLoadSuccess: function () {
+                    var rootNode = $("#typeTree").tree("getRoot");
+                    $("#typeTree").tree("expand", rootNode.target);
+                }
+            });
+        }
+
+        //保存所选部门
+        function saveGoodsTypeChoose() {
+            var node = $("#typeTree").tree("getSelected");
+            if (node != null && node.id != 1) {
+                $("#typeId").val(node.id);
+                $("#typeName").val(node.text);
+            }
+            $("#dlg3").dialog("close");
+        }
+
+        //关闭选择部门面板
+        function closeGoodsTypeChooseDialog() {
+            $("#dlg3").dialog("close");
+        }
+
+        //保存员工信息
+        function saveGoods(type) {
+            $("#fm2").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                    var result = eval('(' + result + ')');
+                    if (result.success) {
+                        document.getElementById("fm2").reset();
+                        $.messager.alert("系统提示", "保存成功！");
+                        resetValue();
+                        if (type == 1) {
+                            $("#dlg2").dialog("close");
+                        } else if (type == 2) {
+                            var node = $("#tree").tree("getSelected");
+                            if (node != null && node.id != 1) {
+                                $("#typeId").val(node.id);
+                                $("#typeName").val(node.text);
+                            } else {
+                                $("#typeId").val("");
+                                $("#typeName").val("");
+                            }
+                        }
+                        $("#dg").datagrid("reload");
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        }
+
+        //关闭添加员工面板
+        function closeGoodsDialog() {
+            document.getElementById("fm2").reset();
+            $("#dlg2").dialog("close");
+        }
+
+        //重置添加员工面板信息
+        function resetValue() {
+            $("#typeId").val("");
+            $("#typeName").val("");
+            $("#name").val("");
+            $("#sex").val("");
+            $("#duty").val("");
+            $("#position").val("");
+            $("#school").val("");
+            $("#tel").val("");
+            $("#address").val("");
+            $("#age").val("");
+            $("#politics").val("");
+            $("#idcar").val("");
+            $("#start").val("");
+            $("#strong").val("");
+            $("#remark").val("");
+        }
+
+        //修改员工信息
+        function openGoodsModifyDialog() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要修改的数据！");
+                return;
+            }
+            var row = selectedRows[0];
+            $("#dlg2").dialog("open").dialog("setTitle", "修改员工信息");
+            $("#fm2").form("load", row);
+            $("#typeId").val(row.dep.id);
+            $("#typeName").val(row.dep.name);
+            $("#saveAddAddNextButton").hide();
+            url = "/admin/clerk/save?id=" + row.id;
+
+        }
+
+        //删除员工信息
+        function deleteGoods() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要删除的数据！");
+                return;
+            }
+            var id = selectedRows[0].id;
+            $.messager.confirm("系统提示", "您确定要删除这条数据吗?", function (r) {
+                if (r) {
+                    $.post("/admin/clerk/delete", {id: id}, function (result) {
+                        if (result.success) {
+                            $.messager.alert("系统提示", "数据已成功删除！");
+                            $("#dg").datagrid("reload");
+                        } else {
+                            $.messager.alert("系统提示", "<font color=red>" + result.errorInfo + "</font>");
+                        }
+                    }, "json");
+                }
+            });
+        }
+
+        //根据员工姓名查询
+        function searchGoods() {
+            $("#dg").datagrid('load', {
+                "name": $("#s_name").val()
+            });
+        }
+    </script>
+</head>
+<body class="easyui-layout" style="padding-top: 2px">
+<div data-options="region:'west',collapsible:false" style="width: 200px" title="所有配方" split=true>
+    <ul id="tree" class="easyui-tree" style="padding: 10px"></ul>
+    <div style="position: absolute;bottom: 10px;left: 15px">
+        <a href="javascript:openGoodsTypeAddDialog()" class="easyui-linkbutton" iconCls="icon-add">新增</a>
+        <a id="del" href="javascript:deleteGoodsType()" class="easyui-linkbutton" disabled=true
+           iconCls="icon-remove">删除</a>
+    </div>
+</div>
+<div data-options="region:'center'">
+    <table id="dg" title="配方管理" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true" singleSelect="true" fit="true" toolbar="#tb">
+    </table>
+
+    <div id="tb">
+        <div>
+            <a href="javascript:openGoodsAddDialog('内层')" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加内层</a>
+            <a href="javascript:openGoodsAddDialog('中层')" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加中层</a>
+            <a href="javascript:openGoodsAddDialog('外层')" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加外层</a>
+            <a href="javascript:openGoodsModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit"
+               plain="true">修改</a>
+            <a href="javascript:deleteGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+        </div>
+        <div>
+            &nbsp;员工名称：&nbsp;<input type="text" id="s_name" size="20" onkeydown="if(event.keyCode==13) searchGoods()"/>
+            <a href="javascript:searchGoods()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+        </div>
+    </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 300px;height: 120px;padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons" data-options="onClose:function(){$('#goodsTypeName').val('');}">
+    <form id="fm" method="post">
+        <div>
+            部门名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox"
+                              required="true"/>
+        </div>
+    </form>
+</div>
+
+<div id="dlg-buttons">
+    <a href="javascript:saveGoodsType()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:closeGoodsTypeDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<div id="dlg2" class="easyui-dialog" style="text-align: center;width: 388px;height: 288px;padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons2" data-options="onClose:function(){resetValue()}">
+    <form id="fm2" method="post" style="text-align: center;">
+        <table style="text-align: center;margin: 0 auto;">
+            <tr>
+                <td>配方名称：</td>
+                <td>
+                    <input required="ture" class="easyui-combobox" id="peifangname" name="peiFang.id" style="width: 100px" data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/peifang/peifangList'"/>
+                    <input type="hidden" id="ceng" name="ceng">
+                </td>
+            </tr>
+            <tr>
+                <td>母&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;料：</td>
+                <td>
+                    <input required="ture" class="easyui-combobox" id="muliao" name="muliaoname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/muliao/muliaoList'"/>
+                </td>
+                <td>
+                    占比：<input required="ture" id="muliaonum" name="muliaonum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+            <tr>
+                <td>线&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</td>
+                <td>
+                    <input required="ture" class="easyui-combobox" id="xianxing" name="xianxingname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/xianxing/xianxingList'"/>
+                </td>
+                <td>
+                    占比： <input id="xianxingnum" required="ture" name="xianxingnum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+            <tr>
+                <td>高&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;压：</td>
+                <td>
+                    <input required="ture" class="easyui-combobox" id="gaoya" name="gaoyaname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/gaoya/gaoyaList'"/>
+                </td>
+                <td>
+                    占比： <input id="gaoyanum" required="ture" name="gaoyanum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+            <tr>
+                <td>茂&nbsp;&nbsp;金&nbsp;&nbsp;属：</td>
+                <td>
+                    <input required="ture" class="easyui-combobox" id="maojinshu" name="maojinshuname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/maojinshu/maojinshuList'"/>
+                </td>
+                <td>
+                    占比： <input id="maojinshunum" required="ture" name="maojinshunum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+            <tr>
+                <td>色&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;母：</td>
+                <td>
+                    <input required="required" class="easyui-combobox" id="semu" name="semuname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/semu/semuList'"/>
+                </td>
+                <td>
+                    占比： <input id="semunum" required="ture" name="semunum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+            <tr>
+                <td>其&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;他：</td>
+                <td>
+                    <input class="easyui-combobox" id="qita" name="qitaname" style="width: 100px" data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/qita/qitaList'"/>
+                </td>
+                <td>
+                    占比： <input id="qitanum" name="qitanum" precision="3" class="easyui-numberbox" size="1">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="dlg-buttons2">
+    <a href="javascript:saveGoods(1)" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:closeGoodsDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<div id="dlg3" class="easyui-dialog" style="width: 180px;height: 300px;padding: 10px 10px"
+     closed="true" buttons="#dlg-buttons3">
+    <ul id="typeTree" class="easyui-tree"></ul>
+</div>
+
+<div id="dlg-buttons3">
+    <a href="javascript:saveGoodsTypeChoose()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">选择</a>
+    <a href="javascript:closeGoodsTypeChooseDialog()" class="easyui-linkbutton" iconCls="icon-cancel"
+       plain="true">关闭</a>
+</div>
+
+</body>
+</html>
