@@ -10,7 +10,7 @@
     function toHtml(target, rows){
         rows = rows || getRows(target);
         var dg = $(target);
-        var data = ['<table border="1" rull="all" style="border-collapse:collapse">'];
+        var data = ['<table border="1" rull="all" style="margin: 0 auto; text-align: center; border-collapse:collapse">'];
         var fields = dg.datagrid('getColumnFields',true).concat(dg.datagrid('getColumnFields',false));
         var trStyle = 'height:32px';
         var tdStyle0 = 'vertical-align:middle;padding:0 4px';

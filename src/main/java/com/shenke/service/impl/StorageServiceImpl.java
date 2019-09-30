@@ -73,6 +73,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setClerk(clerk);
         storage.setGroup(group);
         storage.setRealityweight(realityweight);
+        storage.setShengyulength(storage.getLength() * storage.getDabaonum());
         storage.setDateInProduced(new Date(System.currentTimeMillis()));
         storage.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
         storage.setState("生产完成:" + storage.getJiTai().getName());
@@ -111,6 +112,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setLength(changdu);
         storage.setJiTaiName(storage.getJiTai().getName());
         storage.setClerkName(clerk.getName());
+        storage.setShengyulength(changdu * storage.getDabaonum());
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
         storage.setPrice(storage.getPrice());
@@ -1196,27 +1198,47 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
                 predicates.getExpressions().add(cb.like(root.get("state"), "%装车%"));
                 predicates.getExpressions().add(cb.equal(root.get("outNumber"), storage.getOutNumber()));
-//                if (StringUtil.isNotEmpty(date)) {
-//                    try {
-//                        String st = date + " 00:00:00";
-//                        String ed = date + " 23:59:59";
-//                        System.out.println(st);
-//                        System.out.println(ed);
-//                        Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(st);
-//                        Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
-//                        System.out.println(star);
-//                        System.out.println(end);
-//                        predicates.getExpressions().add(cb.greaterThanOrEqualTo(root.get("deliveryTime"), star));
-//                        predicates.getExpressions().add(cb.lessThanOrEqualTo(root.get("deliveryTime"), end));
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
                 return predicates;
             }
         });
         return count.intValue();
+    }
+
+    @Override
+    public List<Storage> findLingShou(Storage storage) {
+        return storageRepository.findAll(new Specification<Storage>() {
+            @Override
+            public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (storage.getId() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("id"), storage.getId()));
+                }
+                if (StringUtil.isNotEmpty(storage.getName())) {
+                    predicate.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
+                }
+                if (storage.getModel() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
+                }
+                if (StringUtil.isNotEmpty(storage.getPrice())) {
+                    predicate.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
+                }
+                if (storage.getLength() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
+                }
+                predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
+                return predicate;
+            }
+        });
+    }
+
+    @Override
+    public void save(List<Storage> storages) {
+        storageRepository.save(storages);
+    }
+
+    @Override
+    public void updateState(String state, Integer key) {
+        storageRepository.updateState(state, key);
     }
 
 }

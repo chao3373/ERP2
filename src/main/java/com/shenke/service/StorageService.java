@@ -195,4 +195,10 @@ public interface StorageService {
     Integer kucunCount(Storage st, String dateInProducedd, String dateInProduceddd);
 
     Integer countByDetail(Storage storage, String dateInProducedd);
+
+    List<Storage> findLingShou(Storage storage);
+
+    void save(List<Storage> storages);
+
+    void updateState(String state, Integer key);
 }

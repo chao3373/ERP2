@@ -499,7 +499,7 @@ public class StorageAdminController {
         Long total = storageService.getCount(storage, dateInProducedd);
         map.put("success", true);
         map.put("rows", list);
-        map.put("total",total);
+        map.put("total", total);
         return map;
     }
 
@@ -517,8 +517,9 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         List<Storage> list = storageService.selectt(storage, dateInProducedd, dateInProduceddd);
         for (Storage st : list) {
-            Integer integer = storageService.kucunCount(st,dateInProducedd, dateInProduceddd);
+            Integer integer = storageService.kucunCount(st, dateInProducedd, dateInProduceddd);
             st.setSum(integer);
+            System.out.println(st);
             Double danjianzhong = st.getDabaonum() * st.getRealityweight();
             st.setDanjianzhong(danjianzhong);
             st.setZongzhong(st.getSum() * danjianzhong);
@@ -730,5 +731,21 @@ public class StorageAdminController {
     public List<Storage> selectTihuo(String pandianji) {
         System.out.println(pandianji);
         return storageService.selectTihuo(pandianji);
+    }
+
+    /***
+     * 查询零售库存中是否存在符合条件的商品
+     * @param storage
+     * @return
+     */
+    @RequestMapping("/findLingShou")
+    public List<Storage> findLingShou(Storage storage) {
+        System.out.println(storage);
+        List<Storage> storages = storageService.findLingShou(storage);
+        for(Storage storage1 : storages){
+            storage1.setWeight(storage1.getRealityweight());
+            storage1.setNum(1);
+        }
+        return storages;
     }
 }

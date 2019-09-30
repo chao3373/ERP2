@@ -80,15 +80,76 @@ function deleteDg(dg, url) {
 }
 
 //根据条件刷新dg中的数据
-function shuaXinDg(dg, url){
+function shuaXinDg(dg, url, data) {
     $.ajax({
-        type:"POST",
-        url:url,
+        type: "POST",
+        url: url,
+        data: data,
         success: function (result) {
-            if (result){
+            if (result) {
                 $(dg).datagrid("loadData", result);
             }
         }
     })
+}
+
+//获取from表单中的所有name和对应的值
+function getFrom(from) {
+    var from = $(from);
+    var obj = {};
+    var t = from.serializeArray();
+    $.each(t, function () {
+        obj[this.name] = this.value;
+    });
+    return obj;
+}
+
+//删除datagrid中选中的行
+function deleteRows(dg) {
+    var rows = $(dg).datagrid("getSelections");
+    if (rows.length < 1) {
+        alert("请选择要删除的行！");
+        return;
+    }
+    for (var i = rows.length - 1; i > -1; i--) {
+        console.log(i);
+        var index = $(dg).datagrid("getRowIndex", rows[i]);
+        console.log(index);
+        $(dg).datagrid("deleteRow", index);
+    }
+    alert("删除成功！");
+}
+
+//格式化时间
+function dateFtt(fmt, date) { //author: meizz
+    var o = {
+        "M+": date.getMonth() + 1,     //月份
+        "d+": date.getDate(),     //日
+        "h+": date.getHours(),     //小时
+        "m+": date.getMinutes(),     //分
+        "s+": date.getSeconds(),     //秒
+        "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+        "S": date.getMilliseconds()    //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+//将一条数据从一个dg添加到另一个dg
+function oldDgToNewDg(oldDg, newDg) {
+    var rows = $(oldDg).datagrid("getSelections");
+    console.log(rows);
+    console.log(rows.length);
+    if (rows.length < 1) {
+        alert("请选择要添加的信息！");
+        return;
+    }
+    for (var i = 0; i < rows.length; i++) {
+        $(newDg).datagrid("appendRow", rows[i]);
+    }
 }
 

@@ -86,7 +86,7 @@ public class Storage{
     @Column(length = 50)
     private String label;// 标签名称
 
-    private Integer weight;// 重量
+    private Double weight;// 重量
 
     @Column(length = 50)
     private String dao;// 剖刀
@@ -176,6 +176,9 @@ public class Storage{
     @Transient
     private Double zongzhong;
 
+    @Column(precision = 6, scale = 2)
+    private Double shengyulength;
+
     @Override
     public String toString() {
         return "Storage{" +
@@ -234,7 +237,16 @@ public class Storage{
                 ", dabaonum=" + dabaonum +
                 ", danjianzhong=" + danjianzhong +
                 ", zongzhong=" + zongzhong +
+                ", shengyulength=" + shengyulength +
                 '}';
+    }
+
+    public Double getShengyulength() {
+        return shengyulength;
+    }
+
+    public void setShengyulength(Double shengyulength) {
+        this.shengyulength = shengyulength;
     }
 
     public Double getDanjianzhong() {
@@ -446,11 +458,11 @@ public class Storage{
         this.label = label;
     }
 
-    public Integer getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 

@@ -3,6 +3,7 @@ package com.shenke.repository;
 import java.util.Date;
 import java.util.List;
 
+import com.shenke.entity.LingShou;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -320,4 +321,17 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set date_in_produced = ?2 where id = ?1", nativeQuery = true)
     void updateshijian(Integer id, Date parse);
+
+    /**
+     * 查询所有可以零售的商品
+     * @param s
+     * @return
+     */
+    @Query(value = "select * from t_storage where clientname = '库存' and name like ?1 group by name", nativeQuery = true)
+    List<Storage> lingshouList(String s);
+
+    //根据id修改状态
+    @Modifying
+    @Query(value = "update t_storage set state = ?1 where id = ?2", nativeQuery = true)
+    void updateState(String state, Integer key);
 }

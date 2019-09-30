@@ -1,5 +1,7 @@
 package com.shenke.controller.admin;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.annotation.Resource;
 
@@ -18,6 +20,9 @@ public class SaleListProductAdminController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private SaleListService saleListService;
 
     @Resource
     private ClientService clientService;
@@ -581,6 +586,91 @@ public class SaleListProductAdminController {
         }
         Map<String, Object> map = new HashMap<>();
         peiFangShouService.saveList(plgList);
+        map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 添加零售商品
+     *
+     * @return
+     */
+    @RequestMapping("/addlingshou")
+    public Map<String, Object> addlingshou(String danhao, String clientname, Integer jitai, String xiaoshouDatee, String goodsJson) throws ParseException {
+        Map<String, Object> map = new HashMap<>();
+        Map<Integer, Double> length = new HashMap<>();
+        List<Storage> storages = new ArrayList<>();
+        SaleList saleList = new SaleList();
+        saleList.setSaleNumber(danhao);
+        saleList.setClient(clientService.findName("零售"));
+        saleList.setSaleDate(new SimpleDateFormat("yyyy-MM-dd Hh:mm:ss").parse(xiaoshouDatee));
+        Long infornNumber = saleListProductService.findMaxInfornNumber();
+        if (infornNumber == null){
+            infornNumber = 0l;
+        }
+        System.out.println(danhao);
+        System.out.println(clientname);
+        System.out.println(jitai);
+        System.out.println(xiaoshouDatee);
+        System.out.println(goodsJson);
+        Gson gson = new Gson();
+        List<SaleListProduct> saleListProducts = gson.fromJson(goodsJson, new TypeToken<List<SaleListProduct>>() {
+        }.getType());
+        System.out.println(saleListProducts);
+        System.out.println(saleListProducts.size());
+        for (SaleListProduct saleListProduct : saleListProducts) {
+            Integer id = saleListProduct.getId();
+            if (length.get(id) != null) {
+                length.put(id, length.get(id) + (saleListProduct.getLength() * saleListProduct.getNum()));
+            } else {
+                length.put(id, saleListProduct.getLength() * saleListProduct.getNum());
+            }
+            Storage storage = storageService.findById(saleListProduct.getId());
+            saleListProduct.setColor(storage.getColor());
+            saleListProduct.setDao(storage.getDao());
+            saleListProduct.setClientname("零售");
+            saleListProduct.setPeasant(clientname);
+            saleListProduct.setJiTai(jiTaiService.findById(jitai));
+            saleListProduct.setInformNumber(infornNumber + 1);
+            saleListProduct.setDaBaoShu(1);
+            saleListProduct.setDemand("");
+            saleListProduct.setPrice(storage.getPrice());
+            saleListProduct.setOneweight(storage.getRealityweight() / storage.getLength() * saleListProduct.getLength());
+            saleListProduct.setSumwight((int) (saleListProduct.getOneweight() * saleListProduct.getNum()));
+            saleListProduct.setLevel(0);
+            saleListProduct.setId(null);
+            saleListProduct.setState("下发机台：" + jiTaiService.findById(jitai).getName());
+            saleListProduct.setSaleList(saleList);
+        }
+
+        for (Integer key : length.keySet()) {
+            System.out.println("=======");
+            System.out.println(key);
+            Storage storage = storageService.findById(key);
+            if (length.get(key) > storage.getShengyulength()) {
+                map.put("success", false);
+                map.put("msg", "编号为" + key + "的总长度超出剩余长度");
+                return map;
+            }
+            Double shengyu = storage.getShengyulength() - length.get(key);
+            System.out.println("剩余：" + shengyu);
+            System.out.println(shengyu == 0);
+            if (shengyu == 0) {
+                System.out.println("等于0");
+                storage.setState("出售");
+            } else if (shengyu < 0) {
+                map.put("success", false);
+                map.put("msg", "未知错误！");
+                return map;
+            }
+            storage.setShengyulength(shengyu);
+            storages.add(storage);
+        }
+        System.out.println(saleListProducts);
+        System.out.println(saleListProducts.size());
+        saleListService.saveOne(saleList);
+        saleListProductService.saveList(saleListProducts);
+        storageService.save(storages);
         map.put("success", true);
         return map;
     }

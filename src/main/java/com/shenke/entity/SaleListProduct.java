@@ -106,6 +106,18 @@ public class SaleListProduct {
 	@Column(nullable = true)
 	private Double meter;// 实际厚度
 
+	@Column(precision = 6, scale = 2)
+	private Double danjia;
+
+	@Column(precision = 6, scale = 2)
+	private Double yingshou;
+
+	@Column(precision = 6, scale = 2)
+	private Double shishou;
+
+	@Column(length = 20)
+	private String fangshi;
+
 	private Integer level;//等级
 
 	@Column(length = 50)
@@ -170,6 +182,10 @@ public class SaleListProduct {
 				", state='" + state + '\'' +
 				", sumwight=" + sumwight +
 				", meter=" + meter +
+				", danjia=" + danjia +
+				", yingshou=" + yingshou +
+				", shishou=" + shishou +
+				", fangshi='" + fangshi + '\'' +
 				", level=" + level +
 				", peasant='" + peasant + '\'' +
 				", clientname='" + clientname + '\'' +
@@ -182,6 +198,38 @@ public class SaleListProduct {
 				", saleTotal=" + saleTotal +
 				", hebingLength='" + hebingLength + '\'' +
 				'}';
+	}
+
+	public Double getDanjia() {
+		return danjia;
+	}
+
+	public void setDanjia(Double danjia) {
+		this.danjia = danjia;
+	}
+
+	public Double getYingshou() {
+		return yingshou;
+	}
+
+	public void setYingshou(Double yingshou) {
+		this.yingshou = yingshou;
+	}
+
+	public Double getShishou() {
+		return shishou;
+	}
+
+	public void setShishou(Double shishou) {
+		this.shishou = shishou;
+	}
+
+	public String getFangshi() {
+		return fangshi;
+	}
+
+	public void setFangshi(String fangshi) {
+		this.fangshi = fangshi;
 	}
 
 	public Integer getDaBaoShu() {

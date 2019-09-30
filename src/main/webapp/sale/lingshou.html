@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>零售单</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="print.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="../static/datagrid-export/datagrid-export.js"></script>
+    <script type="text/javascript" src="../static/jquery-easyui-edatagrid/jquery.edatagrid.js"></script>
+    <script type="text/javascript" src="/static/datagrid-export/datagrid-export.js"></script>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north'"
+     style="height: 100px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>
+            单号：<span id="dh"></span>
+        </legend>
+        <form id="fm" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text" id="saleDate"
+                                                                            name="xiaoshouDatee"
+                                                                            class="easyui-datetimebox" demandd="true"
+                                                                            data-options="editable:false" size="15"/>
+                    </td>
+                    <td>
+                        客户名称：<input type="text" id="clientname" name="clientname">
+                    </td>
+                    <td><input type="hidden" id="danhao" name="danhao"/>
+                        <input type="hidden" id="goodsJson" name="goodsJson"/> <a
+                                href="javascript:saveSaleGoods()" class="easyui-linkbutton"
+                                iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <input type="checkbox" id="dama" name="dama" disabled="disabled" style="vertical-align:middle;">
+                        <lable for="dama" style="display: inline-block;vertical-align: middle;">是否打码入库</lable>
+                        <lable style="vertical-align:middle;padding-left: 5px;">选择机台：</lable><input id="jitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll" name="jitai" valueField="id" textField="name" style="vertical-align:middle;width: 98px"/>
+                        <a href="javascript:{$('#dama').removeAttr('disabled');$('#jitai').combobox('enable');}" class="easyui-linkbutton">修改</a>
+                        <a href="javascript:{$('#dama').attr('disabled', true);$('#jitai').combobox('disable');}" class="easyui-linkbutton">确定</a>
+                    </td>
+                    <!--<td><a href="#" onclick="javascript:$('#dg').edatagrid('saveRow')" class="easyui-linkbutton"-->
+                           <!--data-options="iconCls:'icon-ok',plain:true">确定</a></td>-->
+                    <!--<td><a href="#" onclick="javascript:$('#dg').edatagrid('destroyRow')" class="easyui-linkbutton"-->
+                           <!--data-options="iconCls:'icon-cancel',plain:true">删除一行</a></td>-->
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+<div data-options="region:'center'" style="padding: 10px; border: 1px">
+    <table id="dg" style="" rownumbers="true"
+           singleSelect="true" fit="true" toolbar="#tb">
+    </table>
+
+    <div id="tb">
+        <div style="padding: 2px">
+            <a href="javascript:openDlg('#dlg2')"
+               class="easyui-linkbutton" iconCls="icon-add" plain="true">选择商品</a>
+            <!--<a href="javascript:openDlg('#dlg')"-->
+            <!--class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>-->
+            <a href="javascript:deleteRows('#dg')" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            <a href="javascript:printdg()" class="easyui-linkbutton" iconCls="icon-print" plain="true">打印</a>
+            <a href="javascript:addSum()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加合计</a>
+        </div>
+    </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" title="添加商品信息" style="width: 600px; height: 450px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons">
+    <form id="fm2" method="post">
+        <table>
+            <tr>
+                <td>
+                    产品名称：<input required="true" type="text" id="name" name="name" class="easyui-combobox"
+                                data-options="demandd:true,valueField:'name',textField:'name',url:'/admin/LingShou/lingshouList'"/>
+                    <input type="hidden" name="clientname" value="库存">
+                </td>
+                <td>
+                    幅宽：<input required="true" id="model" name="model" class="easyui-numberbox" precision="2"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    厚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：<input type="text" class="easyui-numberbox" name="price"
+                                                                  precision="2">
+                </td>
+                <td>
+                    长度：<input type="text" class="easyui-numberbox" name="length" precision="2">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：<input type="text" class="easyui-numberbox" name="weight"
+                                                                  precision="2">
+                </td>
+                <td>
+                    数量：<input type="text" name="num" class="easyui-numberbox">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：<input type="text" class="easyui-numberbox" name="jine"
+                                                                  precision="2">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="dlg-buttons">
+    <a
+            href="javascript:saveGoods()" class="easyui-linkbutton"
+            iconCls="icon-ok">保存</a> <a href="javascript:closeDlg('#dlg')"
+                                        class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<div id="dlg2" class="easyui-dialog" title="选择商品" resizable="true" style="width:888px;height:200px;"
+     buttons="#dlg-buttons2">
+    <div id="dg2" singleSelect="true" fitColumns="true" toolbar="#tb2">
+
+    </div>
+</div>
+
+<div id="tb2">
+    <form id="fm3" action="">
+        编号：<input type="text" name="id" style="width: 50px;">
+        客户名：<input type="text" name="clientname" style="width: 88px;" class="easyui-combobox"
+                   url="/admin/client/clientList" valueField="name" textField="name">
+        幅宽：<input type="text" name="model" style="width: 50px;">
+        厚度：<input type="text" name="price" style="width: 50px;">
+        长度：<input type="text" name="length" style="width: 50px;">
+        <a href="javascript:{var data = getFrom('#fm3');shuaXinDg('#dg2', '/admin/storage/findLingShou', data)}"
+           class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">查询</a>
+    </form>
+</div>
+
+<div id="dlg3" class="easyui-dialog" title="填写长度和单价" buttons="#dlg-button3" resizable="true"
+     style="width: 300px;padding: 20px;">
+    <form action="" id="fm4">
+        <table>
+            <tr>
+                <td>长度：</td>
+                <td><input type="text" id="length" name="length" style="width: 100px;"></td>
+            </tr>
+            <tr>
+                <td>数量：</td>
+                <td><input type="text" id="num" name="num" style="width: 100px;"></td>
+            </tr>
+            <tr>
+                <td>单价：</td>
+                <td><input type="text" id="danjia" name="danjia" style="width: 100px;"></td>
+            </tr>
+            <tr>
+                <td>应收金额：</td>
+                <td><input type="text" disabled="disabled" id="yingshou" name="yingshou" style="width: 100px;"></td>
+            </tr>
+            <tr>
+                <td>实收金额：</td>
+                <td><input type="number" id="shishou" name="shishou" style="width: 100px;"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="dlg-button3">
+    <a href="javascript:savePrice()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+    <a href="javascript:{clertInput('#fm4');closeDlg('#dlg3')}" class="easyui-linkbutton" iconCls="icon-no">取消</a>
+</div>
+
+<div id="dlg-buttons2">
+    <a href="javascript:add()" class="easyui-linkbutton"
+       data-options="iconCls:'icon-add'">添加</a>
+    <a href="javascript:closeDlg('#dlg2')" class="easyui-linkbutton" data-options="iconCls:'icon-no'">关闭</a>
+</div>
+</body>
+<script>
+    //入口函数
+    $(function () {
+        $('#jitai').combobox('disable');
+        closeDlg("#dlg3");
+        $("#saleDate").datetimebox("setValue", dateFtt("yyyy-MM-dd hh:mm:ss", new Date()));
+        $("#dh").load("/admin/LingShou/genCode");
+        closeDlg("#dlg2");
+        $("#dg2").datagrid({
+            columns: [[
+                {field: 'id', title: '编号', width: 50, align: 'center'},
+                {field: 'name', title: '产品名称', width: 200, align: 'center'},
+                {field: 'clientname', title: '客户名称', width: 200, align: 'center'},
+                {field: 'model', title: '幅宽', width: 100, align: 'center'},
+                {field: 'price', title: '厚度', width: 100, align: 'center'},
+                {field: 'length', title: '长度', width: 100, align: 'center'},
+                {field: 'shengyulength', title: '剩余长度', width: 100, align: 'center'},
+                {field: 'weight', title: '重量kg', width: 100, align: 'center'}
+            ]]
+        });
+        $("#dg").edatagrid({
+            columns: [[
+                {field: 'id', title: '编号', width: 200, align: 'center'},
+                {field: 'name', title: '产品名称', width: 200, align: 'center'},
+                {field: 'model', title: '幅宽', width: 100, align: 'center'},
+                {field: 'length', title: '长度', width: 100, align: 'center', editor: 'text'},
+                {field: 'num', title: '数量', width: 100, align: 'center', editor: 'text'},
+                {field: 'danjia', title: '单价', width: 100, align: 'center', editor: 'text'},
+                {field: 'yingshou', title: '应收金额', width: 100, align: 'center', editor: 'text'},
+                {field: 'shishou', title: '实收金额', width: 100, align: 'center', editor: 'text'},
+            ]]
+        });
+    });
+
+    function saveGoods() {
+        var row = getFrom("#fm2");
+        $.ajax({
+            type: "POST",
+            url: "/admin/storage/findLingShou",
+            data: row,
+            success: function (result) {
+                if (result.success) {
+                    closeDlg("#dlg");
+                    $("#dg").datagrid("appendRow", row);
+                } else {
+                    alert("库存中不存在名称为" + row.name + "幅宽为" + row.model + "厚度为" + row.price + "并且长度大于" + row.length + "的产品！");
+                }
+            }
+        });
+    }
+
+    //保存零售商品
+    function saveSaleGoods() {
+        if ($("#dama").prop("checked")){
+            if (!$("#jitai").combobox("getValue")){
+                alert("请选择要分配的机台！");
+                return;
+            }
+            var rows = $("#dg").datagrid("getRows");
+            if (rows.length < 1) {
+                alert("没有添加数据！");
+                return;
+            }
+
+            $("#danhao").val($("#dh").text());
+            if (rows[rows.length-1].yingshou == "合计："){
+                rows.splice(rows.length-1, 1);
+                $("#goodsJson").val(JSON.stringify(rows));
+            } else {
+                $("#goodsJson").val(JSON.stringify(rows));
+            }
+            var data = getFrom("#fm");
+            console.log(data);
+            data.jitai = $("#jitai").combobox("getValue");
+            $.ajax({
+                type: "POST",
+                url: "/admin/saleListProduct/addlingshou",
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        alert("保存成功！");
+                        location.reload();
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        } else {
+            var rows = $("#dg").datagrid("getRows");
+            if (rows.length < 1) {
+                alert("没有添加数据！");
+                return;
+            }
+            $("#danhao").val($("#dh").text());
+            if (rows[rows.length-1].yingshou == "合计："){
+                rows.splice(rows.length-1, 1);
+                $("#goodsJson").val(JSON.stringify(rows));
+            } else {
+                $("#goodsJson").val(JSON.stringify(rows));
+            }
+            var data = getFrom("#fm");
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: "/admin/LingShou/add",
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        alert("保存成功！");
+                        location.reload();
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        }
+    }
+
+    //点击添加按钮
+    var obj = {};
+
+    function add() {
+        var row = $("#dg2").datagrid("getSelected");
+        obj.id = row.id;
+        obj.name = row.name;
+        obj.model = row.model;
+        obj.shengyulength = row.shengyulength;
+        $("#length").change(function () {
+            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+                console.log($("#danjia").val());
+                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+            }
+            if ($("#length").val() && $("#num").val()) {
+                if (row.shengyulength < $("#length").val() * $("#num").val()) {
+                    alert("总长度超出剩余长度！");
+                    return;
+                }
+            }
+        });
+        $("#danjia").change(function () {
+            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+            }
+        });
+        $("#num").change(function () {
+            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+            }
+            if ($("#length").val() && $("#num").val()) {
+                if (row.shengyulength < $("#length").val() * $("#num").val()) {
+                    alert("总长度超出剩余长度！");
+                    return;
+                }
+            }
+        });
+        openDlg("#dlg3");
+    }
+
+    //点击确定按钮
+    function savePrice() {
+        if ($("#length").val() && $("#length").val() > 0) {
+            obj.length = $("#length").val();
+        } else {
+            alert("长度有误，请重新输入！");
+            return;
+        }
+        if ($("#num").val() && $("#num").val() > 0) {
+            obj.num = $("#num").val();
+        } else {
+            alert("数量有误，请重新输入！");
+            return;
+        }
+        if ($("#danjia").val() && $("#danjia").val() > 0) {
+            obj.danjia = $("#danjia").val();
+        } else {
+            alert("单价有误，请重新输入！");
+            return;
+        }
+        if ($("#yingshou").val() && $("#yingshou").val() > 0) {
+            obj.yingshou = $("#yingshou").val();
+        } else {
+            alert("应收金额有误，请重新输入！");
+            return;
+        }
+        if ($("#shishou").val() && $("#shishou").val() > 0) {
+            obj.shishou = $("#shishou").val();
+        } else {
+            alert("实收金额有误，请重新输入！");
+            return;
+        }
+        if (obj.shengyulength < $("#num").val() * $("#length").val()) {
+            alert("总长度超出剩余长度，请重新输入！");
+            return;
+        }
+        $("#dg").datagrid("appendRow", obj);
+        clertInput("#fm4");
+        closeDlg("#dlg2");
+        closeDlg("#dlg3");
+        obj = {};
+    }
+
+    function addSum() {
+        var rows = $("#dg").datagrid("getRows");
+        if (rows.length < 1) {
+            alert("没有添加数据!");
+            return;
+        }
+        if (rows[rows.length - 1].yingshou == "合计：") {
+            alert("已经添加合计！");
+            return;
+        }
+        var heji = 0;
+        for (var i = 0; i < rows.length; i++) {
+            heji += Number(rows[i].shishou);
+        }
+        $("#dg").datagrid("appendRow", {
+            id: "",
+            name: "",
+            model: "",
+            length: "",
+            num: "",
+            danjia: "",
+            yingshou: "合计：",
+            shishou: heji
+        });
+    }
+
+    //点击打印
+    function printdg() {
+        var rows = $("#dg").datagrid("getRows");
+        var ht = $("#dg").datagrid("toHtml", rows);
+        var newWindow = window.open('', '', 'width=800, height=500');
+        var document = newWindow.document.open();
+        var content =
+            '<!doctype html>' +
+            '<html>' +
+            '<head>' +
+            '<meta charset="utf-8">' +
+            '<title>' + "销售单" + '</title>' +
+            '</head>' +
+            '<body><h3 style="text-align: center;">销售单</h3><div style="text-align: center;">时间：' + $("#saleDate").datebox("getValue");
+        if ($("#clientname").val()) {
+            content += "客户名称：" + $("#clientname").val();
+        }
+        var st = '</div>' + ht + '</body>' + '</html>';
+        content += st;
+        document.write(content);
+        document.close();
+        newWindow.print();
+    }
+
+    function print(target, param) {
+        var title = null;
+        var rows = null;
+        if (typeof param == 'string') {
+            title = param;
+        } else {
+            title = param['title'];
+            rows = param['rows'];
+        }
+        var newWindow = window.open('', '', 'width=800, height=500');
+        var document = newWindow.document.open();
+        var content =
+            '<!doctype html>' +
+            '<html>' +
+            '<head>' +
+            '<meta charset="utf-8">' +
+            '<title>' + title + '</title>' +
+            '</head>' +
+            '<body><h2>销售单</h2><div>时间：' + $("#saleDate").datebox("getValue");
+        if ($("#clientname").val()) {
+            content += "客户名称：" + $("#clientname").val();
+        }
+        var st = '</div>' + toHtml(target, rows) + '</body>' + '</html>';
+        content += st;
+        document.write(content);
+        document.close();
+        newWindow.print();
+    }
+
+    function toHtml(target, rows) {
+        rows = rows || getRows(target);
+        var dg = $(target);
+        var data = ['<table border="1" rull="all" style="margin: 0 auto; text-align: center; border-collapse:collapse">'];
+        var fields = dg.datagrid('getColumnFields', true).concat(dg.datagrid('getColumnFields', false));
+        var trStyle = 'height:32px';
+        var tdStyle0 = 'vertical-align:middle;padding:0 4px';
+        data.push('<tr style="' + trStyle + '">');
+        for (var i = 0; i < fields.length; i++) {
+            var col = dg.datagrid('getColumnOption', fields[i]);
+            var tdStyle = tdStyle0 + ';width:' + col.boxWidth + 'px;';
+            data.push('<th style="' + tdStyle + '">' + col.title + '</th>');
+        }
+        data.push('</tr>');
+        $.map(rows, function (row) {
+            data.push('<tr style="' + trStyle + '">');
+            for (var i = 0; i < fields.length; i++) {
+                var field = fields[i];
+                data.push(
+                    '<td style="' + tdStyle0 + '">' + row[field] + '</td>'
+                );
+            }
+            data.push('</tr>');
+        });
+        data.push('</table>');
+        return data.join('');
+    }
+
+</script>
+</html>
