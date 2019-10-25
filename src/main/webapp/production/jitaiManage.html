@@ -79,6 +79,9 @@
                     if (result.jitai.weight) {
                         $("#printWeight").prop("checked", true);
                     }
+                    if (result.jitai.price) {
+                        $("#price").prop("checked", true);
+                    }
                     if (result.jitai.group) {
                         $("#banzu").val(result.jitai.group.name);
                     }
@@ -135,6 +138,12 @@
                             field: 'informNumber',
                             title: 'informNumber',
                             width: 100,
+                            align: 'center'
+                        }, {
+                            field: 'storageid',
+                            title: '零售编号',
+                            width: 100,
+                            // hidden: 'true',
                             align: 'center'
                         }, {
                             field: 'clientname',
@@ -586,7 +595,7 @@
                         if (result.staff) {
                             $("#staff").combobox("select", result.staff);
                         }
-                        disabledInput();
+                        // disabledInput();
                     }
                 });
         }
@@ -618,7 +627,7 @@
             }, function (result) {
 
             });
-            disabledInput();
+            // disabledInput();
         }
 
         //禁用打印设置中的input
@@ -637,81 +646,6 @@
             $(("#jitaiName")).prop('disabled', true);
         }
 
-
-        //称重
-        // function weigh() {
-        //     if (!$("#banzu").val() || !$("#staff").val()) {
-        //         $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
-        //         return;
-        //     }
-        //     $("#printButton").show();
-        //     $("#dg2").datagrid("selectRow", 0);
-        //     if ($("#dg2").datagrid("getRows").length == 0) {
-        //         $.messager.alert("系统提示",
-        //             "<span style='color:red;'>数据为空,请选择数据</span>");
-        //         return;
-        //     }
-        //     $.messager
-        //         .prompt(
-        //             '重量',
-        //             '请输入重量：',
-        //             function (weight) {
-        //                 if (weight) {
-        //                     $.ajax({
-        //                         url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
-        //                         success: function (result) {
-        //                             // alert(result);
-        //                             console.log(result);
-        //                             if (result.substring(0, 4) == "打包完成") {
-        //                                 // alert(result);
-        //                                 console.log(result);
-        //                                 var num = result.split(":")[1];
-        //                                 $.ajax({
-        //                                     url: "/admin/storage/add",
-        //                                     async: false,
-        //                                     data: {
-        //                                         saleListProduct: $("#dg").datagrid("getSelected").id,
-        //                                         jiTai: $("#selectJitai").combobox("getValue"),
-        //                                         clerkName: $("#staff").val(),
-        //                                         realityweight: weight,
-        //                                         dabaonum: num
-        //                                     },
-        //                                     success: function (result) {
-        //                                         printt(result.id);
-        //                                         reloadDg();
-        //                                     }
-        //                                 });
-        //                             } else if (result.substring(0, 4) == "生产完成") {
-        //                                 // alert(result);
-        //                                 console.log(result);
-        //                                 var num = result.split(":")[1];
-        //                                 $.ajax({
-        //                                     url: "/admin/storage/add",
-        //                                     async: false,
-        //                                     data: {
-        //                                         saleListProduct: $("#dg").datagrid("getSelected").id,
-        //                                         jiTai: $("#selectJitai").combobox("getValue"),
-        //                                         clerkName: $("#staff").val(),
-        //                                         realityweight: weight,
-        //                                         dabaonum: num
-        //                                     },
-        //                                     success: function (result) {
-        //                                         printt(result.id);
-        //                                         reloadDg();
-        //                                     }
-        //                                 });
-        //                             } else if (result.substring(0, 5) == "只增加数量") {
-        //                                 // alert(result);
-        //                                 console.log(result);
-        //                                 reloadDg();
-        //                             }
-        //                         }
-        //                     });
-        //                 } else {
-        //                     $.messager.alert("系统提示", "请输入重量!");
-        //                 }
-        //             });
-        // }
 
         function weigh() {
             if (!$("#banzu").val() || !$("#staff").val()) {
@@ -757,110 +691,6 @@
                         }
                     });
         }
-
-        //快速打码
-        // function kuaiSu() {
-        //     if (!$("#banzu").val() || !$("#staff").val()) {
-        //         $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
-        //         return;
-        //     }
-        //     // dabaoCount++;
-        //     $.ajax({
-        //         url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
-        //         success: function (result) {
-        //             // alert(result);
-        //             console.log(result);
-        //             if (result.substring(0, 4) == "打包完成") {
-        //                 // alert(result);
-        //                 var num = result.split(":")[1];
-        //                 $.ajax({
-        //                     url: "/admin/storage/add",
-        //                     async: false,
-        //                     data: {
-        //                         saleListProduct: $("#dg").datagrid("getSelected").id,
-        //                         jiTai: $("#selectJitai").combobox("getValue"),
-        //                         clerkName: $("#staff").val(),
-        //                         realityweight: $("#dg").datagrid("getSelected").oneweight,
-        //                         dabaonum: num
-        //                     },
-        //                     success: function (result) {
-        //                         printt(result.id);
-        //                         reloadDg();
-        //                     }
-        //                 });
-        //             } else if (result.substring(0, 4) == "生产完成") {
-        //                 // alert(result);
-        //                 console.log(result);
-        //                 var num = result.split(":")[1];
-        //                 $.ajax({
-        //                     url: "/admin/storage/add",
-        //                     async: false,
-        //                     data: {
-        //                         saleListProduct: $("#dg").datagrid("getSelected").id,
-        //                         jiTai: $("#selectJitai").combobox("getValue"),
-        //                         clerkName: $("#staff").val(),
-        //                         realityweight: $("#dg").datagrid("getSelected").oneweight,
-        //                         dabaonum: num
-        //                     },
-        //                     success: function (result) {
-        //                         printt(result.id);
-        //                         reloadDg();
-        //                     }
-        //                 });
-        //             } else if (result.substring(0, 5) == "只增加数量") {
-        //                 // alert(result);
-        //                 console.log(result);
-        //                 reloadDg();
-        //             }
-        //         }
-        //     });
-        //     // if (dabaoCount == dabaoNum) {
-        //     //     $.ajax({
-        //     //         url: "/admin/storage/add",
-        //     //         async: false,
-        //     //         data: {
-        //     //             saleListProduct: $("#dg").datagrid("getSelected").id,
-        //     //             jiTai: $("#selectJitai").combobox("getValue"),
-        //     //             clerkName: $("#staff").val(),
-        //     //             realityweight: $("#dg").datagrid("getSelected").oneweight,
-        //     //             dabaonum: dabaoCount
-        //     //         },
-        //     //         success: function (result) {
-        //     //             if (result.success) {
-        //     //                 printNum = dabaoCount;
-        //     //                 printt(result.id);
-        //     //                 // alert("打印" + printNum + "===id:" + result.id);
-        //     //                 dabaoCount = 0;
-        //     //             } else {
-        //     //                 alert("未知错误");
-        //     //             }
-        //     //         }
-        //     //     });
-        //     // } else if ($("#dg2").datagrid('getRows').length == 1) {
-        //     //     $.ajax({
-        //     //         url: "/admin/storage/add",
-        //     //         async: false,
-        //     //         data: {
-        //     //             saleListProduct: $("#dg").datagrid("getSelected").id,
-        //     //             jiTai: $("#selectJitai").combobox("getValue"),
-        //     //             clerkName: $("#staff").val(),
-        //     //             realityweight: Number(weight),
-        //     //             hebingLength: $("#dg").datagrid("getSelected").hebingLength,
-        //     //             dabaonum: dabaoCount
-        //     //         },
-        //     //         success: function (result) {
-        //     //             if (result.success) {
-        //     //                 printNum = dabaoCount;
-        //     //                 dabaoCount = 0;
-        //     //                 printt(result.id);
-        //     //                 // alert("打印" + printNum + "===id:" + result.id);
-        //     //             } else {
-        //     //                 alert("未知错误");
-        //     //             }
-        //     //         }
-        //     //     });
-        //     // }
-        // }
 
         function kuaiSu() {
             if (!$("#banzu").val() || !$("#staff").val()) {
@@ -951,14 +781,12 @@
                             type: "POST", async: false, url: "/static/erweima", data: {
                                 url: url
                             }, success: function (result) {
-                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
                                 var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
-                                // url += result.url;
-                                // url += "'/>";
                                 tableString = "";
-                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                                tableString += "<div id='tab' style='text-align: center;padding-top: 10px;width: 100%;font-size: 55px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
                                 "</td>";
                                 tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
+                                tableString += "<tr><td>颜色：" + row.color + "</td><td>剖刀：" + row.dao + "</td></tr>";
                                 if ($('#printWeight').is(':checked')) {
                                     if (row.dabaonum != 1) {
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg x " + row.dabaonum + "件</td></tr>";
@@ -966,27 +794,37 @@
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
                                     }
                                 }
-                                if ($('#printLabel').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
+                                // if ($('#printLabel').is(':checked')) {
+                                //     tableString += "<tr><td>颜色：" + row.color + "</td><td>剖刀：" + row.dao + "</td></tr>";
+                                // }
+                                // if ($('#printLength').is(':checked')) {
+                                //     tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
+                                // }
+                                // if ($('#printThickness').is(':checked')){
+                                //     tableString += "<tr></tr>";
+                                //     console.log(tableString);
+                                // }
+                                if ($('#printnonghu').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>农户：" + row.peasant + "</td></tr>";
                                 }
-                                if ($('#printLength').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
-                                }
-                                tableString += "<tr><td>客户：" + row.clientname + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
-                                if (isNaN(row.price)) {
-                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "</td></tr>";
-                                } else {
-                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
-                                }
-                                if (row.hebingLength != null) {
-                                    tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
-                                } else {
-                                    if ($("#changdu").val()) {
-                                        tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                tableString += "<tr></tr>";
+                                if ($('#price').is(':checked')) {
+                                    if (isNaN(row.price)) {
+                                        tableString += "<tr><td colspan='2'>厚度：" + row.price + "</td></tr>";
                                     } else {
-                                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
+                                        tableString += "<tr><td colspan='2'>厚度：" + row.price + "mm</td></tr>";
                                     }
                                 }
+                                if (row.hebingLength != null) {
+                                    tableString += "<tr><td>长度：" + row.hebingLength + "</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                } else {
+                                    if ($("#changdu").val()) {
+                                        tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                    } else {
+                                        tableString += "<tr><td>长度：" + row.length + "m</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                    }
+                                }
+                                tableString += "<tr><td>客户：" + row.clientname + "</td><td>机台：" + row.jiTai.name + "</td></tr>"
                                 tableString += "<tr><td>班组：" + row.jiTai.group.name + "</td><td>质检：" + row.jiTai.clerk.name + "</td></tr>";
                                 Date.prototype.format = function (format) {
                                     var o = {
@@ -1011,6 +849,8 @@
                                 }
                                 tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
                                 tableString += "</td></tr></table></div>";
+                                tableString += $("#printnum").val();
+                                console.log(tableString);
                                 if (window.showModalDialog) {
                                     window.showModalDialog(
                                         "..\\print.html",
@@ -1062,10 +902,10 @@
             //     $.messager.alert("系统提示", "<span style='color: red;'>请先完成当前打包任务</span>");
             //     return;
             // }
-            if (!$("#dabao").val()){
+            if (!$("#dabao").val()) {
                 alert("请输入数量！");
                 return;
-            } else if($("#dabao").val() == 0){
+            } else if ($("#dabao").val() == 0) {
                 alert("打包数不能为0！");
                 return;
             }
@@ -1078,9 +918,12 @@
                     if (result) {
                         alert("修改成功！");
                         $("#dabao").numberbox("disable");
+                        // var index = $("#dg").datagrid("getRowIndex", $("#dg").datagrid("getSelected"));
+                        $("#dl").empty();
                         // reSelect();
                         start();
                         $('#dg2').datagrid('loadData', []);
+                        // $("#dg").datagrid("selectRow", 0);
                     }
                 }
             });
@@ -1150,6 +993,7 @@
                     tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
                     +"";
                     tableString += "</td></tr></table></div>";
+                    tableString += 2;
                     if (window.showModalDialog) {
                         window
                             .showModalDialog(
@@ -1302,6 +1146,7 @@
         }
 
         $(document).ready(function () {
+            $("#printnum").val(1);
             $("#dd3").dialog("close");
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
@@ -1314,7 +1159,7 @@
             loadColum();
             loadDg2Colum();
             ddClose();
-            disabledInput();
+            // disabledInput();
             set();
             $("#yaoqiu").hide();
             $("#dabao").numberbox("disable");
@@ -1380,7 +1225,9 @@
     <div id="tb" style="padding: 20px;">
         <table id="tbTab" style="display: inline-block;">
             <tr>
-                <td>选择机台：<input id="selectJitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll" name="selectJitai" valueField="id" panelHeight="auto" textField="name" style="width: 98px" onSelect="selectJitai(data)"/></td>
+                <td>选择机台：<input id="selectJitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll"
+                                name="selectJitai" valueField="id" panelHeight="auto" textField="name"
+                                style="width: 98px" onSelect="selectJitai(data)"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="start"
                                                      class="easyui-linkbutton" iconCls="icon-ok"
                                                      href="javascript:start()">开始</a></td>
@@ -1442,7 +1289,10 @@
                 <td><input id="printLabel" type="checkbox"/>打印颜色&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printLength" type="checkbox"/>打印剖刀&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printThickness" type="checkbox"/>打印客户&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printnonghu" type="checkbox"/>打印农户&nbsp;&nbsp;&nbsp;</td>
                 <td><input id="printWeight" type="checkbox"/>打印重量&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="price" type="checkbox"/>打印厚度&nbsp;&nbsp;&nbsp;</td>
+                <td>标签数量：<input id="printnum" type="text" style="width: 50px;"/>&nbsp;&nbsp;&nbsp;</td>
                 <!--<td>标签数：<input id="labelNumber" type="text"
                                style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
                 </td>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>生产通知单</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="../static/datagrid-export/datagrid-export.js"></script>
+    <script type="text/javascript" src="../static/jquery-easyui-edatagrid/jquery.edatagrid.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <script type="text/javascript">
+        function savepeifang() {
+            var rows = $("#tt").datagrid("getRows");
+            var heji;
+            if (rows[rows.length - 1].danjia == "合计：") {
+                heji = rows[rows.length - 1].yingshou;
+                rows.splice(rows.length - 1, 1);
+                var lingshou = JSON.stringify(rows);
+            } else {
+                var lingshou = JSON.stringify(rows);
+            }
+            var obj = {};
+            obj.danhao = $("#dh").text();
+            if ($("#clientname").combobox("getText")) {
+                obj.clientname = $("#clientname").combobox("getText");
+            }
+            if ($("#tel").val()) {
+                obj.tel = $("#tel").val();
+            }
+            if ($("#dingjin").val()) {
+                obj.dingjin = $("#dingjin").val();
+            }
+            if ($("#address").val()) {
+                obj.address = $("#address").val();
+            }
+            if (heji){
+                obj.heji = heji;
+            }
+            obj.lingshou = lingshou;
+            console.log(lingshou);
+            $.ajax({
+                type: "POST",
+                url: "/admin/LingShou/add",
+                data: obj,
+                success: function (result) {
+                    if (result.success) {
+                        alert("保存成功！");
+                        location.reload();
+                    }
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            $("#dh").load("/admin/LingShou/genCode");
+            closeDlg("#addpeifang");
+            $("#tt").edatagrid({});
+            $('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.level || row.level != 0) {
+                        return 'background-color:orange;color:blue;font-weight:bold;';
+                    }
+                }
+            });
+        });
+
+        //添加合计
+        function heji() {
+            var sum = 0;
+            var yingshousum = 0;
+            var rows = $("#tt").datagrid("getRows");
+            if (rows[rows.length - 1].danjia == "合计：") {
+                alert("已经添加合计！");
+                return;
+            }
+            for (var i = 0; i < rows.length; i++) {
+                sum += Number(rows[i].shishou);
+                yingshousum += Number(rows[i].yingshou);
+            }
+            $("#tt").datagrid("appendRow", {
+                name: "",
+                model: "",
+                length: "",
+                num: "",
+                weight: "",
+                midu: "",
+                peasant: "",
+                price: "",
+                qita: "",
+                beizhu: "",
+                danjia: "合计：",
+                yingshou: yingshousum,
+                shishou: sum
+            });
+        }
+
+        //按平方计算应收金额
+        function yingshousum() {
+            $("#tt").datagrid("hideColumn", "midu");
+            $("#tt").datagrid("hideColumn", "price");
+            $("#tt").datagrid("hideColumn", "weight");
+            var rows = $("#tt").datagrid("getRows");
+            for (var i = 0; i < rows.length; i++) {
+                var index = $("#tt").datagrid("getRowIndex", rows[i]);
+                $("#tt").datagrid("updateRow", {
+                    index: index,
+                    row: {
+                        weight: (rows[i].length * rows[i].model * rows[i].price * rows[i].midu).toFixed(2),
+                        yingshou: (rows[i].length * rows[i].model * rows[i].danjia * rows[i].num + Number(rows[i].qita)).toFixed(2)
+                    }
+                })
+            }
+        }
+
+        //按重量计算应收金额
+        function yingshousumzhonglaing() {
+            var rows = $("#tt").datagrid("getRows");
+            $("#tt").datagrid("showColumn", "weight");
+            $("#tt").datagrid("showColumn", "price");
+            $("#tt").datagrid("hideColumn", "midu");
+            for (var i = 0; i < rows.length; i++) {
+                var index = $("#tt").datagrid("getRowIndex", rows[i]);
+                var weight = rows[i].length * rows[i].model * rows[i].price * rows[i].midu;
+                console.log(weight);
+                var yingshou = weight * rows[i].danjia * rows[i].num;
+                $("#tt").datagrid("updateRow", {
+                    index: index,
+                    row: {
+                        weight: weight.toFixed(2),
+                        yingshou: (yingshou + Number(rows[i].qita)).toFixed(2)
+                    }
+                })
+            }
+        }
+
+        //打印配方
+        function peifangprint() {
+            var tab = $("#tt").datagrid("toHtml");
+            var newWindow = window.open('', '', 'width=800, height=500');
+            var document = newWindow.document.open();
+            var content =
+                '<!doctype html>' +
+                '<html>' +
+                '<head>' +
+                '<meta charset="utf-8">' +
+                '<title>零售单</title>' +
+                '</head>' +
+                '<body style="margin: 0;padding: 0;"><h1 style="text-align: center;margin: 0;">零售单</h1><br><div style="text-align: left;margin: 5px 0;">客户名称：' + $("#clientname").val() + '<div style="text-align: left;margin: 5px 0;">单号：' + $("#dh").text() + '</div><div style="text-align: left;margin: 5px 0;">电话：' + $("#tel").val() + '</div><div style="text-align: left;margin: 5px 0;">地址：' + $("#address").val() + '</div>' + tab + '</body>' +
+                '</html>';
+            document.write(content);
+            document.close();
+            newWindow.print();
+        }
+
+        //按平方计算金额和总金额
+        function pingfangjisuan() {
+            var rows = $("#tt").datagrid("getRows");
+            if (rows[rows.length - 1].danjia == "合计：") {
+                $("#tt").datagrid("deleteRow", rows.length - 1);
+            }
+            if (rows.length < 1) {
+                alert("没有导入数据！");
+                return;
+            }
+            var sumyingshou = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var jine = rows[i].length * rows[i].model * rows[i].danjia * rows[i].num + rows[i].qita;
+                console.log(jine);
+                $("#tt").datagrid("updateRow", {
+                    index: i,
+                    row: {
+                        yingshou: jine.toFixed(2)
+                    }
+                });
+                sumyingshou += jine;
+            }
+            $("#tt").datagrid("appendRow", {
+                name: "",
+                model: "",
+                length: "",
+                num: "",
+                weight: "",
+                midu: "",
+                peasant: "",
+                price: "",
+                qita: "",
+                beizhu: "",
+                danjia: "合计：",
+                yingshou: sumyingshou.toFixed(2)
+            });
+        }
+
+        //按重量计算金额和总金额
+        function zhongliangjisuan() {
+            var rows = $("#tt").datagrid("getRows");
+            if (rows[rows.length - 1].danjia == "合计：") {
+                $("#tt").datagrid("deleteRow", rows.length - 1);
+            }
+            if (rows.length < 1) {
+                alert("没有导入数据！");
+                return;
+            }
+            var sumyingshou = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var jine = rows[i].weight * rows[i].danjia * rows[i].num + rows[i].qita;
+                $("#tt").datagrid("updateRow", {
+                    index: i,
+                    row: {
+                        yingshou: jine.toFixed(2)
+                    }
+                });
+                sumyingshou += jine;
+            }
+            $("#tt").datagrid("appendRow", {
+                name: "",
+                model: "",
+                length: "",
+                num: "",
+                weight: "",
+                midu: "",
+                peasant: "",
+                price: "",
+                qita: "",
+                beizhu: "",
+                danjia: "合计：",
+                yingshou: sumyingshou.toFixed(2)
+            });
+        }
+    </script>
+</head>
+
+
+<body style="" class="easyui-layout">
+<div data-options="region:'north'" style="height: 150px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>
+            单号：<span id="dh"></span>
+        </legend>
+        <form id="form" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <!--<td>&nbsp;&nbsp;选择机台： <input class="easyui-combobox" id="jiTaii" valueField="id" textField="name" name="jiTai.id" url="/admin/jitai/jitaiList" style="width: 100px"/></td>-->
+                    <!--<td><a href="javascript:openDlg('#addpeifang')" class="easyui-linkbutton" iconCls="icon-add">添加/修改配方</a>-->
+                    <td>地址：<input type="text" id="address" name="address" style="width: 250px;"></td>
+                    <td>客户名称：<input id="clientname" name="clientname" type="text" style="width: 100px;"
+                                    class="easyui-combobox"
+                                    data-options="demandd:true,valueField:'id',textField:'name',url:'/admin/client/clientList'">
+                    </td>
+                    <td>电话：<input type="text" id="tel" name="tel" style="width: 88px;"></td>
+                    <td>定金：<input type="text" id="dingjin" name="dingjin" style="width: 88px;"></td>
+                    <td><a href="#" onclick="javascript:$('#tt').edatagrid('saveRow')" class="easyui-linkbutton"
+                           data-options="iconCls:'icon-ok',plain:true">确定</a></td>
+                    <td><a href="javascript:openDlg('#dlg3')" class="easyui-linkbutton" iconCls="icon-search">导入</a>
+                    </td>
+                    <td><a href="javascript:peifangprint()" class="easyui-linkbutton" iconCls="icon-search">打印</a></td>
+                    <td><a href="#" onclick="javascript:savepeifang()" class="easyui-linkbutton"
+                           data-options="iconCls:'icon-save'">保存</a></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <a href="#" onclick="javascript:pingfangjisuan()" class="easyui-linkbutton"
+                           data-options="iconCls:'icon-add'">按平方计算金额</a>
+                        <a href="#" onclick="javascript:zhongliangjisuan()" class="easyui-linkbutton"
+                           data-options="iconCls:'icon-add'">按重量计算金额</a>
+                        <a href="#" onclick="javascript:$('#tt').datagrid('showColumn','weight')"
+                           class="easyui-linkbutton" data-options="iconCls:'icon-ok'">显示重量</a>
+                        <a href="#" onclick="javascript:$('#tt').datagrid('hideColumn','weight')"
+                           class="easyui-linkbutton" data-options="iconCls:'icon-ok'">隐藏重量</a>
+                    </td>
+                </tr>
+                <!--<tr>-->
+                <!--<td><a href="#" onclick="javascript:$('#tt').edatagrid('addRow')" class="easyui-linkbutton"-->
+                <!--data-options="iconCls:'icon-add',plain:true">添加一行</a>-->
+                <!--<a href="#" onclick="javascript:$('#tt').edatagrid('saveRow')" class="easyui-linkbutton"-->
+                <!--data-options="iconCls:'icon-ok',plain:true">确定</a>-->
+                <!--<a href="#" onclick="javascript:$('#tt').edatagrid('cancelRow')" class="easyui-linkbutton"-->
+                <!--data-options="iconCls:'icon-cancel',plain:true">取消</a>-->
+                <!--<a href="#" onclick="javascript:$('#tt').edatagrid('destroyRow')" class="easyui-linkbutton"-->
+                <!--data-options="iconCls:'icon-cancel',plain:true">删除一行</a>-->
+                <!--<a href="#" onclick="javascript:savepeifang()" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true">保存</a>-->
+                <!--</td>-->
+                <!--<td><a href="javascript:yingshousum()" class="easyui-linkbutton" iconCls="icon-add">平方计算应收</a></td>-->
+                <!--<td><a href="javascript:yingshousumzhonglaing()" class="easyui-linkbutton"-->
+                <!--iconCls="icon-add">重量计算应收</a></td>-->
+                <!--<td><a href="#" onclick="javascript:heji()" class="easyui-linkbutton"-->
+                <!--data-options="iconCls:'icon-add'">添加合计</a></td>-->
+                <!--<td><a href="javascript:peifangprint()" class="easyui-linkbutton" iconCls="icon-search">打印</a></td>-->
+                <!--</tr>-->
+            </table>
+        </form>
+    </fieldset>
+</div>
+
+<div data-options="region:'center'" style="height: 20%;padding: 10px; border: 1px;">
+    <table id="tt" style="height:200px" fitColumns="true" singleSelect="true">
+        <thead>
+        <tr>
+            <th field="peasant" width="100" editor="text" align="center">农户</th>
+            <th field="name" width="100" align="center" editor="text">
+                产品名称
+            </th>
+            <th field="model" width="100" editor="text" align="center">幅宽</th>
+            <th field="length" width="100" align="center" editor="text">长度</th>
+            <th field="price" width="100" align="center" editor="text">厚度</th>
+            <!--<th field="midu" width="100" align="center" editor="text">密度</th>-->
+            <th field="weight" width="100" hidden="true" align="center" editor="text">重量</th>
+            <th field="num" width="100" align="center" editor="text">数量</th>
+            <th field="beizhu" width="200" align="center" editor="text">要求</th>
+            <th field="danjia" width="100" align="center" editor="text">单价</th>
+            <th field="qita" width="100" align="center" editor="text">其他费用</th>
+            <th field="yingshou" width="100" align="center" editor="text">应收金额</th>
+            <!--<th field="shishou" width="100" align="center" editor="text">实收金额</th>-->
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div id="addpeifang" buttons="#bb" class="easyui-dialog" title="添加配方" style="width:400px;height:200px;"
+     data-options="iconCls:'icon-save',resizable:true,modal:true">
+    <form id="addfrom" style="text-align: center;">
+        <table style="text-align: center;">
+            <tr>
+                <td>
+                    配方: <input required="ture" class="easyui-combobox" id="peifangname" name="peiFang.id"
+                               style="width: 100px"
+                               data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/peifang/peifangList'"/>
+                    <input required="ture" id="informNumberr" name="informNumber" type="hidden">kg
+                    <input type="hidden" id="peifangjson" name="peifangjson">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    总重量: <input required="ture" id="peifangnum" name="peifangnum" precision="2" class="easyui-numberbox"
+                                size="5">kg
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="bb">
+    <a href="javascript:savepeifang()" class="easyui-linkbutton">确定</a>
+    <a href="javascript:closeDlg('#addpeifang')" class="easyui-linkbutton">关闭</a>
+</div>
+
+<div id="dlg3" class="easyui-dialog" title="导入零售单" style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons2"
+     data-options="onClose:function(){resetValue()}">
+    <form id="fm3" method="post" enctype="multipart/form-data"
+          action="/admin/toLead/importFile">
+        <input id="fil" name="fileName" type="file"/>
+    </form>
+</div>
+
+<div id="dlg-buttons2">
+    <a href="javascript:saveToLead()" class="easyui-linkbutton"
+       iconCls="icon-ok">确定</a> <a href="javascript:closeDlg('#dlg3')"
+                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+</body>
+<script>
+    function append() {
+        $("#dg2").edatagrid("addRow");
+    }
+
+    //点击确定按钮
+    function saveToLead() {
+        $("#fm3").form(
+            'submit',
+            {
+                url: "/admin/toLead/lingshouimport",
+                onSubmit: function () { //onSubmit  事件会在表单中的确认按钮被点击时发生
+                    var fileAccept = $("#fil").val().split(".")[1];
+                    if (fileAccept != "xls" && fileAccept != "xlsx") {
+                        alert("只能上传.xls和.xlsx的文件！");
+                        return false;
+                    }
+                    return true;
+                },
+                success: function (result) {
+                    var obj = eval('(' + result + ')');
+                    if (obj.success) {
+                        var resultt = $.parseJSON(result);
+                        $("#tt").datagrid({
+                            data: resultt.rows
+                        });
+                        var countnum = 0;
+                        var sumyingshou = 0;
+                        var rows = $("#tt").datagrid('getRows');
+                        // for (var i = 0; i < rows.length; i++) {
+                        //     $("#tt").datagrid("updateRow", {
+                        //         index: i,
+                        //         row: {
+                        //             yingshou: (rows[i].danjia * rows[i].num).toFixed(2)
+                        //         }
+                        //     });
+                        //     console.log(rows[i].num);
+                        //     countnum += parseFloat(rows[i].num);
+                        //     sumyingshou += parseFloat(rows[i].yingshou);
+                        // }
+                        // $("#tt").datagrid('appendRow', {
+                        //     model: "",
+                        //     price: "",
+                        //     length: "",
+                        //     peasant: "",
+                        //     beizhu: "",
+                        //     danjia: "",
+                        //     weight: "",
+                        //     qita: "",
+                        //     name: '合计',
+                        //     num: '总数量：' + countnum,
+                        //     yingshou: '总金额：' + sumyingshou.toFixed(2)
+                        // });
+                    } else {
+                        $.messager.alert("系统提示", "<span style='color:red'>"
+                            + obj.errorInfo + "</span>");
+                    }
+                }
+            });
+
+        $("#dlg3").dialog("close");
+    }
+
+</script>
+</html>

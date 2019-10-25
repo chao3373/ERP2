@@ -2,13 +2,14 @@ package com.shenke.controller.admin;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Sort.Direction;
@@ -80,8 +81,10 @@ public class SaleListAdminController {
     @RequestMapping("/save")
     @RequiresPermissions(value = "销售订货单")
     public Map<String, Object> save(String saleDate, String saleNumber, Integer clientId, Integer sellId,
-                                    Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson)
+                                    Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson, Double zongjine)
             throws Exception {
+        System.out.println("总金额");
+        System.out.println(zongjine);
         System.out.println(goodsJson);
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -104,6 +107,7 @@ public class SaleListAdminController {
         Client client = new Client();
         client.setId(clientId);
         saleList.setClient(client);
+        saleList.setTotalPrice(zongjine);
         saleList.setLankman(lankman);
         saleList.setTel(tel);
         saleList.setAddress(address);
@@ -121,6 +125,8 @@ public class SaleListAdminController {
             saleListProduct.setSaleList(saleList);
             saleListProduct.setState("下单");
             saleListProduct.setDaBaoShu(1);
+            saleListProduct.setStorageid(0);
+            saleListProduct.setLingshou(false);
             saleListProduct.setLevel(0);
         }
 
@@ -186,14 +192,21 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/listProduct")
-    public Map<String, Object> listGoods(Integer saleListId) {
+    public String listGoods(Integer saleListId) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (saleListId == null) {
             return null;
         }
-        map.put("rows", saleListProductService.listBySaleListId(saleListId));
+        List<SaleListProduct> saleListProducts = saleListProductService.listBySaleListId(saleListId);
+        System.out.println(saleListProducts);
+        System.out.println(saleListProducts.size());
+        map.put("rows", saleListProducts);
         System.out.println(map);
-        return map;
+//        return map;
+        JSON parse = JSONUtil.parse(map);
+        String s = parse.toString();
+        System.out.println(s);
+        return s;
     }
 
     /**
@@ -264,6 +277,55 @@ public class SaleListAdminController {
         resultMap.put("success", true);
         System.out.println(resultMap);
         return resultMap;
+    }
+
+    @RequestMapping("/add")
+    public Map<String, Object> add(SaleListProduct saleListProduct) {
+        Map<String, Object> map = new HashMap<>();
+        Integer id = saleListProduct.getId();
+        SaleList saleList = saleListService.findById(id);
+        SaleListProduct newSaleListProduct = new SaleListProduct();
+        newSaleListProduct.setState("未审核");
+        newSaleListProduct.setNum(saleListProduct.getNum());
+        newSaleListProduct.setName(saleListProduct.getName());
+        if (saleListProduct.getOneweight() == null) {
+            Double oneweight = 0.93 * saleListProduct.getLength() * saleListProduct.getModel() * saleListProduct.getMeter();
+            newSaleListProduct.setOneweight(oneweight);
+            newSaleListProduct.setSumwight(oneweight * saleListProduct.getNum());
+        } else {
+            newSaleListProduct.setOneweight(saleListProduct.getOneweight());
+            newSaleListProduct.setSumwight(saleListProduct.getNum() * saleListProduct.getOneweight());
+        }
+        newSaleListProduct.setLength(saleListProduct.getLength());
+        newSaleListProduct.setStorageid(0);
+        newSaleListProduct.setModel(saleListProduct.getModel());
+        newSaleListProduct.setDaBaoShu(1);
+        newSaleListProduct.setDemand(saleListProduct.getDemand());
+        newSaleListProduct.setPrice(saleListProduct.getPrice());
+        newSaleListProduct.setMeter(saleListProduct.getMeter());
+        newSaleListProduct.setColor(saleListProduct.getColor());
+        newSaleListProduct.setPeasant(saleListProduct.getPeasant());
+        newSaleListProduct.setSaleList(saleList);
+        newSaleListProduct.setClientname(saleList.getClient().getName());
+        newSaleListProduct.setLevel(0);
+        System.out.println(saleListProduct);
+        System.out.println(newSaleListProduct);
+        saleListProductService.save(newSaleListProduct);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 修改订金
+     * @param dingjin
+     * @return
+     */
+    @RequestMapping("/updateDingjin")
+    public Map<String, Object> updateDingjin(Integer id, Double dingjin){
+        Map<String, Object> map = new HashMap<>();
+        saleListService.updateDingjin(dingjin, id);
+        map.put("success", true);
+        return map;
     }
 
 }

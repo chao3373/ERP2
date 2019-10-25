@@ -254,30 +254,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         });
     }
 
-//    @Override
-//    public String updateAccomplishNumber(Integer id) {
-//        SaleListProduct saleListProduct = this.findById(id);
-//        //完成数+1
-//        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
-//        System.out.println("count: " + count);
-//        Integer num = saleListProduct.getNum();
-//        Integer daBaoShu = saleListProduct.getDaBaoShu();
-//        Integer countt = count + 1;
-//        System.out.println("countt:" + countt);
-//        saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
-//        if (countt == num) {
-//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-//            if (countt % daBaoShu == 0) {
-//                return "生产完成:" + daBaoShu;
-//            } else {
-//                return "生产完成:" + countt % daBaoShu;
-//            }
-//        } else if (countt % daBaoShu == 0) {
-//            return "打包完成:" + daBaoShu;
-//        } else {
-//            return "只增加数量";
-//        }
-//    }
 
     @Override
     public String updateAccomplishNumber(Integer id) {
@@ -285,7 +261,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         //完成数+1
 //        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
         Integer count = storageService.findCountBySaleListProductId(id);
-        if (count == null){
+        if (count == null) {
             count = 0;
         }
         Integer num = saleListProduct.getNum();
@@ -293,6 +269,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         Integer shengyu = num - count;
         Integer countt = count + daBaoShu;
         if (count > num || count == num) {
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
             return "生产已完成";
         }
         LogUtil.printLog("当前完成数量：" + count);
@@ -322,43 +299,23 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     @Override
     public void hebingJian(Integer count, Integer id) {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
-        SaleListProduct saleListProduct1 = new SaleListProduct();
-        BeanUtils.copyProperties(saleListProduct, saleListProduct1);
-        saleListProduct1.setId(null);
         Integer num = saleListProduct.getNum();
+        Double length = saleListProduct.getLength();
         saleListProduct.setNum(num / count);
-        Double oneweight = saleListProduct.getOneweight();
-        Double sumOneWeight = oneweight;
-        double lengthh = saleListProduct.getLength();
-        int length = (int) lengthh;
-        StringBuilder sb = new StringBuilder();
-        sb.append(length + "");
-        Integer countNum = length;
-        for (int i = 0; i < count - 1; i++) {
-            sumOneWeight += oneweight;
-            sb.append("+" + length);
-            countNum += length;
+        saleListProduct.setLength(length * num);
+        Integer newNum = num / count;
+        saleListProduct.setHebingLength(length + "*" + num);
+        if (newNum != 0) {
+            saleListProduct.setHebingLength(length + "*" + newNum);
+            SaleListProduct newSaleListProduct = new SaleListProduct();
+            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
+            newSaleListProduct.setNum(1);
+            newSaleListProduct.setLength(length * newNum);
+            newSaleListProduct.setHebingLength(length + "*" + newNum);
+            newSaleListProduct.setId(null);
+            saleListProductRepository.save(newSaleListProduct);
         }
-        saleListProduct.setHebingLength(sb.toString());
-        saleListProduct.setLength(Double.parseDouble(countNum.toString()));
-        saleListProduct.setOneweight(sumOneWeight);
         saleListProductRepository.save(saleListProduct);
-        if (num % count != 0) {
-            StringBuilder leng = new StringBuilder();
-            leng.append(length + "");
-            Integer countNum2 = length;
-            Double sumOneWeight1 = 0.0;
-            for (int i = 0; i < num % count - 1; i++) {
-                sumOneWeight1 += oneweight;
-                leng.append("+" + leng);
-                countNum2 += num;
-            }
-            saleListProduct1.setHebingLength(leng.toString());
-            saleListProduct1.setNum(1);
-            saleListProduct1.setLength(Double.parseDouble(countNum2.toString()));
-            saleListProduct1.setOneweight(sumOneWeight1);
-            saleListProductRepository.save(saleListProduct1);
-        }
     }
 
     @Override
@@ -436,18 +393,27 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             wc = 0;
         }
         if (wc == num) {
-            saleListProductRepository.updateNum(num, id);
-            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), id);
+            saleListProduct.setNum(num);
+            saleListProduct.setState("生产完成：" + saleListProduct.getJiTai().getName());
+//            saleListProductRepository.updateNum(num, id);
+//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), id);
+            saleListProduct.setSumwight(saleListProduct.getOneweight() * num);
+            saleListProductRepository.save(saleListProduct);
             return "修改成功，数量等于完成数，修改订单状态为完成";
         } else if (wc > num) {
             return "已经完成比该数量多的件数，无法修改";
         } else {
-            saleListProductRepository.updateNum(num, id);
+            saleListProduct.setNum(num);
+            saleListProduct.setSumwight(num * saleListProduct.getOneweight());
+//            saleListProductRepository.updateNum(num, id);
             String state = saleListProductRepository.findOne(id).getState();
+            saleListProductRepository.save(saleListProduct);
             if (state.startsWith("审核成功") || state.startsWith("未审核")) {
                 return "修改成功！";
             }
-            saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
+            saleListProduct.setState("下发机台：" + saleListProduct.getJiTai().getName());
+//            saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
+            saleListProductRepository.save(saleListProduct);
             return "修改成功，数量大于完成数，修改订单状态为下发机台";
         }
     }
@@ -469,5 +435,49 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 return predicate;
             }
         });
+    }
+
+    @Override
+    public void updateName(Integer[] ids, String name) {
+        saleListProductRepository.updateName(ids, name);
+    }
+
+    @Override
+    public void updatLength(Integer[] ids, Double length) {
+        saleListProductRepository.updatLength(ids, length);
+    }
+
+    @Override
+    public void updatemodel(Integer[] ids, Double model) {
+        saleListProductRepository.updatemodel(ids, model);
+    }
+
+    @Override
+    public void updatPrice(Integer[] ids, Double price) {
+        saleListProductRepository.updatPrice(ids, price);
+    }
+
+    @Override
+    public void updatMeter(Integer[] ids, Double meter) {
+        saleListProductRepository.updatMeter(ids, meter);
+    }
+
+    @Override
+    public void updatOneweight(Integer[] ids, Double oneWeight) {
+        for (int i = 0; i < ids.length; i++) {
+            SaleListProduct saleListProduct = saleListProductRepository.findOne(ids[i]);
+            Double sunWeight = saleListProduct.getNum() * oneWeight;
+            saleListProductRepository.updatOneweight(ids[i], oneWeight, sunWeight);
+        }
+    }
+
+    @Override
+    public void updatPeasant(Integer[] ids, String peasant) {
+        saleListProductRepository.updatPeasant(ids, peasant);
+    }
+
+    @Override
+    public void updatColor(Integer[] ids, String color) {
+        saleListProductRepository.updatColor(ids, color);
     }
 }

@@ -19,32 +19,49 @@ public class LingShou {
     @Column(length = 50)
     private String clientname;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double length;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double model;
 
-    @Column(precision = 6, scale = 3)
+    @Column(scale = 2)
+    private Double midu;
+
+    @Column(scale = 3)
     private Double price;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double weight;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double danjia;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double yingshou;
 
-    @Column(precision = 6, scale = 2)
+    @Column(scale = 2)
     private Double shishou;
+
+    private String tel;//联系电话
+
+    @Column(scale = 2)
+    private Double dingjin;//订金
+
+    private String peasant;//农户
 
     private Integer num;
 
     private Integer storageid;
 
     private Date xiaoshouDate;
+
+    @Column(precision = 6, scale = 2)
+    private Double qita;
+
+    private String beizhu;//备注
+
+    private String address;//地址
 
     @Transient
     private Date starDate;
@@ -61,17 +78,80 @@ public class LingShou {
                 ", clientname='" + clientname + '\'' +
                 ", length=" + length +
                 ", model=" + model +
+                ", midu=" + midu +
                 ", price=" + price +
                 ", weight=" + weight +
                 ", danjia=" + danjia +
                 ", yingshou=" + yingshou +
                 ", shishou=" + shishou +
+                ", tel='" + tel + '\'' +
+                ", dingjin=" + dingjin +
+                ", peasant='" + peasant + '\'' +
                 ", num=" + num +
                 ", storageid=" + storageid +
                 ", xiaoshouDate=" + xiaoshouDate +
+                ", qita=" + qita +
+                ", beizhu='" + beizhu + '\'' +
+                ", address='" + address + '\'' +
                 ", starDate=" + starDate +
                 ", endDate=" + endDate +
                 '}';
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public Double getDingjin() {
+        return dingjin;
+    }
+
+    public void setDingjin(Double dingjin) {
+        this.dingjin = dingjin;
+    }
+
+    public String getPeasant() {
+        return peasant;
+    }
+
+    public void setPeasant(String peasant) {
+        this.peasant = peasant;
+    }
+
+    public Double getQita() {
+        return qita;
+    }
+
+    public void setQita(Double qita) {
+        this.qita = qita;
+    }
+
+    public String getBeizhu() {
+        return beizhu;
+    }
+
+    public void setBeizhu(String beizhu) {
+        this.beizhu = beizhu;
+    }
+
+    public Double getMidu() {
+        return midu;
+    }
+
+    public void setMidu(Double midu) {
+        this.midu = midu;
     }
 
     public Double getDanjia() {

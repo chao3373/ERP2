@@ -162,7 +162,7 @@
     </dependencies>
 
     <build>
-        <finalName>slbc</finalName>
+        <finalName>xiannong</finalName>
         <plugins>
             <!-- 指定编译java版本 -->
             <plugin>
@@ -178,7 +178,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.4.2.RELEASE</version>
                 <configuration>
                     <!-- 启动类 -->
                     <mainClass>com.shenke.Application</mainClass>

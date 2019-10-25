@@ -29,30 +29,38 @@
         <form id="fm" method="post">
             <table cellspacing="8px">
                 <tr>
-                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text" id="saleDate"
-                                                                            name="xiaoshouDatee"
-                                                                            class="easyui-datetimebox" demandd="true"
-                                                                            data-options="editable:false" size="15"/>
-                    </td>
                     <td>
-                        客户名称：<input type="text" id="clientname" name="clientname">
+                        单号：<input id="lingshoudanhao" name="danhao" type="text" style="width: 100px;">
+                        <a href="javascript:findbydanhao()" class="easyui-linkbutton" iconCls="icon-ok">查询</a>
+                    </td>
+                    <!--<td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text" id="saleDate"-->
+                                                                            <!--name="xiaoshouDatee"-->
+                                                                            <!--class="easyui-datetimebox" demandd="true"-->
+                                                                            <!--data-options="editable:false" size="15"/>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                    <!--客户名称：<input type="text" id="clientname" name="clientname" style="width: 50px;">-->
+                    <!--</td>-->
+                    <td>
+                        <input type="checkbox" id="dama" name="dama" disabled="disabled" style="vertical-align:middle;">
+                        <lable for="dama" style="display: inline-block;vertical-align: middle;">是否打码入库</lable>
+                        <lable style="vertical-align:middle;padding-left: 5px;">选择机台：</lable>
+                        <input id="jitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll" name="jitai"
+                               valueField="id" textField="name" style="vertical-align:middle;width: 98px"/>
+                        <a href="javascript:{$('#dama').removeAttr('disabled');$('#jitai').combobox('enable');}"
+                           class="easyui-linkbutton">修改</a>
+                        <a href="javascript:{$('#dama').attr('disabled', true);$('#jitai').combobox('disable');}"
+                           class="easyui-linkbutton">确定</a>
                     </td>
                     <td><input type="hidden" id="danhao" name="danhao"/>
                         <input type="hidden" id="goodsJson" name="goodsJson"/> <a
                                 href="javascript:saveSaleGoods()" class="easyui-linkbutton"
                                 iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </td>
-                    <td>
-                        <input type="checkbox" id="dama" name="dama" disabled="disabled" style="vertical-align:middle;">
-                        <lable for="dama" style="display: inline-block;vertical-align: middle;">是否打码入库</lable>
-                        <lable style="vertical-align:middle;padding-left: 5px;">选择机台：</lable><input id="jitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll" name="jitai" valueField="id" textField="name" style="vertical-align:middle;width: 98px"/>
-                        <a href="javascript:{$('#dama').removeAttr('disabled');$('#jitai').combobox('enable');}" class="easyui-linkbutton">修改</a>
-                        <a href="javascript:{$('#dama').attr('disabled', true);$('#jitai').combobox('disable');}" class="easyui-linkbutton">确定</a>
-                    </td>
                     <!--<td><a href="#" onclick="javascript:$('#dg').edatagrid('saveRow')" class="easyui-linkbutton"-->
-                           <!--data-options="iconCls:'icon-ok',plain:true">确定</a></td>-->
+                    <!--data-options="iconCls:'icon-ok',plain:true">确定</a></td>-->
                     <!--<td><a href="#" onclick="javascript:$('#dg').edatagrid('destroyRow')" class="easyui-linkbutton"-->
-                           <!--data-options="iconCls:'icon-cancel',plain:true">删除一行</a></td>-->
+                    <!--data-options="iconCls:'icon-cancel',plain:true">删除一行</a></td>-->
                 </tr>
             </table>
         </form>
@@ -65,11 +73,11 @@
 
     <div id="tb">
         <div style="padding: 2px">
-            <a href="javascript:openDlg('#dlg2')"
+            <a href="javascript:selectPro()"
                class="easyui-linkbutton" iconCls="icon-add" plain="true">选择商品</a>
             <!--<a href="javascript:openDlg('#dlg')"-->
             <!--class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>-->
-            <a href="javascript:deleteRows('#dg')" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            <!--<a href="javascript:deleteRows('#dg')" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>-->
             <a href="javascript:printdg()" class="easyui-linkbutton" iconCls="icon-print" plain="true">打印</a>
             <a href="javascript:addSum()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加合计</a>
         </div>
@@ -206,17 +214,30 @@
         });
         $("#dg").edatagrid({
             columns: [[
-                {field: 'id', title: '编号', width: 200, align: 'center'},
+                {field: 'id', title: '编号', width: 50, align: 'center'},
+                {field: 'storageid', title: '产品编号', width: 100, align: 'center'},
                 {field: 'name', title: '产品名称', width: 200, align: 'center'},
+                {field: 'peasant', title: '农户', width: 200, align: 'center'},
                 {field: 'model', title: '幅宽', width: 100, align: 'center'},
-                {field: 'length', title: '长度', width: 100, align: 'center', editor: 'text'},
-                {field: 'num', title: '数量', width: 100, align: 'center', editor: 'text'},
-                {field: 'danjia', title: '单价', width: 100, align: 'center', editor: 'text'},
-                {field: 'yingshou', title: '应收金额', width: 100, align: 'center', editor: 'text'},
-                {field: 'shishou', title: '实收金额', width: 100, align: 'center', editor: 'text'},
+                {field: 'price', title: '厚度', width: 100, align: 'center'},
+                {field: 'length', title: '长度', width: 100, align: 'center'},
+                {field: 'num', title: '数量', width: 100, align: 'center'},
+                // {field: 'danjia', title: '单价', width: 100, align: 'center', editor: 'text'},
+                // {field: 'yingshou', title: '应收金额', width: 100, align: 'center', editor: 'text'},
+                // {field: 'shishou', title: '实收金额', width: 100, align: 'center', editor: 'text'},
             ]]
         });
     });
+
+    //选择商品
+    function selectPro() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row == null) {
+            alert('请选择一条信息！');
+            return;
+        }
+        openDlg('#dlg2');
+    }
 
     function saveGoods() {
         var row = getFrom("#fm2");
@@ -237,8 +258,18 @@
 
     //保存零售商品
     function saveSaleGoods() {
-        if ($("#dama").prop("checked")){
-            if (!$("#jitai").combobox("getValue")){
+        var rows = $("#dg").datagrid("getRows");
+        console.log(rows);
+        console.log(JSON.stringify(rows));
+        for (var i = 0; i < rows.length; i++) {
+            if (!rows[i].storageid) {
+                var index = i + 1;
+                alert("第" + index + "行，没有指定商品！");
+                return;
+            }
+        }
+        if ($("#dama").prop("checked")) {
+            if (!$("#jitai").combobox("getValue")) {
                 alert("请选择要分配的机台！");
                 return;
             }
@@ -248,9 +279,9 @@
                 return;
             }
 
-            $("#danhao").val($("#dh").text());
-            if (rows[rows.length-1].yingshou == "合计："){
-                rows.splice(rows.length-1, 1);
+            $("#danhao").val($("#lingshoudanhao").val());
+            if (rows[rows.length - 1].yingshou == "合计：") {
+                rows.splice(rows.length - 1, 1);
                 $("#goodsJson").val(JSON.stringify(rows));
             } else {
                 $("#goodsJson").val(JSON.stringify(rows));
@@ -278,8 +309,8 @@
                 return;
             }
             $("#danhao").val($("#dh").text());
-            if (rows[rows.length-1].yingshou == "合计："){
-                rows.splice(rows.length-1, 1);
+            if (rows[rows.length - 1].yingshou == "合计：") {
+                rows.splice(rows.length - 1, 1);
                 $("#goodsJson").val(JSON.stringify(rows));
             } else {
                 $("#goodsJson").val(JSON.stringify(rows));
@@ -307,39 +338,65 @@
 
     function add() {
         var row = $("#dg2").datagrid("getSelected");
-        obj.id = row.id;
-        obj.name = row.name;
-        obj.model = row.model;
-        obj.shengyulength = row.shengyulength;
-        $("#length").change(function () {
-            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
-                console.log($("#danjia").val());
-                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
-            }
-            if ($("#length").val() && $("#num").val()) {
-                if (row.shengyulength < $("#length").val() * $("#num").val()) {
-                    alert("总长度超出剩余长度！");
-                    return;
-                }
-            }
-        });
-        $("#danjia").change(function () {
-            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
-                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
-            }
-        });
-        $("#num").change(function () {
-            if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
-                $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
-            }
-            if ($("#length").val() && $("#num").val()) {
-                if (row.shengyulength < $("#length").val() * $("#num").val()) {
-                    alert("总长度超出剩余长度！");
-                    return;
-                }
+        if (row == null) {
+            alert("请选择要添加的行！");
+            return;
+        }
+        var rowdg = $("#dg").datagrid("getSelected");
+        if (row.name != rowdg.name) {
+            alert("产品名称不符！");
+            return;
+        }
+        if (row.model != rowdg.model) {
+            alert("幅宽不符！")
+            return;
+        }
+        if (row.shengyulength < rowdg.length * rowdg.num) {
+            alert("所选择的商品剩余长度不够！");
+            return;
+        }
+        var index = $("#dg").datagrid("getRowIndex", rowdg);
+        $("#dg").datagrid("updateRow", {
+            index: index,
+            row: {
+                storageid: row.id,
+                price: row.price
             }
         });
-        openDlg("#dlg3");
+        closeDlg("#dlg2");
+        // obj.id = row.id;
+        // obj.name = row.name;
+        // obj.model = row.model;
+        // obj.shengyulength = row.shengyulength;
+        // $("#length").change(function () {
+        //     if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+        //         console.log($("#danjia").val());
+        //         $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+        //     }
+        //     if ($("#length").val() && $("#num").val()) {
+        //         if (row.shengyulength < $("#length").val() * $("#num").val()) {
+        //             alert("总长度超出剩余长度！");
+        //             return;
+        //         }
+        //     }
+        // });
+        // $("#danjia").change(function () {
+        //     if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+        //         $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+        //     }
+        // });
+        // $("#num").change(function () {
+        //     if ($("#danjia").val() && obj.model && $("#length").val() && $("#num").val()) {
+        //         $("#yingshou").val(obj.model * $("#length").val() * $("#danjia").val() * $("#num").val());
+        //     }
+        //     if ($("#length").val() && $("#num").val()) {
+        //         if (row.shengyulength < $("#length").val() * $("#num").val()) {
+        //             alert("总长度超出剩余长度！");
+        //             return;
+        //         }
+        //     }
+        // });
+        // openDlg("#dlg3");
     }
 
     //点击确定按钮
@@ -490,6 +547,25 @@
         });
         data.push('</table>');
         return data.join('');
+    }
+
+    //根据零售单号查询零售单
+    function findbydanhao() {
+        if (!$("#lingshoudanhao").val()) {
+            alert("请填写单号");
+            return;
+        }
+        var danhao = $("#lingshoudanhao").val();
+        $.ajax({
+            url: "/admin/LingShou/findbydanhao",
+            data: {danhao: danhao},
+            success: function (result) {
+                if (result.success) {
+                    console.log(result);
+                    $("#dg").datagrid("loadData", result.rows);
+                }
+            }
+        });
     }
 
 </script>

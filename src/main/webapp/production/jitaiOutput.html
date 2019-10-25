@@ -67,6 +67,11 @@
                         title: '重量',
                         width: 66,
                         align: 'center'
+                    },{
+                        field: 'dabaonum',
+                        title: '打包数',
+                        width: 66,
+                        align: 'center'
                     }, {
                         field: 'color',
                         title: '颜色',
@@ -398,11 +403,11 @@
             var sumnum = 0;
             var a = $("#dg").datagrid("getRows");
             for (var i = 0; i < a.length; i++) {
-                sumweight += a[i].realityweight;
+                sumweight += a[i].realityweight * a[i].dabaonum;
                 sumnum++;
             }
             $("#sumnum").val(sumnum);
-            $("#sumweight").val(sumweight);
+            $("#sumweight").val(sumweight.toFixed(2));
         }
 
         //设置仓位
@@ -442,7 +447,7 @@
 </head>
 <body style="margin: 1px" class="easyui-layout">
 <div data-options="region:'center'" style="padding: 10px; border: 1px;">
-    <table id="dg" class="easyui-datagrid" rownumbers="true" toolbar="#tb" fit="true">
+    <table id="dg" class="easyui-datagrid" fitColumns="true" rownumbers="true" toolbar="#tb" fit="true">
     </table>
     <div id="tb" style="padding: 15px;">
         <table>

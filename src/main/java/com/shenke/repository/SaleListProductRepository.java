@@ -248,4 +248,41 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set accomplish_number = (select count(*) from t_storage where sale_list_product_id = ?1) where id = ?1", nativeQuery = true)
 	void updateAccomplishNumber(Integer id);
+
+	/***
+	 * 根据id数组修改产品名称
+	 * @param ids
+	 * @param name
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set name = ?2 where id in ?1", nativeQuery = true)
+	void updateName(Integer[] ids, String name);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set length = ?2 where id in ?1", nativeQuery = true)
+	void updatLength(Integer[] ids, Double length);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set model = ?2 where id in ?1", nativeQuery = true)
+	void updatemodel(Integer[] ids, Double model);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set price = ?2 where id in ?1", nativeQuery = true)
+	void updatPrice(Integer[] ids, Double price);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set meter = ?2 where id in ?1", nativeQuery = true)
+	void updatMeter(Integer[] ids, Double meter);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set oneweight = ?2,sumwight=?3  where id = ?1", nativeQuery = true)
+	void updatOneweight(Integer ids, Double oneWeight, Double sunWeight);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set peasant = ?2 where id in ?1", nativeQuery = true)
+	void updatPeasant(Integer[] ids, String peasant);
+
+	@Modifying
+	@Query(value = "update t_sale_list_product set color = ?2 where id in ?1", nativeQuery = true)
+	void updatColor(Integer[] ids, String color);
 }

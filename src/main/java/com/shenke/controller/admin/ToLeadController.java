@@ -79,22 +79,37 @@ public class ToLeadController {
             map1.put("model", map1.remove("宽度m").toString().trim());
             map1.put("price", map1.remove("厚度mm").toString().trim());
             map1.put("length", map1.remove("长度m").toString().trim());
-            map1.put("meter", map1.remove("实际厚度mm").toString().trim());
             map1.put("color", map1.remove("颜色").toString().trim());
             map1.put("oneweight", map1.remove("重量").toString().trim());
             map1.put("num", map1.remove("件数").toString().trim());
             map1.put("sumwight", map1.remove("总重量").toString().trim());
-            map1.put("realitymodel", map1.remove("实际幅宽m").toString().trim());
-            map1.put("demand", map1.remove("要求").toString().trim());
             map1.put("weightset", map1.remove("重量设置").toString().trim());
             map1.put("dao", map1.remove("剖刀设置").toString().trim());
             map1.put("brand", map1.remove("商标设置").toString().trim());
             map1.put("pack", map1.remove("包装设置").toString().trim());
             map1.put("letter", map1.remove("印字设置").toString().trim());
-            map1.put("peasant", map1.remove("客户姓名").toString().trim());
             map1.put("clientname", map1.remove("客户名称").toString().trim());
+            if (map1.get("农户名称") != null) {
+                map1.put("peasant", map1.remove("农户名称").toString().trim());
+            } else {
+                map1.put("peasant", "");
+            }
             if (map1.get("实际重量") != null) {
                 map1.put("realityweight", map1.remove("实际重量").toString().trim());
+            }
+            if (map1.get("单价") != null) {
+                map1.put("unitPrice", map1.remove("单价").toString().trim());
+            } else {
+                map1.put("unitPrice", 0);
+            }
+            if (map1.get("要求") != null) {
+                map1.put("demand", map1.remove("要求").toString().trim());
+            }
+            if (map1.get("实际厚度mm") != null) {
+                map1.put("meter", map1.remove("实际厚度mm").toString().trim());
+            }
+            if (map1.get("实际幅宽m") != null) {
+                map1.put("realitymodel", map1.remove("实际幅宽m").toString().trim());
             }
 
             if (map1.get("name") == null || map1.get("weightset") == null || map1.get("dao") == null || map1.get("brand") == null || map1.get("pack") == null || map1.get("letter") == null || map1.get("clientname") == null) {
@@ -102,6 +117,9 @@ public class ToLeadController {
                 map.put("errorInfo", "第" + j + "行存在空白单元格");
                 return map;
             }
+
+            String jine = new DecimalFormat("0.00").format(Integer.parseInt(map1.get("num").toString()) * Double.parseDouble(map1.get("unitPrice").toString()));
+            map1.put("totalPrice", jine);
 
             System.out.println(productService.findByName(map1.get("name").toString()));
             System.out.println(productService.findByName(map1.get("name").toString()).size());
@@ -268,7 +286,7 @@ public class ToLeadController {
                         case 9:
                             if (!(StringUtil.isEmpty(getStringCellValue(cell)))) {
                                 // map.put("总重量", getStringCellValue(cell));
-                                saleListProduct.setSumwight((int) Math.round(Double.parseDouble(getStringCellValue(cell))));
+                                saleListProduct.setSumwight(Double.parseDouble(getStringCellValue(cell)));
                             }
                             break;
                         case 10:
@@ -413,5 +431,65 @@ public class ToLeadController {
             return "";
         }
         return strCell;
+    }
+
+    /***
+     * 零售单导入
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("/lingshouimport")
+    public Map<String, Object> lingshouimport(@RequestParam("fileName") MultipartFile file) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        String errorInfo = "";
+        InputStream inputStream = file.getInputStream();
+        ExcelReader reader = ExcelUtil.getReader(inputStream);
+        List<Map<String, Object>> mapList = reader.readAll();
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (int i = 0; i < mapList.size(); i++) {
+            int j = i + 1;
+            Map<String, Object> map1 = mapList.get(i);
+            map1.put("name", map1.remove("品名").toString().trim());
+            if (map1.get("重") != null && StringUtil.isNotEmpty(map1.get("重").toString())) {
+                map1.put("weight", map1.remove("重").toString().trim());
+            } else {
+                Double weight = Double.parseDouble(map1.get("长").toString().trim()) * Double.parseDouble(map1.get("宽").toString().trim()) * Double.parseDouble(map1.get("厚").toString().trim()) * 0.93;
+                map1.put("weight", new DecimalFormat("#.00").format(weight));
+            }
+            map1.put("price", map1.remove("厚").toString().trim());
+            map1.put("length", map1.remove("长").toString().trim());
+            map1.put("model", map1.remove("宽").toString().trim());
+            map1.put("num", map1.remove("件数").toString().trim());
+            if (map1.get("要求") != null) {
+                map1.put("beizhu", map1.remove("要求").toString().trim());
+            } else {
+                map1.put("beizhu", "");
+            }
+            map1.put("danjia", map1.remove("单价").toString().trim());
+            if (map1.get("农户") != null) {
+                map1.put("peasant", map1.remove("农户").toString().trim());
+            } else {
+                map1.put("peasant", "");
+            }
+
+            if (map1.get("name") == null || productService.findByName(map1.get("name").toString()).size() == 0) {
+                map.put("success", false);
+                map.put("errorInfo", "第" + j + "行产品名称有误");
+                return map;
+            }
+
+            if (map1.get("其他费用") != null) {
+                map1.put("qita", map1.remove("其他费用").toString().trim());
+            } else {
+                map1.put("qita", 0);
+            }
+
+            data.add(map1);
+        }
+        System.out.println(data);
+        map.put("success", true);
+        map.put("rows", data);
+        return map;
     }
 }

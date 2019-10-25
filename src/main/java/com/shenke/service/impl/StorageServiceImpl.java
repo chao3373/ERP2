@@ -61,14 +61,16 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void add(Storage storage, String clerkName, String groupName) {
         System.out.println(storage);
-        System.out.println();
         System.out.println(storage.getPrice());
         Group group = storage.getJiTai().getGroup();
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Clerk clerk = storage.getJiTai().getClerk();
         Double realityweight = storage.getRealityweight();
 
+        System.out.println(saleListProduct.getUnitPrice());
         BeanUtils.copyProperties(saleListProduct, storage);
+
+        System.out.println(storage.getUnitPrice());
         storage.setId(null);
         storage.setClerk(clerk);
         storage.setGroup(group);
@@ -82,6 +84,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setPrice(storage.getSaleListProduct().getPrice());
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
+        storage.setPingfang(storage.getLength() * storage.getModel());
         System.out.println(storage);
         System.out.println(storage.getPrice());
         storageRepository.save(storage);
@@ -96,11 +99,12 @@ public class StorageServiceImpl implements StorageService {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Clerk clerk = storage.getJiTai().getClerk();
         Double realityweight = storage.getRealityweight();
-
+        System.out.println(saleListProduct.getUnitPrice());
         BeanUtils.copyProperties(saleListProduct, storage);
         if (StringUtil.isNotEmpty(type) && type.equals("保存不添加完成数")) {
             storage.setSaleListProduct(null);
         }
+        System.out.println(storage.getUnitPrice());
         storage.setId(null);
         System.out.println(clerk);
         storage.setClerk(clerk);
@@ -116,6 +120,7 @@ public class StorageServiceImpl implements StorageService {
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
         storage.setPrice(storage.getPrice());
+        storage.setPingfang(storage.getLength() * storage.getModel());
         System.out.println(storage);
         storageRepository.save(storage);
     }
@@ -220,12 +225,6 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty((String) map.get("saleNumber"))) {
                     predicate.getExpressions().add(cb.equal(root.get("saleNumber"), (String) map.get("saleNumber")));
                 }
-                /*if (map.get("location") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("location").get("id"), map.get("location")));
-                }
-                if (map.get("jitai") != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), map.get("jitai")));
-                }*/
                 if (StringUtil.isNotEmpty((String) map.get("productDate")) && !((String) map.get("productDatee")).equals("null")) {
                     try {
                         System.out.println(map.get("productDate"));
@@ -264,9 +263,6 @@ public class StorageServiceImpl implements StorageService {
 
                 Root from = subQuery.from(Storage.class);
                 subQuery.select(from.get("id")).where(cb.like(from.get("state"), "%生产完成%"));
-//                Predicate state1 = cb.like(from.get("state"), "%装车%");
-//                Predicate state = cb.like(from.get("state"), "%提货%");
-//                Predicate or = cb.or(state1);
 
                 predicate.getExpressions().add(cb.or(root.get("id").in(subQuery)));
 
@@ -282,6 +278,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void save(Storage storage) {
+        storage.setShengyulength(storage.getLength());
         storageRepository.save(storage);
     }
 
@@ -353,7 +350,7 @@ public class StorageServiceImpl implements StorageService {
                     }
                     predicate.getExpressions().add(cb.like(root.get("state"), "%装车%"));
 
-                    query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"));
+                    query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("outNumber"), root.get("dabaonum"), root.get("unitPrice"));
                     System.out.println("执行");
                     return predicate;
                 }
@@ -709,7 +706,7 @@ public class StorageServiceImpl implements StorageService {
                     predicate.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 }
                 predicate.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
-                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("dabaonum"));
+                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"), root.get("dabaonum"), root.get("unitPrice"));
                 return predicate;
             }
         }, new Sort(Sort.Direction.ASC, "peasant", "name", "model", "price", "length", "color", "realityweight"));
@@ -843,7 +840,11 @@ public class StorageServiceImpl implements StorageService {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
         storageRepository.deletekucun(id);
         //更新完成数量
-        saleListProduct.setAccomplishNumber(saleListProduct.getAccomplishNumber() - 1);
+        Integer count = storageRepository.getCountBySaleListProductId(saleListProductId);
+        if (count == null) {
+            count = 0;
+        }
+        saleListProduct.setAccomplishNumber(count);
 //        saleListProductRepository.updateAccomplishNumber(saleListProductId);
         //根据id查询完成数跟总数量，完成数小于总数量则修改状态为下发机台
         if (saleListProduct.getNum() > saleListProduct.getAccomplishNumber()) {
@@ -1152,6 +1153,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public Integer kucunCount(Storage storage, String dateInProducedd, String dateInProduceddd) {
+        System.out.println(storage);
         Long count = storageRepository.count(new Specification<Storage>() {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -1169,6 +1171,11 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
+                if (storage.getUnitPrice() != null) {
+                    predicates.getExpressions().add(cb.equal(root.get("unitPrice"), storage.getUnitPrice()));
+                } else {
+                    predicates.getExpressions().add(cb.isNull(root.get("unitPrice")));
+                }
                 predicates.getExpressions().add(cb.like(root.get("state"), "%生产完成%"));
 //                query.groupBy(root.get("saleListProduct").get("id"), root.get("name"), root.get("model"), root.get("price"), root.get("length"), root.get("color"), root.get("realityweight"), root.get("dao"), root.get("peasant"), root.get("clientname"));
                 return predicates;
@@ -1213,8 +1220,8 @@ public class StorageServiceImpl implements StorageService {
                 if (storage.getId() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("id"), storage.getId()));
                 }
-                if (StringUtil.isNotEmpty(storage.getName())) {
-                    predicate.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
+                if (StringUtil.isNotEmpty(storage.getClientname())) {
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                 }
                 if (storage.getModel() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));

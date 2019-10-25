@@ -154,6 +154,14 @@
                             }
                             return "否";
                         }
+                    },{
+                        field: 'price', title: '打印厚度', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.price) {
+                                return "是";
+                            }
+                            return "否";
+                        }
                     },
                     {
                         field: 'group',
@@ -232,36 +240,14 @@
      style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
      buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
     <form id="fm" method="post">
-        <table cellspacing="8px">
-            <tr>
-                <td>机台名称：</td>
-                <td colspan="2"><input type="text" id="name" name="name"
-                                       class="easyui-validatebox" required="true"/></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" id="weight" name="weight"/>打印重量</td>
-                <td><input type="checkbox" id="dao" name="dao"/>打印剖刀</td>
-                <td><input type="checkbox" id="color" name="color"/>打印颜色</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" id="clientName" name="clientName"/>打印客户名称</td>
-                <td>班组：<input
-                        id="banzu" panelHeight="auto" valueField="id" textField="name"
-                        class="easyui-combobox" style="width: 55px;"
-                        url="/admin/group/groupList" name="group"/></td>
-                <td>生产人员：<input id="staff" class="easyui-combobox"
-                                style="width: 55px;" url="/admin/clerk/clerkProList"
-                                panelHeight="auto" valueField="id" textField="name" name="clerk"/></td>
-            </tr>
-            <tr>
-
-            </tr>
-            <tr>
-                <td valign="top">备注：</td>
-                <td colspan="2"><input/>
-                </td>
-            </tr>
-        </table>
+        机台名称：<input type="text" id="name" name="name" class="easyui-validatebox" required="true"/><br>
+        <input type="checkbox" id="weight" name="weight"/>打印重量
+        <input type="checkbox" id="dao" name="dao"/>打印剖刀 <br>
+        <input type="checkbox" id="color" name="color"/>打印颜色
+        <input type="checkbox" id="price" name="price"/>打印厚度 <br>
+        <input type="checkbox" id="clientName" name="clientName"/>打印客户名称 <br>
+        班组：<input id="banzu" panelHeight="auto" valueField="id" textField="name" class="easyui-combobox" style="width: 55px;" url="/admin/group/groupList" name="group"/>
+        生产人员：<input id="staff" class="easyui-combobox" style="width: 55px;" url="/admin/clerk/clerkProList" panelHeight="auto" valueField="id" textField="name" name="clerk"/>
     </form>
 </div>
 

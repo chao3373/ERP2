@@ -153,3 +153,18 @@ function oldDgToNewDg(oldDg, newDg) {
     }
 }
 
+//返回一个选中的行的id
+function getDgId(dg) {
+    var ids = [];
+    var rows = $(dg).datagrid("getSelections");
+    if (rows.length < 1) {
+        alert("请选择要修改的数据");
+        return;
+    }
+    for (var i = 0; i < rows.length; i++) {
+        ids.push(rows[i].id);
+    }
+    var idarr = ids.join(",");
+    return idarr;
+}
+

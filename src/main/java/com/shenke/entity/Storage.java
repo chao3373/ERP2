@@ -170,11 +170,28 @@ public class Storage{
 
     private Integer dabaonum;//打包数量
 
+    private Boolean lingshou;//零售
+
+    @Column(nullable = true, precision = 2)
+    private Double unitPrice;//单价
+
+    //总价格
+    @Transient
+    private Double totalPrice;//总价格
+
     @Transient
     private Double danjianzhong;
 
     @Transient
     private Double zongzhong;
+
+    private Double pingfang;
+
+    @Transient
+    private Double danjianpingfang;
+
+    @Transient
+    private Double zongpingfang;
 
     @Column(precision = 6, scale = 2)
     private Double shengyulength;
@@ -235,44 +252,17 @@ public class Storage{
                 ", clerkName='" + clerkName + '\'' +
                 ", groupName='" + groupName + '\'' +
                 ", dabaonum=" + dabaonum +
+                ", lingshou=" + lingshou +
+                ", unitPrice=" + unitPrice +
+                ", totalPrice=" + totalPrice +
                 ", danjianzhong=" + danjianzhong +
                 ", zongzhong=" + zongzhong +
+                ", pingfang=" + pingfang +
+                ", danjianpingfang=" + danjianpingfang +
+                ", zongpingfang=" + zongpingfang +
                 ", shengyulength=" + shengyulength +
                 '}';
     }
-
-    public Double getShengyulength() {
-        return shengyulength;
-    }
-
-    public void setShengyulength(Double shengyulength) {
-        this.shengyulength = shengyulength;
-    }
-
-    public Double getDanjianzhong() {
-        return danjianzhong;
-    }
-
-    public void setDanjianzhong(Double danjianzhong) {
-        this.danjianzhong = danjianzhong;
-    }
-
-    public Double getZongzhong() {
-        return zongzhong;
-    }
-
-    public void setZongzhong(Double zongzhong) {
-        this.zongzhong = zongzhong;
-    }
-
-    public Integer getDabaonum() {
-        return dabaonum;
-    }
-
-    public void setDabaonum(Integer dabaonum) {
-        this.dabaonum = dabaonum;
-    }
-
 
     public Integer getId() {
         return id;
@@ -688,5 +678,85 @@ public class Storage{
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public Integer getDabaonum() {
+        return dabaonum;
+    }
+
+    public void setDabaonum(Integer dabaonum) {
+        this.dabaonum = dabaonum;
+    }
+
+    public Boolean getLingshou() {
+        return lingshou;
+    }
+
+    public void setLingshou(Boolean lingshou) {
+        this.lingshou = lingshou;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Double getDanjianzhong() {
+        return danjianzhong;
+    }
+
+    public void setDanjianzhong(Double danjianzhong) {
+        this.danjianzhong = danjianzhong;
+    }
+
+    public Double getZongzhong() {
+        return zongzhong;
+    }
+
+    public void setZongzhong(Double zongzhong) {
+        this.zongzhong = zongzhong;
+    }
+
+    public Double getPingfang() {
+        return pingfang;
+    }
+
+    public void setPingfang(Double pingfang) {
+        this.pingfang = pingfang;
+    }
+
+    public Double getDanjianpingfang() {
+        return danjianpingfang;
+    }
+
+    public void setDanjianpingfang(Double danjianpingfang) {
+        this.danjianpingfang = danjianpingfang;
+    }
+
+    public Double getZongpingfang() {
+        return zongpingfang;
+    }
+
+    public void setZongpingfang(Double zongpingfang) {
+        this.zongpingfang = zongpingfang;
+    }
+
+    public Double getShengyulength() {
+        return shengyulength;
+    }
+
+    public void setShengyulength(Double shengyulength) {
+        this.shengyulength = shengyulength;
     }
 }

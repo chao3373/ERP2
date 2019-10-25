@@ -176,6 +176,16 @@
                     title: '总重量',
                     width: 100,
                     align: 'center'
+                }, {
+                    field: 'unitPrice',
+                    title: '单价',
+                    width: 100,
+                    align: 'center'
+                }, {
+                    field: 'totalPrice',
+                    title: '金额',
+                    width: 100,
+                    align: 'center'
                 }]]
 
             });
@@ -386,6 +396,8 @@
             var zsumw = 0;
             var count = 0;
             var sumw = 0;
+            var jine = 0;
+            var zongjine = 0;
             for (var i = 0; i < rows.length; i++) {
                 // console.log("长度：" + rows.length);
                 // console.log(nong_hu);
@@ -398,11 +410,13 @@
                         row: {
                             clientname: "小计：",
                             peasant: "总数量：" + count + "件",
-                            name: "总重量：" + sumw.toFixed(2) + "KG"
+                            name: "总重量：" + sumw.toFixed(2) + "KG",
+                            totalPrice: "总金额：" + jine.toFixed(2) + "元",
                         }
                     });
                     count = 0;
                     sumw = 0;
+                    jine = 0;
                     nong_hu = rows[i + 1].peasant;
                     i++;
                 }
@@ -411,12 +425,15 @@
                     count += rows[i].sum;
                     zsumw += rows[i].zongzhong;
                     zcount += rows[i].sum;
+                    jine += rows[i].totalPrice;
+                    zongjine += rows[i].totalPrice;
                     $('#dg').datagrid('insertRow', {
                         index: i + 1,	// index start with 0
                         row: {
                             clientname: "小计：",
                             peasant: "总数量：" + count + "件",
-                            name: "总重量：" + sumw.toFixed(2) + "KG"
+                            name: "总重量：" + sumw.toFixed(2) + "KG",
+                            totalPrice: "总金额：" + jine.toFixed(2) + "元"
                         }
                     });
                     $('#dg').datagrid('insertRow', {
@@ -424,7 +441,8 @@
                         row: {
                             clientname: "总计：",
                             peasant: "总数量：" + zcount + "件",
-                            name: "总重量：" + zsumw.toFixed(2) + "KG"
+                            name: "总重量：" + zsumw.toFixed(2) + "KG",
+                            totalPrice: "总金额：" + zongjine.toFixed(2) + "元"
                         }
                     });
                     return;
@@ -433,6 +451,8 @@
                 count += rows[i].sum;
                 zsumw += rows[i].zongzhong;
                 zcount += rows[i].sum;
+                jine += rows[i].totalPrice;
+                zongjine += rows[i].totalPrice;
             }
         }
 

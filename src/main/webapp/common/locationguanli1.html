@@ -504,14 +504,11 @@
             if ($("#length").numberbox("getValue")) {
                 json.length = $("#length").numberbox("getValue");
             }
-            if ($("#num").numberbox("getValue")) {
-                json.num = $("#num").numberbox("getValue");
-            }
             if ($("#color").val()) {
                 json.color = $("#color").val();
             }
             if ($("#weight").numberbox("getValue")) {
-                json.weight = $("#weight").numberbox("getValue");
+                json.realityweight = $("#weight").numberbox("getValue");
             }
             if ($("#dao").combobox("getText")) {
                 json.dao = $("#dao").combobox("getText");
@@ -521,15 +518,6 @@
             }
             if ($("#pack").combobox("getText")) {
                 json.pack = $("#pack").combobox("getText");
-            }
-            if ($("#letter").combobox("getText")) {
-                json.letter = $("#letter").combobox("getText");
-            }
-            if ($("#patu").combobox("getText")) {
-                json.patu = $("#patu").combobox("getText");
-            }
-            if ($("#meter").numberbox("getValue")) {
-                json.meter = $("#meter").numberbox("getValue");
             }
             if ($("#clientname").combobox("getText")) {
                 json.clientname = $("#clientname").combobox("getText");
@@ -952,12 +940,6 @@
                 </td>
                 <td><input type="text" id="color" name="color" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量
-                    ：
-                </td>
-                <td><input type="text" id="num" name="num"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <tr>
                 <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
                 <td><input type="text" id="weight" name="weight"
@@ -986,39 +968,17 @@
                 </td>
             </tr>
             <tr>
-                <td>印&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字&nbsp;：</td>
-                <td><input type="text" id="letter" name="letter"
-                           class="easyui-combobox" style="width: 120px" id="letterId"
-                           name="letter.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/letter/letterList'"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>纸&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;管&nbsp;：</td>
-                <td><input type="text" id="patu" name="patu"
-                           class="easyui-combobox" style="width: 120px" id="patuId"
-                           name="patu.id" style="width: 100px"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/patu/patuList'"/>
-                </td>
-            </tr>
-            <tr>
-                <td>生&nbsp;&nbsp;&nbsp;
-                    产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
-                </td>
-                <td><input type="text" id="meter" name="meter"
-                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
-                <td><input type="text" id="clientname" name="clientname"
-                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
-            </tr>
-            <tr>
                 <td>仓&nbsp;&nbsp;&nbsp;位&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：
                 </td>
                 <td><input type="text" id="cang" name="cang"
                            class="easyui-combobox" style="width: 120px"
                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
                 </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
+                <td><input type="text" id="clientname" name="clientname"
+                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
             </tr>
         </table>
     </form>

@@ -34,6 +34,32 @@ public class JiTai {
 
     private Boolean clientName;//客户
 
+    private Boolean price;//厚度
+
+    @Override
+    public String toString() {
+        return "JiTai{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", group=" + group +
+                ", clerk=" + clerk +
+                ", weight=" + weight +
+                ", color=" + color +
+                ", dao=" + dao +
+                ", clientName=" + clientName +
+                ", price=" + price +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
+
+    public Boolean getPrice() {
+        return price;
+    }
+
+    public void setPrice(Boolean price) {
+        this.price = price;
+    }
+
     @Column(length = 500)
     private String remark;//备注
 
@@ -109,18 +135,4 @@ public class JiTai {
         this.remark = remark;
     }
 
-    @Override
-    public String toString() {
-        return "JiTai{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", group=" + group +
-                ", clerk=" + clerk +
-                ", weight=" + weight +
-                ", color=" + color +
-                ", dao=" + dao +
-                ", clientName=" + clientName +
-                ", remark='" + remark + '\'' +
-                '}';
-    }
 }

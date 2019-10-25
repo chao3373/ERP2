@@ -281,6 +281,11 @@
                                                         title: "长度（m）",
                                                         width: "100",
                                                         align: "center"
+                                                    },{
+                                                        field: "hebingLength",
+                                                        title: "合并长度",
+                                                        width: "100",
+                                                        align: "center"
                                                     },
                                                     {
                                                         field: "meter",
@@ -911,6 +916,10 @@
                 $.messager.alert("系统提示", "<span style='color: red'>只能选择一行要合并的订单信息</span>");
                 return;
             }
+            if ($("#dg2").datagrid('getSelected').hebingLength) {
+                alert("选择的订单已经进行过合并！");
+                return;
+            }
             $.messager.prompt("确定合并件数", "几件合成为一件：", function (r) {
                 if (r) {
                     var num = $("#dg2").datagrid('getSelections')[0].num;
@@ -936,7 +945,7 @@
 
         //合并成一件
         function hebingOne() {
-            var rows = $("#dg2").datagrid('getSelections')
+            var rows = $("#dg2").datagrid('getSelections');
             var name = rows[0].peasant;
             var model = rows[0].model;
             var price = rows[0].price;
@@ -945,6 +954,10 @@
             for (var i = 0; i < rows.length; i++) {
                 var id = rows[i].id;
                 ids.push(id);
+                if (rows[i].hebingLength) {
+                    alert("选择的订单已经进行过合并！");
+                    return;
+                }
                 if (rows[i].peasant != name) {
                     alert("选择的客户不一致！");
                     return;

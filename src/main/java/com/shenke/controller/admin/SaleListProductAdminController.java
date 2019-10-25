@@ -1,5 +1,6 @@
 package com.shenke.controller.admin;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -11,6 +12,8 @@ import com.shenke.entity.*;
 import com.shenke.service.*;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +26,9 @@ public class SaleListProductAdminController {
 
     @Resource
     private SaleListService saleListService;
+
+    @Autowired
+    private LingShouService lingShouService;
 
     @Resource
     private ClientService clientService;
@@ -387,16 +393,31 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
         SaleListProduct byId = saleListProductService.findById(Integer.parseInt(idArr[0]));
-        double length = byId.getLength();
         StringBuilder hebingLength = new StringBuilder();
-        hebingLength.append(length);
+        Double sumLength = 0.0;
+        Double length = byId.getLength();
+        Integer num1 = byId.getNum();
+        sumLength += (length * num1);
+        if (num1 > 1) {
+            hebingLength.append(length + "*" + byId.getNum());
+        } else {
+            hebingLength.append(length);
+        }
         for (int i = 1; i < idArr.length; i++) {
-            length += saleListProductService.findById(Integer.parseInt(idArr[0])).getLength();
-            hebingLength.append("+" + (int) Math.floor(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength()));
+            SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(idArr[i]));
+            Integer num = saleListProduct.getNum();
+            Double sLength = saleListProduct.getLength() * saleListProduct.getNum();
+            sumLength += new BigDecimal(sLength).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            if (num > 1) {
+                hebingLength.append(" + " + saleListProduct.getLength() + "*" + saleListProduct.getNum());
+            } else {
+                hebingLength.append(" + " + saleListProduct.getLength());
+            }
             saleListProductService.deleteById(Integer.parseInt(idArr[i]));
         }
-        byId.setLength(length);
+        byId.setLength(sumLength);
         byId.setHebingLength(hebingLength.toString());
+        byId.setNum(1);
         save(byId);
         map.put("success", true);
         System.out.println(map);
@@ -517,6 +538,9 @@ public class SaleListProductAdminController {
         SaleListProduct saleListProduct = saleListProductService.findById(id);
         Integer num = saleListProduct.getNum();
         Integer count = storageService.findCountBySaleListProductId(saleListProduct.getId());
+        if (count == null) {
+            count = 0;
+        }
         System.out.println(count);
         System.out.println(wancheng);
         if (count > wancheng) {
@@ -597,46 +621,52 @@ public class SaleListProductAdminController {
      */
     @RequestMapping("/addlingshou")
     public Map<String, Object> addlingshou(String danhao, String clientname, Integer jitai, String xiaoshouDatee, String goodsJson) throws ParseException {
+        System.out.println(danhao);
+        SaleList saleList = saleListService.findBySaleNumber(danhao);
+        System.out.println(saleList);
+        System.out.println(saleList);
         Map<String, Object> map = new HashMap<>();
         Map<Integer, Double> length = new HashMap<>();
         List<Storage> storages = new ArrayList<>();
-        SaleList saleList = new SaleList();
-        saleList.setSaleNumber(danhao);
-        saleList.setClient(clientService.findName("零售"));
-        saleList.setSaleDate(new SimpleDateFormat("yyyy-MM-dd Hh:mm:ss").parse(xiaoshouDatee));
         Long infornNumber = saleListProductService.findMaxInfornNumber();
-        if (infornNumber == null){
+        if (infornNumber == null) {
             infornNumber = 0l;
         }
-        System.out.println(danhao);
-        System.out.println(clientname);
-        System.out.println(jitai);
-        System.out.println(xiaoshouDatee);
-        System.out.println(goodsJson);
         Gson gson = new Gson();
         List<SaleListProduct> saleListProducts = gson.fromJson(goodsJson, new TypeToken<List<SaleListProduct>>() {
         }.getType());
         System.out.println(saleListProducts);
         System.out.println(saleListProducts.size());
         for (SaleListProduct saleListProduct : saleListProducts) {
-            Integer id = saleListProduct.getId();
+            System.out.println(saleListProduct);
+            Integer id = saleListProduct.getStorageid();
+            System.out.println(id);
+            LingShou findone = lingShouService.findone(saleListProduct.getId());
+            System.out.println(findone);
+            findone.setStorageid(id);
+            findone.setXiaoshouDate(saleList.getSaleDate());
+            lingShouService.saveone(findone);
             if (length.get(id) != null) {
                 length.put(id, length.get(id) + (saleListProduct.getLength() * saleListProduct.getNum()));
             } else {
                 length.put(id, saleListProduct.getLength() * saleListProduct.getNum());
             }
-            Storage storage = storageService.findById(saleListProduct.getId());
+            Storage storage = storageService.findById(saleListProduct.getStorageid());
             saleListProduct.setColor(storage.getColor());
             saleListProduct.setDao(storage.getDao());
-            saleListProduct.setClientname("零售");
-            saleListProduct.setPeasant(clientname);
+            System.out.println(saleList.getClient().getName());
+            saleListProduct.setClientname(saleList.getClient().getName());
+            saleListProduct.setLingshou(true);
+            saleListProduct.setPeasant(findone.getPeasant());
+            saleListProduct.setUnitPrice(findone.getDanjia());
+            saleListProduct.setDemand(findone.getBeizhu());
             saleListProduct.setJiTai(jiTaiService.findById(jitai));
             saleListProduct.setInformNumber(infornNumber + 1);
             saleListProduct.setDaBaoShu(1);
-            saleListProduct.setDemand("");
+            saleListProduct.setDemand(findone.getBeizhu());
             saleListProduct.setPrice(storage.getPrice());
             saleListProduct.setOneweight(storage.getRealityweight() / storage.getLength() * saleListProduct.getLength());
-            saleListProduct.setSumwight((int) (saleListProduct.getOneweight() * saleListProduct.getNum()));
+            saleListProduct.setSumwight((saleListProduct.getOneweight() * saleListProduct.getNum()));
             saleListProduct.setLevel(0);
             saleListProduct.setId(null);
             saleListProduct.setState("下发机台：" + jiTaiService.findById(jitai).getName());
@@ -668,10 +698,126 @@ public class SaleListProductAdminController {
         }
         System.out.println(saleListProducts);
         System.out.println(saleListProducts.size());
+//        Client client = clientService.findName("零售");
+//        if (client == null) {
+//            map.put("success", false);
+//            map.put("msg", "不存在客户名为零售的客户，请先添加");
+//            return map;
+//        }
+//        saleList.setClient(client);
         saleListService.saveOne(saleList);
         saleListProductService.saveList(saleListProducts);
         storageService.save(storages);
         map.put("success", true);
         return map;
     }
+
+    @PostMapping("/updateName")
+    public Map<String, Object> updateName(Integer[] ids, String name) {
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(name);
+
+        saleListProductService.updateName(ids, name);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改长度
+     * @param ids
+     * @param length
+     * @return
+     */
+    @RequestMapping("/updatLength")
+    public Map<String, Object> updateLength(Integer[] ids, Double length) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatLength(ids, length);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id修改幅宽
+     * @param ids
+     * @param model
+     * @return
+     */
+    @RequestMapping("/updatModel")
+    public Map<String, Object> updatemodel(Integer[] ids, Double model) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatemodel(ids, model);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改厚度
+     * @param ids
+     * @param price
+     * @return
+     */
+    @RequestMapping("/updatPrice")
+    public Map<String, Object> updatPrice(Integer[] ids, Double price) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatPrice(ids, price);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改实际厚度
+     * @param ids
+     * @param meter
+     * @return
+     */
+    @RequestMapping("/updatMeter")
+    public Map<String, Object> updatMeter(Integer[] ids, Double meter) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatMeter(ids, meter);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改单件
+     * @param ids
+     * @param oneweight
+     * @return
+     */
+    @RequestMapping("/updatOneweight")
+    public Map<String, Object> updatOneweight(Integer[] ids, Double oneweight) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatOneweight(ids, oneweight);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改农户名
+     * @param ids
+     * @param peasant
+     * @return
+     */
+    @RequestMapping("/updatPeasant")
+    public Map<String, Object> updatPeasant(Integer[] ids, String peasant) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatPeasant(ids, peasant);
+        map.put("success", true);
+        return map;
+    }
+
+    /***
+     * 根据id数组修改颜色
+     * @param ids
+     * @param color
+     * @return
+     */
+    @RequestMapping("/updatColor")
+    public Map<String, Object> updatColor(Integer[] ids, String color) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatColor(ids, color);
+        map.put("success", true);
+        return map;
+    }
+
 }

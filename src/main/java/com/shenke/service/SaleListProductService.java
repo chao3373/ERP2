@@ -197,4 +197,20 @@ public interface SaleListProductService {
     String updateNum(Integer num, Integer id);
 
     List<SaleListProduct> find(SaleListProduct saleListProduct);
+
+	void updateName(Integer[] ids, String name);
+
+	void updatLength(Integer[] ids, Double length);
+
+	void updatemodel(Integer[] ids, Double model);
+
+	void updatPrice(Integer[] ids, Double price);
+
+	void updatMeter(Integer[] ids, Double meter);
+
+	void updatOneweight(Integer[] ids, Double oneWeight);
+
+	void updatPeasant(Integer[] ids, String peasant);
+
+	void updatColor(Integer[] ids, String color);
 }

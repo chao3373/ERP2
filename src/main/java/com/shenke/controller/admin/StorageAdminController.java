@@ -267,9 +267,9 @@ public class StorageAdminController {
      */
     @RequestMapping("/saveAdd")
     public Map<String, Object> saveAdd(Storage storage) {
-        System.out.println(storage);
-        System.out.println(storage.getNum());
-        storageService.save(storage, storage.getNum());
+        storage.setDabaonum(1);
+        storage.setPeasant("");
+        storageService.save(storage);
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         return map;
@@ -328,13 +328,26 @@ public class StorageAdminController {
             System.out.println(integer);
             storage.setSum(integer);
             Double danjian = storage.getDabaonum() * storage.getRealityweight();
+            Double danjianpingfang = storage.getDabaonum() * storage.getPingfang();
+            System.out.println(storage);
+            Double unitPrice = storage.getUnitPrice();
+            Double price = storage.getUnitPrice();
+            if(price == null){
+                price = 0.0;
+            }
+            storage.setUnitPrice(storage.getDabaonum() * price);
+            Double totalPrice = storage.getUnitPrice() * storage.getNum();
+            storage.setDanjianpingfang(danjianpingfang);
             storage.setDanjianzhong(danjian);
             Double zongzhong = storage.getSum() * danjian;
+            Double zongpingfang = storage.getSum() * danjianpingfang;
             System.out.println("总数量：" + integer);
             System.out.println("打包数：" + storage.getDabaonum());
             System.out.println("单件重量：" + danjian);
             System.out.println("总重量：" + zongzhong);
+            storage.setZongpingfang(new BigDecimal(zongpingfang).setScale(2, BigDecimal.ROUND_UP).doubleValue());
             storage.setZongzhong((new BigDecimal(zongzhong).setScale(2, BigDecimal.ROUND_UP).doubleValue()));
+            storage.setTotalPrice(new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_UP).doubleValue());
         }
         map.put("success", true);
         map.put("rows", storageList);
@@ -520,7 +533,16 @@ public class StorageAdminController {
             Integer integer = storageService.kucunCount(st, dateInProducedd, dateInProduceddd);
             st.setSum(integer);
             System.out.println(st);
+            Double jiage;
+            if (st.getUnitPrice() == null){
+                jiage = 0.0;
+            } else {
+                jiage = st.getUnitPrice();
+            }
+            Double danjia = st.getDabaonum() * jiage;
             Double danjianzhong = st.getDabaonum() * st.getRealityweight();
+            st.setUnitPrice(danjia);
+            st.setTotalPrice(danjia * st.getSum());
             st.setDanjianzhong(danjianzhong);
             st.setZongzhong(st.getSum() * danjianzhong);
         }

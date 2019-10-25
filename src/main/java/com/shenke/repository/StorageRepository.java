@@ -334,4 +334,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set state = ?1 where id = ?2", nativeQuery = true)
     void updateState(String state, Integer key);
+
+    //根据saleListProductId获取完成数
+    @Query(value = "select sum(dabaonum) from t_storage where sale_list_product_id = ?1", nativeQuery = true)
+    Integer getCountBySaleListProductId(Integer saleListProductId);
 }

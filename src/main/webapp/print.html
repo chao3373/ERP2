@@ -6,8 +6,9 @@
         body {
             background: white;
             margin: 0px;
-            padding: 60px 100px 0 50px;
+            /*padding: 60px 100px 0 50px;*/
             text-align: center;
+            padding: 0 60px 0 25px;
         }
 
         table td {
@@ -22,6 +23,10 @@
             border-collapse: collapse;
             text-align: left;
         }
+
+        tab {
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -31,13 +36,27 @@
 <script type="text/javascript" src="/static/js/LodopFuncs.js"></script>
 <script type="text/javascript">
     if (window.dialogArguments) {
-        document.write(window.dialogArguments.tableString);
-        document.write("<div style='height: 300px'></div>");
-        document.write(window.dialogArguments.tableString);
+        var index = window.dialogArguments.tableString.lastIndexOf(">");
+        var num = window.dialogArguments.tableString.substring(index + 1)
+        var table = window.dialogArguments.tableString.substring(0, index + 1);
+        for (var i = 0; i < num; i++) {
+            document.write(window.dialogArguments.tableString);
+            document.write("<div style='page-break-after: always;'></div>");
+        }
+        // document.write(window.dialogArguments.tableString);
+        // document.write("<div style='page-break-after: always;'></div>");
+        // document.write(window.dialogArguments.tableString);
     } else {
-        document.write(window.opener.tableString);
-        document.write("<div style='height: 300px'></div>");
-        document.write(window.opener.tableString);
+        var index = window.opener.tableString.lastIndexOf(">");
+        var num = window.opener.tableString.substring(index + 1)
+        var table = window.opener.tableString.substring(0, index + 1);
+        for (var i = 0; i < num; i++) {
+            document.write(window.opener.tableString);
+            document.write("<div style='page-break-after: always;'></div>");
+        }
+        // document.write(window.opener.tableString);
+        // document.write("<div style='page-break-after: always;'></div>");
+        // document.write(window.opener.tableString);
     }
     window.print();
     var timeId = setInterval(function () {
