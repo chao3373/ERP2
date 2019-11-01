@@ -93,7 +93,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void add(Storage storage, String clerkName, String groupName, Double changdu, String type) {
-
+        System.out.println(type);
         System.out.println(storage);
         Group group = groupRepository.findByGrouptName(groupName);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
@@ -102,6 +102,7 @@ public class StorageServiceImpl implements StorageService {
         System.out.println(saleListProduct.getUnitPrice());
         BeanUtils.copyProperties(saleListProduct, storage);
         if (StringUtil.isNotEmpty(type) && type.equals("保存不添加完成数")) {
+            System.out.println("保存不添加完成数");
             storage.setSaleListProduct(null);
         }
         System.out.println(storage.getUnitPrice());
@@ -836,7 +837,12 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String deletekucun(Integer id) {
         Storage storage = storageRepository.findOne(id);
+        if (storage.getSaleListProduct() == null){
+            storageRepository.deletekucun(id);
+            return "删除成功！";
+        }
         Integer saleListProductId = storage.getSaleListProduct().getId();
+        System.out.println(saleListProductId);
         SaleListProduct saleListProduct = saleListProductRepository.findOne(saleListProductId);
         storageRepository.deletekucun(id);
         //更新完成数量
@@ -1167,7 +1173,11 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
                 predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
-                predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                if (storage.getDao()!=null){
+                    predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                } else {
+                    predicates.getExpressions().add(cb.isNull(root.get("dao")));
+                }
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
@@ -1199,7 +1209,11 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
                 predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
-                predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                if (storage.getDao()!=null){
+                    predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                } else {
+                    predicates.getExpressions().add(cb.isNull(root.get("dao")));
+                }
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));

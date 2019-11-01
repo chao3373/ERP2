@@ -50,7 +50,7 @@ public class SaleListProduct {
 	private Double realitymodel;// 实际幅宽
 
 	@Column(nullable = true)
-	private Double realityprice;// 实际厚度
+	private Double realityprice;//
 	
 	@Column(nullable = true)
 	private Double realityweight;//实际重量

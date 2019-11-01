@@ -1,8 +1,7 @@
 package com.shenke.controller.admin;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.*;
 import javax.annotation.Resource;
 
@@ -12,7 +11,6 @@ import com.shenke.entity.*;
 import com.shenke.service.*;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,12 +21,6 @@ public class SaleListProductAdminController {
 
     @Resource
     private LogService logService;
-
-    @Resource
-    private SaleListService saleListService;
-
-    @Autowired
-    private LingShouService lingShouService;
 
     @Resource
     private ClientService clientService;
@@ -397,7 +389,6 @@ public class SaleListProductAdminController {
         Double sumLength = 0.0;
         Double length = byId.getLength();
         Integer num1 = byId.getNum();
-        sumLength += (length * num1);
         if (num1 > 1) {
             hebingLength.append(length + "*" + byId.getNum());
         } else {
@@ -409,16 +400,27 @@ public class SaleListProductAdminController {
             Double sLength = saleListProduct.getLength() * saleListProduct.getNum();
             sumLength += new BigDecimal(sLength).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             if (num > 1) {
-                hebingLength.append(" + " + saleListProduct.getLength() + "*" + saleListProduct.getNum());
+                hebingLength.append("+" + saleListProduct.getLength() + "*" + saleListProduct.getNum());
             } else {
-                hebingLength.append(" + " + saleListProduct.getLength());
+                hebingLength.append("+" + saleListProduct.getLength());
             }
             saleListProductService.deleteById(Integer.parseInt(idArr[i]));
         }
-        byId.setLength(sumLength);
+        byId.setLength(length);
         byId.setHebingLength(hebingLength.toString());
-        byId.setNum(1);
         save(byId);
+//        SaleListProduct byId = saleListProductService.findById(Integer.parseInt(idArr[0]));
+//        double length = byId.getLength();
+//        StringBuilder hebingLength = new StringBuilder();
+//        hebingLength.append(length);
+//        for (int i = 1; i < idArr.length; i++) {
+//            length += saleListProductService.findById(Integer.parseInt(idArr[0])).getLength();
+//            hebingLength.append("+" + (int) Math.floor(saleListProductService.findById(Integer.parseInt(idArr[0])).getLength()));
+//            saleListProductService.deleteById(Integer.parseInt(idArr[i]));
+//        }
+//        byId.setLength(length);
+//        byId.setHebingLength(hebingLength.toString());
+//        save(byId);
         map.put("success", true);
         System.out.println(map);
         return map;
@@ -538,9 +540,6 @@ public class SaleListProductAdminController {
         SaleListProduct saleListProduct = saleListProductService.findById(id);
         Integer num = saleListProduct.getNum();
         Integer count = storageService.findCountBySaleListProductId(saleListProduct.getId());
-        if (count == null) {
-            count = 0;
-        }
         System.out.println(count);
         System.out.println(wancheng);
         if (count > wancheng) {
@@ -610,104 +609,6 @@ public class SaleListProductAdminController {
         }
         Map<String, Object> map = new HashMap<>();
         peiFangShouService.saveList(plgList);
-        map.put("success", true);
-        return map;
-    }
-
-    /**
-     * 添加零售商品
-     *
-     * @return
-     */
-    @RequestMapping("/addlingshou")
-    public Map<String, Object> addlingshou(String danhao, String clientname, Integer jitai, String xiaoshouDatee, String goodsJson) throws ParseException {
-        System.out.println(danhao);
-        SaleList saleList = saleListService.findBySaleNumber(danhao);
-        System.out.println(saleList);
-        System.out.println(saleList);
-        Map<String, Object> map = new HashMap<>();
-        Map<Integer, Double> length = new HashMap<>();
-        List<Storage> storages = new ArrayList<>();
-        Long infornNumber = saleListProductService.findMaxInfornNumber();
-        if (infornNumber == null) {
-            infornNumber = 0l;
-        }
-        Gson gson = new Gson();
-        List<SaleListProduct> saleListProducts = gson.fromJson(goodsJson, new TypeToken<List<SaleListProduct>>() {
-        }.getType());
-        System.out.println(saleListProducts);
-        System.out.println(saleListProducts.size());
-        for (SaleListProduct saleListProduct : saleListProducts) {
-            System.out.println(saleListProduct);
-            Integer id = saleListProduct.getStorageid();
-            System.out.println(id);
-            LingShou findone = lingShouService.findone(saleListProduct.getId());
-            System.out.println(findone);
-            findone.setStorageid(id);
-            findone.setXiaoshouDate(saleList.getSaleDate());
-            lingShouService.saveone(findone);
-            if (length.get(id) != null) {
-                length.put(id, length.get(id) + (saleListProduct.getLength() * saleListProduct.getNum()));
-            } else {
-                length.put(id, saleListProduct.getLength() * saleListProduct.getNum());
-            }
-            Storage storage = storageService.findById(saleListProduct.getStorageid());
-            saleListProduct.setColor(storage.getColor());
-            saleListProduct.setDao(storage.getDao());
-            System.out.println(saleList.getClient().getName());
-            saleListProduct.setClientname(saleList.getClient().getName());
-            saleListProduct.setLingshou(true);
-            saleListProduct.setPeasant(findone.getPeasant());
-            saleListProduct.setUnitPrice(findone.getDanjia());
-            saleListProduct.setDemand(findone.getBeizhu());
-            saleListProduct.setJiTai(jiTaiService.findById(jitai));
-            saleListProduct.setInformNumber(infornNumber + 1);
-            saleListProduct.setDaBaoShu(1);
-            saleListProduct.setDemand(findone.getBeizhu());
-            saleListProduct.setPrice(storage.getPrice());
-            saleListProduct.setOneweight(storage.getRealityweight() / storage.getLength() * saleListProduct.getLength());
-            saleListProduct.setSumwight((saleListProduct.getOneweight() * saleListProduct.getNum()));
-            saleListProduct.setLevel(0);
-            saleListProduct.setId(null);
-            saleListProduct.setState("下发机台：" + jiTaiService.findById(jitai).getName());
-            saleListProduct.setSaleList(saleList);
-        }
-
-        for (Integer key : length.keySet()) {
-            System.out.println("=======");
-            System.out.println(key);
-            Storage storage = storageService.findById(key);
-            if (length.get(key) > storage.getShengyulength()) {
-                map.put("success", false);
-                map.put("msg", "编号为" + key + "的总长度超出剩余长度");
-                return map;
-            }
-            Double shengyu = storage.getShengyulength() - length.get(key);
-            System.out.println("剩余：" + shengyu);
-            System.out.println(shengyu == 0);
-            if (shengyu == 0) {
-                System.out.println("等于0");
-                storage.setState("出售");
-            } else if (shengyu < 0) {
-                map.put("success", false);
-                map.put("msg", "未知错误！");
-                return map;
-            }
-            storage.setShengyulength(shengyu);
-            storages.add(storage);
-        }
-        System.out.println(saleListProducts);
-        System.out.println(saleListProducts.size());
-//        Client client = clientService.findName("零售");
-//        if (client == null) {
-//            map.put("success", false);
-//            map.put("msg", "不存在客户名为零售的客户，请先添加");
-//            return map;
-//        }
-//        saleList.setClient(client);
-        saleListService.saveOne(saleList);
-        saleListProductService.saveList(saleListProducts);
-        storageService.save(storages);
         map.put("success", true);
         return map;
     }
@@ -819,5 +720,4 @@ public class SaleListProductAdminController {
         map.put("success", true);
         return map;
     }
-
 }

@@ -73,14 +73,5 @@ public interface SaleListService {
 	 */
 	public List<SaleList> findSaleListId(String saleNumber);
 
-	/***
-	 * 根据订单号查询订单
-	 * @param danhao
-	 * @return
-	 */
-    SaleList findBySaleNumber(String danhao);
-
     SaleList findById(Integer id);
-
-    void updateDingjin(Double dingjin, Integer id);
 }

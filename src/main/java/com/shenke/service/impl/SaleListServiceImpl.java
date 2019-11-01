@@ -125,17 +125,7 @@ public class SaleListServiceImpl implements SaleListService {
 	}
 
     @Override
-    public SaleList findBySaleNumber(String danhao) {
-        return saleListRepository.findBySaleNumber(danhao);
-    }
-
-    @Override
     public SaleList findById(Integer id) {
         return saleListRepository.findOne(id);
-    }
-
-    @Override
-    public void updateDingjin(Double dingjin, Integer id) {
-        saleListRepository.updateDingjin(dingjin, id);
     }
 }

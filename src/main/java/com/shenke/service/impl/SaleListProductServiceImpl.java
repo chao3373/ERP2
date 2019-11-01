@@ -285,7 +285,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         //完成数+1
 //        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
         Integer count = storageService.findCountBySaleListProductId(id);
-        if (count == null){
+        if (count == null) {
             count = 0;
         }
         Integer num = saleListProduct.getNum();
@@ -478,5 +478,49 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 return predicate;
             }
         });
+    }
+
+    @Override
+    public void updateName(Integer[] ids, String name) {
+        saleListProductRepository.updateName(ids, name);
+    }
+
+    @Override
+    public void updatLength(Integer[] ids, Double length) {
+        saleListProductRepository.updatLength(ids, length);
+    }
+
+    @Override
+    public void updatemodel(Integer[] ids, Double model) {
+        saleListProductRepository.updatemodel(ids, model);
+    }
+
+    @Override
+    public void updatPrice(Integer[] ids, Double price) {
+        saleListProductRepository.updatPrice(ids, price);
+    }
+
+    @Override
+    public void updatMeter(Integer[] ids, Double meter) {
+        saleListProductRepository.updatMeter(ids, meter);
+    }
+
+    @Override
+    public void updatOneweight(Integer[] ids, Double oneWeight) {
+        for (int i = 0; i < ids.length; i++) {
+            SaleListProduct saleListProduct = saleListProductRepository.findOne(ids[i]);
+            Double sunWeight = saleListProduct.getNum() * oneWeight;
+            saleListProductRepository.updatOneweight(ids[i], oneWeight, sunWeight);
+        }
+    }
+
+    @Override
+    public void updatPeasant(Integer[] ids, String peasant) {
+        saleListProductRepository.updatPeasant(ids, peasant);
+    }
+
+    @Override
+    public void updatColor(Integer[] ids, String color) {
+        saleListProductRepository.updatColor(ids, color);
     }
 }

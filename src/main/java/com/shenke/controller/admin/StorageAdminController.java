@@ -53,6 +53,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/add")
     public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu, String type) {
+        System.out.println(type);
         System.out.println(storage);
         System.out.println("员工名称：" + clerkName);
         if (changdu != null) {

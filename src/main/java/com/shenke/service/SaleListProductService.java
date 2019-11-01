@@ -198,7 +198,7 @@ public interface SaleListProductService {
 
     List<SaleListProduct> find(SaleListProduct saleListProduct);
 
-	void updateName(Integer[] ids, String name);
+    void updateName(Integer[] ids, String name);
 
 	void updatLength(Integer[] ids, Double length);
 

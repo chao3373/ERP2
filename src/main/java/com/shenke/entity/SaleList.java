@@ -55,30 +55,22 @@ public class SaleList {
 	
 	@Column(length=500)
 	private String address;//地址
-
-	@Column(nullable = true, scale = 2)
-	private Double dingjin;//定金，零售单用到
-
-	@Column(nullable = true, scale = 2)
-	private Double subscription;//订金
-
+	
 	@Transient
 	private Date bSaleDate;//起始日期 搜索用到
-
+	
 	@Transient
 	private Date eSaleDate;//结束日期 搜索用到
-
+	
 	@ManyToOne
 	@JoinColumn(name="userId")
 	private User user;//操作员
-
+	
 	@Transient
 	private List<SaleListProduct> saleListProduct=null;//销售单商品集合
 
-	private Double totalPrice;//合计金额
-
-	public Double getDingjin() {
-		return dingjin;
+	public Integer getId() {
+		return id;
 	}
 
 	@Override
@@ -94,38 +86,11 @@ public class SaleList {
 				", lankman='" + lankman + '\'' +
 				", tel='" + tel + '\'' +
 				", address='" + address + '\'' +
-				", dingjin=" + dingjin +
 				", bSaleDate=" + bSaleDate +
 				", eSaleDate=" + eSaleDate +
 				", user=" + user +
 				", saleListProduct=" + saleListProduct +
-				", subscription=" + subscription +
-				", totalPrice=" + totalPrice +
 				'}';
-	}
-
-	public Double getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Double subscription) {
-		this.subscription = subscription;
-	}
-
-	public Double getTotalPrice() {
-		return totalPrice;
-	}
-
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
-	}
-
-	public void setDingjin(Double dingjin) {
-		this.dingjin = dingjin;
-	}
-
-	public Integer getId() {
-		return id;
 	}
 
 	public void setId(Integer id) {

@@ -195,16 +195,23 @@
                                         title: "客户"
                                     },
                                     {
-                                        field: "dingjin",
+                                        field: "clerk",
                                         width: "100",
                                         align: "center",
-                                        title: "订金"
+                                        formatter: function (
+                                            val, row) {
+                                            if (row.clerk) {
+                                                return val.name;
+                                            }
+                                            return "";
+                                        },
+                                        title: "业务员"
                                     },
                                     {
-                                        field: "totalPrice",
+                                        field: "lankman",
                                         width: "100",
                                         align: "center",
-                                        title: "总价格"
+                                        title: "联系人"
                                     },
                                     {
                                         field: "tel",
@@ -300,18 +307,6 @@
                                                         align: "center"
                                                     },
                                                     {
-                                                        field: "clientname",
-                                                        title: "客户名称",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "peasant",
-                                                        title: "农户名称",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
                                                         field: "model",
                                                         title: "幅宽（m）",
                                                         width: "50",
@@ -340,6 +335,11 @@
                                                         title: "颜色",
                                                         width: "50",
                                                         align: "center"
+                                                    },{
+                                                        field: "dao",
+                                                        title: "剖刀",
+                                                        width: "50",
+                                                        align: "center"
                                                     },
                                                     {
                                                         field: "oneweight",
@@ -366,22 +366,31 @@
                                                         align: "center"
                                                     },
                                                     {
+                                                        field: "peasant",
+                                                        title: "农户名称",
+                                                        width: "100",
+                                                        align: "center"
+                                                    },
+                                                    {
+                                                        field: "clientname",
+                                                        title: "客户名称",
+                                                        width: "100",
+                                                        align: "center"
+                                                    },
+                                                    {
                                                         field: "realityweight",
                                                         title: "实际重量（kg）",
                                                         width: "100",
                                                         align: "center"
                                                     },
                                                     {
-                                                        field: "unitPrice",
-                                                        title: "单价",
+                                                        field: "saleList",
+                                                        title: "ID",
                                                         width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "totalPrice",
-                                                        title: "金额",
-                                                        width: "100",
-                                                        align: "center"
+                                                        align: "center",
+                                                        formatter: function (val, row) {
+                                                            return val.id;
+                                                        }
                                                     }]]
                                             });
                                 }
@@ -774,6 +783,7 @@
         //保存修改
         //封装订单信息传递后台
         function saveGoods() {
+            // var from = $("#fm");
             var data = getFrom('#fm');
             console.log(data);
             data.id = $("#dg").datagrid("getSelected").id;
@@ -846,6 +856,7 @@
             });
         }
 
+        //修改机台
         function updatajitai() {
             var ids = [];
             var rows = $("#dg2").datagrid("getSelections");
@@ -1087,11 +1098,10 @@
             })
 
         }
-
     </script>
 </head>
 <body class="easyui-layout" style="margin: 1px">
-<div region="north" style="height: 300px">
+<div region="north" style="height: 250px">
     <table id="dg" title="销售单据查询" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb" split="true">
@@ -1105,7 +1115,7 @@
             formatter="formatSupplier">客户
         </th>
         <th field="clerk" width="100" align="center"
-            formatter="formatSupplier">订金
+            formatter="formatSupplier">业务员
         </th>
         <th field="user" width="150" align="center" formatter="formatUser">操作员</th>
         <th field="lankman" width="100" align="center">联系人</th>
@@ -1125,7 +1135,7 @@
             &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;&nbsp;客户：&nbsp;<input class="easyui-combobox"
-                                              id="s_client" name="client.id" style="width: 100px"
+                                              id="s_client" name="client.id" style="width: 200px"
                                               data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
             &nbsp;&nbsp;&nbsp;业务员：&nbsp;<input class="easyui-combobox"
                                                id="s_clerk" name="clerk.id" style="width: 100px"
@@ -1139,9 +1149,7 @@
             &nbsp;&nbsp;<a href="javascript:openRoleModifyDialog()"
                            class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
             &nbsp;&nbsp;<a href="javascript:deleteSaleList()"
-                           class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a><br>
-            &nbsp;&nbsp;&nbsp;订金：<input type="text" id="dingjin" style="width: 100px;">
-            &nbsp;&nbsp;<a href="javascript:updatedingjin()" class="easyui-linkbutton" plain="true">确定</a>
+                           class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
         </fieldset>
     </div>
 </div>
@@ -1168,7 +1176,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订单状态：&nbsp;
         <!-- <input id="combo" class="easyui-combobox" style="width:120px;" /> -->
         <!-- <input id="cc" name="dept" /> -->
-        <input id="cc1" class="easyui-combobox"
+        <input id="cc1" class="easyui-combobox" style="width: 100px;"
                data-options="
 			panelHeight: 'auto',
 		    valueField: 'label',
@@ -1199,7 +1207,7 @@
 		    	auditQuery(rec.value);
 		    }"/>
         <!--<a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"-->
-           <!--plain="true">修改</a>-->
+        <!--plain="true">修改</a>-->
         <form id="updatefm">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数量：<input type="text" id="shuliang" style="width: 50px;">
             <a href="javascript:updateshuliang()"
@@ -1321,33 +1329,6 @@
        iconCls="icon-ok">确定</a> <a href="javascript:closeCause()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
-</body>
-<script>
 
-    //修改订金
-    function updatedingjin(){
-        var row = $("#dg").datagrid("getSelected");
-        if (!row){
-            alert("请选择一行！！");
-            return;
-        }
-        id =  row.id;
-        if (!$("#dingjin").val()){
-            alert("请输出订金！！");
-            return;
-        }
-        $.ajax({
-            type:"POST",
-            url:"/admin/saleList/updateDingjin",
-            data:{id:id, dingjin:$("#dingjin").val()},
-            success:function (result) {
-                if (result.success) {
-                    alert("修改成功");
-                    searchSale();
-                    $("#dingjin").val("");
-                }
-            }
-        })
-    }
-</script>
+</body>
 </html>
