@@ -67,7 +67,7 @@ public class StorageServiceImpl implements StorageService {
         Clerk clerk = storage.getJiTai().getClerk();
         Double realityweight = storage.getRealityweight();
 
-        System.out.println(saleListProduct.getUnitPrice());
+//        System.out.println(saleListProduct.getUnitPrice());
         BeanUtils.copyProperties(saleListProduct, storage);
 
         System.out.println(storage.getUnitPrice());
@@ -99,7 +99,7 @@ public class StorageServiceImpl implements StorageService {
         SaleListProduct saleListProduct = saleListProductRepository.findOne(storage.getSaleListProduct().getId());
         Clerk clerk = storage.getJiTai().getClerk();
         Double realityweight = storage.getRealityweight();
-        System.out.println(saleListProduct.getUnitPrice());
+//        System.out.println(saleListProduct.getUnitPrice());
         BeanUtils.copyProperties(saleListProduct, storage);
         if (StringUtil.isNotEmpty(type) && type.equals("保存不添加完成数")) {
             System.out.println("保存不添加完成数");
